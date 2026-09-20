@@ -8,6 +8,9 @@
 <title>EV Manager Evo · BYD Atto 3 EVO</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2322d3ee' stroke-width='2.5'%3E%3Cpolygon points='13 2 3 14 12 14 11 22 21 10 12 10 13 2'/%3E%3C/svg%3E">
 <link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <style>
 :root{
@@ -21,7 +24,7 @@
   --danger:#fb7185; --danger-soft:rgba(251,113,133,.14);
   --radius:16px; --radius-sm:10px; --radius-lg:22px;
   --shadow-card:0 1px 0 rgba(255,255,255,.04) inset, 0 12px 32px -12px rgba(0,0,0,.55);
-  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  --font:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
   --sidebar-w:236px;
 }
 :root[data-theme="light"]{
@@ -150,13 +153,35 @@ button{cursor:pointer}
 
 .card{
   background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius);
-  padding:20px; box-shadow:var(--shadow-card);
+  padding:22px; box-shadow:var(--shadow-card); position:relative;
+}
+.card::before{
+  content:'';position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;
+  background:linear-gradient(160deg,rgba(255,255,255,.10),transparent 40%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;
 }
 .card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
 .card-head h2{font-size:14.5px;font-weight:800}
 .card-head .hint{font-size:11.5px;color:var(--text-faint);font-weight:600}
+.chart-box{position:relative;height:220px;width:100%}
+.chart-box-wide{height:260px}
+.chart-box canvas{position:absolute;inset:0;width:100%!important;height:100%!important}
 
-.stat-card{position:relative;overflow:hidden}
+.quicklinks-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:10px;margin-bottom:16px}
+.quicklink-tile{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;padding:16px 8px;border-radius:14px;background:var(--bg-2);border:1px solid var(--border);text-decoration:none;color:var(--text);transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease}
+.quicklink-tile:hover{border-color:rgba(34,211,238,.4);transform:translateY(-2px);box-shadow:0 12px 26px -12px var(--accent-glow)}
+.quicklink-tile .ql-icon{width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:var(--accent-soft);color:var(--accent);flex-shrink:0}
+.quicklink-tile .ql-icon svg{width:17px;height:17px;stroke:currentColor}
+.quicklink-tile .ql-label{font-size:11.5px;font-weight:700;text-align:center;line-height:1.3;word-break:break-word}
+.quicklink-del{position:absolute;top:5px;right:5px;width:19px;height:19px;border-radius:50%;background:rgba(15,20,32,.55);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;line-height:1;opacity:0;transition:opacity .15s ease;border:none;cursor:pointer}
+.quicklink-tile:hover .quicklink-del{opacity:1}
+.quicklink-form{display:flex;gap:8px;flex-wrap:wrap;padding-top:14px;border-top:1px solid var(--border)}
+.quicklink-form input{flex:1;min-width:130px;background:var(--bg-2);border:1px solid var(--border);border-radius:10px;padding:9px 12px;font-size:12.5px;color:var(--text);outline:none}
+.quicklink-form input:focus{border-color:var(--accent)}
+
+.stat-card{position:relative;overflow:hidden;transition:border-color .2s ease,transform .2s ease}
+.stat-card:hover{border-color:var(--border-strong);transform:translateY(-1px)}
 .stat-card .icon-badge{
   width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;
 }
@@ -170,15 +195,18 @@ button{cursor:pointer}
 .tone-amber{color:var(--warning);background:var(--warning-soft)}
 
 .hero-banner{
-  border-radius:var(--radius-lg); padding:22px 26px; position:relative; overflow:hidden;
+  border-radius:var(--radius-lg); padding:24px 28px; position:relative; overflow:hidden;
   background:linear-gradient(120deg,rgba(34,211,238,.16),rgba(99,102,241,.14));
-  border:1px solid rgba(34,211,238,.25); display:flex; align-items:center; justify-content:space-between; gap:20px;
+  border:1px solid rgba(34,211,238,.25); display:flex; align-items:center; justify-content:space-between; gap:24px;
 }
 .hero-banner.overdue{background:linear-gradient(120deg,rgba(251,113,133,.18),rgba(251,191,36,.12));border-color:rgba(251,113,133,.3)}
-.hero-banner h3{font-size:14px;font-weight:800;display:flex;align-items:center;gap:8px}
-.hero-banner h3 svg{width:16px;height:16px;flex-shrink:0;stroke:currentColor}
-.hero-banner p{font-size:13px;color:var(--text-muted);margin-top:6px;font-weight:600;max-width:480px}
-.hero-progress{width:100%;max-width:280px}
+.hero-main{display:flex;align-items:flex-start;gap:16px;min-width:0}
+.hero-icon{width:44px;height:44px;border-radius:13px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:rgba(52,211,153,.18);color:var(--success)}
+.hero-banner.overdue .hero-icon{background:rgba(251,113,133,.2);color:var(--danger)}
+.hero-icon svg{width:20px;height:20px;stroke:currentColor}
+.hero-banner h3{font-size:15px;font-weight:800}
+.hero-banner p{font-size:13px;color:var(--text-muted);margin-top:5px;font-weight:600;max-width:440px;line-height:1.5}
+.hero-progress{width:100%;max-width:260px;flex-shrink:0}
 .bar-track{height:8px;border-radius:6px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:8px}
 .bar-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--accent),var(--accent-2))}
 .bar-fill.danger{background:linear-gradient(90deg,var(--warning),var(--danger))}
@@ -189,9 +217,10 @@ button{cursor:pointer}
 }
 .btn svg{width:15px;height:15px;stroke:currentColor}
 .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#04141a;box-shadow:0 8px 20px -8px var(--accent-glow)}
-.btn-primary:hover{filter:brightness(1.08)}
+.btn-primary:hover{filter:brightness(1.08);transform:translateY(-1px);box-shadow:0 12px 26px -8px var(--accent-glow)}
+.btn-primary:active{transform:translateY(0)}
 .btn-ghost{background:rgba(255,255,255,.04);border-color:var(--border);color:var(--text)}
-.btn-ghost:hover{border-color:var(--border-strong)}
+.btn-ghost:hover{border-color:var(--border-strong);background:rgba(255,255,255,.07)}
 .btn-danger{background:var(--danger-soft);color:var(--danger)}
 .btn-danger:hover{filter:brightness(1.1)}
 .btn-sm{padding:7px 11px;font-size:12px}
@@ -301,6 +330,11 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
   .topbar{padding:0 16px}
   .content{padding:16px}
   .chip{display:none}
+  .hero-banner{flex-direction:column;align-items:flex-start}
+  .hero-progress{max-width:100%}
+  .quicklinks-grid{grid-template-columns:repeat(3,1fr)}
+  .quicklink-form{flex-direction:column}
+  .quicklink-form button{width:100%}
 }
 </style>
 </head>
@@ -368,6 +402,15 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
       <!-- DASHBOARD -->
       <section class="page" id="page-dashboard">
         <div id="dashHero" style="margin-bottom:18px"></div>
+        <div class="card quicklinks-card" style="margin-bottom:18px">
+          <div class="card-head"><h2>Accesos rápidos</h2><span class="hint">a mano desde el coche</span></div>
+          <div class="quicklinks-grid" id="quickLinksGrid"></div>
+          <form id="quickLinkForm" class="quicklink-form">
+            <input id="ql_title" type="text" placeholder="Nombre (ej. Mi seguro)" required maxlength="30">
+            <input id="ql_url" type="text" placeholder="https://..." required>
+            <button type="submit" class="btn btn-ghost btn-sm">+ Añadir enlace</button>
+          </form>
+        </div>
         <div class="grid grid-4" style="margin-bottom:18px">
           <div class="card stat-card"><div class="icon-badge tone-cyan"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div><div class="label">Kilometraje</div><div class="value" id="statKm">—</div><div class="sub">km actuales</div></div>
           <div class="card stat-card"><div class="icon-badge tone-violet"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><div class="label">Consumo medio</div><div class="value" id="statConsumption">—</div><div class="sub">kWh / 100 km</div></div>
@@ -377,11 +420,11 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
         <div class="grid grid-2">
           <div class="card">
             <div class="card-head"><h2>Consumo por carga</h2><span class="hint">últimas 10</span></div>
-            <canvas id="chartConsumption" height="150"></canvas>
+            <div class="chart-box"><canvas id="chartConsumption"></canvas></div>
           </div>
           <div class="card">
             <div class="card-head"><h2>Reparto de gasto</h2><span class="hint">total</span></div>
-            <canvas id="chartSplit" height="150"></canvas>
+            <div class="chart-box"><canvas id="chartSplit"></canvas></div>
           </div>
         </div>
       </section>
@@ -569,7 +612,7 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
         </div>
         <div class="card">
           <div class="card-head"><h2>Gasto mensual</h2><span class="hint">cargas + mantenimiento</span></div>
-          <canvas id="chartMonthly" height="90"></canvas>
+          <div class="chart-box chart-box-wide"><canvas id="chartMonthly"></canvas></div>
         </div>
         <div class="card" style="margin-top:16px">
           <div class="card-head"><h2>Resumen general</h2></div>
@@ -609,8 +652,20 @@ const ICONS = {
   check: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
   alert: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
   clock: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
-  trash: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>'
+  trash: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
+  bolt: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
+  pin: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>',
+  book: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>',
+  wrench: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>',
+  link: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>'
 };
+const DEFAULT_QUICK_LINKS = [
+  { id:'maps', title:'Cargadores cercanos', url:'https://www.google.com/maps/search/?api=1&query=cargador+coche+el%C3%A9ctrico', icon:'pin' },
+  { id:'plugshare', title:'PlugShare', url:'https://www.plugshare.com/', icon:'bolt' },
+  { id:'electromaps', title:'Electromaps', url:'https://www.electromaps.com/', icon:'bolt' },
+  { id:'bydmanual', title:'Manual BYD', url:'https://www.byd.com/es-es/service-maintenance/owners-manual.html', icon:'book' },
+  { id:'bydservice', title:'Servicio BYD', url:'https://www.byd.com/es-es/service-maintenance', icon:'wrench' }
+];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
 const VEHICLE_BATTERY_KWH = 74.8;
@@ -673,6 +728,7 @@ let state = {
   maintenance: [],
   notes: [],
   completedRevisions: [],
+  quickLinks: DEFAULT_QUICK_LINKS.slice(),
   lang: 'es',
   meta: { notifiedRevisions: [], lastAlertCheck: '' }
 };
@@ -810,6 +866,7 @@ function updateNotifStatus(){
 
 /* ---------------- dashboard ---------------- */
 function renderDashboard(){
+  renderQuickLinks();
   const c = state.config;
   document.getElementById('statKm').textContent = (Number(c.currentKm)||0).toLocaleString('es-ES') + ' km';
   document.getElementById('statConsumption').textContent = (Number(c.avgConsumption)||0).toFixed(1);
@@ -831,9 +888,12 @@ function renderDashboard(){
   const pct = next ? Math.min(100, Math.max(0, (km/next.km)*100)) : 0;
   hero.innerHTML = `
     <div class="hero-banner ${overdueCount?'overdue':''}">
-      <div>
-        <h3>${overdueCount ? (ICONS.alert+' Tienes '+overdueCount+' revisión(es) vencida(s)') : (ICONS.check+' Todo al día')}</h3>
-        <p>${next ? next.name+' — '+next.description : 'Configura tu vehículo para ver el calendario de revisiones.'}</p>
+      <div class="hero-main">
+        <span class="hero-icon">${overdueCount ? ICONS.alert : ICONS.check}</span>
+        <div>
+          <h3>${overdueCount ? 'Tienes '+overdueCount+' revisión(es) vencida(s)' : 'Todo al día'}</h3>
+          <p>${next ? next.name+' — '+next.description : 'Configura tu vehículo para ver el calendario de revisiones.'}</p>
+        </div>
       </div>
       <div class="hero-progress">
         <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:var(--text-muted)"><span>${km.toLocaleString('es-ES')} km</span><span>${next?next.km.toLocaleString('es-ES'):''} km</span></div>
@@ -997,6 +1057,24 @@ function renderNotes(){
 function toggleNoteTag(t){ activeNoteTags.has(t) ? activeNoteTags.delete(t) : activeNoteTags.add(t); renderNotes(); }
 function deleteNote(id){ state.notes = state.notes.filter(n=>n.id!==id); saveState(); renderNotes(); toast('Nota eliminada','info'); }
 function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+function escapeAttr(s){ return (s||'').replace(/"/g,'&quot;'); }
+
+/* ---------------- quick links ---------------- */
+function renderQuickLinks(){
+  const grid = document.getElementById('quickLinksGrid');
+  if(!grid) return;
+  const links = state.quickLinks || [];
+  grid.innerHTML = links.length ? links.map(l=>`
+    <a class="quicklink-tile" href="${escapeAttr(l.url)}" target="_blank" rel="noopener noreferrer">
+      <button type="button" class="quicklink-del" title="Eliminar" onclick="event.preventDefault();event.stopPropagation();deleteQuickLink('${l.id}')">✕</button>
+      <span class="ql-icon">${ICONS[l.icon]||ICONS.link}</span>
+      <span class="ql-label">${escapeHtml(l.title)}</span>
+    </a>`).join('') : `<span style="font-size:12px;color:var(--text-faint)">Sin enlaces todavía. Añade uno abajo.</span>`;
+}
+function deleteQuickLink(id){
+  state.quickLinks = (state.quickLinks||[]).filter(l=>l.id!==id);
+  saveState(); renderQuickLinks(); toast('Enlace eliminado','info');
+}
 
 /* ---------------- manual ---------------- */
 function normalizeText(s){ return (s||'').toString().normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase(); }
@@ -1194,6 +1272,18 @@ function setupEventListeners(){
     saveState(); e.target.reset(); renderNotes(); toast('Nota guardada', 'success');
   });
   document.getElementById('noteSearch').addEventListener('input', renderNotes);
+
+  document.getElementById('quickLinkForm').addEventListener('submit', e=>{
+    e.preventDefault();
+    const title = document.getElementById('ql_title').value.trim();
+    let url = document.getElementById('ql_url').value.trim();
+    if(!title || !url) return;
+    if(!/^https?:\/\//i.test(url) && !/^tel:/i.test(url)) url = 'https://' + url;
+    state.quickLinks = state.quickLinks || [];
+    state.quickLinks.push({ id: 'custom-'+uid(), title, url, icon:'link' });
+    saveState(); renderQuickLinks(); e.target.reset();
+    toast('Enlace añadido', 'success');
+  });
 
   document.getElementById('manualSearch').addEventListener('input', renderManual);
   document.getElementById('manLangEs').addEventListener('click', ()=>{ state.manualLang='es'; renderManual(); });

@@ -29,6 +29,7 @@ ev-manager-evo/
 ## Funcionalidades
 
 - **Dashboard**: kilometraje, consumo medio, gasto total, próxima revisión con barra de progreso, gráficos de consumo y reparto de gasto (cargas vs. mantenimiento).
+- **Accesos rápidos**: widget de enlaces en el Dashboard (cargadores cercanos, PlugShare, Electromaps, manual y servicio oficial BYD) pensado para consultarlo desde el móvil en el coche. Puedes añadir tus propios enlaces (seguro, taller de confianza, etc.) y borrar los que no uses.
 - **Cargas**: registro de kWh, coste, ubicación y km; historial editable y estadísticas (€/kWh medio, total kWh, etc.).
 - **Mantenimiento**: registro por tipo (frenos, neumáticos, batería, filtros, reparación...), coste y notas.
 - **Revisiones**: calendario preventivo del Atto 3 EVO precargado (cada 24 meses o 30.000 km), con estado vencida / próxima / completada.
