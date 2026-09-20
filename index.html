@@ -258,6 +258,7 @@ button{cursor:pointer}
 /* ---------- forms ---------- */
 .field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
 .field label{font-size:12px;font-weight:700;color:var(--text-muted)}
+.opt-hint{font-weight:600;color:var(--text-faint);text-transform:none;letter-spacing:0}
 .field input,.field select,.field textarea{
   background:var(--bg-2); border:1px solid var(--border); border-radius:10px; padding:10px 12px;
   font-size:13.5px; color:var(--text); outline:none; transition:border-color .15s ease;
@@ -513,16 +514,27 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
             <div class="card-head"><h2>Registrar carga</h2></div>
             <form id="chargeForm">
               <div class="field-row">
-                <div class="field"><label>Fecha</label><input id="c_date" type="date" required></div>
+                <div class="field"><label>Fecha</label><input id="c_date" type="date"></div>
                 <div class="field"><label>Hora</label><input id="c_time" type="time"></div>
               </div>
               <div class="field-row">
-                <div class="field"><label>kWh cargados</label><input id="c_kwh" type="number" step="0.1" min="0" required placeholder="0.0"></div>
-                <div class="field"><label>Coste (€)</label><input id="c_cost" type="number" step="0.01" min="0" required placeholder="0.00"></div>
+                <div class="field"><label>kWh cargados <span class="opt-hint">(opcional)</span></label><input id="c_kwh" type="number" step="0.1" min="0" placeholder="0.0"></div>
+                <div class="field"><label>Coste (€) <span class="opt-hint">(opcional, 0 = gratis)</span></label><input id="c_cost" type="number" step="0.01" min="0" placeholder="0.00"></div>
               </div>
               <div class="field-row">
                 <div class="field"><label>Km en el momento</label><input id="c_km" type="number" min="0" placeholder="opcional"></div>
-                <div class="field"><label>Ubicación</label><input id="c_location" type="text" placeholder="Casa, trabajo, público..."></div>
+                <div class="field">
+                  <label>Ubicación</label>
+                  <select id="c_location_type">
+                    <option value="Casa">Casa</option>
+                    <option value="Trabajo">Trabajo</option>
+                    <option value="Otro">Otro (especificar)</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field" id="c_location_other_wrap" style="display:none">
+                <label>Especifica el lugar</label>
+                <input id="c_location_other" type="text" placeholder="Ej. Electrolinera Iberdrola">
               </div>
               <button type="submit" class="btn btn-primary btn-block">Registrar carga</button>
             </form>
@@ -1012,8 +1024,8 @@ function renderCharges(){
   const sorted = [...state.charges].sort((a,b)=> new Date(b.date)-new Date(a.date));
   tbody.innerHTML = sorted.map(c=>`
     <tr>
-      <td>${fmtDate(c.date)}</td><td>${Number(c.kwh).toFixed(1)}</td><td>${fmtEUR(c.cost)}</td>
-      <td>${(c.cost/c.kwh || 0).toFixed(3)} €</td><td>${c.km ? Number(c.km).toLocaleString('es-ES') : '—'}</td>
+      <td>${fmtDate(c.date)}</td><td>${c.kwh!=null ? Number(c.kwh).toFixed(1) : '—'}</td><td>${c.cost!=null ? fmtEUR(c.cost) : '—'}</td>
+      <td>${(c.kwh && c.cost!=null) ? (c.cost/c.kwh).toFixed(3)+' €' : '—'}</td><td>${c.km ? Number(c.km).toLocaleString('es-ES') : '—'}</td>
       <td>${c.location||'—'}</td>
       <td><button class="icon-action danger" onclick="deleteCharge(${c.id})">${ICONS.trash}</button></td>
     </tr>`).join('');
@@ -1302,16 +1314,24 @@ function setupEventListeners(){
     saveState(); renderDashboard(); renderAlerts(); toast('Configuración guardada', 'success');
   });
 
+  document.getElementById('c_location_type').addEventListener('change', e=>{
+    document.getElementById('c_location_other_wrap').style.display = e.target.value==='Otro' ? 'block' : 'none';
+  });
+
   document.getElementById('chargeForm').addEventListener('submit', e=>{
     e.preventDefault();
-    const kwh = Number(document.getElementById('c_kwh').value);
-    const cost = Number(document.getElementById('c_cost').value);
-    if(!kwh || !cost){ toast('Introduce kWh y coste válidos', 'warning'); return; }
+    const kwhRaw = document.getElementById('c_kwh').value;
+    const costRaw = document.getElementById('c_cost').value;
+    const kwh = kwhRaw==='' ? null : Number(kwhRaw);
+    const cost = costRaw==='' ? null : Number(costRaw);
+    const locationType = document.getElementById('c_location_type').value;
+    const location = locationType==='Otro' ? (document.getElementById('c_location_other').value.trim() || 'Otro') : locationType;
     state.charges.push({ id:uid(), date:document.getElementById('c_date').value, time:document.getElementById('c_time').value,
-      kwh, cost, km:Number(document.getElementById('c_km').value)||null, location:document.getElementById('c_location').value.trim() });
+      kwh, cost, km:Number(document.getElementById('c_km').value)||null, location });
     const kmVal = Number(document.getElementById('c_km').value);
     if(kmVal && kmVal > (Number(state.config.currentKm)||0)) state.config.currentKm = kmVal;
     saveState(); e.target.reset(); document.getElementById('c_date').valueAsDate = new Date();
+    document.getElementById('c_location_other_wrap').style.display = 'none';
     renderCharges(); renderDashboard(); renderAlerts(); toast('Carga registrada', 'success');
   });
 
