@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="description" content="EV Manager Evo — gestor integral del BYD Atto 3 EVO: cargas, mantenimiento, revisiones, notas y manual.">
+<meta name="theme-color" content="#070b14">
+<title>EV Manager Evo · BYD Atto 3 EVO</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2322d3ee' stroke-width='2.5'%3E%3Cpolygon points='13 2 3 14 12 14 11 22 21 10 12 10 13 2'/%3E%3C/svg%3E">
+<link rel="manifest" href="manifest.json">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#070b14; --bg-1:#0b1120; --bg-2:#0f1626; --bg-card:rgba(255,255,255,.035);
+  --border:rgba(255,255,255,.09); --border-strong:rgba(255,255,255,.16);
+  --text:#e9edf6; --text-muted:#8d96ab; --text-faint:#5c6478;
+  --accent:#22d3ee; --accent-2:#6366f1; --accent-3:#a855f7;
+  --accent-soft:rgba(34,211,238,.14); --accent-glow:rgba(34,211,238,.35);
+  --success:#34d399; --success-soft:rgba(52,211,153,.14);
+  --warning:#fbbf24; --warning-soft:rgba(251,191,36,.14);
+  --danger:#fb7185; --danger-soft:rgba(251,113,133,.14);
+  --radius:16px; --radius-sm:10px; --radius-lg:22px;
+  --shadow-card:0 1px 0 rgba(255,255,255,.04) inset, 0 12px 32px -12px rgba(0,0,0,.55);
+  --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  --sidebar-w:236px;
+}
+:root[data-theme="light"]{
+  --bg:#eef1f8; --bg-1:#f7f9fd; --bg-2:#ffffff; --bg-card:#ffffff;
+  --border:#e1e6f0; --border-strong:#cbd3e3;
+  --text:#0f1524; --text-muted:#5b6478; --text-faint:#8a92a6;
+  --accent:#0891b2; --accent-2:#4f46e5; --accent-3:#9333ea;
+  --accent-soft:rgba(8,145,178,.10); --accent-glow:rgba(8,145,178,.22);
+  --success:#059669; --success-soft:rgba(5,150,105,.10);
+  --warning:#b45309; --warning-soft:rgba(180,83,9,.10);
+  --danger:#dc2626; --danger-soft:rgba(220,38,38,.10);
+  --shadow-card:0 1px 0 #fff inset, 0 8px 24px -10px rgba(15,23,42,.16);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+svg{width:1em;height:1em;display:inline-block}
+html,body{height:100%}
+body{
+  font-family:var(--font); background:
+    radial-gradient(1100px 600px at 85% -10%, var(--accent-soft), transparent 60%),
+    radial-gradient(900px 500px at -10% 110%, rgba(99,102,241,.10), transparent 60%),
+    var(--bg);
+  color:var(--text); overflow:hidden; -webkit-font-smoothing:antialiased;
+}
+input,textarea,select,button{font-family:inherit;color:inherit}
+button{cursor:pointer}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:10px}
+::selection{background:var(--accent-glow)}
+
+/* ---------- layout ---------- */
+.app{display:flex; height:100vh}
+.sidebar{
+  width:var(--sidebar-w); flex-shrink:0; display:flex; flex-direction:column;
+  background:var(--bg-1); border-right:1px solid var(--border);
+  transition:transform .25s ease;
+}
+.brand{display:flex;align-items:center;gap:11px;padding:22px 20px 18px}
+.brand-mark{
+  width:38px;height:38px;border-radius:11px;flex-shrink:0;
+  background:linear-gradient(140deg,var(--accent),var(--accent-2));
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 18px -4px var(--accent-glow);
+}
+.brand-mark svg{width:20px;height:20px;stroke:#04141a;fill:#04141a}
+.brand-text .name{font-size:15px;font-weight:800;letter-spacing:.2px}
+.brand-text .sub{font-size:11px;color:var(--text-muted);font-weight:600;letter-spacing:.4px;text-transform:uppercase}
+
+.nav{flex:1;overflow-y:auto;padding:8px 12px;display:flex;flex-direction:column;gap:3px}
+.nav-item{
+  display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:11px;
+  border:1px solid transparent; background:none; text-align:left; width:100%;
+  color:var(--text-muted); font-size:13.5px; font-weight:600; transition:all .15s ease;
+}
+.nav-item svg{width:17px;height:17px;stroke:currentColor;flex-shrink:0}
+.nav-item:hover{color:var(--text); background:rgba(255,255,255,.04)}
+.nav-item.active{
+  color:var(--accent); background:var(--accent-soft); border-color:rgba(34,211,238,.25);
+}
+.nav-sep{height:1px;background:var(--border);margin:10px 6px}
+
+.sidebar-foot{padding:14px 12px 18px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px}
+.foot-btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;padding:9px 10px;border-radius:10px;
+  background:rgba(255,255,255,.04); border:1px solid var(--border); font-size:12.5px; font-weight:700;color:var(--text-muted);
+}
+.foot-btn:hover{color:var(--text);border-color:var(--border-strong)}
+.foot-btn svg{width:15px;height:15px;stroke:currentColor}
+.foot-row{display:flex;gap:8px}
+.foot-row .foot-btn{flex:1}
+
+.main{flex:1;display:flex;flex-direction:column;min-width:0;height:100vh;overflow:hidden}
+.topbar{
+  height:64px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;
+  padding:0 26px;border-bottom:1px solid var(--border);background:var(--bg-1);gap:16px;
+}
+.topbar h1{font-size:17px;font-weight:800;letter-spacing:-.2px}
+.hamburger{display:none;background:none;border:none;color:var(--text);padding:6px}
+.hamburger svg{width:20px;height:20px;stroke:currentColor}
+
+.top-right{display:flex;align-items:center;gap:10px}
+.chip{
+  display:flex;flex-direction:column;align-items:flex-end;padding:6px 2px;
+}
+.chip .l1{font-size:12.5px;font-weight:700}
+.chip .l2{font-size:10.5px;color:var(--text-muted);font-weight:600}
+
+.bell-wrap{position:relative}
+.icon-btn{
+  width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.04); border:1px solid var(--border); color:var(--text-muted); position:relative;
+}
+.icon-btn:hover{color:var(--text);border-color:var(--border-strong)}
+.icon-btn svg{width:17px;height:17px;stroke:currentColor}
+.badge-dot{
+  position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;padding:0 4px;border-radius:8px;
+  background:var(--danger);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 0 2px var(--bg-1);
+}
+.dropdown{
+  position:absolute;top:44px;right:0;width:320px;max-height:380px;overflow-y:auto;background:var(--bg-2);
+  border:1px solid var(--border-strong);border-radius:var(--radius);box-shadow:0 20px 48px -12px rgba(0,0,0,.5);
+  padding:8px;display:none;z-index:60;
+}
+.dropdown.open{display:block}
+.dropdown-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--text-muted);padding:8px 10px 4px}
+.alert-row{display:flex;gap:10px;padding:10px;border-radius:10px;align-items:flex-start}
+.alert-row:hover{background:rgba(255,255,255,.04)}
+.alert-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.alert-row .t1{font-size:12.5px;font-weight:700}
+.alert-row .t2{font-size:11.5px;color:var(--text-muted);margin-top:2px}
+.empty-mini{padding:24px 10px;text-align:center;color:var(--text-muted);font-size:12.5px}
+
+.content{flex:1;overflow-y:auto;padding:26px}
+.page{display:none;max-width:1180px;margin:0 auto}
+.page.active{display:block;animation:fadeUp .28s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ---------- cards / grid ---------- */
+.grid{display:grid;gap:16px}
+.grid-4{grid-template-columns:repeat(4,1fr)}
+.grid-3{grid-template-columns:repeat(3,1fr)}
+.grid-2{grid-template-columns:1.4fr 1fr}
+@media(max-width:1000px){.grid-4{grid-template-columns:repeat(2,1fr)}.grid-3{grid-template-columns:1fr 1fr}.grid-2{grid-template-columns:1fr}}
+@media(max-width:560px){.grid-4{grid-template-columns:1fr 1fr}.grid-3{grid-template-columns:1fr}}
+
+.card{
+  background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius);
+  padding:20px; box-shadow:var(--shadow-card);
+}
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.card-head h2{font-size:14.5px;font-weight:800}
+.card-head .hint{font-size:11.5px;color:var(--text-faint);font-weight:600}
+
+.stat-card{position:relative;overflow:hidden}
+.stat-card .icon-badge{
+  width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;
+}
+.stat-card .icon-badge svg{width:17px;height:17px;stroke:currentColor}
+.stat-card .label{font-size:11.5px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.stat-card .value{font-size:26px;font-weight:800;margin-top:6px;letter-spacing:-.5px}
+.stat-card .sub{font-size:11.5px;color:var(--text-faint);margin-top:4px;font-weight:600}
+.tone-cyan{color:var(--accent);background:var(--accent-soft)}
+.tone-violet{color:var(--accent-3);background:rgba(168,85,247,.14)}
+.tone-green{color:var(--success);background:var(--success-soft)}
+.tone-amber{color:var(--warning);background:var(--warning-soft)}
+
+.hero-banner{
+  border-radius:var(--radius-lg); padding:22px 26px; position:relative; overflow:hidden;
+  background:linear-gradient(120deg,rgba(34,211,238,.16),rgba(99,102,241,.14));
+  border:1px solid rgba(34,211,238,.25); display:flex; align-items:center; justify-content:space-between; gap:20px;
+}
+.hero-banner.overdue{background:linear-gradient(120deg,rgba(251,113,133,.18),rgba(251,191,36,.12));border-color:rgba(251,113,133,.3)}
+.hero-banner h3{font-size:14px;font-weight:800;display:flex;align-items:center;gap:8px}
+.hero-banner h3 svg{width:16px;height:16px;flex-shrink:0;stroke:currentColor}
+.hero-banner p{font-size:13px;color:var(--text-muted);margin-top:6px;font-weight:600;max-width:480px}
+.hero-progress{width:100%;max-width:280px}
+.bar-track{height:8px;border-radius:6px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:8px}
+.bar-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--accent),var(--accent-2))}
+.bar-fill.danger{background:linear-gradient(90deg,var(--warning),var(--danger))}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 16px;border-radius:10px;
+  font-size:13px;font-weight:700;border:1px solid transparent;transition:all .15s ease;white-space:nowrap;
+}
+.btn svg{width:15px;height:15px;stroke:currentColor}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#04141a;box-shadow:0 8px 20px -8px var(--accent-glow)}
+.btn-primary:hover{filter:brightness(1.08)}
+.btn-ghost{background:rgba(255,255,255,.04);border-color:var(--border);color:var(--text)}
+.btn-ghost:hover{border-color:var(--border-strong)}
+.btn-danger{background:var(--danger-soft);color:var(--danger)}
+.btn-danger:hover{filter:brightness(1.1)}
+.btn-sm{padding:7px 11px;font-size:12px}
+.btn-block{width:100%}
+
+/* ---------- forms ---------- */
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.field label{font-size:12px;font-weight:700;color:var(--text-muted)}
+.field input,.field select,.field textarea{
+  background:var(--bg-2); border:1px solid var(--border); border-radius:10px; padding:10px 12px;
+  font-size:13.5px; color:var(--text); outline:none; transition:border-color .15s ease;
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent)}
+.field textarea{resize:vertical;min-height:80px}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:520px){.field-row{grid-template-columns:1fr}}
+
+/* ---------- table ---------- */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--text-faint);padding:0 14px 10px;white-space:nowrap}
+td{padding:12px 14px;font-size:13px;border-top:1px solid var(--border);white-space:nowrap}
+tr:hover td{background:rgba(255,255,255,.02)}
+.icon-action{background:none;border:none;color:var(--text-faint);padding:5px;border-radius:6px}
+.icon-action:hover{color:var(--text)}
+.icon-action.danger:hover{color:var(--danger)}
+.icon-action svg{width:15px;height:15px;stroke:currentColor}
+.empty-state{padding:48px 20px;text-align:center;color:var(--text-muted)}
+.empty-state svg{width:36px;height:36px;stroke:var(--text-faint);margin-bottom:10px}
+.empty-state p{font-size:13px;font-weight:600}
+
+/* ---------- revisions ---------- */
+.rev-item{
+  display:flex;align-items:center;gap:16px;padding:16px 18px;border-radius:var(--radius);
+  border:1px solid var(--border); background:var(--bg-card); margin-bottom:10px;
+}
+.rev-item.due{border-color:rgba(251,191,36,.35);background:linear-gradient(120deg,var(--warning-soft),transparent)}
+.rev-item.overdue{border-color:rgba(251,113,133,.35);background:linear-gradient(120deg,var(--danger-soft),transparent)}
+.rev-item.done{opacity:.55}
+.rev-status{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.rev-status svg{width:18px;height:18px;stroke:currentColor}
+.rev-body{flex:1;min-width:0}
+.rev-body h4{font-size:13.5px;font-weight:800}
+.rev-body p{font-size:12px;color:var(--text-muted);margin-top:3px}
+.rev-tasks{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.tag-pill{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;background:rgba(255,255,255,.06);color:var(--text-muted)}
+.rev-meta{font-size:11px;color:var(--text-faint);font-weight:700;flex-shrink:0;text-align:right;min-width:90px}
+
+/* ---------- notes ---------- */
+.tags-bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.tag-toggle{
+  font-size:12px;font-weight:700;padding:6px 13px;border-radius:20px;border:1px solid var(--border);
+  background:var(--bg-card);color:var(--text-muted);
+}
+.tag-toggle.active{background:var(--accent-soft);border-color:rgba(34,211,238,.4);color:var(--accent)}
+.note-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:18px}
+.note-card h4{font-size:14px;font-weight:800;margin-bottom:6px}
+.note-card p{font-size:12.5px;color:var(--text-muted);line-height:1.5;white-space:pre-wrap}
+.note-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.note-foot{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
+.note-foot .date{font-size:11px;color:var(--text-faint);font-weight:600}
+
+/* ---------- manual ---------- */
+.manual-search{display:flex;gap:10px;margin-bottom:20px}
+.manual-search input{flex:1}
+.lang-toggle{display:flex;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.lang-toggle button{padding:10px 16px;background:var(--bg-2);border:none;font-size:12.5px;font-weight:700;color:var(--text-muted)}
+.lang-toggle button.active{background:var(--accent-soft);color:var(--accent)}
+.manual-cat{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--accent);margin:20px 0 10px}
+.manual-cat:first-child{margin-top:0}
+.manual-item{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:10px}
+.manual-item h4{font-size:13.5px;font-weight:800;margin-bottom:8px}
+.manual-item pre{font-family:inherit;font-size:12.5px;color:var(--text-muted);white-space:pre-wrap;line-height:1.6}
+mark{background:var(--accent-glow);color:var(--text);border-radius:3px;padding:0 2px}
+
+/* ---------- toasts ---------- */
+.toasts{position:fixed;top:18px;right:18px;z-index:200;display:flex;flex-direction:column;gap:10px;max-width:340px}
+.toast{
+  display:flex;gap:10px;align-items:flex-start;padding:13px 15px;border-radius:12px;background:var(--bg-2);
+  border:1px solid var(--border-strong);box-shadow:0 16px 40px -10px rgba(0,0,0,.4);
+  animation:slideIn .25s ease;font-size:12.5px;font-weight:600;
+}
+@keyframes slideIn{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+.toast svg{width:16px;height:16px;stroke:currentColor;flex-shrink:0;margin-top:1px}
+.toast.success{color:var(--success)}
+.toast.warning{color:var(--warning)}
+.toast.danger{color:var(--danger)}
+.toast.info{color:var(--accent)}
+.toast .msg{color:var(--text);font-weight:600}
+
+/* ---------- modal ---------- */
+.overlay{position:fixed;inset:0;background:rgba(3,6,14,.6);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:150;padding:20px}
+.overlay.open{display:flex}
+.modal{background:var(--bg-2);border:1px solid var(--border-strong);border-radius:var(--radius-lg);padding:26px;width:100%;max-width:400px;box-shadow:0 30px 80px -20px rgba(0,0,0,.6)}
+.modal h3{font-size:15px;font-weight:800;margin-bottom:6px}
+.modal p{font-size:12.5px;color:var(--text-muted);margin-bottom:18px}
+.modal-actions{display:flex;gap:10px;margin-top:6px}
+.modal-actions .btn{flex:1}
+
+footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-faint);font-weight:600}
+
+/* ---------- mobile ---------- */
+@media(max-width:860px){
+  .sidebar{position:fixed;inset:0 auto 0 0;z-index:100;transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0);box-shadow:0 0 60px rgba(0,0,0,.5)}
+  .hamburger{display:flex}
+  .topbar{padding:0 16px}
+  .content{padding:16px}
+  .chip{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="toasts" id="toasts"></div>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-mark"><svg viewBox="0 0 24 24" stroke-width="0"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+      <div class="brand-text">
+        <div class="name">EV Manager</div>
+        <div class="sub">Atto 3 EVO</div>
+      </div>
+    </div>
+    <nav class="nav" id="navMenu">
+      <button class="nav-item" data-page="dashboard"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Dashboard</button>
+      <button class="nav-item" data-page="charges"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Cargas</button>
+      <button class="nav-item" data-page="maintenance"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Mantenimiento</button>
+      <button class="nav-item" data-page="revisions"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Revisiones</button>
+      <button class="nav-item" data-page="notes"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg>Notas</button>
+      <button class="nav-item" data-page="manual"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>Manual</button>
+      <button class="nav-item" data-page="stats"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18M18 17V9M13 17V5M8 17v-4"/></svg>Estadísticas</button>
+      <div class="nav-sep"></div>
+      <button class="nav-item" data-page="setup"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Configuración</button>
+    </nav>
+    <div class="sidebar-foot">
+      <button class="foot-btn" id="themeToggle"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="themeIcon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><span id="themeLabel">Modo claro</span></button>
+      <div class="foot-row">
+        <button class="foot-btn" id="exportBtn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Exportar</button>
+        <button class="foot-btn" id="importBtn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>Importar</button>
+      </div>
+      <input type="file" id="importFile" accept="application/json" style="display:none">
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <header class="topbar">
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="hamburger" id="hamburgerBtn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18M3 6h18M3 18h18"/></svg></button>
+        <h1 id="pageTitle">Dashboard</h1>
+      </div>
+      <div class="top-right">
+        <div class="chip">
+          <div class="l1" id="chipKm">— km</div>
+          <div class="l2" id="chipBattery">— kWh</div>
+        </div>
+        <div class="bell-wrap">
+          <button class="icon-btn" id="bellBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+            <span class="badge-dot" id="bellBadge" style="display:none">0</span>
+          </button>
+          <div class="dropdown" id="bellDropdown">
+            <div class="dropdown-title">Alertas</div>
+            <div id="alertsList"></div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="content">
+      <!-- DASHBOARD -->
+      <section class="page" id="page-dashboard">
+        <div id="dashHero" style="margin-bottom:18px"></div>
+        <div class="grid grid-4" style="margin-bottom:18px">
+          <div class="card stat-card"><div class="icon-badge tone-cyan"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div><div class="label">Kilometraje</div><div class="value" id="statKm">—</div><div class="sub">km actuales</div></div>
+          <div class="card stat-card"><div class="icon-badge tone-violet"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div><div class="label">Consumo medio</div><div class="value" id="statConsumption">—</div><div class="sub">kWh / 100 km</div></div>
+          <div class="card stat-card"><div class="icon-badge tone-green"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div class="label">Gasto total</div><div class="value" id="statSpent">—</div><div class="sub" id="statSpentSub">cargas + mantenimiento</div></div>
+          <div class="card stat-card"><div class="icon-badge tone-amber"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div><div class="label">Próxima revisión</div><div class="value" id="statNextRev">—</div><div class="sub" id="statNextRevSub">—</div></div>
+        </div>
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="card-head"><h2>Consumo por carga</h2><span class="hint">últimas 10</span></div>
+            <canvas id="chartConsumption" height="150"></canvas>
+          </div>
+          <div class="card">
+            <div class="card-head"><h2>Reparto de gasto</h2><span class="hint">total</span></div>
+            <canvas id="chartSplit" height="150"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- SETUP -->
+      <section class="page" id="page-setup">
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="card-head"><h2>Configuración del vehículo</h2></div>
+            <form id="setupForm">
+              <div class="field">
+                <label>Versión</label>
+                <select id="f_version">
+                  <option value="design">Design (RWD) · 313 CV · 510 km WLTP</option>
+                  <option value="excellence">Excellence (AWD) · 449 CV · 470 km WLTP</option>
+                </select>
+              </div>
+              <div class="field"><label>Batería</label><input type="text" value="74.8 kWh (Blade Battery + Cell to Body)" disabled style="opacity:.7"></div>
+              <div class="field"><label>VIN</label><input id="f_vin" type="text" placeholder="LGXC...12345"></div>
+              <div class="field-row">
+                <div class="field"><label>Kilometraje actual</label><input id="f_km" type="number" min="0" placeholder="0"></div>
+                <div class="field"><label>Fecha de compra</label><input id="f_purchase" type="date"></div>
+              </div>
+              <div class="field-row">
+                <div class="field"><label>Consumo medio (kWh/100km)</label><input id="f_consumption" type="number" step="0.1" placeholder="15"></div>
+                <div class="field"><label>Tarifa eléctrica (€/kWh)</label><input id="f_rate" type="number" step="0.01" placeholder="0.15"></div>
+              </div>
+              <button type="submit" class="btn btn-primary btn-block">Guardar configuración</button>
+            </form>
+          </div>
+          <div class="card">
+            <div class="card-head"><h2>Idioma del manual y revisiones</h2></div>
+            <p style="font-size:12.5px;color:var(--text-muted);margin-bottom:14px">Afecta al contenido del manual y al calendario de revisiones.</p>
+            <div class="lang-toggle" style="width:fit-content;margin-bottom:20px">
+              <button id="langEs" class="active">🇪🇸 Español</button>
+              <button id="langEn">🇬🇧 English</button>
+            </div>
+            <div class="card-head"><h2>Notificaciones automáticas</h2></div>
+            <p style="font-size:12.5px;color:var(--text-muted);margin-bottom:12px">Activa avisos del navegador para revisiones próximas o vencidas, incluso si tienes la app en segundo plano.</p>
+            <button class="btn btn-ghost btn-block" id="notifPermBtn">Activar notificaciones del navegador</button>
+            <p style="font-size:11px;color:var(--text-faint);margin-top:10px" id="notifStatus"></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- CHARGES -->
+      <section class="page" id="page-charges">
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="card-head"><h2>Registrar carga</h2></div>
+            <form id="chargeForm">
+              <div class="field-row">
+                <div class="field"><label>Fecha</label><input id="c_date" type="date" required></div>
+                <div class="field"><label>Hora</label><input id="c_time" type="time"></div>
+              </div>
+              <div class="field-row">
+                <div class="field"><label>kWh cargados</label><input id="c_kwh" type="number" step="0.1" min="0" required placeholder="0.0"></div>
+                <div class="field"><label>Coste (€)</label><input id="c_cost" type="number" step="0.01" min="0" required placeholder="0.00"></div>
+              </div>
+              <div class="field-row">
+                <div class="field"><label>Km en el momento</label><input id="c_km" type="number" min="0" placeholder="opcional"></div>
+                <div class="field"><label>Ubicación</label><input id="c_location" type="text" placeholder="Casa, trabajo, público..."></div>
+              </div>
+              <button type="submit" class="btn btn-primary btn-block">Registrar carga</button>
+            </form>
+          </div>
+          <div class="card">
+            <div class="card-head"><h2>Resumen</h2></div>
+            <div class="grid grid-2" style="gap:12px">
+              <div class="stat-card"><div class="label">Total cargas</div><div class="value" id="chgTotal" style="font-size:20px">0</div></div>
+              <div class="stat-card"><div class="label">Total kWh</div><div class="value" id="chgKwh" style="font-size:20px">0</div></div>
+              <div class="stat-card"><div class="label">Gasto total</div><div class="value" id="chgCost" style="font-size:20px">0 €</div></div>
+              <div class="stat-card"><div class="label">Precio medio</div><div class="value" id="chgAvg" style="font-size:20px">0 €/kWh</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:16px">
+          <div class="card-head"><h2>Historial de cargas</h2></div>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Fecha</th><th>kWh</th><th>Coste</th><th>€/kWh</th><th>Km</th><th>Ubicación</th><th></th></tr></thead>
+            <tbody id="chargesTable"></tbody>
+          </table></div>
+          <div id="chargesEmpty" class="empty-state" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><p>Aún no hay cargas registradas</p></div>
+        </div>
+      </section>
+
+      <!-- MAINTENANCE -->
+      <section class="page" id="page-maintenance">
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="card-head"><h2>Registrar mantenimiento</h2></div>
+            <form id="maintForm">
+              <div class="field">
+                <label>Tipo de servicio</label>
+                <select id="m_type" required>
+                  <option value="">Selecciona…</option>
+                  <option value="revision">Revisión general</option>
+                  <option value="oil">Cambio de aceite reductora</option>
+                  <option value="brake">Pastillas / discos de freno</option>
+                  <option value="tire">Neumáticos</option>
+                  <option value="battery">Batería de alto voltaje</option>
+                  <option value="filter">Filtros (aire/habitáculo)</option>
+                  <option value="alignment">Alineación / equilibrado</option>
+                  <option value="repair">Reparación</option>
+                  <option value="other">Otro</option>
+                </select>
+              </div>
+              <div class="field-row">
+                <div class="field"><label>Fecha</label><input id="m_date" type="date" required></div>
+                <div class="field"><label>Coste (€)</label><input id="m_cost" type="number" step="0.01" min="0" required placeholder="0.00"></div>
+              </div>
+              <div class="field"><label>Km en el momento</label><input id="m_km" type="number" min="0" placeholder="opcional"></div>
+              <div class="field"><label>Notas</label><textarea id="m_notes" placeholder="Detalles, taller, garantía..."></textarea></div>
+              <button type="submit" class="btn btn-primary btn-block">Registrar mantenimiento</button>
+            </form>
+          </div>
+          <div class="card">
+            <div class="card-head"><h2>Resumen</h2></div>
+            <div class="grid grid-2" style="gap:12px">
+              <div class="stat-card"><div class="label">Registros</div><div class="value" id="mntTotal" style="font-size:20px">0</div></div>
+              <div class="stat-card"><div class="label">Gasto total</div><div class="value" id="mntCost" style="font-size:20px">0 €</div></div>
+            </div>
+            <div class="stat-card" style="margin-top:12px"><div class="label">Último servicio</div><div class="value" id="mntLast" style="font-size:16px">—</div></div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:16px">
+          <div class="card-head"><h2>Historial de mantenimiento</h2></div>
+          <div class="table-wrap"><table>
+            <thead><tr><th>Fecha</th><th>Tipo</th><th>Coste</th><th>Km</th><th>Notas</th><th></th></tr></thead>
+            <tbody id="maintTable"></tbody>
+          </table></div>
+          <div id="maintEmpty" class="empty-state" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg><p>Aún no hay mantenimientos registrados</p></div>
+        </div>
+      </section>
+
+      <!-- REVISIONS -->
+      <section class="page" id="page-revisions">
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-head"><h2>Calendario preventivo BYD</h2><span class="hint" id="revLangHint">basado en km / meses desde la compra</span></div>
+          <p style="font-size:12px;color:var(--text-faint)">Orientativo. Verifica los intervalos exactos en el manual oficial de tu mercado.</p>
+        </div>
+        <div id="revisionsList"></div>
+      </section>
+
+      <!-- NOTES -->
+      <section class="page" id="page-notes">
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="card-head"><h2>Nueva nota</h2></div>
+            <form id="noteForm">
+              <div class="field"><label>Título</label><input id="n_title" type="text" required placeholder="Título de la nota"></div>
+              <div class="field"><label>Contenido</label><textarea id="n_content" required placeholder="Escribe aquí..."></textarea></div>
+              <div class="field"><label>Etiquetas (separadas por comas)</label><input id="n_tags" type="text" placeholder="batería, garantía, ruido..."></div>
+              <button type="submit" class="btn btn-primary btn-block">Guardar nota</button>
+            </form>
+          </div>
+          <div class="card">
+            <div class="card-head"><h2>Filtrar por etiqueta</h2></div>
+            <div class="tags-bar" id="tagsBar"><span style="font-size:12px;color:var(--text-faint)">Sin etiquetas todavía</span></div>
+            <input id="noteSearch" type="text" placeholder="Buscar en notas..." style="width:100%;background:var(--bg-2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:13px">
+          </div>
+        </div>
+        <div class="grid grid-3" id="notesList" style="margin-top:16px"></div>
+        <div id="notesEmpty" class="empty-state" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg><p>No hay notas que coincidan</p></div>
+      </section>
+
+      <!-- MANUAL -->
+      <section class="page" id="page-manual">
+        <div class="manual-search">
+          <input id="manualSearch" type="text" placeholder="Buscar: batería, carga, consumo, frenos, garantía...">
+          <div class="lang-toggle">
+            <button id="manLangEs" class="active">🇪🇸 ES</button>
+            <button id="manLangEn">🇬🇧 EN</button>
+          </div>
+        </div>
+        <div id="manualContent"></div>
+      </section>
+
+      <!-- STATS -->
+      <section class="page" id="page-stats">
+        <div class="grid grid-3" style="margin-bottom:16px">
+          <div class="card stat-card"><div class="label">Coste / km</div><div class="value" id="st_costPerKm" style="font-size:22px">—</div><div class="sub">€ por km recorrido</div></div>
+          <div class="card stat-card"><div class="label">Precio medio energía</div><div class="value" id="st_avgPrice" style="font-size:22px">—</div><div class="sub">€ / kWh</div></div>
+          <div class="card stat-card"><div class="label">Proyección anual</div><div class="value" id="st_yearProj" style="font-size:22px">—</div><div class="sub">gasto estimado / año</div></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h2>Gasto mensual</h2><span class="hint">cargas + mantenimiento</span></div>
+          <canvas id="chartMonthly" height="90"></canvas>
+        </div>
+        <div class="card" style="margin-top:16px">
+          <div class="card-head"><h2>Resumen general</h2></div>
+          <div class="table-wrap"><table>
+            <tbody id="statsSummaryTable"></tbody>
+          </table></div>
+        </div>
+      </section>
+
+      <footer class="sig">EV Manager Evo · datos guardados localmente en este navegador</footer>
+    </div>
+  </main>
+</div>
+
+<!-- Import confirm modal -->
+<div class="overlay" id="importOverlay">
+  <div class="modal">
+    <h3>Importar datos</h3>
+    <p>Esto reemplazará todos los datos actuales (cargas, mantenimiento, notas, configuración) por los del archivo seleccionado. Esta acción no se puede deshacer.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="importCancel">Cancelar</button>
+      <button class="btn btn-danger" id="importConfirm">Reemplazar datos</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   EV MANAGER EVO — BYD Atto 3 EVO
+   Vanilla JS, self-contained, localStorage persistence.
+   ============================================================ */
+
+const STORAGE_KEY = 'evManagerEvo:v1';
+const THEME_KEY = 'evManagerEvo:theme';
+
+const ICONS = {
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+  alert: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+  clock: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+  trash: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>'
+};
+
+/* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
+const VEHICLE_BATTERY_KWH = 74.8;
+const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
+const REVISIONS_SCHEDULE = {
+  "es": [
+    { "km": 1000, "months": 1, "name": "Revisión de entrega · 1.000 km", "description": "Chequeo inicial centrado en los componentes que sí requieren mantenimiento habitual en un eléctrico.", "tasks": ["Frenos", "Presión y estado de neumáticos", "Sistemas eléctricos", "Batería de servicio 12V", "Actualización de software"] },
+    { "km": 30000, "months": 25, "name": "Revisión 1 · 30.000 km / 24 meses", "description": "Primera revisión periódica bajo el intervalo ampliado de BYD.", "tasks": ["Frenos (pastillas y discos)", "Neumáticos (rotación y desgaste)", "Refrigerante de batería/motor", "Filtro de habitáculo", "Diagnóstico electrónico"] },
+    { "km": 60000, "months": 49, "name": "Revisión 2 · 60.000 km / 48 meses", "description": "Revisión periódica estándar.", "tasks": ["Frenos", "Neumáticos", "Sistema de carga rápida", "Suspensión y dirección"] },
+    { "km": 90000, "months": 73, "name": "Revisión 3 · 90.000 km / 72 meses", "description": "Revisión periódica estándar.", "tasks": ["Frenos", "Neumáticos", "Refrigerante", "Filtro de habitáculo"] },
+    { "km": 120000, "months": 97, "name": "Revisión 4 · 120.000 km / 96 meses", "description": "Revisión periódica próxima al límite de garantía general del vehículo.", "tasks": ["Frenos", "Neumáticos", "Diagnóstico completo de sistemas eléctricos"] },
+    { "km": 150000, "months": 121, "name": "Revisión 5 · 150.000 km / 120 meses", "description": "Coincide con el límite de la garantía general del vehículo (6 años / 150.000 km).", "tasks": ["Revisión general completa", "Frenos y suspensión", "Informe de estado del vehículo"] },
+    { "km": 250000, "months": 96, "name": "Revisión de batería · 250.000 km", "description": "Límite de la garantía de la Blade Battery (8 años / 250.000 km, SOH mínimo garantizado 70%).", "tasks": ["Informe de salud de batería (SOH)", "Inspección profesional de batería de alto voltaje", "Sistema de refrigeración de batería"] }
+  ],
+  "en": [
+    { "km": 1000, "months": 1, "name": "Delivery check · 1,000 km", "description": "Initial check focused on the components that do need regular maintenance on an EV.", "tasks": ["Brakes", "Tire pressure and condition", "Electrical systems", "12V service battery", "Software update"] },
+    { "km": 30000, "months": 25, "name": "Service 1 · 30,000 km / 24 months", "description": "First periodic service under BYD's extended interval.", "tasks": ["Brakes (pads and discs)", "Tires (rotation and wear)", "Battery/motor coolant", "Cabin filter", "Electronic diagnostics"] },
+    { "km": 60000, "months": 49, "name": "Service 2 · 60,000 km / 48 months", "description": "Standard periodic service.", "tasks": ["Brakes", "Tires", "Fast charging system", "Suspension and steering"] },
+    { "km": 90000, "months": 73, "name": "Service 3 · 90,000 km / 72 months", "description": "Standard periodic service.", "tasks": ["Brakes", "Tires", "Coolant", "Cabin filter"] },
+    { "km": 120000, "months": 97, "name": "Service 4 · 120,000 km / 96 months", "description": "Periodic service close to the vehicle's general warranty limit.", "tasks": ["Brakes", "Tires", "Full electrical systems diagnostics"] },
+    { "km": 150000, "months": 121, "name": "Service 5 · 150,000 km / 120 months", "description": "Coincides with the vehicle's general warranty limit (6 years / 150,000 km).", "tasks": ["Full general inspection", "Brakes and suspension", "Vehicle condition report"] },
+    { "km": 250000, "months": 96, "name": "Battery review · 250,000 km", "description": "Blade Battery warranty limit (8 years / 250,000 km, minimum guaranteed SOH 70%).", "tasks": ["Battery health report (SOH)", "Professional high-voltage battery inspection", "Battery cooling system"] }
+  ]
+};
+const MANUAL_CONTENT = {
+  "es": [
+    { "id": 1, "category": "Especificaciones", "title": "Especificaciones técnicas generales", "keywords": ["motor", "potencia", "batería", "velocidad", "aceleración", "especificaciones", "design", "excellence"], "content": "Carrocería: SUV compacto eléctrico.\nVersiones disponibles: Design (tracción trasera) y Excellence (tracción total).\nDesign (RWD): motor trasero de 230 kW (313 CV) y 380 Nm de par.\nExcellence (AWD): dos motores eléctricos, 330 kW (449 CV) combinados.\nAceleración 0-100 km/h: 3,9 s en la versión Excellence.\nAutonomía WLTP: hasta 510 km (Design) / hasta 470 km (Excellence).\nDimensiones: 4.455 mm largo x 1.875 mm ancho x 1.615 mm alto." },
+    { "id": 2, "category": "Carga", "title": "Sistema de carga", "keywords": ["carga", "cargador", "AC", "DC", "wallbox", "tiempo de carga", "kW", "800v"], "content": "Arquitectura eléctrica de 800 V.\nCarga rápida DC: hasta 220 kW.\nTiempo de carga DC del 10% al 80%: aproximadamente 25 minutos.\nCarga AC (wallbox/doméstica): potencia exacta admitida según mercado; consulta el manual oficial de tu unidad.\nConector: CCS Combo 2 (Europa).\nTecnología Cell to Body (CTB): la batería forma parte estructural del chasis, mejorando rigidez y aprovechamiento del espacio interior." },
+    { "id": 3, "category": "Consumo", "title": "Consumo de energía y autonomía", "keywords": ["consumo", "kwh/100km", "autonomía", "eficiencia", "rango", "wltp"], "content": "Consumo combinado WLTP: 16,4 - 17,8 kWh/100 km según versión.\nAutonomía WLTP: 470 km (Excellence) a 510 km (Design) según equipamiento.\nFactores que aumentan el consumo: clima frío, uso intensivo de climatización, velocidad sostenida elevada, neumáticos mal inflados.\nEl freno regenerativo ayuda a recuperar energía en desaceleraciones y bajadas." },
+    { "id": 4, "category": "Mantenimiento", "title": "Mantenimiento preventivo general", "keywords": ["mantenimiento", "revisión", "intervalo", "servicio", "filtro", "30000"], "content": "Intervalo recomendado: cada 24 meses o 30.000 km (lo que ocurra primero). BYD amplió este intervalo respecto a generaciones anteriores y respecto al Atto 3 original.\nRevisión inicial (primeros ~1.000 km): frenos, neumáticos, sistemas eléctricos y batería de servicio de 12V.\nRevisiones posteriores: sistema de refrigeración, sistema de carga rápida, estado general de la batería de alto voltaje.\nEl cambio de intervalo no afecta a la garantía del vehículo.\nSe recomienda mantenimiento en red oficial BYD para conservar la garantía de batería." },
+    { "id": 5, "category": "Batería", "title": "Batería de alto voltaje (Blade Battery + Cell to Body)", "keywords": ["batería", "blade battery", "garantía", "soh", "degradación", "lfp", "cell to body", "ctb", "74.8"], "content": "Tecnología: Blade Battery (química LFP - Litio Ferrofosfato), 74,8 kWh de capacidad.\nIntegración Cell to Body (CTB): la batería es parte estructural del chasis, no solo un pack añadido.\nGarantía de batería: 8 años o 250.000 km, con un estado de salud (SOH) mínimo garantizado del 70%.\nLa química LFP tolera bien cargas frecuentes al 100%; sigue igualmente las recomendaciones del manual oficial de tu unidad.\nEvitar mantener el vehículo con batería muy baja (<10%) durante periodos prolongados." },
+    { "id": 6, "category": "Frenos", "title": "Sistema de frenos y frenada regenerativa", "keywords": ["frenos", "regenerativo", "pastillas", "abs", "ebd"], "content": "Frenado regenerativo ajustable en varios niveles desde el vehículo.\nSistema ABS y EBD (reparto electrónico de frenada) de serie.\nLas pastillas de freno suelen durar más que en vehículos de combustión gracias al uso del freno regenerativo.\nInspección recomendada de pastillas y discos en cada revisión periódica (cada 30.000 km / 24 meses)." },
+    { "id": 7, "category": "Tracción y versiones", "title": "Diferencias entre versión Design y Excellence", "keywords": ["design", "excellence", "tracción", "awd", "rwd", "diferencias"], "content": "Design: tracción trasera (RWD), un único motor eléctrico trasero, 230 kW / 313 CV, 380 Nm.\nExcellence: tracción total (AWD), dos motores eléctricos, 330 kW / 449 CV combinados, aceleración 0-100 km/h en 3,9 s.\nAmbas versiones comparten la misma batería de 74,8 kWh (Blade Battery + CTB).\nLa versión Excellence prioriza el rendimiento y la tracción; la Design prioriza mayor autonomía WLTP (510 km frente a 470 km)." },
+    { "id": 8, "category": "Carrocería", "title": "Maletero y espacio de carga", "keywords": ["maletero", "frunk", "carga", "litros", "espacio"], "content": "Maletero trasero: 490 litros.\nMaletero delantero (frunk): 101 litros, gracias a la ausencia de motor de combustión en el eje delantero.\nCapacidad total combinada: 591 litros.\nCon los asientos traseros abatidos, la capacidad puede ampliarse hasta aproximadamente 1.360 litros." },
+    { "id": 9, "category": "Seguridad", "title": "Seguridad activa y pasiva", "keywords": ["seguridad", "airbags", "adas", "frenada de emergencia", "carril"], "content": "Sistemas de asistencia a la conducción (ADAS): frenada de emergencia autónoma (AEB), aviso de colisión frontal (FCW), aviso/asistencia de cambio involuntario de carril (LDW/LKA), reconocimiento de señales, cámara de visión trasera y sensores de aparcamiento.\nControl de estabilidad electrónico (ESC) y control de tracción (TCS) de serie.\nLa versión Excellence (AWD) añade reparto de tracción entre ejes para mejorar la estabilidad." },
+    { "id": 10, "category": "Conectividad", "title": "Pantalla, conectividad e infoentretenimiento", "keywords": ["pantalla", "infoentretenimiento", "carplay", "android auto", "bluetooth", "navegación"], "content": "Pantalla central táctil de gran formato (giratoria según versión).\nCompatibilidad con Apple CarPlay y Android Auto.\nConectividad Bluetooth para llamadas y audio.\nActualizaciones de software OTA (Over-The-Air) para mejoras y correcciones, incluyendo posibles mejoras de gestión de batería y carga." },
+    { "id": 11, "category": "Garantía", "title": "Garantía del vehículo", "keywords": ["garantía", "cobertura", "años", "km", "250000"], "content": "Garantía general del vehículo: 6 años o 150.000 km.\nGarantía de la batería de alto voltaje (Blade Battery): 8 años o 250.000 km, con SOH mínimo garantizado del 70%.\nGarantía del motor eléctrico: 8 años o 150.000 km.\nGarantía anticorrosión/perforación de carrocería: 12 años, sin límite de kilómetros.\nEstas condiciones pueden variar por país y campaña comercial; consulta siempre el manual oficial y las condiciones vigentes de tu distribuidor." },
+    { "id": 12, "category": "Carga doméstica", "title": "Recomendaciones para carga en casa", "keywords": ["wallbox", "enchufe", "instalación", "carga doméstica", "seguridad eléctrica", "800v"], "content": "Se recomienda instalar un wallbox dedicado por un instalador certificado, compatible con la arquitectura de 800V del vehículo.\nVerificar la instalación eléctrica de la vivienda (potencia contratada, protección diferencial).\nProgramar la carga en horas valle si la tarifa eléctrica lo permite para reducir costes.\nPara viajes largos, la carga rápida DC de hasta 220 kW permite recuperar 10-80% en unos 25 minutos en electrolineras compatibles." }
+  ],
+  "en": [
+    { "id": 1, "category": "Specifications", "title": "General technical specifications", "keywords": ["motor", "power", "battery", "speed", "acceleration", "specifications", "design", "excellence"], "content": "Body type: compact electric SUV.\nAvailable versions: Design (rear-wheel drive) and Excellence (all-wheel drive).\nDesign (RWD): rear motor, 230 kW (313 hp), 380 Nm torque.\nExcellence (AWD): dual electric motors, 330 kW (449 hp) combined.\n0-100 km/h acceleration: 3.9 s on the Excellence version.\nWLTP range: up to 510 km (Design) / up to 470 km (Excellence).\nDimensions: 4,455 mm long x 1,875 mm wide x 1,615 mm high." },
+    { "id": 2, "category": "Charging", "title": "Charging system", "keywords": ["charging", "charger", "AC", "DC", "wallbox", "charging time", "kW", "800v"], "content": "800V electrical architecture.\nDC fast charging: up to 220 kW.\nDC charging time 10-80%: approximately 25 minutes.\nAC charging (wallbox/home): exact supported power varies by market; check the official manual for your unit.\nConnector: CCS Combo 2 (Europe).\nCell to Body (CTB) technology: the battery is a structural part of the chassis, improving rigidity and interior space usage." },
+    { "id": 3, "category": "Consumption", "title": "Energy consumption and range", "keywords": ["consumption", "kwh/100km", "range", "efficiency", "wltp"], "content": "Combined WLTP consumption: 16.4 - 17.8 kWh/100 km depending on version.\nWLTP range: 470 km (Excellence) to 510 km (Design) depending on configuration.\nFactors that increase consumption: cold weather, heavy climate control use, sustained high speed, underinflated tires.\nRegenerative braking helps recover energy during deceleration and downhill driving." },
+    { "id": 4, "category": "Maintenance", "title": "General preventive maintenance", "keywords": ["maintenance", "service", "interval", "filter", "30000"], "content": "Recommended interval: every 24 months or 30,000 km (whichever comes first). BYD extended this interval compared to previous generations and compared to the original Atto 3.\nInitial check (first ~1,000 km): brakes, tires, electrical systems and the 12V service battery.\nLater services: cooling system, fast charging system, overall high-voltage battery condition.\nThis interval change does not affect the vehicle's warranty.\nMaintenance at an official BYD network is recommended to preserve battery warranty." },
+    { "id": 5, "category": "Battery", "title": "High-voltage battery (Blade Battery + Cell to Body)", "keywords": ["battery", "blade battery", "warranty", "soh", "degradation", "lfp", "cell to body", "ctb", "74.8"], "content": "Technology: Blade Battery (LFP - Lithium Iron Phosphate chemistry), 74.8 kWh capacity.\nCell to Body (CTB) integration: the battery is a structural part of the chassis, not just an added pack.\nBattery warranty: 8 years or 250,000 km, with a minimum guaranteed state of health (SOH) of 70%.\nLFP chemistry tolerates frequent 100% charges well; still follow the official manual's recommendations for your unit.\nAvoid leaving the vehicle at very low charge (<10%) for extended periods." },
+    { "id": 6, "category": "Brakes", "title": "Braking system and regenerative braking", "keywords": ["brakes", "regenerative", "pads", "abs", "ebd"], "content": "Adjustable regenerative braking with multiple levels selectable from the vehicle.\nABS and EBD (electronic brakeforce distribution) standard.\nBrake pads typically last longer than in combustion vehicles thanks to regenerative braking usage.\nRecommended inspection of pads and discs at every periodic service (every 30,000 km / 24 months)." },
+    { "id": 7, "category": "Drivetrain & versions", "title": "Differences between Design and Excellence versions", "keywords": ["design", "excellence", "drivetrain", "awd", "rwd", "differences"], "content": "Design: rear-wheel drive (RWD), single rear electric motor, 230 kW / 313 hp, 380 Nm.\nExcellence: all-wheel drive (AWD), dual electric motors, 330 kW / 449 hp combined, 0-100 km/h in 3.9 s.\nBoth versions share the same 74.8 kWh battery (Blade Battery + CTB).\nExcellence prioritizes performance and traction; Design prioritizes higher WLTP range (510 km vs 470 km)." },
+    { "id": 8, "category": "Body", "title": "Trunk and cargo space", "keywords": ["trunk", "frunk", "cargo", "liters", "space"], "content": "Rear trunk: 490 liters.\nFront trunk (frunk): 101 liters, thanks to the absence of a combustion engine on the front axle.\nCombined total capacity: 591 liters.\nWith rear seats folded, capacity can extend to approximately 1,360 liters." },
+    { "id": 9, "category": "Safety", "title": "Active and passive safety", "keywords": ["safety", "airbags", "adas", "emergency braking", "lane"], "content": "Driver assistance systems (ADAS): autonomous emergency braking (AEB), forward collision warning (FCW), lane departure warning/assist (LDW/LKA), traffic sign recognition, rear-view camera and parking sensors.\nElectronic stability control (ESC) and traction control (TCS) standard.\nThe Excellence (AWD) version adds torque distribution between axles for improved stability." },
+    { "id": 10, "category": "Connectivity", "title": "Display, connectivity and infotainment", "keywords": ["screen", "infotainment", "carplay", "android auto", "bluetooth", "navigation"], "content": "Large touchscreen (rotating depending on version).\nApple CarPlay and Android Auto compatibility.\nBluetooth connectivity for calls and audio.\nOTA (Over-The-Air) software updates for improvements and fixes, including possible battery and charging management improvements." },
+    { "id": 11, "category": "Warranty", "title": "Vehicle warranty", "keywords": ["warranty", "coverage", "years", "km", "250000"], "content": "General vehicle warranty: 6 years or 150,000 km.\nHigh-voltage battery warranty (Blade Battery): 8 years or 250,000 km, with a minimum guaranteed SOH of 70%.\nElectric motor warranty: 8 years or 150,000 km.\nBody corrosion/perforation warranty: 12 years, unlimited mileage.\nThese conditions may vary by country and commercial campaign; always check the official manual and current dealer conditions." },
+    { "id": 12, "category": "Home charging", "title": "Home charging recommendations", "keywords": ["wallbox", "outlet", "installation", "home charging", "electrical safety", "800v"], "content": "It is recommended to install a dedicated wallbox by a certified installer, compatible with the vehicle's 800V architecture.\nVerify the home's electrical installation (contracted power, RCD/differential protection).\nSchedule charging during off-peak hours if your electricity rate allows it to reduce costs.\nFor long trips, DC fast charging up to 220 kW allows recovering 10-80% in about 25 minutes at compatible fast chargers." }
+  ]
+};
+
+/* ---------------- state ---------------- */
+let state = {
+  config: { version: 'design', vin: '', currentKm: 0, purchaseDate: '', avgConsumption: 17, electricRate: 0.15 },
+  charges: [],
+  maintenance: [],
+  notes: [],
+  completedRevisions: [],
+  lang: 'es',
+  meta: { notifiedRevisions: [], lastAlertCheck: '' }
+};
+let activeNoteTags = new Set();
+let charts = {};
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){ const parsed = JSON.parse(raw); state = deepMerge(state, parsed); }
+  }catch(e){ console.warn('No se pudo cargar el estado guardado', e); }
+}
+function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+function deepMerge(base, incoming){
+  const out = Array.isArray(base) ? base.slice() : {...base};
+  for(const k in incoming){
+    if(incoming[k] && typeof incoming[k]==='object' && !Array.isArray(incoming[k]) && base[k] && typeof base[k]==='object'){
+      out[k] = deepMerge(base[k], incoming[k]);
+    } else { out[k] = incoming[k]; }
+  }
+  return out;
+}
+
+/* ---------------- utils ---------------- */
+const fmtEUR = n => (Number(n)||0).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' €';
+const fmtDate = d => { if(!d) return '—'; const dt = new Date(d); return isNaN(dt) ? d : dt.toLocaleDateString('es-ES'); };
+const uid = () => Date.now() + Math.floor(Math.random()*1000);
+function monthsBetween(a,b){ if(!a) return 0; const d1=new Date(a), d2=b?new Date(b):new Date(); return (d2.getFullYear()-d1.getFullYear())*12 + (d2.getMonth()-d1.getMonth()); }
+
+function toast(msg, type='info'){
+  const box = document.getElementById('toasts');
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  const icon = type==='success' ? ICONS.check : type==='danger' ? ICONS.alert : type==='warning' ? ICONS.alert : ICONS.clock;
+  el.innerHTML = icon + '<span class="msg">'+msg+'</span>';
+  box.appendChild(el);
+  setTimeout(()=>{ el.style.transition='opacity .3s'; el.style.opacity='0'; setTimeout(()=>el.remove(),300); }, 4200);
+}
+
+/* ---------------- navigation ---------------- */
+function navigate(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active', b.dataset.page===page));
+  const titles = {dashboard:'Dashboard', setup:'Configuración', charges:'Cargas', maintenance:'Mantenimiento', revisions:'Revisiones', notes:'Notas', manual:'Manual', stats:'Estadísticas'};
+  document.getElementById('pageTitle').textContent = titles[page] || page;
+  document.getElementById('sidebar').classList.remove('open');
+  if(page==='charges') renderCharges();
+  if(page==='maintenance') renderMaintenance();
+  if(page==='revisions') renderRevisions();
+  if(page==='notes') renderNotes();
+  if(page==='manual') renderManual();
+  if(page==='stats') renderStats();
+  if(page==='dashboard') renderDashboard();
+}
+
+/* ---------------- theme ---------------- */
+function applyTheme(theme){
+  document.documentElement.setAttribute('data-theme', theme);
+  document.getElementById('themeLabel').textContent = theme==='dark' ? 'Modo claro' : 'Modo oscuro';
+  document.getElementById('themeIcon').innerHTML = theme==='dark'
+    ? '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>'
+    : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+  localStorage.setItem(THEME_KEY, theme);
+  refreshCharts();
+}
+function toggleTheme(){
+  const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+  applyTheme(cur==='dark' ? 'light' : 'dark');
+}
+
+/* ---------------- revisions logic ---------------- */
+function getScheduleForRevision(rev, currentKm, months){
+  const overdue = currentKm >= rev.km || months >= rev.months;
+  const kmRemaining = rev.km - currentKm;
+  const upcoming = !overdue && kmRemaining <= 1500;
+  return { overdue, upcoming, kmRemaining };
+}
+function computeAlerts(){
+  const sched = REVISIONS_SCHEDULE[state.lang] || REVISIONS_SCHEDULE.es;
+  const km = Number(state.config.currentKm)||0;
+  const months = monthsBetween(state.config.purchaseDate);
+  const alerts = [];
+  sched.forEach(rev=>{
+    if(state.completedRevisions.includes(rev.km)) return;
+    const st = getScheduleForRevision(rev, km, months);
+    if(st.overdue) alerts.push({rev, level:'overdue', text: (state.lang==='es' ? 'Vencida' : 'Overdue')});
+    else if(st.upcoming) alerts.push({rev, level:'upcoming', text: (state.lang==='es' ? `Faltan ${st.kmRemaining} km` : `${st.kmRemaining} km left`)});
+  });
+  return alerts;
+}
+function renderAlerts(){
+  const alerts = computeAlerts();
+  const badge = document.getElementById('bellBadge');
+  const list = document.getElementById('alertsList');
+  if(alerts.length){
+    badge.style.display='flex'; badge.textContent = alerts.length;
+  } else { badge.style.display='none'; }
+  list.innerHTML = alerts.length ? alerts.map(a=>`
+    <div class="alert-row">
+      <div class="alert-dot" style="background:${a.level==='overdue'?'var(--danger)':'var(--warning)'}"></div>
+      <div><div class="t1">${a.rev.name}</div><div class="t2">${a.text}</div></div>
+    </div>`).join('') : `<div class="empty-mini">Todo al día. Sin revisiones pendientes.</div>`;
+  maybeNotify(alerts);
+}
+function maybeNotify(alerts){
+  if(!('Notification' in window) || Notification.permission !== 'granted') return;
+  const today = new Date().toISOString().slice(0,10);
+  const overdue = alerts.filter(a=>a.level==='overdue');
+  const alreadyToday = state.meta.lastAlertCheck === today;
+  const newOverdueKms = overdue.map(a=>a.rev.km).filter(km=>!state.meta.notifiedRevisions.includes(km));
+  if(newOverdueKms.length || (!alreadyToday && overdue.length)){
+    const title = state.lang==='es' ? '⚠️ Revisión pendiente — Atto 3 EVO' : '⚠️ Service due — Atto 3 EVO';
+    const body = overdue.map(a=>a.rev.name).join(', ');
+    try{ new Notification(title, { body, icon: '' }); }catch(e){}
+    state.meta.notifiedRevisions = Array.from(new Set([...state.meta.notifiedRevisions, ...overdue.map(a=>a.rev.km)]));
+    state.meta.lastAlertCheck = today;
+    saveState();
+  }
+}
+function requestNotifPermission(){
+  if(!('Notification' in window)){ toast('Tu navegador no soporta notificaciones', 'warning'); return; }
+  Notification.requestPermission().then(p=>{
+    updateNotifStatus();
+    if(p==='granted'){ toast('Notificaciones activadas', 'success'); renderAlerts(); }
+    else toast('Permiso de notificaciones no concedido', 'warning');
+  });
+}
+function updateNotifStatus(){
+  const el = document.getElementById('notifStatus');
+  if(!('Notification' in window)){ el.textContent = 'No soportado en este navegador.'; return; }
+  const map = {granted:'✅ Activadas', denied:'🚫 Bloqueadas (revisa permisos del navegador)', default:'⏸️ No activadas todavía'};
+  el.textContent = map[Notification.permission] || '';
+}
+
+/* ---------------- dashboard ---------------- */
+function renderDashboard(){
+  const c = state.config;
+  document.getElementById('statKm').textContent = (Number(c.currentKm)||0).toLocaleString('es-ES') + ' km';
+  document.getElementById('statConsumption').textContent = (Number(c.avgConsumption)||0).toFixed(1);
+  const totalCost = state.charges.reduce((s,x)=>s+Number(x.cost||0),0) + state.maintenance.reduce((s,x)=>s+Number(x.cost||0),0);
+  document.getElementById('statSpent').textContent = fmtEUR(totalCost);
+
+  const sched = REVISIONS_SCHEDULE[state.lang] || REVISIONS_SCHEDULE.es;
+  const km = Number(c.currentKm)||0;
+  const months = monthsBetween(c.purchaseDate);
+  let next = sched.find(r=>!state.completedRevisions.includes(r.km) && (r.km>=km));
+  if(!next) next = sched.find(r=>!state.completedRevisions.includes(r.km)) || sched[sched.length-1];
+  const st = next ? getScheduleForRevision(next, km, months) : {overdue:false,kmRemaining:0};
+  document.getElementById('statNextRev').textContent = next ? next.name.split('·')[0].trim() : '—';
+  document.getElementById('statNextRevSub').textContent = next ? (st.overdue ? 'Vencida' : `${st.kmRemaining} km restantes`) : '';
+
+  const hero = document.getElementById('dashHero');
+  const alerts = computeAlerts();
+  const overdueCount = alerts.filter(a=>a.level==='overdue').length;
+  const pct = next ? Math.min(100, Math.max(0, (km/next.km)*100)) : 0;
+  hero.innerHTML = `
+    <div class="hero-banner ${overdueCount?'overdue':''}">
+      <div>
+        <h3>${overdueCount ? (ICONS.alert+' Tienes '+overdueCount+' revisión(es) vencida(s)') : (ICONS.check+' Todo al día')}</h3>
+        <p>${next ? next.name+' — '+next.description : 'Configura tu vehículo para ver el calendario de revisiones.'}</p>
+      </div>
+      <div class="hero-progress">
+        <div style="display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:var(--text-muted)"><span>${km.toLocaleString('es-ES')} km</span><span>${next?next.km.toLocaleString('es-ES'):''} km</span></div>
+        <div class="bar-track"><div class="bar-fill ${overdueCount?'danger':''}" style="width:${pct}%"></div></div>
+      </div>
+    </div>`;
+
+  document.getElementById('chipKm').textContent = km.toLocaleString('es-ES') + ' km';
+  document.getElementById('chipBattery').textContent = (VERSION_LABELS[c.version] || VERSION_LABELS.design).split('·')[0].trim() + ' · ' + VEHICLE_BATTERY_KWH + ' kWh';
+
+  buildConsumptionChart();
+  buildSplitChart();
+}
+function buildConsumptionChart(){
+  const ctx = document.getElementById('chartConsumption');
+  if(!ctx || typeof Chart === 'undefined') return;
+  const last = state.charges.slice(-10);
+  const labels = last.map(c=>fmtDate(c.date));
+  const data = last.map(c=>Number(c.kwh)||0);
+  if(charts.consumption) charts.consumption.destroy();
+  charts.consumption = new Chart(ctx, {
+    type:'line',
+    data:{ labels, datasets:[{ label:'kWh cargados', data, borderColor: cssVar('--accent'), backgroundColor: hexAlpha(cssVar('--accent'),0.15), tension:.4, fill:true, pointRadius:3 }] },
+    options: baseChartOpts()
+  });
+}
+function buildSplitChart(){
+  const ctx = document.getElementById('chartSplit');
+  if(!ctx || typeof Chart === 'undefined') return;
+  const chargeCost = state.charges.reduce((s,x)=>s+Number(x.cost||0),0);
+  const maintCost = state.maintenance.reduce((s,x)=>s+Number(x.cost||0),0);
+  if(charts.split) charts.split.destroy();
+  charts.split = new Chart(ctx, {
+    type:'doughnut',
+    data:{ labels:['Cargas','Mantenimiento'], datasets:[{ data:[chargeCost, maintCost], backgroundColor:[cssVar('--accent'), cssVar('--accent-3')], borderWidth:0 }] },
+    options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom', labels:{ color: cssVar('--text-muted'), font:{size:11,weight:'600'} } } } }
+  });
+}
+function cssVar(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+function hexAlpha(hex, a){
+  if(hex.startsWith('#')){
+    const r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
+    return `rgba(${r},${g},${b},${a})`;
+  }
+  return hex;
+}
+function baseChartOpts(){
+  return { responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{ display:false } },
+    scales:{ x:{ grid:{ color:'rgba(128,128,128,.1)' }, ticks:{ color: cssVar('--text-muted'), font:{size:10} } },
+              y:{ beginAtZero:true, grid:{ color:'rgba(128,128,128,.1)' }, ticks:{ color: cssVar('--text-muted'), font:{size:10} } } } };
+}
+function refreshCharts(){ renderDashboard(); if(document.getElementById('page-stats').classList.contains('active')) renderStats(); }
+
+/* ---------------- charges ---------------- */
+function renderCharges(){
+  const tbody = document.getElementById('chargesTable');
+  const sorted = [...state.charges].sort((a,b)=> new Date(b.date)-new Date(a.date));
+  tbody.innerHTML = sorted.map(c=>`
+    <tr>
+      <td>${fmtDate(c.date)}</td><td>${Number(c.kwh).toFixed(1)}</td><td>${fmtEUR(c.cost)}</td>
+      <td>${(c.cost/c.kwh || 0).toFixed(3)} €</td><td>${c.km ? Number(c.km).toLocaleString('es-ES') : '—'}</td>
+      <td>${c.location||'—'}</td>
+      <td><button class="icon-action danger" onclick="deleteCharge(${c.id})">${ICONS.trash}</button></td>
+    </tr>`).join('');
+  document.getElementById('chargesEmpty').style.display = state.charges.length ? 'none' : 'block';
+
+  const totalKwh = state.charges.reduce((s,x)=>s+Number(x.kwh||0),0);
+  const totalCost = state.charges.reduce((s,x)=>s+Number(x.cost||0),0);
+  document.getElementById('chgTotal').textContent = state.charges.length;
+  document.getElementById('chgKwh').textContent = totalKwh.toFixed(1);
+  document.getElementById('chgCost').textContent = fmtEUR(totalCost);
+  document.getElementById('chgAvg').textContent = (totalKwh? totalCost/totalKwh : 0).toFixed(3) + ' €/kWh';
+}
+function deleteCharge(id){
+  state.charges = state.charges.filter(c=>c.id!==id);
+  saveState(); renderCharges(); renderDashboard(); toast('Carga eliminada', 'info');
+}
+
+/* ---------------- maintenance ---------------- */
+const MAINT_LABELS = { revision:'Revisión general', oil:'Cambio aceite reductora', brake:'Frenos', tire:'Neumáticos', battery:'Batería AV', filter:'Filtros', alignment:'Alineación', repair:'Reparación', other:'Otro' };
+function renderMaintenance(){
+  const tbody = document.getElementById('maintTable');
+  const sorted = [...state.maintenance].sort((a,b)=> new Date(b.date)-new Date(a.date));
+  tbody.innerHTML = sorted.map(m=>`
+    <tr>
+      <td>${fmtDate(m.date)}</td><td>${MAINT_LABELS[m.type]||m.type}</td><td>${fmtEUR(m.cost)}</td>
+      <td>${m.km ? Number(m.km).toLocaleString('es-ES') : '—'}</td><td style="white-space:normal;max-width:220px">${m.notes||'—'}</td>
+      <td><button class="icon-action danger" onclick="deleteMaint(${m.id})">${ICONS.trash}</button></td>
+    </tr>`).join('');
+  document.getElementById('maintEmpty').style.display = state.maintenance.length ? 'none' : 'block';
+
+  const totalCost = state.maintenance.reduce((s,x)=>s+Number(x.cost||0),0);
+  document.getElementById('mntTotal').textContent = state.maintenance.length;
+  document.getElementById('mntCost').textContent = fmtEUR(totalCost);
+  const last = sorted[0];
+  document.getElementById('mntLast').textContent = last ? (MAINT_LABELS[last.type]||last.type)+' · '+fmtDate(last.date) : '—';
+}
+function deleteMaint(id){
+  state.maintenance = state.maintenance.filter(m=>m.id!==id);
+  saveState(); renderMaintenance(); renderDashboard(); toast('Registro eliminado', 'info');
+}
+
+/* ---------------- revisions ---------------- */
+function renderRevisions(){
+  const sched = REVISIONS_SCHEDULE[state.lang] || REVISIONS_SCHEDULE.es;
+  const km = Number(state.config.currentKm)||0;
+  const months = monthsBetween(state.config.purchaseDate);
+  const container = document.getElementById('revisionsList');
+  container.innerHTML = sched.map(rev=>{
+    const done = state.completedRevisions.includes(rev.km);
+    const st = getScheduleForRevision(rev, km, months);
+    const cls = done ? 'done' : st.overdue ? 'overdue' : st.upcoming ? 'due' : '';
+    const statusIcon = done ? ICONS.check : st.overdue ? ICONS.alert : ICONS.clock;
+    const statusColor = done ? 'var(--success)' : st.overdue ? 'var(--danger)' : st.upcoming ? 'var(--warning)' : 'var(--text-faint)';
+    const statusBg = done ? 'var(--success-soft)' : st.overdue ? 'var(--danger-soft)' : st.upcoming ? 'var(--warning-soft)' : 'rgba(255,255,255,.05)';
+    return `
+    <div class="rev-item ${cls}">
+      <div class="rev-status" style="color:${statusColor};background:${statusBg}">${statusIcon}</div>
+      <div class="rev-body">
+        <h4>${rev.name}</h4>
+        <p>${rev.description}</p>
+        <div class="rev-tasks">${(rev.tasks||[]).map(t=>`<span class="tag-pill">${t}</span>`).join('')}</div>
+      </div>
+      <div class="rev-meta">${done ? 'Completada' : st.overdue ? 'Vencida' : st.kmRemaining+' km'}</div>
+      <button class="btn ${done?'btn-ghost':'btn-primary'} btn-sm" onclick="toggleRevision(${rev.km})">${done ? 'Deshacer' : 'Marcar hecha'}</button>
+    </div>`;
+  }).join('');
+}
+function toggleRevision(km){
+  if(state.completedRevisions.includes(km)) state.completedRevisions = state.completedRevisions.filter(k=>k!==km);
+  else state.completedRevisions.push(km);
+  saveState(); renderRevisions(); renderAlerts(); renderDashboard();
+}
+
+/* ---------------- notes ---------------- */
+function renderNotes(){
+  const allTags = new Set();
+  state.notes.forEach(n=>(n.tags||[]).forEach(t=>t && allTags.add(t)));
+  const tagsBar = document.getElementById('tagsBar');
+  tagsBar.innerHTML = allTags.size ? Array.from(allTags).map(t=>`<button class="tag-toggle ${activeNoteTags.has(t)?'active':''}" onclick="toggleNoteTag('${t.replace(/'/g,"\\'")}')">#${t}</button>`).join('')
+    : `<span style="font-size:12px;color:var(--text-faint)">Sin etiquetas todavía</span>`;
+
+  const search = (document.getElementById('noteSearch').value||'').toLowerCase();
+  let filtered = state.notes.filter(n=>{
+    const matchesTag = activeNoteTags.size===0 || (n.tags||[]).some(t=>activeNoteTags.has(t));
+    const matchesSearch = !search || n.title.toLowerCase().includes(search) || n.content.toLowerCase().includes(search);
+    return matchesTag && matchesSearch;
+  }).sort((a,b)=> new Date(b.date)-new Date(a.date));
+
+  const list = document.getElementById('notesList');
+  list.innerHTML = filtered.map(n=>`
+    <div class="note-card">
+      <h4>${escapeHtml(n.title)}</h4>
+      <p>${escapeHtml(n.content)}</p>
+      <div class="note-tags">${(n.tags||[]).filter(Boolean).map(t=>`<span class="tag-pill">#${t}</span>`).join('')}</div>
+      <div class="note-foot"><span class="date">${fmtDate(n.date)}</span><button class="icon-action danger" onclick="deleteNote(${n.id})">${ICONS.trash}</button></div>
+    </div>`).join('');
+  document.getElementById('notesEmpty').style.display = filtered.length ? 'none' : 'block';
+}
+function toggleNoteTag(t){ activeNoteTags.has(t) ? activeNoteTags.delete(t) : activeNoteTags.add(t); renderNotes(); }
+function deleteNote(id){ state.notes = state.notes.filter(n=>n.id!==id); saveState(); renderNotes(); toast('Nota eliminada','info'); }
+function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+
+/* ---------------- manual ---------------- */
+function normalizeText(s){ return (s||'').toString().normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase(); }
+function renderManual(){
+  const lang = state.manualLang || 'es';
+  document.getElementById('manLangEs').classList.toggle('active', lang==='es');
+  document.getElementById('manLangEn').classList.toggle('active', lang==='en');
+  const q = normalizeText(document.getElementById('manualSearch').value||'').trim();
+  const items = (MANUAL_CONTENT[lang]||[]).filter(it=>{
+    if(!q) return true;
+    return normalizeText(it.title).includes(q) || normalizeText(it.content).includes(q) || (it.keywords||[]).some(k=>normalizeText(k).includes(q));
+  });
+  const byCat = {};
+  items.forEach(it=>{ (byCat[it.category] = byCat[it.category]||[]).push(it); });
+  const container = document.getElementById('manualContent');
+  if(!items.length){ container.innerHTML = `<div class="empty-state"><p>Sin resultados para "${escapeHtml(q)}"</p></div>`; return; }
+  container.innerHTML = Object.keys(byCat).map(cat=>`
+    <div class="manual-cat">${cat}</div>
+    ${byCat[cat].map(it=>`
+      <div class="manual-item">
+        <h4>${highlight(it.title,q)}</h4>
+        <pre>${highlight(escapeHtml(it.content),q)}</pre>
+      </div>`).join('')}
+  `).join('');
+}
+const ACCENT_MAP = { a:'[aáàä]', e:'[eéèë]', i:'[ií ìï]'.replace(' ',''), o:'[oóòö]', u:'[uúùü]', n:'[nñ]' };
+function highlight(text,q){
+  if(!q) return text;
+  try{
+    const escaped = q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    const flexible = escaped.replace(/[aeioun]/gi, ch => ACCENT_MAP[ch.toLowerCase()] || ch);
+    const re = new RegExp('('+flexible+')','ig');
+    return text.replace(re,'<mark>$1</mark>');
+  }catch(e){ return text; }
+}
+
+/* ---------------- stats ---------------- */
+function renderStats(){
+  const km = Number(state.config.currentKm)||0;
+  const purchaseKm = state.charges.length ? Math.min(...state.charges.map(c=>Number(c.km)||km)) : 0;
+  const totalCost = state.charges.reduce((s,x)=>s+Number(x.cost||0),0) + state.maintenance.reduce((s,x)=>s+Number(x.cost||0),0);
+  const kmDriven = km || 1;
+  document.getElementById('st_costPerKm').textContent = (totalCost/kmDriven).toFixed(3) + ' €';
+  const totalKwh = state.charges.reduce((s,x)=>s+Number(x.kwh||0),0);
+  const chargeCost = state.charges.reduce((s,x)=>s+Number(x.cost||0),0);
+  document.getElementById('st_avgPrice').textContent = (totalKwh? chargeCost/totalKwh:0).toFixed(3) + ' €';
+
+  const months = Math.max(1, monthsBetween(state.config.purchaseDate));
+  const monthlyAvg = totalCost / months;
+  document.getElementById('st_yearProj').textContent = fmtEUR(monthlyAvg*12);
+
+  const monthly = {};
+  [...state.charges.map(c=>({date:c.date, cost:c.cost})), ...state.maintenance.map(m=>({date:m.date,cost:m.cost}))].forEach(x=>{
+    if(!x.date) return;
+    const key = new Date(x.date).toLocaleDateString('es-ES',{month:'short',year:'2-digit'});
+    monthly[key] = (monthly[key]||0) + Number(x.cost||0);
+  });
+  const ctx = document.getElementById('chartMonthly');
+  if(charts.monthly) charts.monthly.destroy();
+  if(ctx && typeof Chart !== 'undefined'){
+    charts.monthly = new Chart(ctx, {
+      type:'bar',
+      data:{ labels:Object.keys(monthly), datasets:[{ label:'Gasto', data:Object.values(monthly), backgroundColor: cssVar('--accent-2'), borderRadius:6 }] },
+      options: baseChartOpts()
+    });
+  }
+
+  const rows = [
+    ['Total cargas registradas', state.charges.length],
+    ['Total kWh cargados', totalKwh.toFixed(1)+' kWh'],
+    ['Gasto total en cargas', fmtEUR(chargeCost)],
+    ['Registros de mantenimiento', state.maintenance.length],
+    ['Gasto total en mantenimiento', fmtEUR(state.maintenance.reduce((s,x)=>s+Number(x.cost||0),0))],
+    ['Gasto total combinado', fmtEUR(totalCost)],
+    ['Notas guardadas', state.notes.length],
+    ['Revisiones completadas', state.completedRevisions.length + ' / ' + (REVISIONS_SCHEDULE[state.lang]||REVISIONS_SCHEDULE.es).length],
+    ['Antigüedad del vehículo', months + ' meses'],
+  ];
+  document.getElementById('statsSummaryTable').innerHTML = rows.map(r=>`<tr><td style="color:var(--text-muted);font-weight:600">${r[0]}</td><td style="text-align:right;font-weight:800">${r[1]}</td></tr>`).join('');
+}
+
+/* ---------------- export / import ---------------- */
+function exportData(){
+  const blob = new Blob([JSON.stringify(state,null,2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `ev-manager-evo-backup-${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+  toast('Datos exportados correctamente', 'success');
+}
+let pendingImport = null;
+function handleImportFile(file){
+  const reader = new FileReader();
+  reader.onload = e=>{
+    try{
+      const data = JSON.parse(e.target.result);
+      pendingImport = data;
+      document.getElementById('importOverlay').classList.add('open');
+    }catch(err){ toast('Archivo JSON no válido', 'danger'); }
+  };
+  reader.readAsText(file);
+}
+function confirmImport(){
+  if(pendingImport){
+    state = deepMerge(state, pendingImport);
+    saveState();
+    applyStateToForms();
+    navigate(document.querySelector('.nav-item.active')?.dataset.page || 'dashboard');
+    toast('Datos importados correctamente', 'success');
+  }
+  pendingImport = null;
+  document.getElementById('importOverlay').classList.remove('open');
+}
+
+/* ---------------- forms wiring ---------------- */
+function applyStateToForms(){
+  const c = state.config;
+  document.getElementById('f_version').value = c.version || 'design';
+  document.getElementById('f_vin').value = c.vin;
+  document.getElementById('f_km').value = c.currentKm;
+  document.getElementById('f_purchase').value = c.purchaseDate;
+  document.getElementById('f_consumption').value = c.avgConsumption;
+  document.getElementById('f_rate').value = c.electricRate;
+  document.getElementById('langEs').classList.toggle('active', state.lang==='es');
+  document.getElementById('langEn').classList.toggle('active', state.lang==='en');
+}
+
+function setupEventListeners(){
+  document.querySelectorAll('.nav-item[data-page]').forEach(btn=>{
+    btn.addEventListener('click', ()=>navigate(btn.dataset.page));
+  });
+  document.getElementById('hamburgerBtn').addEventListener('click', ()=>document.getElementById('sidebar').classList.toggle('open'));
+  document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+  document.getElementById('exportBtn').addEventListener('click', exportData);
+  document.getElementById('importBtn').addEventListener('click', ()=>document.getElementById('importFile').click());
+  document.getElementById('importFile').addEventListener('change', e=>{ if(e.target.files[0]) handleImportFile(e.target.files[0]); e.target.value=''; });
+  document.getElementById('importCancel').addEventListener('click', ()=>{ pendingImport=null; document.getElementById('importOverlay').classList.remove('open'); });
+  document.getElementById('importConfirm').addEventListener('click', confirmImport);
+
+  document.getElementById('bellBtn').addEventListener('click', ()=>document.getElementById('bellDropdown').classList.toggle('open'));
+  document.addEventListener('click', e=>{
+    if(!e.target.closest('.bell-wrap')) document.getElementById('bellDropdown').classList.remove('open');
+  });
+
+  document.getElementById('notifPermBtn').addEventListener('click', requestNotifPermission);
+
+  document.getElementById('langEs').addEventListener('click', ()=>{ state.lang='es'; saveState(); applyStateToForms(); renderAlerts(); if(document.getElementById('page-revisions').classList.contains('active')) renderRevisions(); renderDashboard(); });
+  document.getElementById('langEn').addEventListener('click', ()=>{ state.lang='en'; saveState(); applyStateToForms(); renderAlerts(); if(document.getElementById('page-revisions').classList.contains('active')) renderRevisions(); renderDashboard(); });
+
+  document.getElementById('setupForm').addEventListener('submit', e=>{
+    e.preventDefault();
+    state.config = {
+      version: document.getElementById('f_version').value,
+      vin: document.getElementById('f_vin').value.trim(),
+      currentKm: Number(document.getElementById('f_km').value)||0,
+      purchaseDate: document.getElementById('f_purchase').value,
+      avgConsumption: Number(document.getElementById('f_consumption').value)||17,
+      electricRate: Number(document.getElementById('f_rate').value)||0.15
+    };
+    saveState(); renderDashboard(); renderAlerts(); toast('Configuración guardada', 'success');
+  });
+
+  document.getElementById('chargeForm').addEventListener('submit', e=>{
+    e.preventDefault();
+    const kwh = Number(document.getElementById('c_kwh').value);
+    const cost = Number(document.getElementById('c_cost').value);
+    if(!kwh || !cost){ toast('Introduce kWh y coste válidos', 'warning'); return; }
+    state.charges.push({ id:uid(), date:document.getElementById('c_date').value, time:document.getElementById('c_time').value,
+      kwh, cost, km:Number(document.getElementById('c_km').value)||null, location:document.getElementById('c_location').value.trim() });
+    const kmVal = Number(document.getElementById('c_km').value);
+    if(kmVal && kmVal > (Number(state.config.currentKm)||0)) state.config.currentKm = kmVal;
+    saveState(); e.target.reset(); document.getElementById('c_date').valueAsDate = new Date();
+    renderCharges(); renderDashboard(); renderAlerts(); toast('Carga registrada', 'success');
+  });
+
+  document.getElementById('maintForm').addEventListener('submit', e=>{
+    e.preventDefault();
+    const type = document.getElementById('m_type').value;
+    const cost = Number(document.getElementById('m_cost').value);
+    if(!type){ toast('Selecciona un tipo de servicio', 'warning'); return; }
+    state.maintenance.push({ id:uid(), type, date:document.getElementById('m_date').value, cost,
+      km:Number(document.getElementById('m_km').value)||null, notes:document.getElementById('m_notes').value.trim() });
+    saveState(); e.target.reset(); document.getElementById('m_date').valueAsDate = new Date();
+    renderMaintenance(); renderDashboard(); toast('Mantenimiento registrado', 'success');
+  });
+
+  document.getElementById('noteForm').addEventListener('submit', e=>{
+    e.preventDefault();
+    const title = document.getElementById('n_title').value.trim();
+    const content = document.getElementById('n_content').value.trim();
+    if(!title || !content){ toast('Completa título y contenido', 'warning'); return; }
+    const tags = document.getElementById('n_tags').value.split(',').map(t=>t.trim()).filter(Boolean);
+    state.notes.push({ id:uid(), title, content, tags, date:new Date().toISOString() });
+    saveState(); e.target.reset(); renderNotes(); toast('Nota guardada', 'success');
+  });
+  document.getElementById('noteSearch').addEventListener('input', renderNotes);
+
+  document.getElementById('manualSearch').addEventListener('input', renderManual);
+  document.getElementById('manLangEs').addEventListener('click', ()=>{ state.manualLang='es'; renderManual(); });
+  document.getElementById('manLangEn').addEventListener('click', ()=>{ state.manualLang='en'; renderManual(); });
+}
+
+/* ---------------- init ---------------- */
+function init(){
+  loadState();
+  setupEventListeners();
+  applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
+  applyStateToForms();
+  updateNotifStatus();
+  document.getElementById('c_date').valueAsDate = new Date();
+  document.getElementById('m_date').valueAsDate = new Date();
+  navigate('dashboard');
+  renderAlerts();
+  setInterval(renderAlerts, 60000);
+}
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

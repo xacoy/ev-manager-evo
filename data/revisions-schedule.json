@@ -1,0 +1,26 @@
+{
+  "_meta": {
+    "vehicle": "BYD Atto 3 EVO (2026, distinto del Atto 3 original)",
+    "note_es": "Calendario preventivo orientativo para el Atto 3 EVO, según el intervalo de mantenimiento ampliado que BYD aplica a su gama eléctrica desde 2025: cada 24 meses o 30.000 km, lo que ocurra primero. Verifica los intervalos exactos de tu unidad en el manual oficial del propietario.",
+    "note_en": "Indicative preventive schedule for the Atto 3 EVO, based on BYD's extended maintenance interval for its EV range since 2025: every 24 months or 30,000 km, whichever comes first. Verify exact intervals for your unit in the official owner's manual.",
+    "source_hint": "https://www.byd.com/es-es/service-maintenance/owners-manual.html"
+  },
+  "es": [
+    { "km": 1000, "months": 1, "name": "Revisión de entrega · 1.000 km", "description": "Chequeo inicial centrado en los componentes que sí requieren mantenimiento habitual en un eléctrico.", "tasks": ["Frenos", "Presión y estado de neumáticos", "Sistemas eléctricos", "Batería de servicio 12V", "Actualización de software"] },
+    { "km": 30000, "months": 25, "name": "Revisión 1 · 30.000 km / 24 meses", "description": "Primera revisión periódica bajo el intervalo ampliado de BYD.", "tasks": ["Frenos (pastillas y discos)", "Neumáticos (rotación y desgaste)", "Refrigerante de batería/motor", "Filtro de habitáculo", "Diagnóstico electrónico"] },
+    { "km": 60000, "months": 49, "name": "Revisión 2 · 60.000 km / 48 meses", "description": "Revisión periódica estándar.", "tasks": ["Frenos", "Neumáticos", "Sistema de carga rápida", "Suspensión y dirección"] },
+    { "km": 90000, "months": 73, "name": "Revisión 3 · 90.000 km / 72 meses", "description": "Revisión periódica estándar.", "tasks": ["Frenos", "Neumáticos", "Refrigerante", "Filtro de habitáculo"] },
+    { "km": 120000, "months": 97, "name": "Revisión 4 · 120.000 km / 96 meses", "description": "Revisión periódica próxima al límite de garantía general del vehículo.", "tasks": ["Frenos", "Neumáticos", "Diagnóstico completo de sistemas eléctricos"] },
+    { "km": 150000, "months": 121, "name": "Revisión 5 · 150.000 km / 120 meses", "description": "Coincide con el límite de la garantía general del vehículo (6 años / 150.000 km).", "tasks": ["Revisión general completa", "Frenos y suspensión", "Informe de estado del vehículo"] },
+    { "km": 250000, "months": 96, "name": "Revisión de batería · 250.000 km", "description": "Límite de la garantía de la Blade Battery (8 años / 250.000 km, SOH mínimo garantizado 70%).", "tasks": ["Informe de salud de batería (SOH)", "Inspección profesional de batería de alto voltaje", "Sistema de refrigeración de batería"] }
+  ],
+  "en": [
+    { "km": 1000, "months": 1, "name": "Delivery check · 1,000 km", "description": "Initial check focused on the components that do need regular maintenance on an EV.", "tasks": ["Brakes", "Tire pressure and condition", "Electrical systems", "12V service battery", "Software update"] },
+    { "km": 30000, "months": 25, "name": "Service 1 · 30,000 km / 24 months", "description": "First periodic service under BYD's extended interval.", "tasks": ["Brakes (pads and discs)", "Tires (rotation and wear)", "Battery/motor coolant", "Cabin filter", "Electronic diagnostics"] },
+    { "km": 60000, "months": 49, "name": "Service 2 · 60,000 km / 48 months", "description": "Standard periodic service.", "tasks": ["Brakes", "Tires", "Fast charging system", "Suspension and steering"] },
+    { "km": 90000, "months": 73, "name": "Service 3 · 90,000 km / 72 months", "description": "Standard periodic service.", "tasks": ["Brakes", "Tires", "Coolant", "Cabin filter"] },
+    { "km": 120000, "months": 97, "name": "Service 4 · 120,000 km / 96 months", "description": "Periodic service close to the vehicle's general warranty limit.", "tasks": ["Brakes", "Tires", "Full electrical systems diagnostics"] },
+    { "km": 150000, "months": 121, "name": "Service 5 · 150,000 km / 120 months", "description": "Coincides with the vehicle's general warranty limit (6 years / 150,000 km).", "tasks": ["Full general inspection", "Brakes and suspension", "Vehicle condition report"] },
+    { "km": 250000, "months": 96, "name": "Battery review · 250,000 km", "description": "Blade Battery warranty limit (8 years / 250,000 km, minimum guaranteed SOH 70%).", "tasks": ["Battery health report (SOH)", "Professional high-voltage battery inspection", "Battery cooling system"] }
+  ]
+}
