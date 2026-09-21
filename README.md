@@ -52,6 +52,10 @@ Enlaces oficiales conocidos (verifica siempre la versión más reciente para tu 
 
 No se localizó un manual del propietario completo en español específico del EVO en el momento de crear esta app; si BYD publica uno, sustituye o amplía el contenido de `data/manual-index.json` (y su copia en `index.html`) con la información real.
 
+## Alojarla como URL (móvil / pantalla del coche)
+
+Para usar la app desde el móvil o el coche hace falta abrirla como una URL, no como archivo local. La carpeta [`deploy/`](deploy/) tiene un `docker-compose.yml` + `nginx.conf` listos para desplegar en un NAS con Docker detrás de Cloudflare Tunnel (nginx sin privilegios, solo lectura, sin capabilities, CSP ajustada) — ver [`deploy/README.md`](deploy/README.md) para los pasos. También funciona con cualquier otro hosting estático (GitHub Pages, Netlify, etc.), ya que no hay build ni backend.
+
 ## Conversión a APK
 
 `index.html` es una web app auto-contenida, por lo que es compatible con herramientas típicas de empaquetado a APK (por ejemplo Median, PWABuilder o una WebView de Android/Capacitor). Ten en cuenta:
