@@ -30,11 +30,11 @@ ev-manager-evo/
 
 - **Dashboard**: kilometraje, consumo medio, gasto total, próxima revisión con barra de progreso, gráficos de consumo y reparto de gasto (cargas vs. mantenimiento).
 - **Accesos rápidos**: widget de enlaces en el Dashboard (cargadores cercanos, PlugShare, Electromaps, manual y servicio oficial BYD) pensado para consultarlo desde el móvil en el coche. Puedes añadir tus propios enlaces (seguro, taller de confianza, etc.) y borrar los que no uses.
-- **Cargas**: registro de kWh, coste, ubicación y km; historial editable y estadísticas (€/kWh medio, total kWh, etc.).
-- **Mantenimiento**: registro por tipo (frenos, neumáticos, batería, filtros, reparación...), coste y notas.
-- **Revisiones**: calendario preventivo del Atto 3 EVO precargado (cada 24 meses o 30.000 km), con estado vencida / próxima / completada.
+- **Cargas**: todos los campos son opcionales (incluida la carga gratuita, coste 0€); ubicación por selector Casa/Trabajo/Otro (especifica el lugar exacto). Historial editable y estadísticas (€/kWh medio, total kWh, etc.).
+- **Mantenimiento**: registro por tipo (frenos, neumáticos, batería, filtros, reparación...), coste, notas y **adjuntos** (fotos, facturas, presupuestos en PDF/imagen, máx. 4MB por archivo) — se pueden añadir al crear el registro o después desde el historial.
+- **Revisiones**: calendario preventivo del Atto 3 EVO precargado (cada 24 meses o 30.000 km), con estado vencida / próxima / completada y **adjuntos** por revisión (informe del taller, factura...).
 - **Notas**: notas libres con etiquetas, filtrado por etiqueta y búsqueda de texto.
-- **Manual**: índice técnico buscable en español e inglés (búsqueda sin distinguir tildes).
+- **Manual**: enlaces directos al manual oficial de BYD (PDF/portal) + índice técnico con **búsqueda inteligente** (varias palabras a la vez, sin distinguir tildes, resultados ordenados por relevancia y resaltados) en español e inglés.
 - **Estadísticas**: coste por km, precio medio de la energía, proyección de gasto anual, gasto mensual y resumen general.
 - **Alertas automáticas**: aviso visual (campana + banner) cuando una revisión está próxima o vencida, revisado cada minuto mientras la app está abierta. Puedes activar además **notificaciones del navegador** (Configuración → Notificaciones automáticas) para recibir avisos aunque tengas la pestaña en segundo plano.
 - **Tema**: oscuro/claro, con botón de cambio en la barra lateral (se recuerda tu preferencia).
@@ -62,4 +62,6 @@ No se localizó un manual del propietario completo en español específico del E
 
 ## Privacidad
 
-Todos los datos (vehículo, cargas, mantenimiento, notas) se guardan **únicamente en tu navegador**, en este equipo/dispositivo. Nada se envía a ningún servidor.
+Todos los datos (vehículo, cargas, mantenimiento, notas, adjuntos) se guardan **únicamente en tu navegador**, en este equipo/dispositivo. Nada se envía a ningún servidor.
+
+`localStorage` suele tener un límite de unos 5-10MB por navegador. Los adjuntos (fotos, facturas) cuentan para ese límite, así que evita subir muchos archivos grandes; si el navegador se queda sin espacio verás un aviso al guardar. Usa "Exportar" periódicamente como copia de seguridad.

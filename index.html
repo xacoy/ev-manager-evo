@@ -52,6 +52,7 @@ body{
   color:var(--text); overflow:hidden; -webkit-font-smoothing:antialiased;
 }
 input,textarea,select,button{font-family:inherit;color:inherit}
+input,textarea,select{background:var(--bg-2);color:var(--text)}
 button{cursor:pointer}
 ::-webkit-scrollbar{width:9px;height:9px}
 ::-webkit-scrollbar-track{background:transparent}
@@ -264,6 +265,7 @@ button{cursor:pointer}
   font-size:13.5px; color:var(--text); outline:none; transition:border-color .15s ease;
 }
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent)}
+.field input:disabled{color:var(--text-muted);-webkit-text-fill-color:var(--text-muted)}
 .field textarea{resize:vertical;min-height:80px}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 @media(max-width:520px){.field-row{grid-template-columns:1fr}}
@@ -297,6 +299,18 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .rev-body p{font-size:12px;color:var(--text-muted);margin-top:3px}
 .rev-tasks{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .tag-pill{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;background:rgba(255,255,255,.06);color:var(--text-muted)}
+
+/* ---------- attachments ---------- */
+.attach-list{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.attach-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 8px 5px 10px;border-radius:var(--radius-full);background:var(--bg-2);color:var(--text);text-decoration:none;font-size:11px;font-weight:600;white-space:nowrap}
+.attach-chip svg{width:12px;height:12px;stroke:currentColor;flex-shrink:0}
+.attach-del{width:15px;height:15px;border-radius:50%;background:transparent;color:var(--text-faint);border:none;cursor:pointer;font-size:9px;line-height:1;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.attach-del:hover{color:var(--danger)}
+.attach-add{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:var(--radius-full);background:none;border:1px dashed var(--border-strong);color:var(--text-muted);font-size:11px;font-weight:700;cursor:pointer}
+.attach-add:hover{color:var(--text);border-color:var(--text-muted)}
+.attach-add svg{width:12px;height:12px;stroke:currentColor}
+input[type="file"]{background:none;border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 10px;font-size:12px;color:var(--text-muted);width:100%}
+input[type="file"]::file-selector-button{background:var(--bg-2);color:var(--text);border:none;border-radius:var(--radius-full);padding:6px 12px;font-size:11.5px;font-weight:700;margin-right:10px;cursor:pointer}
 .rev-meta{font-size:11px;color:var(--text-faint);font-weight:700;flex-shrink:0;text-align:right;min-width:90px}
 
 /* ---------- notes ---------- */
@@ -315,7 +329,8 @@ tr:hover td{background:rgba(255,255,255,.02)}
 
 /* ---------- manual ---------- */
 .manual-search{display:flex;gap:10px;margin-bottom:20px}
-.manual-search input{flex:1}
+.manual-search input{flex:1;background:var(--bg-2);color:var(--text);border:1px solid transparent;border-radius:var(--radius-sm);padding:12px 16px;font-size:14px;outline:none}
+.manual-search input:focus{border-color:var(--accent)}
 .lang-toggle{display:flex;border:1px solid var(--border);border-radius:10px;overflow:hidden}
 .lang-toggle button{padding:10px 16px;background:var(--bg-2);border:none;font-size:12.5px;font-weight:700;color:var(--text-muted)}
 .lang-toggle button.active{background:var(--accent-soft);color:var(--accent)}
@@ -420,6 +435,7 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
             <button class="dropdown-item" id="importBtn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>Importar datos</button>
           </div>
           <input type="file" id="importFile" accept="application/json" style="display:none">
+          <input type="file" id="globalAttachInput" multiple accept="image/*,application/pdf" style="display:none">
         </div>
       </div>
     </header>
@@ -586,6 +602,10 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
               </div>
               <div class="field"><label>Km en el momento</label><input id="m_km" type="number" min="0" placeholder="opcional"></div>
               <div class="field"><label>Notas</label><textarea id="m_notes" placeholder="Detalles, taller, garantía..."></textarea></div>
+              <div class="field">
+                <label>Adjuntos <span class="opt-hint">(fotos, factura, presupuesto... opcional, máx. 4MB c/u)</span></label>
+                <input id="m_files" type="file" multiple accept="image/*,application/pdf">
+              </div>
               <button type="submit" class="btn btn-primary btn-block">Registrar mantenimiento</button>
             </form>
           </div>
@@ -601,7 +621,7 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
         <div class="card" style="margin-top:16px">
           <div class="card-head"><h2>Historial de mantenimiento</h2></div>
           <div class="table-wrap"><table>
-            <thead><tr><th>Fecha</th><th>Tipo</th><th>Coste</th><th>Km</th><th>Notas</th><th></th></tr></thead>
+            <thead><tr><th>Fecha</th><th>Tipo</th><th>Coste</th><th>Km</th><th>Notas</th><th>Adjuntos</th><th></th></tr></thead>
             <tbody id="maintTable"></tbody>
           </table></div>
           <div id="maintEmpty" class="empty-state" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg><p>Aún no hay mantenimientos registrados</p></div>
@@ -641,8 +661,12 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
 
       <!-- MANUAL -->
       <section class="page" id="page-manual">
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-head"><h2>Manual oficial BYD</h2><span class="hint">se abre en una pestaña nueva</span></div>
+          <div class="quicklinks-strip" id="manualLinksList" style="padding-bottom:2px;margin-bottom:0"></div>
+        </div>
         <div class="manual-search">
-          <input id="manualSearch" type="text" placeholder="Buscar: batería, carga, consumo, frenos, garantía...">
+          <input id="manualSearch" type="text" placeholder="Buscar: batería garantía, carga rápida, consumo invierno...">
           <div class="lang-toggle">
             <button id="manLangEs" class="active">🇪🇸 ES</button>
             <button id="manLangEn">🇬🇧 EN</button>
@@ -725,8 +749,16 @@ const ICONS = {
   pin: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>',
   book: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>',
   wrench: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>',
-  link: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>'
+  link: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>',
+  image: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>',
+  file: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>',
+  plus: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>'
 };
+const MANUAL_LINKS = [
+  { title: 'Manual del propietario (EN, oficial 2026)', url: "https://www.byd.com/material/seal-2026/ATTO 3 EVO Owner's Manual-Left-hand Drive-20260327-EN.pdf", icon: 'book' },
+  { title: 'Ficha técnica oficial (ES)', url: 'https://www.byd.com/material/byd-site/es-es/pdfs/atto-3-evo/ATTO 3 EVO-0317-BPS-ES-V4_WEB.pdf', icon: 'book' },
+  { title: 'Portal de manuales BYD España', url: 'https://www.byd.com/es-es/service-maintenance/owners-manual.html', icon: 'link' }
+];
 const DEFAULT_QUICK_LINKS = [
   { id:'maps', title:'Cargadores cercanos', url:'https://www.google.com/maps/search/?api=1&query=cargador+coche+el%C3%A9ctrico', icon:'pin' },
   { id:'plugshare', title:'PlugShare', url:'https://www.plugshare.com/', icon:'bolt' },
@@ -797,6 +829,7 @@ let state = {
   notes: [],
   completedRevisions: [],
   quickLinks: DEFAULT_QUICK_LINKS.slice(),
+  revisionAttachments: {},
   lang: 'es',
   meta: { notifiedRevisions: [], lastAlertCheck: '' }
 };
@@ -809,7 +842,62 @@ function loadState(){
     if(raw){ const parsed = JSON.parse(raw); state = deepMerge(state, parsed); }
   }catch(e){ console.warn('No se pudo cargar el estado guardado', e); }
 }
-function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+function saveState(){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }catch(e){
+    toast('Almacenamiento local lleno: no se pudo guardar. Elimina adjuntos grandes o exporta y borra datos antiguos.', 'danger');
+    console.warn('saveState failed', e);
+  }
+}
+
+/* ---------------- attachments ---------------- */
+const MAX_ATTACHMENT_MB = 4;
+function readFileAsAttachment(file){
+  return new Promise((resolve,reject)=>{
+    if(file.size > MAX_ATTACHMENT_MB*1024*1024){ reject(new Error('too-large')); return; }
+    const reader = new FileReader();
+    reader.onload = () => resolve({ name:file.name, mime:file.type||'application/octet-stream', size:file.size, dataUrl:reader.result });
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
+}
+async function readFilesAsAttachments(fileList){
+  const files = Array.from(fileList||[]);
+  const results = [];
+  for(const f of files){
+    try{ results.push(await readFileAsAttachment(f)); }
+    catch(e){ toast(`"${f.name}" es demasiado grande (máx. ${MAX_ATTACHMENT_MB}MB)`, 'warning'); }
+  }
+  return results;
+}
+function truncateName(n){ return n && n.length>18 ? n.slice(0,15)+'…' : (n||'archivo'); }
+function renderAttachmentChips(attachments, kind, ownerId){
+  const atts = attachments||[];
+  const chips = atts.map((a,i)=>`
+    <a href="${a.dataUrl}" target="_blank" rel="noopener noreferrer" class="attach-chip" title="${escapeAttr(a.name)}" download="${escapeAttr(a.name)}">
+      ${(a.mime||'').startsWith('image/') ? ICONS.image : ICONS.file}
+      <span>${escapeHtml(truncateName(a.name))}</span>
+      <button type="button" class="attach-del" title="Eliminar" onclick="event.preventDefault();event.stopPropagation();deleteAttachment('${kind}',${ownerId},${i})">✕</button>
+    </a>`).join('');
+  return `<div class="attach-list">${chips}<button type="button" class="attach-add" onclick="triggerAttachUpload('${kind}',${ownerId})">${ICONS.plus}Adjuntar</button></div>`;
+}
+let pendingAttachContext = null;
+function triggerAttachUpload(kind, id){
+  pendingAttachContext = { kind, id };
+  document.getElementById('globalAttachInput').click();
+}
+function deleteAttachment(kind, id, index){
+  if(kind==='maintenance'){
+    const rec = state.maintenance.find(m=>m.id===id);
+    if(rec && rec.attachments) rec.attachments.splice(index,1);
+    saveState(); renderMaintenance();
+  } else if(kind==='revision'){
+    if(state.revisionAttachments && state.revisionAttachments[id]) state.revisionAttachments[id].splice(index,1);
+    saveState(); renderRevisions();
+  }
+  toast('Adjunto eliminado', 'info');
+}
 function deepMerge(base, incoming){
   const out = Array.isArray(base) ? base.slice() : {...base};
   for(const k in incoming){
@@ -1052,6 +1140,7 @@ function renderMaintenance(){
     <tr>
       <td>${fmtDate(m.date)}</td><td>${MAINT_LABELS[m.type]||m.type}</td><td>${fmtEUR(m.cost)}</td>
       <td>${m.km ? Number(m.km).toLocaleString('es-ES') : '—'}</td><td style="white-space:normal;max-width:220px">${m.notes||'—'}</td>
+      <td style="white-space:normal;min-width:160px">${renderAttachmentChips(m.attachments,'maintenance',m.id)}</td>
       <td><button class="icon-action danger" onclick="deleteMaint(${m.id})">${ICONS.trash}</button></td>
     </tr>`).join('');
   document.getElementById('maintEmpty').style.display = state.maintenance.length ? 'none' : 'block';
@@ -1087,6 +1176,7 @@ function renderRevisions(){
         <h4>${rev.name}</h4>
         <p>${rev.description}</p>
         <div class="rev-tasks">${(rev.tasks||[]).map(t=>`<span class="tag-pill">${t}</span>`).join('')}</div>
+        <div style="margin-top:10px">${renderAttachmentChips(state.revisionAttachments[rev.km],'revision',rev.km)}</div>
       </div>
       <div class="rev-meta">${done ? 'Completada' : st.overdue ? 'Vencida' : st.kmRemaining+' km'}</div>
       <button class="btn ${done?'btn-ghost':'btn-primary'} btn-sm" onclick="toggleRevision(${rev.km})">${done ? 'Deshacer' : 'Marcar hecha'}</button>
@@ -1148,36 +1238,82 @@ function deleteQuickLink(id){
 
 /* ---------------- manual ---------------- */
 function normalizeText(s){ return (s||'').toString().normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase(); }
+function tokenize(q){ return normalizeText(q).trim().split(/\s+/).filter(Boolean); }
+
+function renderManualLinks(){
+  const box = document.getElementById('manualLinksList');
+  if(!box) return;
+  box.innerHTML = MANUAL_LINKS.map(l=>`
+    <a class="ql-pill" href="${escapeAttr(l.url)}" target="_blank" rel="noopener noreferrer">
+      ${ICONS[l.icon]||ICONS.link}<span class="ql-label">${escapeHtml(l.title)}</span>
+    </a>`).join('');
+}
+
 function renderManual(){
+  renderManualLinks();
   const lang = state.manualLang || 'es';
   document.getElementById('manLangEs').classList.toggle('active', lang==='es');
   document.getElementById('manLangEn').classList.toggle('active', lang==='en');
-  const q = normalizeText(document.getElementById('manualSearch').value||'').trim();
-  const items = (MANUAL_CONTENT[lang]||[]).filter(it=>{
-    if(!q) return true;
-    return normalizeText(it.title).includes(q) || normalizeText(it.content).includes(q) || (it.keywords||[]).some(k=>normalizeText(k).includes(q));
-  });
-  const byCat = {};
-  items.forEach(it=>{ (byCat[it.category] = byCat[it.category]||[]).push(it); });
+  const tokens = tokenize(document.getElementById('manualSearch').value||'');
+  const all = MANUAL_CONTENT[lang]||[];
   const container = document.getElementById('manualContent');
-  if(!items.length){ container.innerHTML = `<div class="empty-state"><p>Sin resultados para "${escapeHtml(q)}"</p></div>`; return; }
-  container.innerHTML = Object.keys(byCat).map(cat=>`
-    <div class="manual-cat">${cat}</div>
-    ${byCat[cat].map(it=>`
-      <div class="manual-item">
-        <h4>${highlight(it.title,q)}</h4>
-        <pre>${highlight(escapeHtml(it.content),q)}</pre>
-      </div>`).join('')}
-  `).join('');
+
+  if(!tokens.length){
+    const byCat = {};
+    all.forEach(it=>{ (byCat[it.category] = byCat[it.category]||[]).push(it); });
+    container.innerHTML = Object.keys(byCat).map(cat=>`
+      <div class="manual-cat">${escapeHtml(cat)}</div>
+      ${byCat[cat].map(it=>`
+        <div class="manual-item">
+          <h4>${escapeHtml(it.title)}</h4>
+          <pre>${escapeHtml(it.content)}</pre>
+        </div>`).join('')}
+    `).join('');
+    return;
+  }
+
+  // Smart search: every word must match somewhere (title/category/keywords/content),
+  // ranked by relevance (title + keyword hits weigh more than body text).
+  const ranked = all.map(it=>{
+    const titleN = normalizeText(it.title), catN = normalizeText(it.category), contentN = normalizeText(it.content);
+    const kwN = (it.keywords||[]).map(normalizeText);
+    let score = 0;
+    for(const t of tokens){
+      let hit = 0;
+      if(titleN.includes(t)) hit += 6;
+      if(catN.includes(t)) hit += 3;
+      if(kwN.some(k=>k.includes(t))) hit += 4;
+      const bodyHits = contentN.split(t).length - 1;
+      hit += bodyHits;
+      if(hit===0) return null;
+      score += hit;
+    }
+    return { it, score };
+  }).filter(Boolean).sort((a,b)=>b.score-a.score).map(x=>x.it);
+
+  if(!ranked.length){
+    container.innerHTML = `<div class="empty-state"><p>Sin resultados para "${escapeHtml(tokens.join(' '))}"</p><p style="margin-top:6px;font-size:11.5px">Prueba con menos palabras o revisa el manual oficial arriba.</p></div>`;
+    return;
+  }
+  container.innerHTML = ranked.map(it=>`
+    <div class="manual-item">
+      <div class="manual-cat" style="margin:0 0 8px">${escapeHtml(it.category)}</div>
+      <h4>${highlightTokens(escapeHtml(it.title),tokens)}</h4>
+      <pre>${highlightTokens(escapeHtml(it.content),tokens)}</pre>
+    </div>`).join('');
 }
 const ACCENT_MAP = { a:'[aáàä]', e:'[eéèë]', i:'[ií ìï]'.replace(' ',''), o:'[oóòö]', u:'[uúùü]', n:'[nñ]' };
-function highlight(text,q){
-  if(!q) return text;
+function highlightTokens(text,tokens){
+  if(!tokens || !tokens.length) return text;
   try{
-    const escaped = q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
-    const flexible = escaped.replace(/[aeioun]/gi, ch => ACCENT_MAP[ch.toLowerCase()] || ch);
-    const re = new RegExp('('+flexible+')','ig');
-    return text.replace(re,'<mark>$1</mark>');
+    let result = text;
+    tokens.forEach(t=>{
+      const escaped = t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+      const flexible = escaped.replace(/[aeioun]/gi, ch => ACCENT_MAP[ch.toLowerCase()] || ch);
+      const re = new RegExp('('+flexible+')','ig');
+      result = result.replace(re,'<mark>$1</mark>');
+    });
+    return result;
   }catch(e){ return text; }
 }
 
@@ -1335,15 +1471,36 @@ function setupEventListeners(){
     renderCharges(); renderDashboard(); renderAlerts(); toast('Carga registrada', 'success');
   });
 
-  document.getElementById('maintForm').addEventListener('submit', e=>{
+  document.getElementById('maintForm').addEventListener('submit', async e=>{
     e.preventDefault();
     const type = document.getElementById('m_type').value;
     const cost = Number(document.getElementById('m_cost').value);
     if(!type){ toast('Selecciona un tipo de servicio', 'warning'); return; }
+    const attachments = await readFilesAsAttachments(document.getElementById('m_files').files);
     state.maintenance.push({ id:uid(), type, date:document.getElementById('m_date').value, cost,
-      km:Number(document.getElementById('m_km').value)||null, notes:document.getElementById('m_notes').value.trim() });
+      km:Number(document.getElementById('m_km').value)||null, notes:document.getElementById('m_notes').value.trim(), attachments });
     saveState(); e.target.reset(); document.getElementById('m_date').valueAsDate = new Date();
     renderMaintenance(); renderDashboard(); toast('Mantenimiento registrado', 'success');
+  });
+
+  document.getElementById('globalAttachInput').addEventListener('change', async e=>{
+    const files = e.target.files;
+    if(!files.length || !pendingAttachContext){ e.target.value=''; return; }
+    const newAtts = await readFilesAsAttachments(files);
+    const { kind, id } = pendingAttachContext;
+    if(newAtts.length){
+      if(kind==='maintenance'){
+        const rec = state.maintenance.find(m=>m.id===id);
+        if(rec){ rec.attachments = (rec.attachments||[]).concat(newAtts); }
+        saveState(); renderMaintenance();
+      } else if(kind==='revision'){
+        state.revisionAttachments[id] = (state.revisionAttachments[id]||[]).concat(newAtts);
+        saveState(); renderRevisions();
+      }
+      toast('Adjunto(s) añadido(s)', 'success');
+    }
+    pendingAttachContext = null;
+    e.target.value = '';
   });
 
   document.getElementById('noteForm').addEventListener('submit', e=>{
