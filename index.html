@@ -59,6 +59,11 @@ button{cursor:pointer}
 ::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:10px}
 ::selection{background:var(--accent-glow)}
 
+.loading-overlay{position:fixed;inset:0;background:var(--bg);z-index:999;display:flex;align-items:center;justify-content:center;transition:opacity .25s ease}
+.loading-overlay.hidden{opacity:0;pointer-events:none}
+.loading-spinner{width:34px;height:34px;border-radius:50%;border:3px solid var(--border);border-top-color:var(--accent);animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
 /* ---------- layout: nav rail (desktop) + bottom nav (mobile) ---------- */
 .app{display:flex; height:100vh}
 .nav-rail{
@@ -389,6 +394,7 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
 <body>
 
 <div class="toasts" id="toasts"></div>
+<div id="loadingOverlay" class="loading-overlay"><div class="loading-spinner"></div></div>
 
 <div class="app">
   <!-- NAV RAIL (desktop) -->
@@ -836,18 +842,48 @@ let state = {
 let activeNoteTags = new Set();
 let charts = {};
 
-function loadState(){
+const API_STATE_URL = '/api/state';
+let syncFailedToastShown = false;
+
+async function loadState(){
+  let serverOk = false;
   try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if(raw){ const parsed = JSON.parse(raw); state = deepMerge(state, parsed); }
-  }catch(e){ console.warn('No se pudo cargar el estado guardado', e); }
+    const res = await fetch(API_STATE_URL, { cache:'no-store' });
+    if(res.ok){
+      const data = await res.json();
+      if(data){ state = deepMerge(state, data); }
+      serverOk = true;
+    }
+  }catch(e){ console.warn('No se pudo cargar desde el servidor', e); }
+
+  if(serverOk){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
+  } else {
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(raw){ state = deepMerge(state, JSON.parse(raw)); }
+    }catch(e){ console.warn('No se pudo cargar el estado local', e); }
+  }
+  return serverOk;
 }
-function saveState(){
+
+async function saveState(){
   try{
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }catch(e){
     toast('Almacenamiento local lleno: no se pudo guardar. Elimina adjuntos grandes o exporta y borra datos antiguos.', 'danger');
-    console.warn('saveState failed', e);
+    console.warn('local save failed', e);
+  }
+  try{
+    const res = await fetch(API_STATE_URL, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(state) });
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    syncFailedToastShown = false;
+  }catch(e){
+    console.warn('saveState server sync failed', e);
+    if(!syncFailedToastShown){
+      toast('Sin conexión con el servidor: los cambios se están guardando solo en este dispositivo por ahora.', 'warning');
+      syncFailedToastShown = true;
+    }
   }
 }
 
@@ -1532,16 +1568,17 @@ function setupEventListeners(){
 }
 
 /* ---------------- init ---------------- */
-function init(){
-  loadState();
+async function init(){
   setupEventListeners();
   applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
+  await loadState();
   applyStateToForms();
   updateNotifStatus();
   document.getElementById('c_date').valueAsDate = new Date();
   document.getElementById('m_date').valueAsDate = new Date();
   navigate('dashboard');
   renderAlerts();
+  document.getElementById('loadingOverlay').classList.add('hidden');
   setInterval(renderAlerts, 60000);
 }
 document.addEventListener('DOMContentLoaded', init);

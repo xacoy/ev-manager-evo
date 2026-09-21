@@ -52,9 +52,11 @@ Enlaces oficiales conocidos (verifica siempre la versión más reciente para tu 
 
 No se localizó un manual del propietario completo en español específico del EVO en el momento de crear esta app; si BYD publica uno, sustituye o amplía el contenido de `data/manual-index.json` (y su copia en `index.html`) con la información real.
 
-## Alojarla como URL (móvil / pantalla del coche)
+## Alojarla como URL, con datos sincronizados (móvil / pantalla del coche)
 
-Para usar la app desde el móvil o el coche hace falta abrirla como una URL, no como archivo local. La carpeta [`deploy/`](deploy/) tiene un `docker-compose.yml` + `nginx.conf` listos para desplegar en un NAS con Docker detrás de Cloudflare Tunnel (nginx sin privilegios, solo lectura, sin capabilities, CSP ajustada) — ver [`deploy/README.md`](deploy/README.md) para los pasos. También funciona con cualquier otro hosting estático (GitHub Pages, Netlify, etc.), ya que no hay build ni backend.
+Para usar la app desde el móvil y el coche con los **mismos datos sincronizados** (no una copia aislada en cada navegador), la carpeta [`deploy/`](deploy/) tiene un backend mínimo listo para desplegar en un NAS con Docker detrás de Cloudflare Tunnel: un servidor Node sin dependencias de terceros (usa `node:sqlite`, integrado) que sirve la app y guarda el estado en SQLite, protegido con Cloudflare Access. Ver [`deploy/README.md`](deploy/README.md) para los pasos.
+
+Si solo quieres alojar la app tal cual (sin sincronización, cada navegador con su `localStorage` local), también funciona en cualquier hosting estático (GitHub Pages, Netlify, etc.) sin necesidad del backend — sigue sin haber build.
 
 ## Conversión a APK
 
@@ -64,8 +66,10 @@ Para usar la app desde el móvil o el coche hace falta abrirla como una URL, no 
 - Para un empaquetado más pulido necesitarás iconos PNG reales (192×192 y 512×512 px), ya que el icono actual es un SVG embebido válido para navegador pero no todas las herramientas de empaquetado lo aceptan.
 - Las notificaciones del navegador (`Notification API`) funcionan mientras la app esté abierta; para notificaciones en segundo plano dentro de una APK necesitarás la integración nativa que ofrezca la herramienta de empaquetado elegida (Service Worker + Push, o notificaciones nativas si usas Capacitor/Cordova).
 
-## Privacidad
+## Privacidad y dónde viven tus datos
 
-Todos los datos (vehículo, cargas, mantenimiento, notas, adjuntos) se guardan **únicamente en tu navegador**, en este equipo/dispositivo. Nada se envía a ningún servidor.
+Por defecto (abriendo `index.html` sin más, o alojado sin el backend de `deploy/`), todos los datos se guardan **únicamente en tu navegador** (`localStorage`), en ese equipo/dispositivo — nada se envía a ningún servidor.
 
-`localStorage` suele tener un límite de unos 5-10MB por navegador. Los adjuntos (fotos, facturas) cuentan para ese límite, así que evita subir muchos archivos grandes; si el navegador se queda sin espacio verás un aviso al guardar. Usa "Exportar" periódicamente como copia de seguridad.
+Si despliegas el backend de `deploy/` (ver arriba), los datos se guardan además en el servidor (SQLite, en tu propio NAS) para sincronizarse entre dispositivos; siguen sin salir de infraestructura tuya, y protegidos por Cloudflare Access solo para ti. La app sigue guardando una copia en `localStorage` como caché local por si te quedas sin conexión en el coche.
+
+`localStorage` suele tener un límite de unos 5-10MB por navegador. Los adjuntos (fotos, facturas) cuentan para ese límite, así que evita subir muchos archivos grandes; si el navegador se queda sin espacio verás un aviso al guardar. Usa "Exportar" periódicamente como copia de seguridad, tengas o no el backend desplegado.

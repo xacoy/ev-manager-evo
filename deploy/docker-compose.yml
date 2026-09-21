@@ -1,18 +1,21 @@
-# EV Manager Evo — despliegue estático reforzado (nginx sin privilegios)
-# Pensado para NAS + Docker + Cloudflare Tunnel (cloudflared).
+# EV Manager Evo — servidor con backend (Node + SQLite integrado, sin
+# dependencias npm de terceros) para tener los datos sincronizados entre
+# dispositivos (móvil, coche...). Pensado para NAS + Docker + Cloudflare
+# Tunnel (cloudflared).
 #
 # USO:
 #   1. Copia index.html, manifest.json y la carpeta data/ dentro de ./site
 #      (o clona el repo entero: git clone https://github.com/xacoy/ev-manager-evo.git site)
 #   2. Elige UNA de las dos formas de conectar con tu Tunnel — ver README.md en esta carpeta.
-#   3. docker compose up -d
+#   3. docker compose up -d --build
 #
-# Endurecido: sin privilegios (nginx-unprivileged), solo lectura, sin capabilities
-# de Linux, sin escalado de privilegios, límites de memoria/procesos.
+# Endurecido: usuario sin privilegios, solo lectura salvo el volumen de
+# datos, sin capabilities de Linux, sin escalado de privilegios, límites
+# de memoria/procesos, cero dependencias npm (superficie de ataque mínima).
 
 services:
   ev-manager-evo:
-    image: nginxinc/nginx-unprivileged:1.27-alpine
+    build: ./server
     container_name: ev-manager-evo
     restart: unless-stopped
     read_only: true
@@ -22,12 +25,10 @@ services:
       - no-new-privileges:true
     tmpfs:
       - /tmp
-      - /var/cache/nginx
-      - /var/run
     volumes:
-      - ./site:/usr/share/nginx/html:ro
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
-    mem_limit: 64m
+      - ./site:/app/site:ro
+      - ev-data:/data
+    mem_limit: 128m
     pids_limit: 50
 
     # --- Opción A (recomendada): cloudflared es OTRO contenedor Docker ---
@@ -42,6 +43,12 @@ services:
     # http://<IP-LAN-del-NAS>:8091 (NO a una IP pública).
     # ports:
     #   - "127.0.0.1:8091:8080"
+
+volumes:
+  ev-data:
+    # Aquí vive app.db (SQLite) con TODOS tus datos: cargas, mantenimiento,
+    # notas, adjuntos. Haz backup de este volumen (o usa "Exportar" en la
+    # app de vez en cuando) — es lo único que de verdad importa conservar.
 
 networks:
   cloudflared_net:
