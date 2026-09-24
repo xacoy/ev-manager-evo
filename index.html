@@ -1534,27 +1534,23 @@ function setupEventListeners(){
     const costInput = document.getElementById('c_cost');
     const kwh = Number(kwhInput.value) || 0;
 
-    if(kwh <= 0){
-      costInput.placeholder = 'Escribe kWh para calcular automáticamente';
-      return;
-    }
-
     let pricePerKwh = 0;
-    let label = '';
+    let placeholder = '';
+
     if(locationType === 'Casa'){
       pricePerKwh = 0.01140;
-      label = ' (0,01140 €/kWh)';
+      placeholder = '0.0114 €/kWh (tarifa Casa)';
+      costInput.value = kwh > 0 ? (kwh * pricePerKwh).toFixed(2) : '0.0114';
     } else if(locationType === 'Trabajo'){
       pricePerKwh = 0;
-      label = ' (GRATIS)';
+      placeholder = '0.00 €/kWh (GRATIS)';
+      costInput.value = '0.00';
     } else {
-      costInput.placeholder = 'Edita manualmente';
-      return;
+      placeholder = 'Ingresa el precio manualmente';
+      costInput.value = '';
     }
 
-    const calculatedCost = kwh * pricePerKwh;
-    costInput.value = calculatedCost > 0 ? calculatedCost.toFixed(2) : '0.00';
-    costInput.placeholder = (calculatedCost > 0 ? calculatedCost.toFixed(2) : '0.00') + label;
+    costInput.placeholder = placeholder;
     costInput.dataset.autocalculated = 'true';
   }
 
