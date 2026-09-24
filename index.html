@@ -1541,8 +1541,8 @@ function setupEventListeners(){
     let placeholder = '';
 
     if(locationType === 'Casa'){
-      pricePerKwh = 0.01140;
-      placeholder = '0.0114 €/kWh (tarifa Casa)';
+      pricePerKwh = 0.114;
+      placeholder = '0.114 €/kWh (tarifa Casa)';
       costInput.value = kwh > 0 ? (kwh * pricePerKwh).toFixed(2) : '0.00';
     } else if(locationType === 'Trabajo'){
       pricePerKwh = 0;

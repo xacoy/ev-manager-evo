@@ -99,13 +99,13 @@ Al seleccionar ubicación de carga:
 
 | Ubicación | Precio |
 |-----------|--------|
-| Casa | 0,01140 €/kWh |
+| Casa | 0,114 €/kWh |
 | Trabajo | 0,00 € (GRATIS) |
 | Otros | Manual (editable) |
 
 El precio se calcula automáticamente:
 ```
-25 kWh en Casa → 0.285 € (automático)
+25 kWh en Casa → 2.85 € (automático)
 30 kWh en Trabajo → 0.00 € (gratis)
 20 kWh Electrolinera → Tú ingresas el precio
 ```
