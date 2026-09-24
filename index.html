@@ -14,22 +14,22 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <style>
 :root{
-  --bg:#0a0e27; --bg-1:#11152c; --bg-2:#1a1f3a; --bg-card:#151b33;
-  --border:rgba(100,200,255,.10); --border-strong:rgba(100,200,255,.18);
-  --text:#f0f4ff; --text-muted:#9aa5b8; --text-faint:#6b7a8f;
-  --accent:#00d4ff; --accent-2:#64b5f6; --accent-3:#bb86fc;
-  --accent-soft:rgba(0,212,255,.10); --accent-glow:rgba(0,212,255,.28);
-  --on-accent:#000000;
-  --success:#10b981; --success-soft:rgba(16,185,129,.15);
-  --warning:#f59e0b; --warning-soft:rgba(245,158,11,.15);
-  --danger:#ef4444; --danger-soft:rgba(239,68,68,.15);
-  --cyan:#00d4ff; --cyan-soft:rgba(0,212,255,.12);
-  --blue:#3b82f6; --blue-soft:rgba(59,130,246,.12);
-  --purple:#a855f7; --purple-soft:rgba(168,85,247,.12);
-  --radius:14px; --radius-sm:10px; --radius-lg:20px; --radius-full:999px;
-  --shadow-card:0 8px 32px rgba(0,0,0,.4), 0 0 2px rgba(0,212,255,.20);
-  --shadow-1:0 4px 12px rgba(0,0,0,.3);
-  --ease:cubic-bezier(.23,.1,.23,1);
+  --bg:#0f1419; --bg-1:#1a1f2e; --bg-2:#242d3d; --bg-card:#1e2736;
+  --border:rgba(34,211,238,.08); --border-strong:rgba(34,211,238,.15);
+  --text:#f8fafc; --text-muted:#94a3b8; --text-faint:#64748b;
+  --accent:#06b6d4; --accent-2:#0ea5e9; --accent-3:#6366f1;
+  --accent-soft:rgba(6,182,212,.12); --accent-glow:rgba(6,182,212,.25);
+  --on-accent:#ffffff;
+  --success:#10b981; --success-soft:rgba(16,185,129,.12);
+  --warning:#f59e0b; --warning-soft:rgba(245,158,11,.12);
+  --danger:#ef4444; --danger-soft:rgba(239,68,68,.12);
+  --cyan:#06b6d4; --cyan-soft:rgba(6,182,212,.10);
+  --blue:#0ea5e9; --blue-soft:rgba(14,165,233,.10);
+  --purple:#a855f7; --purple-soft:rgba(168,85,247,.10);
+  --radius:16px; --radius-sm:12px; --radius-lg:24px; --radius-full:999px;
+  --shadow-card:0 12px 48px rgba(0,0,0,.35), 0 0 1px rgba(6,182,212,.15);
+  --shadow-1:0 6px 20px rgba(0,0,0,.25);
+  --ease:cubic-bezier(.16,.1,.3,1);
   --font:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
   --font-display:Syne,sans-serif;
   --rail-w:110px; --bottomnav-h:100px;
@@ -70,17 +70,18 @@ button{cursor:pointer}
 .app{display:flex; height:100vh}
 .nav-rail{
   width:var(--rail-w); flex-shrink:0; display:flex; flex-direction:column; align-items:center;
-  background:linear-gradient(135deg, var(--bg-1), var(--bg-2));
-  border-right:1px solid var(--border); padding:20px 6px; gap:8px; overflow-y:auto;
-  box-shadow:inset -1px 0 0 var(--border-strong);
+  background:linear-gradient(180deg, rgba(26,31,46,.8), rgba(36,45,61,.6));
+  border-right:1.5px solid var(--border-strong); padding:20px 6px; gap:8px; overflow-y:auto;
+  box-shadow:inset -2px 0 8px rgba(6,182,212,.05), 0 0 20px rgba(0,0,0,.3);
+  backdrop-filter:blur(10px);
 }
 .rail-brand{margin-bottom:10px}
 .brand-mark{
-  width:52px;height:52px;border-radius:12px;flex-shrink:0;
-  background:linear-gradient(135deg, var(--accent), var(--accent-2));
+  width:52px;height:52px;border-radius:var(--radius-sm);flex-shrink:0;
+  background:linear-gradient(135deg, var(--accent), var(--blue));
   color:var(--on-accent);
   display:flex;align-items:center;justify-content:center;
-  box-shadow:0 4px 16px rgba(0,212,255,.25), inset 0 1px 0 rgba(255,255,255,.2);
+  box-shadow:0 0 20px rgba(6,182,212,.4), 0 0 40px rgba(6,182,212,.1);
   position:relative;
 }
 .brand-mark svg{width:22px;height:22px;stroke:none;fill:currentColor}
@@ -109,8 +110,9 @@ button{cursor:pointer}
 .main{flex:1;display:flex;flex-direction:column;min-width:0;height:100vh;overflow:hidden}
 .topbar{
   height:96px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;
-  padding:0 36px;background:linear-gradient(90deg, var(--bg) 0%, rgba(0,212,255,.03) 100%);
-  gap:24px; border-bottom:1px solid var(--border);
+  padding:0 36px;background:linear-gradient(90deg, rgba(15,20,25,.9) 0%, rgba(6,182,212,.02) 100%);
+  gap:24px; border-bottom:1.5px solid var(--border-strong);
+  box-shadow:0 8px 24px rgba(0,0,0,.2), inset 0 1px 0 rgba(6,182,212,.1);
 }
 .topbar h1{font-size:36px;font-weight:800;letter-spacing:-.5px;font-family:var(--font-display);
   background:linear-gradient(135deg, var(--text), var(--accent));
@@ -195,12 +197,13 @@ button{cursor:pointer}
 @media(max-width:560px){.grid-4{grid-template-columns:1fr 1fr}.grid-3{grid-template-columns:1fr}}
 
 .card{
-  background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius);
+  background:linear-gradient(135deg, rgba(30,39,54,.5), rgba(36,45,61,.3));
+  border:1.5px solid var(--border-strong); border-radius:var(--radius);
   padding:32px; box-shadow:var(--shadow-card); position:relative;
-  transition:all .4s var(--ease); overflow:hidden;
+  transition:all .4s var(--ease); overflow:hidden; backdrop-filter:blur(10px);
 }
 .card::before{
-  content:''; position:absolute; top:0; left:0; right:0; height:1px;
+  content:''; position:absolute; top:0; left:0; right:0; height:1.5px;
   background:linear-gradient(90deg, transparent, var(--accent), transparent);
 }
 .card:hover{
@@ -308,26 +311,26 @@ button{cursor:pointer}
 .bar-fill.danger{background:linear-gradient(90deg, var(--danger), #ff6b6b)}
 
 .btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:18px 32px;border-radius:var(--radius-full);
-  font-size:15px;font-weight:700;border:1px solid transparent;transition:all .3s var(--ease);white-space:nowrap;
-  cursor:pointer; position:relative; overflow:hidden; min-height:56px;
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:18px 32px;border-radius:var(--radius);
+  font-size:15px;font-weight:700;border:1.5px solid transparent;transition:all .3s var(--ease);white-space:nowrap;
+  cursor:pointer; position:relative; overflow:hidden; min-height:56px; text-transform:uppercase; letter-spacing:.5px;
 }
 .btn::before{
-  content:''; position:absolute; top:50%; left:50%; width:0; height:0; border-radius:50%;
-  background:rgba(255,255,255,.2); transform:translate(-50%, -50%); transition:width .5s, height .5s;
+  content:''; position:absolute; inset:0; background:linear-gradient(45deg, rgba(255,255,255,.1), transparent);
+  opacity:0; transition:opacity .3s var(--ease);
 }
-.btn:active::before{width:200px; height:200px}
+.btn:hover::before{opacity:1}
+.btn:active{transform:scale(.97)}
 .btn svg{width:16px;height:16px;stroke:currentColor}
 .btn-primary{
-  background:linear-gradient(135deg, var(--accent), var(--accent-2));
-  color:var(--on-accent);box-shadow:0 6px 20px rgba(0,212,255,.3), inset 0 1px 0 rgba(255,255,255,.2);
-  position:relative; z-index:1;
+  background:linear-gradient(135deg, var(--accent), var(--blue));
+  color:var(--on-accent); border-color:rgba(6,182,212,.3);
+  box-shadow:0 0 24px rgba(6,182,212,.25), inset 0 1px 0 rgba(255,255,255,.15);
+  position:relative; z-index:1; font-weight:800;
 }
-.btn-primary:hover{transform:translateY(-2px); box-shadow:0 8px 28px rgba(0,212,255,.4)}
-.btn-primary:active{transform:scale(.98)}
-.btn-ghost{background:var(--bg-2);border-color:var(--border);color:var(--text)}
-.btn-ghost:hover{background:var(--bg-2); border-color:var(--accent); color:var(--accent)}
-.btn-ghost:active{transform:scale(.98)}
+.btn-primary:hover{transform:translateY(-3px); box-shadow:0 8px 32px rgba(6,182,212,.35), 0 0 20px rgba(6,182,212,.2)}
+.btn-ghost{background:rgba(36,45,61,.4);border-color:var(--border-strong);color:var(--text); backdrop-filter:blur(10px)}
+.btn-ghost:hover{background:rgba(36,45,61,.7); border-color:var(--accent); color:var(--accent); box-shadow:0 0 16px rgba(6,182,212,.15)}
 .btn-danger{background:var(--danger-soft);color:var(--danger); border-color:var(--danger-soft)}
 .btn-danger:hover{background:var(--danger); color:white; filter:brightness(1.1)}
 .btn-sm{padding:14px 24px;font-size:13px; min-height:48px}
@@ -397,7 +400,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
 
 /* ---------- manual ---------- */
 .manual-search{display:flex;gap:10px;margin-bottom:20px}
-.manual-search input{flex:1}
+.manual-search input{flex:1; background:var(--bg-card)!important; border:2px solid var(--accent)!important; color:var(--text)!important; font-size:15px!important; padding:16px 18px!important; min-height:48px!important}
 .lang-toggle{display:flex;border:1px solid var(--border);border-radius:10px;overflow:hidden}
 .lang-toggle button{padding:10px 16px;background:var(--bg-2);border:none;font-size:12.5px;font-weight:700;color:var(--text-muted)}
 .lang-toggle button.active{background:var(--accent-soft);color:var(--accent)}
