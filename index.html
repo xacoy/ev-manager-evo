@@ -643,8 +643,9 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
                 <div class="info-sub">cargas + servicio</div>
               </div>
               <div class="info-card-small">
-                <div class="info-label">PRÓXIMA</div>
-                <div id="revisionQuick" style="font-size:11px;font-weight:600;margin-top:4px"></div>
+                <div class="info-label">ÚLTIMA CARGA</div>
+                <div id="lastChargeInfo" style="font-size:13px;font-weight:700;margin-top:4px">—</div>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:2px" id="lastChargeDate">—</div>
               </div>
             </div>
           </div>
@@ -1167,22 +1168,18 @@ function renderDashboard(){
   document.getElementById('chipBattery').textContent = (VERSION_LABELS[c.version] || VERSION_LABELS.design).split('·')[0].trim() + ' · ' + VEHICLE_BATTERY_KWH + ' kWh';
 
   buildConsumptionChart();
-  updateRevisionQuick();
+  updateLastChargeInfo();
 }
 
-function updateRevisionQuick(){
-  const container = document.getElementById('revisionQuick');
-  if(!container) return;
-  const sched = REVISIONS_SCHEDULE[state.lang] || REVISIONS_SCHEDULE.es;
-  const km = Number(state.config.currentKm)||0;
-  const months = monthsBetween(state.config.purchaseDate);
-  let next = sched.find(r=>!state.completedRevisions.includes(r.km) && (r.km>=km));
-  if(!next) next = sched.find(r=>!state.completedRevisions.includes(r.km)) || sched[sched.length-1];
-  if(!next){ container.textContent = '—'; return; }
-  const st = getScheduleForRevision(next, km, months);
-  const statusIcon = st.overdue ? '⚠️' : st.upcoming ? '🔔' : '✓';
-  const statusText = st.overdue ? 'VENCIDA' : st.kmRemaining + ' km';
-  container.innerHTML = `<div style="color:var(--${st.overdue?'danger':st.upcoming?'warning':'success'})">${statusIcon} ${statusText}</div>`;
+function updateLastChargeInfo(){
+  const infoEl = document.getElementById('lastChargeInfo');
+  const dateEl = document.getElementById('lastChargeDate');
+  if(!infoEl || !dateEl) return;
+  if(!state.charges.length){ infoEl.textContent = '—'; dateEl.textContent = '—'; return; }
+  const last = state.charges.sort((a,b)=> new Date(b.date)-new Date(a.date))[0];
+  if(!last){ infoEl.textContent = '—'; dateEl.textContent = '—'; return; }
+  infoEl.textContent = (last.kwh ? last.kwh.toFixed(1) + ' kWh' : '—') + (last.location ? ' · ' + last.location : '');
+  dateEl.textContent = fmtDate(last.date) + (last.cost ? ' · ' + fmtEUR(last.cost) : '');
 }
 function buildConsumptionChart(){
   const ctx = document.getElementById('chartConsumption');
@@ -1531,28 +1528,55 @@ function setupEventListeners(){
     saveState(); renderDashboard(); renderAlerts(); toast('Configuración guardada', 'success');
   });
 
-  document.getElementById('c_location_type').addEventListener('change', e=>{
-    document.getElementById('c_location_other_wrap').style.display = e.target.value==='Otro' ? 'block' : 'none';
-    updateChargePriceDefault();
-  });
-
-  document.getElementById('c_kwh').addEventListener('change', updateChargePriceDefault);
-
   function updateChargePriceDefault(){
     const locationType = document.getElementById('c_location_type').value;
     const kwhInput = document.getElementById('c_kwh');
     const costInput = document.getElementById('c_cost');
     const kwh = Number(kwhInput.value) || 0;
 
-    if(kwh <= 0) return;
+    if(kwh <= 0){
+      costInput.placeholder = 'Escribe kWh para calcular automáticamente';
+      return;
+    }
 
     let pricePerKwh = 0;
-    if(locationType === 'Casa') pricePerKwh = 0.01140;
-    else if(locationType === 'Trabajo') pricePerKwh = 0;
+    let label = '';
+    if(locationType === 'Casa'){
+      pricePerKwh = 0.01140;
+      label = ' (0,01140 €/kWh)';
+    } else if(locationType === 'Trabajo'){
+      pricePerKwh = 0;
+      label = ' (GRATIS)';
+    } else {
+      costInput.placeholder = 'Edita manualmente';
+      return;
+    }
 
     const calculatedCost = kwh * pricePerKwh;
     costInput.value = calculatedCost > 0 ? calculatedCost.toFixed(2) : '0.00';
+    costInput.placeholder = (calculatedCost > 0 ? calculatedCost.toFixed(2) : '0.00') + label;
+    costInput.dataset.autocalculated = 'true';
   }
+
+  document.getElementById('c_location_type').addEventListener('change', e=>{
+    document.getElementById('c_location_other_wrap').style.display = e.target.value==='Otro' ? 'block' : 'none';
+    document.getElementById('c_cost').dataset.autocalculated = 'true';
+    updateChargePriceDefault();
+  });
+
+  document.getElementById('c_kwh').addEventListener('input', updateChargePriceDefault);
+  document.getElementById('c_kwh').addEventListener('change', updateChargePriceDefault);
+
+  document.getElementById('c_cost').addEventListener('input', e=>{
+    if(e.target.value) e.target.dataset.autocalculated = 'false';
+  });
+
+  document.getElementById('chargeForm').addEventListener('reset', e=>{
+    setTimeout(()=>{
+      document.getElementById('c_cost').dataset.autocalculated = 'true';
+      updateChargePriceDefault();
+    }, 0);
+  });
 
   document.getElementById('chargeForm').addEventListener('submit', e=>{
     e.preventDefault();
