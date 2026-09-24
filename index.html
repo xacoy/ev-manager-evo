@@ -242,18 +242,12 @@ button{cursor:pointer}
 
 /* Info cards grid in bottom section */
 .info-cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.info-card-small{background:linear-gradient(135deg, rgba(0,217,255,.12), rgba(0,255,136,.08));border:1px solid var(--border-strong);border-radius:var(--radius-sm);padding:16px;transition:all .3s var(--ease)}
+.info-cards-grid-4{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.info-card-small{background:linear-gradient(135deg, rgba(0,217,255,.12), rgba(0,255,136,.08));border:1px solid var(--border-strong);border-radius:var(--radius-sm);padding:14px;transition:all .3s var(--ease)}
 .info-card-small:hover{border-color:var(--cyan);box-shadow:0 8px 24px rgba(0,217,255,.15)}
-
-/* Spend display */
-.spend-display{display:flex;flex-direction:column;gap:8px;align-items:center;justify-content:center;min-height:100px}
-.spend-value{font-size:36px;font-weight:900;background:linear-gradient(135deg, var(--cyan), var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.spend-label{font-size:12px;color:var(--text-muted);text-align:center}
-
-/* Revision display */
-.revision-display{display:flex;flex-direction:column;gap:12px;min-height:100px;justify-content:center}
-.revision-item{display:flex;align-items:center;gap:12px;padding:8px 0}
-.revision-item .status{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.info-label{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--text-faint);margin-bottom:6px}
+.info-value{font-size:18px;font-weight:900;background:linear-gradient(135deg, var(--cyan), var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.info-sub{font-size:11px;color:var(--text-muted);margin-top:2px}
 .dash-info-grid{flex:1;display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
 .info-card{background:linear-gradient(135deg, rgba(0,217,255,.12), rgba(0,255,136,.08));border:2px solid var(--border-strong);border-radius:var(--radius);padding:24px;transition:all .3s var(--ease)}
 .info-card:hover{border-color:var(--cyan);box-shadow:0 12px 32px rgba(0,217,255,.18)}
@@ -624,7 +618,7 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
           <button type="submit" class="btn btn-ghost btn-sm">+ Añadir enlace</button>
         </form>
 
-        <!-- BOTTOM: Consumption Chart + Info Cards -->
+        <!-- BOTTOM: Consumption Chart + Vehicle Status -->
         <div class="grid grid-2">
           <div class="card">
             <div class="card-head"><h2>Consumo por carga</h2><span class="hint">últimas 10</span></div>
@@ -632,7 +626,7 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
           </div>
           <div class="card">
             <div class="card-head"><h2>Estado del vehículo</h2></div>
-            <div class="info-cards-grid">
+            <div class="info-cards-grid-4">
               <div class="info-card-small">
                 <div class="info-label">BATERÍA</div>
                 <div class="info-value" id="sideBattery">—</div>
@@ -643,22 +637,16 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
                 <div class="info-value" id="sideConsumption">—</div>
                 <div class="info-sub">kWh/100km</div>
               </div>
+              <div class="info-card-small">
+                <div class="info-label">GASTO TOTAL</div>
+                <div class="info-value" id="sideSpent">—</div>
+                <div class="info-sub">cargas + servicio</div>
+              </div>
+              <div class="info-card-small">
+                <div class="info-label">PRÓXIMA</div>
+                <div id="revisionQuick" style="font-size:11px;font-weight:600;margin-top:4px"></div>
+              </div>
             </div>
-          </div>
-        </div>
-
-        <!-- INFO CARDS ROW -->
-        <div class="grid grid-2" style="margin-top:16px">
-          <div class="card">
-            <div class="card-head"><h2>Gasto total</h2></div>
-            <div class="spend-display">
-              <div class="spend-value" id="sideSpent">—</div>
-              <div class="spend-label">cargas + mantenimiento</div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-head"><h2>Próxima revisión</h2></div>
-            <div class="revision-display" id="revisionDisplay"></div>
           </div>
         </div>
       </section>
@@ -1179,31 +1167,22 @@ function renderDashboard(){
   document.getElementById('chipBattery').textContent = (VERSION_LABELS[c.version] || VERSION_LABELS.design).split('·')[0].trim() + ' · ' + VEHICLE_BATTERY_KWH + ' kWh';
 
   buildConsumptionChart();
-  buildRevisionDisplay();
+  updateRevisionQuick();
 }
 
-function buildRevisionDisplay(){
-  const container = document.getElementById('revisionDisplay');
+function updateRevisionQuick(){
+  const container = document.getElementById('revisionQuick');
   if(!container) return;
   const sched = REVISIONS_SCHEDULE[state.lang] || REVISIONS_SCHEDULE.es;
   const km = Number(state.config.currentKm)||0;
   const months = monthsBetween(state.config.purchaseDate);
   let next = sched.find(r=>!state.completedRevisions.includes(r.km) && (r.km>=km));
   if(!next) next = sched.find(r=>!state.completedRevisions.includes(r.km)) || sched[sched.length-1];
-  if(!next){ container.innerHTML = '<div style="color:var(--text-faint)">Sin revisiones pendientes</div>'; return; }
+  if(!next){ container.textContent = '—'; return; }
   const st = getScheduleForRevision(next, km, months);
   const statusIcon = st.overdue ? '⚠️' : st.upcoming ? '🔔' : '✓';
-  const statusText = st.overdue ? 'VENCIDA' : st.upcoming ? 'PRÓXIMA' : 'OK';
-  const statusClass = st.overdue ? 'danger' : st.upcoming ? 'warning' : 'success';
-  container.innerHTML = `
-    <div style="display:flex;gap:12px;align-items:flex-start">
-      <div style="font-size:24px">${statusIcon}</div>
-      <div>
-        <div style="font-size:13px;font-weight:700;color:var(--text)">${next.name}</div>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">${st.overdue ? 'VENCIDA' : st.kmRemaining + ' km'}</div>
-      </div>
-    </div>
-  `;
+  const statusText = st.overdue ? 'VENCIDA' : st.kmRemaining + ' km';
+  container.innerHTML = `<div style="color:var(--${st.overdue?'danger':st.upcoming?'warning':'success'})">${statusIcon} ${statusText}</div>`;
 }
 function buildConsumptionChart(){
   const ctx = document.getElementById('chartConsumption');
@@ -1554,7 +1533,26 @@ function setupEventListeners(){
 
   document.getElementById('c_location_type').addEventListener('change', e=>{
     document.getElementById('c_location_other_wrap').style.display = e.target.value==='Otro' ? 'block' : 'none';
+    updateChargePriceDefault();
   });
+
+  document.getElementById('c_kwh').addEventListener('change', updateChargePriceDefault);
+
+  function updateChargePriceDefault(){
+    const locationType = document.getElementById('c_location_type').value;
+    const kwhInput = document.getElementById('c_kwh');
+    const costInput = document.getElementById('c_cost');
+    const kwh = Number(kwhInput.value) || 0;
+
+    if(kwh <= 0) return;
+
+    let pricePerKwh = 0;
+    if(locationType === 'Casa') pricePerKwh = 0.01140;
+    else if(locationType === 'Trabajo') pricePerKwh = 0;
+
+    const calculatedCost = kwh * pricePerKwh;
+    costInput.value = calculatedCost > 0 ? calculatedCost.toFixed(2) : '0.00';
+  }
 
   document.getElementById('chargeForm').addEventListener('submit', e=>{
     e.preventDefault();
