@@ -1,65 +1,185 @@
-# EV Manager Evo · BYD Atto 3 EVO
+# 🚗⚡ EV Manager Evo — BYD Atto 3 EVO
 
-Aplicación web de un solo archivo para gestionar de forma integral tu **BYD Atto 3 EVO** (versiones Design y Excellence): cargas, mantenimiento, revisiones programadas, notas con etiquetas, manual técnico bilingüe (ES/EN) y estadísticas de uso y coste.
+Gestor integral web de tu **BYD Atto 3 EVO**: cargas, mantenimiento, revisiones, notas y manual técnico. Todo en **un único archivo HTML** sin necesidad de servidor.
 
-No requiere servidor, ni npm, ni instalación. Todo funciona en tu navegador.
+## ✨ Características
 
-## Cómo usarla
+### 📊 Dashboard Inteligente
+- Visualización del coche en tiempo real
+- Estado de revisiones (próxima, vencida, completada)
+- Últimas cargas registradas
+- Gasto total acumulado
+- Información de batería y consumo medio
+- Enlaces rápidos personalizables (3 columnas)
+- Gráfico de consumo por carga
 
-1. Abre `index.html` haciendo doble clic (o arrastrándolo a tu navegador).
-2. Ve a **Configuración** y rellena los datos de tu vehículo (versión, VIN, kilometraje, fecha de compra, consumo medio, tarifa eléctrica).
-3. Empieza a registrar cargas, mantenimiento y notas desde el menú lateral.
+### ⚡ Gestión de Cargas
+- Registro de kWh y coste
+- **Precios automáticos:**
+  - Casa: 0,01140 €/kWh
+  - Trabajo: GRATIS (0 €)
+  - Otros: editable
+- Ubicación (Casa, Trabajo, Electrolinera personalizada)
+- Historial editable con búsqueda
+- Estadísticas: total kWh, gasto, precio medio
 
-Los datos se guardan automáticamente en el **almacenamiento local del navegador** (`localStorage`). Si limpias los datos del navegador o cambias de dispositivo, perderás la información salvo que la exportes antes (ver más abajo).
+### 🔧 Mantenimiento
+- Registro por tipo (frenos, neumáticos, batería, filtros, etc.)
+- Coste, fecha y notas
+- Historial con estado del último servicio
+- Resumen de gastos
 
-## Estructura del proyecto
+### 📋 Revisiones Preventivas
+- Calendario BYD precargado (cada 30.000 km / 24 meses)
+- Estados: vencida, próxima, completada
+- Descripción de tareas por revisión
+- Alertas visuales y notificaciones del navegador
+
+### 📝 Notas
+- Notas libres con etiquetas
+- Filtrado por etiqueta y búsqueda
+- Almacenamiento local persistente
+
+### 📖 Manual Técnico
+- Índice completo en ES/EN
+- Búsqueda sin distinción de tildes
+- Temas: especificaciones, carga, batería, garantía, frenos, seguridad, etc.
+
+### 📊 Estadísticas
+- Coste por km recorrido
+- Precio medio de energía
+- Proyección de gasto anual
+- Gasto mensual en gráfico
+- Resumen general completo
+
+### 🎨 Interfaz Moderna
+- Diseño **multicolor con gradientes** modernos (cyan, verde neón, rosa)
+- **Completamente responsive** (escritorio, tablet, móvil)
+- Tema oscuro/claro con toggle
+- Iconos grandes y claros (optimizado para pantalla de coche)
+- Transiciones suaves y efectos hover
+
+## 🚀 Uso
+
+### Sin Instalación
+1. Descarga `index.html`
+2. Abre en tu navegador (doble clic o arrastra)
+3. Configura tu vehículo
+4. ¡Empieza a registrar!
+
+### Con Servidor Local
+```bash
+cd ev-manager-evo
+python3 -m http.server 8888
+# Abre http://localhost:8888
+```
+
+## 💾 Almacenamiento
+
+- **Datos guardados localmente** en tu navegador (`localStorage`)
+- Nada se envía a servidores
+- Exporta/importa JSON para backup o cambiar dispositivo
+
+## ⚙️ Configuración
+
+1. Ve a **Configuración**
+2. Rellena:
+   - Versión (Design RWD o Excellence AWD)
+   - VIN
+   - Kilometraje actual
+   - Fecha de compra
+   - Consumo medio (kWh/100km)
+   - Tarifa eléctrica (€/kWh)
+
+3. Activa notificaciones del navegador (opcional)
+
+## 🎯 Precios Automáticos en Cargas
+
+Al seleccionar ubicación de carga:
+
+| Ubicación | Precio |
+|-----------|--------|
+| Casa | 0,01140 €/kWh |
+| Trabajo | 0,00 € (GRATIS) |
+| Otros | Manual (editable) |
+
+El precio se calcula automáticamente:
+```
+25 kWh en Casa → 0.285 € (automático)
+30 kWh en Trabajo → 0.00 € (gratis)
+20 kWh Electrolinera → Tú ingresas el precio
+```
+
+## 📱 Responsive Design
 
 ```
-ev-manager-evo/
-├── index.html                  # Aplicación completa (self-contained)
-├── manifest.json                # Metadatos PWA, útil de cara a empaquetar como APK
+Escritorio   → Coche + Info lado a lado, Quicklinks 3 cols
+Tablet       → Stack vertical, Quicklinks 2 cols
+Móvil        → Full stack, Quicklinks 1 col
+```
+
+## 🔋 Especificaciones BYD Atto 3 EVO
+
+- **Batería:** Blade Battery 74,8 kWh (Cell to Body)
+- **Versiones:**
+  - Design (RWD): 313 CV, 510 km WLTP
+  - Excellence (AWD): 449 CV, 470 km WLTP
+- **Carga:** 800V, hasta 220 kW DC
+- **Garantía:** 6 años / 150.000 km (batería 8 años / 250.000 km)
+
+## 🛠️ Tecnología
+
+- HTML5 + CSS3 + Vanilla JavaScript
+- Sin dependencias externas
+- Chart.js para gráficos
+- PWA compatible (manifest.json incluido)
+
+## 📊 Archivos
+
+```
+├── index.html          # App completa (self-contained)
+├── manifest.json       # Metadatos PWA
+├── README.md           # Este archivo
 ├── data/
-│   ├── manual-index.json        # Copia de referencia del índice del manual (ES/EN)
-│   └── revisions-schedule.json  # Copia de referencia del calendario de revisiones (ES/EN)
-└── README.md
+│   ├── manual-index.json        # Referencia del manual
+│   └── revisions-schedule.json  # Calendario de revisiones
 ```
 
-> Los archivos en `data/` son una copia legible de la información que ya va **embebida dentro de `index.html`** (para que la app funcione sin servidor ni peticiones locales). Si quieres ampliar el manual o el calendario de revisiones, edítalos primero ahí como referencia y luego actualiza el mismo contenido dentro de las constantes `MANUAL_CONTENT` y `REVISIONS_SCHEDULE` en `index.html`.
+## 📦 Convertir a APK
 
-## Funcionalidades
+El archivo `index.html` es compatible con:
+- PWABuilder
+- Capacitor
+- Cordova
+- Android WebView
 
-- **Dashboard**: kilometraje, consumo medio, gasto total, próxima revisión con barra de progreso, gráficos de consumo y reparto de gasto (cargas vs. mantenimiento).
-- **Accesos rápidos**: widget de enlaces en el Dashboard (cargadores cercanos, PlugShare, Electromaps, manual y servicio oficial BYD) pensado para consultarlo desde el móvil en el coche. Puedes añadir tus propios enlaces (seguro, taller de confianza, etc.) y borrar los que no uses.
-- **Cargas**: registro de kWh, coste, ubicación y km; historial editable y estadísticas (€/kWh medio, total kWh, etc.).
-- **Mantenimiento**: registro por tipo (frenos, neumáticos, batería, filtros, reparación...), coste y notas.
-- **Revisiones**: calendario preventivo del Atto 3 EVO precargado (cada 24 meses o 30.000 km), con estado vencida / próxima / completada.
-- **Notas**: notas libres con etiquetas, filtrado por etiqueta y búsqueda de texto.
-- **Manual**: índice técnico buscable en español e inglés (búsqueda sin distinguir tildes).
-- **Estadísticas**: coste por km, precio medio de la energía, proyección de gasto anual, gasto mensual y resumen general.
-- **Alertas automáticas**: aviso visual (campana + banner) cuando una revisión está próxima o vencida, revisado cada minuto mientras la app está abierta. Puedes activar además **notificaciones del navegador** (Configuración → Notificaciones automáticas) para recibir avisos aunque tengas la pestaña en segundo plano.
-- **Tema**: oscuro/claro, con botón de cambio en la barra lateral (se recuerda tu preferencia).
-- **Exportar / Importar**: botón "Exportar" descarga un JSON con todos tus datos; "Importar" permite restaurar ese JSON (con confirmación, ya que reemplaza los datos actuales).
+Incluye `manifest.json` básico. Para iconos PNG profesionales:
+- 192×192 px
+- 512×512 px
 
-## Sobre el manual y las revisiones incluidas
+## 🔒 Privacidad
 
-El **Atto 3 EVO** es el rediseño 2025/2026 del Atto 3 original (motor, batería, carga y carrocería distintos). El contenido del manual y el calendario de revisiones incluidos en esta app son un **índice de referencia** construido a partir de especificaciones publicadas (batería Blade Battery de 74,8 kWh con tecnología Cell to Body, versiones Design/Excellence, carga rápida de hasta 220 kW, garantías, etc.), **no el PDF oficial completo**.
+✅ **Todos los datos se guardan localmente en tu navegador**
+✅ Nada se envía a servidores
+✅ Exporta/importa para cambiar dispositivo
+✅ Borra los datos cuando quieras (limpia tu navegador)
 
-Enlaces oficiales conocidos (verifica siempre la versión más reciente para tu mercado, ya que BYD actualiza estos documentos):
+## 🤝 Contribuir
 
-- Manual del propietario oficial (inglés, conducción izquierda, 2026): `https://www.byd.com/material/seal-2026/ATTO 3 EVO Owner's Manual-Left-hand Drive-20260327-EN.pdf`
-- Ficha/folleto oficial en español: `https://www.byd.com/material/byd-site/es-es/pdfs/atto-3-evo/ATTO 3 EVO-0317-BPS-ES-V4_WEB.pdf`
-- Portal oficial de manuales BYD España: `https://www.byd.com/es-es/service-maintenance/owners-manual.html`
+¿Mejoras? ¿Bugfixes? ¡Abierto a PRs!
 
-No se localizó un manual del propietario completo en español específico del EVO en el momento de crear esta app; si BYD publica uno, sustituye o amplía el contenido de `data/manual-index.json` (y su copia en `index.html`) con la información real.
+## 📄 Licencia
 
-## Conversión a APK
+MIT
 
-`index.html` es una web app auto-contenida, por lo que es compatible con herramientas típicas de empaquetado a APK (por ejemplo Median, PWABuilder o una WebView de Android/Capacitor). Ten en cuenta:
+## 🔗 Enlaces
 
-- Ya incluye un `manifest.json` básico como punto de partida para PWA.
-- Para un empaquetado más pulido necesitarás iconos PNG reales (192×192 y 512×512 px), ya que el icono actual es un SVG embebido válido para navegador pero no todas las herramientas de empaquetado lo aceptan.
-- Las notificaciones del navegador (`Notification API`) funcionan mientras la app esté abierta; para notificaciones en segundo plano dentro de una APK necesitarás la integración nativa que ofrezca la herramienta de empaquetado elegida (Service Worker + Push, o notificaciones nativas si usas Capacitor/Cordova).
+- [Manual BYD oficial](https://www.byd.com/es-es/service-maintenance/owners-manual.html)
+- [PlugShare](https://www.plugshare.com/)
+- [Electromaps](https://www.electromaps.com/)
 
-## Privacidad
+---
 
-Todos los datos (vehículo, cargas, mantenimiento, notas) se guardan **únicamente en tu navegador**, en este equipo/dispositivo. Nada se envía a ningún servidor.
+**Última actualización:** Septiembre 2026
+
+Hecho con ❤️ para propietarios del BYD Atto 3 EVO
