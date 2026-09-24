@@ -1532,6 +1532,9 @@ function setupEventListeners(){
     const locationType = document.getElementById('c_location_type').value;
     const kwhInput = document.getElementById('c_kwh');
     const costInput = document.getElementById('c_cost');
+
+    if(costInput.dataset.autocalculated === 'false') return;
+
     const kwh = Number(kwhInput.value) || 0;
 
     let pricePerKwh = 0;
@@ -1540,7 +1543,7 @@ function setupEventListeners(){
     if(locationType === 'Casa'){
       pricePerKwh = 0.01140;
       placeholder = '0.0114 €/kWh (tarifa Casa)';
-      costInput.value = kwh > 0 ? (kwh * pricePerKwh).toFixed(2) : '0.0114';
+      costInput.value = kwh > 0 ? (kwh * pricePerKwh).toFixed(2) : '0.00';
     } else if(locationType === 'Trabajo'){
       pricePerKwh = 0;
       placeholder = '0.00 €/kWh (GRATIS)';
@@ -1563,8 +1566,10 @@ function setupEventListeners(){
   document.getElementById('c_kwh').addEventListener('input', updateChargePriceDefault);
   document.getElementById('c_kwh').addEventListener('change', updateChargePriceDefault);
 
+  updateChargePriceDefault();
+
   document.getElementById('c_cost').addEventListener('input', e=>{
-    if(e.target.value) e.target.dataset.autocalculated = 'false';
+    e.target.dataset.autocalculated = 'false';
   });
 
   document.getElementById('chargeForm').addEventListener('reset', e=>{
