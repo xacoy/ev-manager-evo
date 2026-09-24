@@ -228,16 +228,32 @@ button{cursor:pointer}
 .chart-box canvas{position:absolute;inset:0;width:100%!important;height:100%!important}
 
 /* ---------- dashboard redesign ---------- */
-.dash-top{display:flex;gap:40px;padding:24px 0 32px;align-items:center}
-.car-visual{display:flex;flex-direction:column;align-items:center;gap:20px;min-width:280px}
-.car-icon-container{width:240px;height:160px;background:linear-gradient(135deg, rgba(0,217,255,.1), rgba(0,255,136,.08));border:2px solid var(--border-strong);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;padding:16px}
-.car-svg{width:100%;height:100%;filter:drop-shadow(0 4px 12px rgba(0,217,255,.2))}
-.car-km-display{display:flex;flex-direction:column;align-items:center;gap:4px}
-.km-value{font-size:48px;font-weight:900;background:linear-gradient(135deg, var(--cyan), var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-variant-numeric:tabular-nums}
-.km-label{font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px}
-.car-status-badge{font-size:12px;font-weight:800;padding:6px 12px;border-radius:var(--radius-full);background:var(--success-soft);color:var(--success);text-transform:uppercase;letter-spacing:.5px}
-.car-status-badge.warning{background:var(--warning-soft);color:var(--warning)}
-.car-status-badge.danger{background:var(--danger-soft);color:var(--danger)}
+.dash-header{padding:16px 0 24px;border-bottom:1px solid var(--border);margin-bottom:24px}
+.car-compact{display:flex;gap:16px;align-items:center}
+.car-svg-compact{width:120px;height:90px;filter:drop-shadow(0 2px 8px rgba(0,217,255,.15))}
+.car-info-compact{display:flex;flex-direction:column;gap:8px;flex:1}
+.car-km{display:flex;gap:4px;align-items:baseline}
+.km-val{font-size:32px;font-weight:900;background:linear-gradient(135deg, var(--cyan), var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-variant-numeric:tabular-nums}
+.km-unit{font-size:13px;font-weight:700;color:var(--text-muted);text-transform:uppercase}
+.car-status-line{font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;color:var(--text-muted)}
+.car-badge{font-size:11px;font-weight:800;padding:4px 10px;border-radius:var(--radius-full);background:var(--success-soft);color:var(--success);text-transform:uppercase;letter-spacing:.5px;width:fit-content}
+.car-badge.warning{background:var(--warning-soft);color:var(--warning)}
+.car-badge.danger{background:var(--danger-soft);color:var(--danger)}
+
+/* Info cards grid in bottom section */
+.info-cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.info-card-small{background:linear-gradient(135deg, rgba(0,217,255,.12), rgba(0,255,136,.08));border:1px solid var(--border-strong);border-radius:var(--radius-sm);padding:16px;transition:all .3s var(--ease)}
+.info-card-small:hover{border-color:var(--cyan);box-shadow:0 8px 24px rgba(0,217,255,.15)}
+
+/* Spend display */
+.spend-display{display:flex;flex-direction:column;gap:8px;align-items:center;justify-content:center;min-height:100px}
+.spend-value{font-size:36px;font-weight:900;background:linear-gradient(135deg, var(--cyan), var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.spend-label{font-size:12px;color:var(--text-muted);text-align:center}
+
+/* Revision display */
+.revision-display{display:flex;flex-direction:column;gap:12px;min-height:100px;justify-content:center}
+.revision-item{display:flex;align-items:center;gap:12px;padding:8px 0}
+.revision-item .status{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
 .dash-info-grid{flex:1;display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
 .info-card{background:linear-gradient(135deg, rgba(0,217,255,.12), rgba(0,255,136,.08));border:2px solid var(--border-strong);border-radius:var(--radius);padding:24px;transition:all .3s var(--ease)}
 .info-card:hover{border-color:var(--cyan);box-shadow:0 12px 32px rgba(0,217,255,.18)}
@@ -258,12 +274,11 @@ button{cursor:pointer}
 .ql-tile:hover .ql-tile-delete{opacity:1}
 
 @media(max-width:1000px){
-  .dash-top{flex-direction:column;gap:24px;align-items:center}
-  .car-visual{min-width:auto;width:100%;max-width:280px}
-  .car-icon-container{width:220px;height:150px}
-  .km-value{font-size:40px}
-  .dash-info-grid{grid-template-columns:repeat(2,1fr);width:100%}
+  .car-compact{flex-direction:column;gap:12px;align-items:center}
+  .car-svg-compact{width:100px;height:75px}
+  .km-val{font-size:28px}
   .quicklinks-grid{grid-template-columns:repeat(2,1fr)}
+  .grid-2{grid-template-columns:1fr!important}
 }
 @media(max-width:560px){
   .dash-info-grid{grid-template-columns:1fr}
@@ -571,57 +586,30 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
     <div class="content">
       <!-- DASHBOARD -->
       <section class="page" id="page-dashboard">
-        <!-- TOP: Car Icon + Critical Info -->
-        <div class="dash-top">
-          <div class="car-visual">
-            <div class="car-icon-container">
-              <svg viewBox="0 0 200 140" class="car-svg">
-                <defs>
-                  <linearGradient id="carGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" style="stop-color:var(--cyan);stop-opacity:1" />
-                    <stop offset="100%" style="stop-color:var(--green);stop-opacity:1" />
-                  </linearGradient>
-                </defs>
-                <!-- Body -->
-                <rect x="30" y="60" width="140" height="55" rx="8" fill="url(#carGradient)" opacity="0.9"/>
-                <!-- Roof -->
-                <polygon points="50,60 60,30 140,30 150,60" fill="url(#carGradient)" opacity="0.85"/>
-                <!-- Windows -->
-                <rect x="65" y="40" width="25" height="25" rx="2" fill="rgba(0,217,255,.3)" stroke="var(--cyan)" stroke-width="2"/>
-                <rect x="110" y="40" width="25" height="25" rx="2" fill="rgba(0,217,255,.3)" stroke="var(--cyan)" stroke-width="2"/>
-                <!-- Wheels -->
-                <circle cx="55" cy="120" r="12" fill="rgba(255,255,255,.2)" stroke="var(--text-muted)" stroke-width="2"/>
-                <circle cx="145" cy="120" r="12" fill="rgba(255,255,255,.2)" stroke="var(--text-muted)" stroke-width="2"/>
-                <!-- Lights -->
-                <circle cx="32" cy="75" r="4" fill="var(--green)"/>
-                <circle cx="168" cy="75" r="4" fill="var(--red)"/>
-              </svg>
-            </div>
-            <div class="car-km-display">
-              <div class="km-value" id="gaugeKm">0</div>
-              <div class="km-label">km</div>
-              <div class="car-status-badge" id="carStatusBadge">OK</div>
-            </div>
-          </div>
-          <div class="dash-info-grid">
-            <div class="info-card">
-              <div class="info-label">ESTADO</div>
-              <div class="info-content" id="sideStatus"></div>
-            </div>
-            <div class="info-card">
-              <div class="info-label">BATERÍA</div>
-              <div class="info-value" id="sideBattery">—</div>
-              <div class="info-sub" id="sideVersion">—</div>
-            </div>
-            <div class="info-card">
-              <div class="info-label">CONSUMO MEDIO</div>
-              <div class="info-value" id="sideConsumption">—</div>
-              <div class="info-sub">kWh/100km</div>
-            </div>
-            <div class="info-card">
-              <div class="info-label">GASTO TOTAL</div>
-              <div class="info-value" id="sideSpent">—</div>
-              <div class="info-sub">cargas + servicio</div>
+        <!-- TOP: Car Info Compact -->
+        <div class="dash-header">
+          <div class="car-compact">
+            <svg viewBox="0 0 200 140" class="car-svg-compact">
+              <defs>
+                <linearGradient id="carGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:var(--cyan);stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:var(--green);stop-opacity:1" />
+                </linearGradient>
+              </defs>
+              <rect x="30" y="60" width="140" height="55" rx="8" fill="url(#carGradient)" opacity="0.9"/>
+              <polygon points="50,60 60,30 140,30 150,60" fill="url(#carGradient)" opacity="0.85"/>
+              <rect x="65" y="40" width="25" height="25" rx="2" fill="rgba(0,217,255,.3)" stroke="var(--cyan)" stroke-width="2"/>
+              <rect x="110" y="40" width="25" height="25" rx="2" fill="rgba(0,217,255,.3)" stroke="var(--cyan)" stroke-width="2"/>
+              <circle cx="55" cy="120" r="12" fill="rgba(255,255,255,.2)" stroke="var(--text-muted)" stroke-width="2"/>
+              <circle cx="145" cy="120" r="12" fill="rgba(255,255,255,.2)" stroke="var(--text-muted)" stroke-width="2"/>
+            </svg>
+            <div class="car-info-compact">
+              <div class="car-km">
+                <span class="km-val" id="gaugeKm">0</span>
+                <span class="km-unit">km</span>
+              </div>
+              <div class="car-status-line" id="sideStatus"></div>
+              <div class="car-badge" id="carStatusBadge">OK</div>
             </div>
           </div>
         </div>
@@ -636,15 +624,41 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
           <button type="submit" class="btn btn-ghost btn-sm">+ Añadir enlace</button>
         </form>
 
-        <!-- BOTTOM: Consumption Chart + Recent Activity -->
+        <!-- BOTTOM: Consumption Chart + Info Cards -->
         <div class="grid grid-2">
           <div class="card">
             <div class="card-head"><h2>Consumo por carga</h2><span class="hint">últimas 10</span></div>
             <div class="chart-box"><canvas id="chartConsumption"></canvas></div>
           </div>
           <div class="card">
-            <div class="card-head"><h2>Actividad reciente</h2></div>
-            <div id="dashRecentActivity" style="font-size:13px"></div>
+            <div class="card-head"><h2>Estado del vehículo</h2></div>
+            <div class="info-cards-grid">
+              <div class="info-card-small">
+                <div class="info-label">BATERÍA</div>
+                <div class="info-value" id="sideBattery">—</div>
+                <div class="info-sub" id="sideVersion">—</div>
+              </div>
+              <div class="info-card-small">
+                <div class="info-label">CONSUMO</div>
+                <div class="info-value" id="sideConsumption">—</div>
+                <div class="info-sub">kWh/100km</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- INFO CARDS ROW -->
+        <div class="grid grid-2" style="margin-top:16px">
+          <div class="card">
+            <div class="card-head"><h2>Gasto total</h2></div>
+            <div class="spend-display">
+              <div class="spend-value" id="sideSpent">—</div>
+              <div class="spend-label">cargas + mantenimiento</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h2>Próxima revisión</h2></div>
+            <div class="revision-display" id="revisionDisplay"></div>
           </div>
         </div>
       </section>
@@ -1165,7 +1179,31 @@ function renderDashboard(){
   document.getElementById('chipBattery').textContent = (VERSION_LABELS[c.version] || VERSION_LABELS.design).split('·')[0].trim() + ' · ' + VEHICLE_BATTERY_KWH + ' kWh';
 
   buildConsumptionChart();
-  buildRecentActivity();
+  buildRevisionDisplay();
+}
+
+function buildRevisionDisplay(){
+  const container = document.getElementById('revisionDisplay');
+  if(!container) return;
+  const sched = REVISIONS_SCHEDULE[state.lang] || REVISIONS_SCHEDULE.es;
+  const km = Number(state.config.currentKm)||0;
+  const months = monthsBetween(state.config.purchaseDate);
+  let next = sched.find(r=>!state.completedRevisions.includes(r.km) && (r.km>=km));
+  if(!next) next = sched.find(r=>!state.completedRevisions.includes(r.km)) || sched[sched.length-1];
+  if(!next){ container.innerHTML = '<div style="color:var(--text-faint)">Sin revisiones pendientes</div>'; return; }
+  const st = getScheduleForRevision(next, km, months);
+  const statusIcon = st.overdue ? '⚠️' : st.upcoming ? '🔔' : '✓';
+  const statusText = st.overdue ? 'VENCIDA' : st.upcoming ? 'PRÓXIMA' : 'OK';
+  const statusClass = st.overdue ? 'danger' : st.upcoming ? 'warning' : 'success';
+  container.innerHTML = `
+    <div style="display:flex;gap:12px;align-items:flex-start">
+      <div style="font-size:24px">${statusIcon}</div>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:var(--text)">${next.name}</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">${st.overdue ? 'VENCIDA' : st.kmRemaining + ' km'}</div>
+      </div>
+    </div>
+  `;
 }
 function buildConsumptionChart(){
   const ctx = document.getElementById('chartConsumption');
