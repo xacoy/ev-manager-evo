@@ -1733,6 +1733,7 @@ function init(){
   document.getElementById('c_date').valueAsDate = new Date();
   document.getElementById('m_date').valueAsDate = new Date();
   navigate('dashboard');
+  renderDashboard();
   renderAlerts();
   setInterval(renderAlerts, 60000);
 }
