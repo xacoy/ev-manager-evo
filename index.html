@@ -770,14 +770,26 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
 
       <!-- TALLER -->
       <section class="page" id="page-maintenance">
-        <!-- MANTENIMIENTO SECTION -->
+        <!-- RESUMEN SIEMPRE VISIBLE -->
+        <div class="grid grid-2" style="margin-bottom:20px">
+          <div class="card">
+            <div class="card-head"><h2>📊 Resumen TALLER</h2></div>
+            <div class="grid grid-2" style="gap:12px">
+              <div class="stat-card"><div class="label">Servicios registrados</div><div class="value" id="mntTotal" style="font-size:20px">0</div></div>
+              <div class="stat-card"><div class="label">Gasto total</div><div class="value" id="mntCost" style="font-size:20px">0 €</div></div>
+            </div>
+            <div class="stat-card" style="margin-top:12px"><div class="label">Último servicio</div><div class="value" id="mntLast" style="font-size:16px">—</div></div>
+          </div>
+        </div>
+
+        <!-- MANTENIMIENTO SECTION (COLLAPSED BY DEFAULT) -->
         <div class="expandable-section">
           <button class="expandable-header" id="maintSection">
             <span style="font-size:18px">🔧</span>
             <h2 style="margin:0;flex:1;text-align:left">Mantenimiento</h2>
             <span class="expand-toggle">▼</span>
           </button>
-          <div class="expandable-content" id="maintContent" style="display:block">
+          <div class="expandable-content" id="maintContent" style="display:none">
             <div class="grid grid-2">
               <div class="card">
                 <div class="card-head"><h2>Registrar mantenimiento</h2></div>
@@ -806,16 +818,8 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
               <button type="submit" class="btn btn-primary btn-block">Registrar mantenimiento</button>
             </form>
           </div>
-          <div class="card">
-            <div class="card-head"><h2>Resumen</h2></div>
-            <div class="grid grid-2" style="gap:12px">
-              <div class="stat-card"><div class="label">Registros</div><div class="value" id="mntTotal" style="font-size:20px">0</div></div>
-              <div class="stat-card"><div class="label">Gasto total</div><div class="value" id="mntCost" style="font-size:20px">0 €</div></div>
-            </div>
-            <div class="stat-card" style="margin-top:12px"><div class="label">Último servicio</div><div class="value" id="mntLast" style="font-size:16px">—</div></div>
-          </div>
         </div>
-        <div class="card" style="margin-top:16px">
+        <div class="card">
           <div class="card-head"><h2>Historial de mantenimiento</h2></div>
           <div class="table-wrap"><table>
             <thead><tr><th>Fecha</th><th>Tipo</th><th>Coste</th><th>Km</th><th>Notas</th><th></th></tr></thead>
@@ -826,14 +830,14 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
           </div>
         </div>
 
-        <!-- REVISIONES SECTION -->
+        <!-- REVISIONES SECTION (COLLAPSED BY DEFAULT) -->
         <div class="expandable-section" style="margin-top:16px">
           <button class="expandable-header" id="revisSection">
             <span style="font-size:18px">📅</span>
             <h2 style="margin:0;flex:1;text-align:left">Revisiones</h2>
             <span class="expand-toggle">▼</span>
           </button>
-          <div class="expandable-content" id="revisContent" style="display:block">
+          <div class="expandable-content" id="revisContent" style="display:none">
             <div class="card" style="margin-bottom:16px">
               <div class="card-head"><h2>Calendario preventivo BYD</h2><span class="hint" id="revLangHint">basado en km / meses desde la compra</span></div>
               <p style="font-size:12px;color:var(--text-faint)">Orientativo. Verifica los intervalos exactos en el manual oficial de tu mercado.</p>
