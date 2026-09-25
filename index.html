@@ -136,19 +136,23 @@ button{cursor:pointer}
 
 .top-left{display:flex;align-items:center;gap:8px;flex:0 0 auto}
 .top-right{display:flex;align-items:center;gap:8px}
-.expandable-section{margin-top:16px}
+.expandable-section{margin-top:20px}
 .expandable-header{
-  display:flex;align-items:center;gap:12px;width:100%;padding:14px 20px;
-  background:linear-gradient(135deg, var(--accent-soft), var(--success-soft));
-  border:1.5px solid var(--accent);border-radius:var(--radius);cursor:pointer;
-  font-size:15px;color:var(--text);font-weight:600;transition:all .3s var(--ease);
+  display:flex;align-items:center;gap:14px;width:100%;padding:18px 24px;
+  background:linear-gradient(135deg, var(--cyan), var(--blue));
+  border:none;border-radius:var(--radius);cursor:pointer;
+  font-size:16px;color:white;font-weight:700;transition:all .3s var(--ease);
+  box-shadow:0 6px 20px rgba(0,217,255,.25), 0 0 1px rgba(0,217,255,.6);
 }
 .expandable-header:hover{
-  background:linear-gradient(135deg, rgba(0,217,255,.15), rgba(0,255,136,.1));
-  box-shadow:0 4px 16px rgba(0,217,255,.2);
+  background:linear-gradient(135deg, var(--cyan), var(--accent-2));
+  box-shadow:0 10px 30px rgba(0,217,255,.35), 0 0 2px rgba(0,217,255,.8);
+  transform:translateY(-2px);
 }
-.expandable-header h2{font-size:inherit;font-weight:inherit}
-.expand-toggle{transition:transform .3s var(--ease);font-size:12px;flex-shrink:0}
+.expandable-header:active{transform:translateY(0)}
+.expandable-header h2{font-size:inherit;font-weight:inherit;margin:0}
+.expandable-header span:first-child{font-size:22px;flex-shrink:0}
+.expand-toggle{transition:transform .3s var(--ease);font-size:14px;flex-shrink:0;margin-left:auto}
 .expandable-content{padding:16px 0;margin-top:12px}
 .chip{
   display:flex;align-items:center;gap:12px;padding:10px 20px;border-radius:var(--radius);
@@ -775,15 +779,22 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
 
       <!-- TALLER -->
       <section class="page" id="page-maintenance">
-        <!-- RESUMEN SIEMPRE VISIBLE -->
-        <div class="grid grid-2" style="margin-bottom:20px">
-          <div class="card">
-            <div class="card-head"><h2>📊 Resumen TALLER</h2></div>
-            <div class="grid grid-2" style="gap:12px">
-              <div class="stat-card"><div class="label">Servicios registrados</div><div class="value" id="mntTotal" style="font-size:20px">0</div></div>
-              <div class="stat-card"><div class="label">Gasto total</div><div class="value" id="mntCost" style="font-size:20px">0 €</div></div>
+        <!-- RESUMEN SIEMPRE VISIBLE - EXPANDIDO -->
+        <div class="card" style="margin-bottom:24px;background:linear-gradient(135deg, rgba(0,217,255,.1), rgba(0,255,136,.05));border:1.5px solid var(--accent)">
+          <div class="card-head"><h2 style="font-size:20px">📊 Resumen TALLER</h2></div>
+          <div class="grid grid-3" style="gap:16px">
+            <div class="stat-card" style="padding:16px;background:rgba(0,217,255,.08);border-radius:12px;border:1px solid var(--accent)">
+              <div class="label" style="font-size:13px">Servicios registrados</div>
+              <div class="value" id="mntTotal" style="font-size:36px;font-weight:900;color:var(--accent)">0</div>
             </div>
-            <div class="stat-card" style="margin-top:12px"><div class="label">Último servicio</div><div class="value" id="mntLast" style="font-size:16px">—</div></div>
+            <div class="stat-card" style="padding:16px;background:rgba(0,255,136,.08);border-radius:12px;border:1px solid var(--accent-2)">
+              <div class="label" style="font-size:13px">Gasto total</div>
+              <div class="value" id="mntCost" style="font-size:36px;font-weight:900;color:var(--accent-2)">0 €</div>
+            </div>
+            <div class="stat-card" style="padding:16px;background:rgba(255,107,157,.08);border-radius:12px;border:1px solid var(--accent-3)">
+              <div class="label" style="font-size:13px">Último servicio</div>
+              <div class="value" id="mntLast" style="font-size:18px;font-weight:600;color:var(--accent-3)">—</div>
+            </div>
           </div>
         </div>
 
