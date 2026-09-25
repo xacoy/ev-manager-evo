@@ -1547,39 +1547,45 @@ function applyStateToForms(){
 }
 
 function setupEventListeners(){
-  document.querySelectorAll('.nav-item[data-page]').forEach(btn=>{
-    btn.addEventListener('click', ()=>navigate(btn.dataset.page));
-  });
+  try {
+    document.querySelectorAll('.nav-item[data-page]').forEach(btn=>{
+      btn.addEventListener('click', ()=>navigate(btn.dataset.page));
+    });
 
-  document.querySelectorAll('.nav-subitem[data-page]').forEach(btn=>{
-    btn.addEventListener('click', ()=>navigate(btn.dataset.page));
-  });
+    document.querySelectorAll('.nav-subitem[data-page]').forEach(btn=>{
+      btn.addEventListener('click', ()=>navigate(btn.dataset.page));
+    });
 
-  document.getElementById('homeBtn').addEventListener('click', ()=>navigate('dashboard'));
-  document.getElementById('homeTopBtn').addEventListener('click', ()=>{ navigate('dashboard'); document.getElementById('moreMenuDropdown').classList.remove('open'); });
-  document.getElementById('setupTopBtn').addEventListener('click', ()=>{ navigate('setup'); document.getElementById('moreMenuDropdown').classList.remove('open'); });
-  document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+    const tryAdd = (id, handler) => {
+      const el = document.getElementById(id);
+      if(el) el.addEventListener('click', handler);
+    };
 
-  document.getElementById('maintSection').addEventListener('click', e=>{
-    e.preventDefault();
-    const content = document.getElementById('maintContent');
-    const toggle = e.target.closest('.expandable-header').querySelector('.expand-toggle');
-    const isOpen = content.style.display !== 'none';
-    content.style.display = isOpen ? 'none' : 'block';
-    toggle.style.transform = isOpen ? '' : 'rotate(180deg)';
-  });
+    tryAdd('homeBtn', ()=>navigate('dashboard'));
+    tryAdd('homeTopBtn', ()=>{ navigate('dashboard'); const dd = document.getElementById('moreMenuDropdown'); if(dd) dd.classList.remove('open'); });
+    tryAdd('setupTopBtn', ()=>{ navigate('setup'); const dd = document.getElementById('moreMenuDropdown'); if(dd) dd.classList.remove('open'); });
+    tryAdd('themeToggle', toggleTheme);
 
-  document.getElementById('revisSection').addEventListener('click', e=>{
-    e.preventDefault();
-    const content = document.getElementById('revisContent');
-    const toggle = e.target.closest('.expandable-header').querySelector('.expand-toggle');
-    const isOpen = content.style.display !== 'none';
-    content.style.display = isOpen ? 'none' : 'block';
-    toggle.style.transform = isOpen ? '' : 'rotate(180deg)';
-  });
+    tryAdd('maintSection', e=>{
+      e.preventDefault();
+      const content = document.getElementById('maintContent');
+      const toggle = e.target.closest('.expandable-header').querySelector('.expand-toggle');
+      const isOpen = content.style.display !== 'none';
+      content.style.display = isOpen ? 'none' : 'block';
+      toggle.style.transform = isOpen ? '' : 'rotate(180deg)';
+    });
 
-  document.getElementById('addLinkBtn').addEventListener('click', ()=>{ document.getElementById('addLinkOverlay').classList.add('open'); document.getElementById('moreMenuDropdown').classList.remove('open'); });
-  document.getElementById('addLinkCancel').addEventListener('click', ()=>{ document.getElementById('addLinkOverlay').classList.remove('open'); });
+    tryAdd('revisSection', e=>{
+      e.preventDefault();
+      const content = document.getElementById('revisContent');
+      const toggle = e.target.closest('.expandable-header').querySelector('.expand-toggle');
+      const isOpen = content.style.display !== 'none';
+      content.style.display = isOpen ? 'none' : 'block';
+      toggle.style.transform = isOpen ? '' : 'rotate(180deg)';
+    });
+
+    tryAdd('addLinkBtn', ()=>{ document.getElementById('addLinkOverlay').classList.add('open'); document.getElementById('moreMenuDropdown').classList.remove('open'); });
+    tryAdd('addLinkCancel', ()=>{ document.getElementById('addLinkOverlay').classList.remove('open'); });
 
   document.getElementById('exportBtn').addEventListener('click', ()=>{ exportData(); document.getElementById('moreMenuDropdown').classList.remove('open'); });
   document.getElementById('importBtn').addEventListener('click', ()=>{ document.getElementById('importFile').click(); document.getElementById('moreMenuDropdown').classList.remove('open'); });
@@ -1726,6 +1732,9 @@ function setupEventListeners(){
   if(manLangEs) manLangEs.addEventListener('click', ()=>{ state.manualLang='es'; renderManual(); });
   const manLangEn = document.getElementById('manLangEn');
   if(manLangEn) manLangEn.addEventListener('click', ()=>{ state.manualLang='en'; renderManual(); });
+  } catch(e) {
+    console.error('setupEventListeners error:', e);
+  }
 }
 
 /* ---------------- init ---------------- */
