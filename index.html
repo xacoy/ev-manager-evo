@@ -863,23 +863,30 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
 
       <!-- MANUAL -->
       <section class="page" id="page-manual">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
-          <div class="card">
-            <div class="card-head"><h3>Manual oficial BYD</h3></div>
-            <div style="display:grid;gap:8px">
-              <a href="https://www.byd.com/es-es/service-maintenance/owners-manual.html" target="_blank" class="btn btn-primary btn-block">📖 Descargar manual completo</a>
+        <div style="display:grid;gap:16px">
+          <!-- TOP: Descargar Manual Oficial -->
+          <div class="card" style="background:linear-gradient(135deg,var(--cyan-soft),var(--blue-soft));border:2px solid var(--cyan)">
+            <div class="card-head"><h2 style="color:var(--cyan)">📖 Manual Oficial BYD Atto 3 EVO</h2></div>
+            <p style="color:var(--text-muted);margin-bottom:12px">Acceso directo al manual oficial de BYD. Contiene especificaciones técnicas, procedimientos de mantenimiento y garantía.</p>
+            <a href="https://www.google.com/search?q=BYD+Atto+3+EVO+manual+PDF+filetype:pdf" target="_blank" class="btn btn-primary btn-block">📥 Descargar PDF oficial</a>
+          </div>
+
+          <!-- MIDDLE: Manual Integrado -->
+          <div class="card" style="background:linear-gradient(135deg,var(--green-soft),var(--blue-soft));border:2px solid var(--green)">
+            <div class="card-head"><h2 style="color:var(--green)">📚 Guía de mantenimiento integrada</h2></div>
+            <p style="color:var(--text-muted);margin-bottom:12px">Manual práctico con instrucciones paso a paso, diagramas y ubicaciones de componentes. Búsqueda integrada.</p>
+            <div style="display:grid;gap:8px;margin-bottom:12px">
+              <input id="manualSearch" type="text" placeholder="Buscar: fusibles, batería, neumáticos, carga..." style="width:100%;background:var(--bg-2);border:1px solid var(--border);border-radius:10px;padding:12px;font-size:13px">
+              <div class="lang-toggle" style="gap:4px">
+                <button id="manLangEs" class="active" style="flex:1;padding:8px">🇪🇸 Español</button>
+                <button id="manLangEn" style="flex:1;padding:8px">🇬🇧 English</button>
+              </div>
             </div>
           </div>
-          <div class="card">
-            <div class="card-head"><h3>Buscar en esta guía</h3></div>
-            <input id="manualSearch" type="text" placeholder="batería, carga, consumo, frenos..." style="width:100%;background:var(--bg-2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:13px;margin-bottom:8px">
-            <div class="lang-toggle" style="gap:4px">
-              <button id="manLangEs" class="active" style="flex:1">🇪🇸 Español</button>
-              <button id="manLangEn" style="flex:1">🇬🇧 English</button>
-            </div>
-          </div>
+
+          <!-- RESULTS: Contenido del manual -->
+          <div id="manualContent"></div>
         </div>
-        <div id="manualContent"></div>
       </section>
 
       <!-- STATS -->
