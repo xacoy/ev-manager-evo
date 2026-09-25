@@ -1735,6 +1735,56 @@ function init(){
   document.getElementById('c_date').valueAsDate = new Date();
   document.getElementById('m_date').valueAsDate = new Date();
   navigate('dashboard');
+  renderQuickLinks();
+  const c = state.config;
+  const km = Number(c.currentKm)||0;
+  const totalCost = state.charges.reduce((s,x)=>s+Number(x.cost||0),0) + state.maintenance.reduce((s,x)=>s+Number(x.cost||0),0);
+  const sched = REVISIONS_SCHEDULE[state.lang] || REVISIONS_SCHEDULE.es;
+  const months = monthsBetween(c.purchaseDate);
+  let next = sched.find(r=>!state.completedRevisions.includes(r.km) && (r.km>=km));
+  if(!next) next = sched.find(r=>!state.completedRevisions.includes(r.km)) || sched[sched.length-1];
+  const st = next ? getScheduleForRevision(next, km, months) : {overdue:false,upcoming:false,kmRemaining:0};
+  const alerts = computeAlerts();
+  const overdueCount = alerts.filter(a=>a.level==='overdue').length;
+  document.getElementById('gaugeKm').textContent = km.toLocaleString('es-ES');
+  const carStatusBadge = document.getElementById('carStatusBadge');
+  if(!c.purchaseDate){
+    carStatusBadge.style.display = 'none';
+  } else if(st.overdue || overdueCount){
+    carStatusBadge.className = 'car-status-badge danger';
+    carStatusBadge.textContent = '⚠️ Revisión vencida';
+    carStatusBadge.style.cursor = 'pointer';
+    carStatusBadge.onclick = ()=>navigate('maintenance');
+  } else if(st.upcoming){
+    carStatusBadge.className = 'car-status-badge warning';
+    carStatusBadge.textContent = '🔔 Próxima revisión';
+    carStatusBadge.style.cursor = 'pointer';
+    carStatusBadge.onclick = ()=>navigate('maintenance');
+  } else {
+    carStatusBadge.className = 'car-status-badge';
+    carStatusBadge.textContent = '✓ OK';
+    carStatusBadge.style.cursor = 'default';
+  }
+  const status = document.getElementById('sideStatus');
+  if(st.overdue || overdueCount){
+    status.className = 'side-status danger';
+    status.innerHTML = ICONS.alert + `<span>${overdueCount||1} revisión(es) vencida(s)</span>`;
+  } else if(st.upcoming){
+    status.className = 'side-status warning';
+    status.innerHTML = ICONS.clock + `<span>${next.name} — faltan ${st.kmRemaining.toLocaleString('es-ES')} km</span>`;
+  } else {
+    status.className = 'side-status ok';
+    status.innerHTML = ICONS.check + '<span>Revisiones al día</span>';
+  }
+  document.getElementById('sideBattery').textContent = c.version==='design' ? '74.8 kWh (RWD)' : '74.8 kWh (AWD)';
+  document.getElementById('sideVersion').textContent = c.version==='design' ? 'Design (RWD) · 313 CV' : 'Excellence (AWD) · 449 CV';
+  document.getElementById('sideConsumption').textContent = (c.avgConsumption||15).toFixed(1);
+  document.getElementById('sideSpent').textContent = fmtEUR(totalCost);
+  const lastCharge = state.charges[state.charges.length-1];
+  if(lastCharge){
+    document.getElementById('lastChargeInfo').innerHTML = `${lastCharge.kWh} kWh · ${fmtEUR(lastCharge.cost)}`;
+    document.getElementById('lastChargeDate').textContent = fmtDate(lastCharge.date);
+  }
   renderAlerts();
   setInterval(renderAlerts, 60000);
 }
