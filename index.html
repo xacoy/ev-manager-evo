@@ -865,11 +865,9 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
       <section class="page" id="page-manual">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
           <div class="card">
-            <div class="card-head"><h3>Descargar manual oficial BYD Atto 3 EVO</h3></div>
+            <div class="card-head"><h3>Manual oficial BYD</h3></div>
             <div style="display:grid;gap:8px">
-              <a href="https://www.byd.com/es-es/service-maintenance/owners-manual.html" target="_blank" class="btn btn-primary btn-block">📖 Manual Oficial BYD</a>
-              <a href="https://www.electromaps.com/" target="_blank" class="btn btn-outline btn-block">🔌 Red de carga Electromaps</a>
-              <a href="https://www.plugshare.com/" target="_blank" class="btn btn-outline btn-block">🌍 Red de carga PlugShare</a>
+              <a href="https://www.byd.com/es-es/service-maintenance/owners-manual.html" target="_blank" class="btn btn-primary btn-block">📖 Descargar manual completo</a>
             </div>
           </div>
           <div class="card">
@@ -1435,14 +1433,22 @@ function renderManual(){
   const container = document.getElementById('manualContent');
   if(!items.length){ container.innerHTML = `<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg><p>Sin resultados para "${escapeHtml(q)}"</p><small>Consulta el manual oficial en los enlaces de arriba</small></div>`; return; }
   container.innerHTML = Object.keys(byCat).map(cat=>`
-    <div class="card"><div class="card-head"><h3>${cat}</h3></div><div style="display:grid;gap:16px">
-    ${byCat[cat].map(it=>{
+    <div class="card"><div class="card-head"><h3>${cat}</h3></div><div style="display:grid;gap:12px">
+    ${byCat[cat].map((it,idx)=>{
       const fullContent = highlight(escapeHtml(it.content).replace(/\n/g,'<br>'),q);
-      return `<div style="border-left:3px solid var(--accent);padding-left:12px;background:var(--bg-2);padding:12px;border-radius:8px">
-        <h4 style="margin-bottom:4px;color:var(--accent)">${highlight(it.title,q)}</h4>
-        ${it.location ? `<div style="font-size:11px;color:var(--text-faint);margin-bottom:8px">📍 ${it.location}</div>` : ''}
-        <p style="font-size:13px;color:var(--text-muted);margin:8px 0;line-height:1.6;white-space:pre-wrap">${fullContent}</p>
-        ${it.keywords ? '<div style="font-size:11px;color:var(--text-faint);margin-top:8px"><strong>Tags:</strong> '+it.keywords.join(', ')+'</div>' : ''}
+      const itemId = 'manual-item-'+cat.replace(/\s+/g,'-')+'-'+idx;
+      return `
+      <div style="border:1px solid var(--border-strong);border-radius:8px;overflow:hidden">
+        <button onclick="document.getElementById('${itemId}').hidden=!document.getElementById('${itemId}').hidden;event.target.closest('[data-toggle]').style.opacity=event.target.closest('[data-toggle]').style.opacity==='0.6'?'1':'0.6'" data-toggle="true" style="width:100%;text-align:left;padding:12px;background:var(--bg-2);border:none;cursor:pointer;color:var(--text);font-weight:600;display:flex;justify-content:space-between;align-items:center">
+          <span>${highlight(it.title,q)}</span>
+          <span style="font-size:12px">▼</span>
+        </button>
+        <div id="${itemId}" style="padding:12px;background:var(--bg-1)">
+          ${it.location ? `<div style="font-size:11px;color:var(--accent);margin-bottom:8px;font-weight:600">📍 ${it.location}</div>` : ''}
+          <p style="font-size:13px;color:var(--text-muted);margin:8px 0;line-height:1.6;white-space:pre-wrap">${fullContent}</p>
+          ${it.keywords ? '<div style="font-size:11px;color:var(--text-faint);margin-top:12px"><strong>Tags:</strong> '+it.keywords.join(', ')+'</div>' : ''}
+          <a href="https://www.byd.com/es-es/service-maintenance/owners-manual.html" target="_blank" class="btn btn-ghost btn-sm" style="margin-top:12px;display:inline-block">📖 Ver en manual oficial →</a>
+        </div>
       </div>`;
     }).join('')}
     </div></div>
