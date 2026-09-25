@@ -602,6 +602,7 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
             <button class="dropdown-item" id="homeTopBtn" data-page="dashboard"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Inicio</button>
             <button class="dropdown-item" id="setupTopBtn" data-page="setup"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Configuración</button>
             <hr style="border:none;border-top:1px solid var(--border);margin:4px 0">
+            <button class="dropdown-item" id="addLinkBtn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Añadir enlace</button>
             <button class="dropdown-item" id="exportBtn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Exportar datos</button>
             <button class="dropdown-item" id="importBtn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>Importar datos</button>
           </div>
@@ -643,13 +644,6 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
 
         <!-- MIDDLE: Quick Links as Large Tiles -->
         <div class="quicklinks-grid" id="quickLinksGrid"></div>
-
-        <!-- Quick Link Form -->
-        <form id="quickLinkForm" class="quicklink-form" style="margin-bottom:22px">
-          <input id="ql_title" type="text" placeholder="Nombre (ej. Mi seguro)" required maxlength="30">
-          <input id="ql_url" type="text" placeholder="https://..." required>
-          <button type="submit" class="btn btn-ghost btn-sm">+ Añadir enlace</button>
-        </form>
 
         <!-- BOTTOM: Consumption Chart + Vehicle Status -->
         <div class="grid grid-2">
@@ -934,6 +928,20 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
 </div>
 
 <!-- Import confirm modal -->
+<div class="overlay" id="addLinkOverlay">
+  <div class="modal">
+    <h3>Añadir enlace rápido</h3>
+    <form id="quickLinkFormModal" style="display:flex;flex-direction:column;gap:12px">
+      <div class="field"><label>Nombre</label><input id="ql_title_modal" type="text" placeholder="Ej. Mi seguro" required maxlength="30"></div>
+      <div class="field"><label>URL</label><input id="ql_url_modal" type="text" placeholder="https://..." required></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" id="addLinkCancel">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar enlace</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <div class="overlay" id="importOverlay">
   <div class="modal">
     <h3>Importar datos</h3>
@@ -1580,6 +1588,9 @@ function setupEventListeners(){
     toggle.style.transform = isOpen ? '' : 'rotate(180deg)';
   });
 
+  document.getElementById('addLinkBtn').addEventListener('click', ()=>{ document.getElementById('addLinkOverlay').classList.add('open'); document.getElementById('moreMenuDropdown').classList.remove('open'); });
+  document.getElementById('addLinkCancel').addEventListener('click', ()=>{ document.getElementById('addLinkOverlay').classList.remove('open'); });
+
   document.getElementById('exportBtn').addEventListener('click', ()=>{ exportData(); document.getElementById('moreMenuDropdown').classList.remove('open'); });
   document.getElementById('importBtn').addEventListener('click', ()=>{ document.getElementById('importFile').click(); document.getElementById('moreMenuDropdown').classList.remove('open'); });
   document.getElementById('importFile').addEventListener('change', e=>{ if(e.target.files[0]) handleImportFile(e.target.files[0]); e.target.value=''; });
@@ -1706,15 +1717,16 @@ function setupEventListeners(){
   });
   document.getElementById('noteSearch').addEventListener('input', renderNotes);
 
-  document.getElementById('quickLinkForm').addEventListener('submit', e=>{
+  document.getElementById('quickLinkFormModal').addEventListener('submit', e=>{
     e.preventDefault();
-    const title = document.getElementById('ql_title').value.trim();
-    let url = document.getElementById('ql_url').value.trim();
+    const title = document.getElementById('ql_title_modal').value.trim();
+    let url = document.getElementById('ql_url_modal').value.trim();
     if(!title || !url) return;
     if(!/^https?:\/\//i.test(url) && !/^tel:/i.test(url)) url = 'https://' + url;
     state.quickLinks = state.quickLinks || [];
     state.quickLinks.push({ id: 'custom-'+uid(), title, url, icon:'link' });
     saveState(); renderQuickLinks(); e.target.reset();
+    document.getElementById('addLinkOverlay').classList.remove('open');
     toast('Enlace añadido', 'success');
   });
 
