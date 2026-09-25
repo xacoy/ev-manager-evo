@@ -136,15 +136,20 @@ button{cursor:pointer}
 
 .top-left{display:flex;align-items:center;gap:8px;flex:0 0 auto}
 .top-right{display:flex;align-items:center;gap:8px}
-.expandable-section{border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--bg-card)}
+.expandable-section{margin-top:16px}
 .expandable-header{
-  display:flex;align-items:center;gap:12px;width:100%;padding:16px 20px;
-  background:linear-gradient(135deg, rgba(0,217,255,.08), rgba(0,255,136,.04));
-  border:none;cursor:pointer;font-size:16px;color:var(--text);transition:all .3s var(--ease);
+  display:flex;align-items:center;gap:12px;width:100%;padding:14px 20px;
+  background:linear-gradient(135deg, var(--accent-soft), var(--success-soft));
+  border:1.5px solid var(--accent);border-radius:var(--radius);cursor:pointer;
+  font-size:15px;color:var(--text);font-weight:600;transition:all .3s var(--ease);
 }
-.expandable-header:hover{background:linear-gradient(135deg, rgba(0,217,255,.12), rgba(0,255,136,.08))}
-.expand-toggle{transition:transform .3s var(--ease);font-size:12px}
-.expandable-content{padding:16px 20px}
+.expandable-header:hover{
+  background:linear-gradient(135deg, rgba(0,217,255,.15), rgba(0,255,136,.1));
+  box-shadow:0 4px 16px rgba(0,217,255,.2);
+}
+.expandable-header h2{font-size:inherit;font-weight:inherit}
+.expand-toggle{transition:transform .3s var(--ease);font-size:12px;flex-shrink:0}
+.expandable-content{padding:16px 0;margin-top:12px}
 .chip{
   display:flex;align-items:center;gap:12px;padding:10px 20px;border-radius:var(--radius);
   background:linear-gradient(135deg, rgba(6,182,212,.12), rgba(14,165,233,.08));
@@ -819,15 +824,14 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
             </form>
           </div>
         </div>
-        <div class="card">
+        <div class="card" style="margin-top:16px">
           <div class="card-head"><h2>Historial de mantenimiento</h2></div>
           <div class="table-wrap"><table>
             <thead><tr><th>Fecha</th><th>Tipo</th><th>Coste</th><th>Km</th><th>Notas</th><th></th></tr></thead>
             <tbody id="maintTable"></tbody>
           </table></div>
-              <div id="maintEmpty" class="empty-state" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg><p>Aún no hay mantenimientos registrados</p></div>
-            </div>
-          </div>
+          <div id="maintEmpty" class="empty-state" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg><p>Aún no hay mantenimientos registrados</p></div>
+        </div>
         </div>
 
         <!-- REVISIONES SECTION (COLLAPSED BY DEFAULT) -->
