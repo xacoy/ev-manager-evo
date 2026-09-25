@@ -843,11 +843,22 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
 
       <!-- MANUAL -->
       <section class="page" id="page-manual">
-        <div class="manual-search">
-          <input id="manualSearch" type="text" placeholder="Buscar: batería, carga, consumo, frenos, garantía...">
-          <div class="lang-toggle">
-            <button id="manLangEs" class="active">🇪🇸 ES</button>
-            <button id="manLangEn">🇬🇧 EN</button>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+          <div class="card">
+            <div class="card-head"><h3>Descargar manual oficial BYD Atto 3 EVO</h3></div>
+            <div style="display:grid;gap:8px">
+              <a href="https://www.byd.com/es-es/service-maintenance/owners-manual.html" target="_blank" class="btn btn-primary btn-block">📖 Manual Oficial BYD</a>
+              <a href="https://www.electromaps.com/" target="_blank" class="btn btn-outline btn-block">🔌 Red de carga Electromaps</a>
+              <a href="https://www.plugshare.com/" target="_blank" class="btn btn-outline btn-block">🌍 Red de carga PlugShare</a>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>Buscar en esta guía</h3></div>
+            <input id="manualSearch" type="text" placeholder="batería, carga, consumo, frenos..." style="width:100%;background:var(--bg-2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:13px;margin-bottom:8px">
+            <div class="lang-toggle" style="gap:4px">
+              <button id="manLangEs" class="active" style="flex:1">🇪🇸 Español</button>
+              <button id="manLangEn" style="flex:1">🇬🇧 English</button>
+            </div>
           </div>
         </div>
         <div id="manualContent"></div>
@@ -1385,19 +1396,26 @@ function renderManual(){
   const q = normalizeText(document.getElementById('manualSearch').value||'').trim();
   const items = (MANUAL_CONTENT[lang]||[]).filter(it=>{
     if(!q) return true;
-    return normalizeText(it.title).includes(q) || normalizeText(it.content).includes(q) || (it.keywords||[]).some(k=>normalizeText(k).includes(q));
+    const titleMatch = normalizeText(it.title).includes(q);
+    const contentMatch = normalizeText(it.content).includes(q);
+    const keywordMatch = (it.keywords||[]).some(k=>normalizeText(k).includes(q));
+    return titleMatch || contentMatch || keywordMatch;
   });
   const byCat = {};
   items.forEach(it=>{ (byCat[it.category] = byCat[it.category]||[]).push(it); });
   const container = document.getElementById('manualContent');
-  if(!items.length){ container.innerHTML = `<div class="empty-state"><p>Sin resultados para "${escapeHtml(q)}"</p></div>`; return; }
+  if(!items.length){ container.innerHTML = `<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg><p>Sin resultados para "${escapeHtml(q)}"</p><small>Consulta el manual oficial en los enlaces de arriba</small></div>`; return; }
   container.innerHTML = Object.keys(byCat).map(cat=>`
-    <div class="manual-cat">${cat}</div>
-    ${byCat[cat].map(it=>`
-      <div class="manual-item">
-        <h4>${highlight(it.title,q)}</h4>
-        <pre>${highlight(escapeHtml(it.content),q)}</pre>
-      </div>`).join('')}
+    <div class="card"><div class="card-head"><h3>${cat}</h3></div><div style="display:grid;gap:12px">
+    ${byCat[cat].map(it=>{
+      const preview = escapeHtml(it.content).substring(0,180).replace(/\n+/g, ' ') + (it.content.length > 180 ? '...' : '');
+      return `<div style="border-left:3px solid var(--accent);padding-left:12px">
+        <h4 style="margin-bottom:4px">${highlight(it.title,q)}</h4>
+        <p style="font-size:13px;color:var(--text-muted);margin:0">${highlight(preview,q)}</p>
+        ${it.keywords ? '<div style="font-size:11px;color:var(--text-faint);margin-top:6px"><strong>Tags:</strong> '+it.keywords.join(', ')+'</div>' : ''}
+      </div>`;
+    }).join('')}
+    </div></div>
   `).join('');
 }
 const ACCENT_MAP = { a:'[aáàä]', e:'[eéèë]', i:'[ií ìï]'.replace(' ',''), o:'[oóòö]', u:'[uúùü]', n:'[nñ]' };
