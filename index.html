@@ -1735,7 +1735,8 @@ function init(){
   document.getElementById('c_date').valueAsDate = new Date();
   document.getElementById('m_date').valueAsDate = new Date();
   navigate('dashboard');
-  renderQuickLinks();
+  requestAnimationFrame(() => {
+    renderQuickLinks();
   const c = state.config;
   const km = Number(c.currentKm)||0;
   const totalCost = state.charges.reduce((s,x)=>s+Number(x.cost||0),0) + state.maintenance.reduce((s,x)=>s+Number(x.cost||0),0);
@@ -1787,6 +1788,7 @@ function init(){
   }
   renderAlerts();
   setInterval(renderAlerts, 60000);
+  });
 }
 document.addEventListener('DOMContentLoaded', init);
 </script>
