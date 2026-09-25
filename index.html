@@ -136,6 +136,15 @@ button{cursor:pointer}
 
 .top-left{display:flex;align-items:center;gap:8px;flex:0 0 auto}
 .top-right{display:flex;align-items:center;gap:8px}
+.expandable-section{border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--bg-card)}
+.expandable-header{
+  display:flex;align-items:center;gap:12px;width:100%;padding:16px 20px;
+  background:linear-gradient(135deg, rgba(0,217,255,.08), rgba(0,255,136,.04));
+  border:none;cursor:pointer;font-size:16px;color:var(--text);transition:all .3s var(--ease);
+}
+.expandable-header:hover{background:linear-gradient(135deg, rgba(0,217,255,.12), rgba(0,255,136,.08))}
+.expand-toggle{transition:transform .3s var(--ease);font-size:12px}
+.expandable-content{padding:16px 20px}
 .chip{
   display:flex;align-items:center;gap:12px;padding:10px 20px;border-radius:var(--radius);
   background:linear-gradient(135deg, rgba(6,182,212,.12), rgba(14,165,233,.08));
@@ -542,13 +551,7 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
     <div class="rail-brand"><div class="brand-mark"><svg viewBox="0 0 24 24" stroke-width="0"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div></div>
     <button class="nav-item" data-page="dashboard"><span class="ni-indicator"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></span><span class="ni-label">Inicio</span></button>
     <button class="nav-item" data-page="charges"><span class="ni-indicator"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span><span class="ni-label">Cargas</span></button>
-    <div class="nav-group">
-      <button class="nav-item" id="tallerLabel" style="position:relative"><span class="ni-indicator"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span><span class="ni-label">Taller</span></button>
-      <button class="nav-item nav-subitem" id="maintToggle" style="padding:12px 8px;font-size:10px"><span class="ni-indicator" style="font-size:20px">↳</span><span class="ni-label">Mantenimiento</span><span class="ni-toggle">▼</span></button>
-      <button class="nav-subitem" data-page="maintenance" id="maintHistory" style="display:none;opacity:0.7"><span class="ni-indicator" style="font-size:16px">📋</span><span class="ni-label" style="font-size:9px">Historial</span></button>
-      <button class="nav-item nav-subitem" id="revisToggle" style="padding:12px 8px;font-size:10px"><span class="ni-indicator" style="font-size:20px">↳</span><span class="ni-label">Revisiones</span><span class="ni-toggle">▼</span></button>
-      <button class="nav-subitem" data-page="revisions" id="revisHistory" style="display:none;opacity:0.7"><span class="ni-indicator" style="font-size:16px">📅</span><span class="ni-label" style="font-size:9px">Historial</span></button>
-    </div>
+    <button class="nav-item" data-page="maintenance"><span class="ni-indicator"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span><span class="ni-label">Taller</span></button>
     <button class="nav-item" data-page="notes"><span class="ni-indicator"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg></span><span class="ni-label">Notas</span></button>
     <button class="nav-item" data-page="manual"><span class="ni-indicator"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="ni-label">Manual</span></button>
     <button class="nav-item" data-page="stats"><span class="ni-indicator"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18M18 17V9M13 17V5M8 17v-4"/></svg></span><span class="ni-label">Datos</span></button>
@@ -765,11 +768,19 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
         </div>
       </section>
 
-      <!-- MAINTENANCE -->
+      <!-- TALLER -->
       <section class="page" id="page-maintenance">
-        <div class="grid grid-2">
-          <div class="card">
-            <div class="card-head"><h2>Registrar mantenimiento</h2></div>
+        <!-- MANTENIMIENTO SECTION -->
+        <div class="expandable-section">
+          <button class="expandable-header" id="maintSection">
+            <span style="font-size:18px">🔧</span>
+            <h2 style="margin:0;flex:1;text-align:left">Mantenimiento</h2>
+            <span class="expand-toggle">▼</span>
+          </button>
+          <div class="expandable-content" id="maintContent" style="display:block">
+            <div class="grid grid-2">
+              <div class="card">
+                <div class="card-head"><h2>Registrar mantenimiento</h2></div>
             <form id="maintForm">
               <div class="field">
                 <label>Tipo de servicio</label>
@@ -810,17 +821,26 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
             <thead><tr><th>Fecha</th><th>Tipo</th><th>Coste</th><th>Km</th><th>Notas</th><th></th></tr></thead>
             <tbody id="maintTable"></tbody>
           </table></div>
-          <div id="maintEmpty" class="empty-state" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg><p>Aún no hay mantenimientos registrados</p></div>
+              <div id="maintEmpty" class="empty-state" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg><p>Aún no hay mantenimientos registrados</p></div>
+            </div>
+          </div>
         </div>
-      </section>
 
-      <!-- REVISIONS -->
-      <section class="page" id="page-revisions">
-        <div class="card" style="margin-bottom:16px">
-          <div class="card-head"><h2>Calendario preventivo BYD</h2><span class="hint" id="revLangHint">basado en km / meses desde la compra</span></div>
-          <p style="font-size:12px;color:var(--text-faint)">Orientativo. Verifica los intervalos exactos en el manual oficial de tu mercado.</p>
+        <!-- REVISIONES SECTION -->
+        <div class="expandable-section" style="margin-top:16px">
+          <button class="expandable-header" id="revisSection">
+            <span style="font-size:18px">📅</span>
+            <h2 style="margin:0;flex:1;text-align:left">Revisiones</h2>
+            <span class="expand-toggle">▼</span>
+          </button>
+          <div class="expandable-content" id="revisContent" style="display:block">
+            <div class="card" style="margin-bottom:16px">
+              <div class="card-head"><h2>Calendario preventivo BYD</h2><span class="hint" id="revLangHint">basado en km / meses desde la compra</span></div>
+              <p style="font-size:12px;color:var(--text-faint)">Orientativo. Verifica los intervalos exactos en el manual oficial de tu mercado.</p>
+            </div>
+            <div id="revisionsList"></div>
+          </div>
         </div>
-        <div id="revisionsList"></div>
       </section>
 
       <!-- NOTES -->
@@ -1534,28 +1554,29 @@ function setupEventListeners(){
     btn.addEventListener('click', ()=>navigate(btn.dataset.page));
   });
 
-  document.getElementById('maintToggle').addEventListener('click', e=>{
-    e.preventDefault();
-    const history = document.getElementById('maintHistory');
-    const toggle = e.target.closest('.nav-item').querySelector('.ni-toggle');
-    const isOpen = history.style.display !== 'none';
-    history.style.display = isOpen ? 'none' : 'flex';
-    toggle.style.transform = isOpen ? '' : 'rotate(180deg)';
-  });
-
-  document.getElementById('revisToggle').addEventListener('click', e=>{
-    e.preventDefault();
-    const history = document.getElementById('revisHistory');
-    const toggle = e.target.closest('.nav-item').querySelector('.ni-toggle');
-    const isOpen = history.style.display !== 'none';
-    history.style.display = isOpen ? 'none' : 'flex';
-    toggle.style.transform = isOpen ? '' : 'rotate(180deg)';
-  });
-
   document.getElementById('homeBtn').addEventListener('click', ()=>navigate('dashboard'));
   document.getElementById('homeTopBtn').addEventListener('click', ()=>{ navigate('dashboard'); document.getElementById('moreMenuDropdown').classList.remove('open'); });
   document.getElementById('setupTopBtn').addEventListener('click', ()=>{ navigate('setup'); document.getElementById('moreMenuDropdown').classList.remove('open'); });
   document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
+  document.getElementById('maintSection').addEventListener('click', e=>{
+    e.preventDefault();
+    const content = document.getElementById('maintContent');
+    const toggle = e.target.closest('.expandable-header').querySelector('.expand-toggle');
+    const isOpen = content.style.display !== 'none';
+    content.style.display = isOpen ? 'none' : 'block';
+    toggle.style.transform = isOpen ? '' : 'rotate(180deg)';
+  });
+
+  document.getElementById('revisSection').addEventListener('click', e=>{
+    e.preventDefault();
+    const content = document.getElementById('revisContent');
+    const toggle = e.target.closest('.expandable-header').querySelector('.expand-toggle');
+    const isOpen = content.style.display !== 'none';
+    content.style.display = isOpen ? 'none' : 'block';
+    toggle.style.transform = isOpen ? '' : 'rotate(180deg)';
+  });
+
   document.getElementById('exportBtn').addEventListener('click', ()=>{ exportData(); document.getElementById('moreMenuDropdown').classList.remove('open'); });
   document.getElementById('importBtn').addEventListener('click', ()=>{ document.getElementById('importFile').click(); document.getElementById('moreMenuDropdown').classList.remove('open'); });
   document.getElementById('importFile').addEventListener('change', e=>{ if(e.target.files[0]) handleImportFile(e.target.files[0]); e.target.value=''; });
