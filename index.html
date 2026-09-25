@@ -1339,6 +1339,8 @@ function renderRevisions(){
   const km = Number(state.config.currentKm)||0;
   const months = monthsBetween(state.config.purchaseDate);
   const container = document.getElementById('revisionsList');
+  console.log('renderRevisions() called:', {sched: sched.length, km, months, container: !!container});
+  if(!container) { console.error('revisionsList container not found'); return; }
   container.innerHTML = sched.map(rev=>{
     const done = state.completedRevisions.includes(rev.km);
     const st = getScheduleForRevision(rev, km, months);
