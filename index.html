@@ -613,6 +613,21 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
     </header>
 
     <div class="content">
+      <!-- BACKUP REMINDER BANNER -->
+      <div id="backupBanner" style="display:none; background:linear-gradient(135deg, var(--warning-soft), var(--danger-soft)); border:1.5px solid var(--warning); border-radius:var(--radius); padding:16px 20px; margin-bottom:16px; display:flex; align-items:center; justify-content:space-between; gap:12px; animation:slideDown .3s var(--ease)">
+        <div style="flex:1">
+          <div style="font-weight:600; color:var(--warning); margin-bottom:4px">⏰ Es momento de hacer copia de seguridad</div>
+          <div style="font-size:14px; color:var(--text-muted)">Han pasado 7 días desde tu último backup. Exporta tus datos para no perderlos.</div>
+        </div>
+        <div style="display:flex; gap:8px; flex-shrink:0">
+          <button onclick="document.getElementById('exportBtn').click(); document.getElementById('backupBanner').style.display='none'" style="padding:8px 14px; background:var(--warning); color:var(--on-accent); border:none; border-radius:var(--radius-sm); font-weight:600; cursor:pointer; font-size:13px">Exportar ahora</button>
+          <button onclick="document.getElementById('backupBanner').style.display='none'" style="padding:8px 14px; background:transparent; border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text); cursor:pointer; font-size:13px">Cerrar</button>
+        </div>
+      </div>
+      <style>
+        @keyframes slideDown { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }
+      </style>
+
       <!-- DASHBOARD -->
       <section class="page" id="page-dashboard">
         <!-- TOP: Car Info Compact -->
@@ -1507,6 +1522,8 @@ function exportData(){
   a.href = url; a.download = `ev-manager-evo-backup-${new Date().toISOString().slice(0,10)}.json`;
   document.body.appendChild(a); a.click(); a.remove();
   URL.revokeObjectURL(url);
+  localStorage.setItem('lastBackupDate', new Date().toISOString());
+  document.getElementById('backupBanner').style.display = 'none';
   toast('Datos exportados correctamente', 'success');
 }
 let pendingImport = null;
@@ -1737,9 +1754,30 @@ function setupEventListeners(){
   }
 }
 
+/* ---------------- backup reminder ---------------- */
+function checkBackupReminder(){
+  const lastBackup = localStorage.getItem('lastBackupDate');
+  if(!lastBackup) return;
+
+  const lastBackupDate = new Date(lastBackup);
+  const now = new Date();
+  const hoursSinceBackup = (now - lastBackupDate) / (1000 * 60 * 60);
+  const sevenDaysInHours = 7 * 24;
+
+  const currentHour = now.getHours();
+  const currentMinute = now.getMinutes();
+  const timeInMinutes = currentHour * 60 + currentMinute;
+  const sixAmTenMin = 6 * 60 + 10;
+
+  if(hoursSinceBackup >= sevenDaysInHours && timeInMinutes >= sixAmTenMin){
+    document.getElementById('backupBanner').style.display = 'flex';
+  }
+}
+
 /* ---------------- init ---------------- */
 function init(){
   loadState();
+  checkBackupReminder();
   setupEventListeners();
   applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
   applyStateToForms();
