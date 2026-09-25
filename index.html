@@ -1720,9 +1720,12 @@ function setupEventListeners(){
     toast('Enlace añadido', 'success');
   });
 
-  document.getElementById('manualSearch').addEventListener('input', renderManual);
-  document.getElementById('manLangEs').addEventListener('click', ()=>{ state.manualLang='es'; renderManual(); });
-  document.getElementById('manLangEn').addEventListener('click', ()=>{ state.manualLang='en'; renderManual(); });
+  const manualSearch = document.getElementById('manualSearch');
+  if(manualSearch) manualSearch.addEventListener('input', renderManual);
+  const manLangEs = document.getElementById('manLangEs');
+  if(manLangEs) manLangEs.addEventListener('click', ()=>{ state.manualLang='es'; renderManual(); });
+  const manLangEn = document.getElementById('manLangEn');
+  if(manLangEn) manLangEn.addEventListener('click', ()=>{ state.manualLang='en'; renderManual(); });
 }
 
 /* ---------------- init ---------------- */
