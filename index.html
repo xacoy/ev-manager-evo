@@ -232,10 +232,10 @@ button{cursor:pointer}
 @media(max-width:560px){.grid-4{grid-template-columns:1fr 1fr}.grid-3{grid-template-columns:1fr}}
 
 .card{
-  background:linear-gradient(135deg, rgba(26,36,53,.7), rgba(20,30,45,.5));
+  background:var(--bg-card);
   border:2px solid var(--border-strong); border-radius:var(--radius);
   padding:36px; box-shadow:var(--shadow-card); position:relative;
-  transition:all .2s var(--ease); overflow:hidden; backdrop-filter:blur(10px);
+  transition:all .2s var(--ease); overflow:hidden;
 }
 .card::before{
   content:''; position:absolute; top:0; left:0; right:0; height:4px;
