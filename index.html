@@ -1067,7 +1067,9 @@ function navigate(page){
   if(page==='notes') renderNotes();
   if(page==='manual') renderManual();
   if(page==='stats') renderStats();
-  if(page==='dashboard') renderDashboard();
+  if(page==='dashboard') {
+    setTimeout(renderDashboard, 10);
+  }
 }
 
 /* ---------------- theme ---------------- */
@@ -1733,9 +1735,6 @@ function init(){
   document.getElementById('c_date').valueAsDate = new Date();
   document.getElementById('m_date').valueAsDate = new Date();
   navigate('dashboard');
-  setTimeout(() => {
-    renderDashboard();
-  }, 50);
   renderAlerts();
   setInterval(renderAlerts, 60000);
 }
