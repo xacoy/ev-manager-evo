@@ -1167,15 +1167,26 @@ function renderDashboard(){
 
   document.getElementById('gaugeKm').textContent = km.toLocaleString('es-ES');
   const carStatusBadge = document.getElementById('carStatusBadge');
-  if(st.overdue || overdueCount){
+
+  if(!c.purchaseDate){
+    carStatusBadge.className = 'car-status-badge info';
+    carStatusBadge.textContent = '⚙️ Configura tu vehículo';
+    carStatusBadge.style.cursor = 'pointer';
+    carStatusBadge.onclick = ()=>navigate('setup');
+  } else if(st.overdue || overdueCount){
     carStatusBadge.className = 'car-status-badge danger';
     carStatusBadge.textContent = '⚠️ Revisión vencida';
+    carStatusBadge.style.cursor = 'pointer';
+    carStatusBadge.onclick = ()=>navigate('maintenance');
   } else if(st.upcoming){
     carStatusBadge.className = 'car-status-badge warning';
     carStatusBadge.textContent = '🔔 Próxima revisión';
+    carStatusBadge.style.cursor = 'pointer';
+    carStatusBadge.onclick = ()=>navigate('maintenance');
   } else {
     carStatusBadge.className = 'car-status-badge';
     carStatusBadge.textContent = '✓ OK';
+    carStatusBadge.style.cursor = 'default';
   }
 
   const status = document.getElementById('sideStatus');
