@@ -1441,13 +1441,13 @@ function renderManual(){
       <div style="border:1px solid var(--border-strong);border-radius:8px;overflow:hidden">
         <button onclick="document.getElementById('${itemId}').hidden=!document.getElementById('${itemId}').hidden;event.target.closest('[data-toggle]').style.opacity=event.target.closest('[data-toggle]').style.opacity==='0.6'?'1':'0.6'" data-toggle="true" style="width:100%;text-align:left;padding:12px;background:var(--bg-2);border:none;cursor:pointer;color:var(--text);font-weight:600;display:flex;justify-content:space-between;align-items:center">
           <span>${highlight(it.title,q)}</span>
-          <span style="font-size:12px">▼</span>
+          <span style="font-size:12px">▶</span>
         </button>
-        <div id="${itemId}" style="padding:12px;background:var(--bg-1)">
+        <div id="${itemId}" hidden style="padding:12px;background:var(--bg-1)">
           ${it.location ? `<div style="font-size:11px;color:var(--accent);margin-bottom:8px;font-weight:600">📍 ${it.location}</div>` : ''}
           <p style="font-size:13px;color:var(--text-muted);margin:8px 0;line-height:1.6;white-space:pre-wrap">${fullContent}</p>
           ${it.keywords ? '<div style="font-size:11px;color:var(--text-faint);margin-top:12px"><strong>Tags:</strong> '+it.keywords.join(', ')+'</div>' : ''}
-          <a href="https://www.byd.com/es-es/service-maintenance/owners-manual.html" target="_blank" class="btn btn-ghost btn-sm" style="margin-top:12px;display:inline-block">📖 Ver en manual oficial →</a>
+          <a href="https://www.google.com/search?q=BYD+Atto+3+EVO+manual+PDF+filetype:pdf" target="_blank" class="btn btn-ghost btn-sm" style="margin-top:12px;display:inline-block">📖 Buscar en manual oficial →</a>
         </div>
       </div>`;
     }).join('')}
