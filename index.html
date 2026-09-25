@@ -1169,10 +1169,7 @@ function renderDashboard(){
   const carStatusBadge = document.getElementById('carStatusBadge');
 
   if(!c.purchaseDate){
-    carStatusBadge.className = 'car-status-badge info';
-    carStatusBadge.textContent = '⚙️ Configura tu vehículo';
-    carStatusBadge.style.cursor = 'pointer';
-    carStatusBadge.onclick = ()=>navigate('setup');
+    carStatusBadge.style.display = 'none';
   } else if(st.overdue || overdueCount){
     carStatusBadge.className = 'car-status-badge danger';
     carStatusBadge.textContent = '⚠️ Revisión vencida';
