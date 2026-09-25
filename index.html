@@ -1083,7 +1083,7 @@ function navigate(page){
   document.getElementById('pageTitle').textContent = titles[page] || page;
   document.getElementById('moreSheetOverlay').classList.remove('open');
   if(page==='charges') renderCharges();
-  if(page==='maintenance') renderMaintenance();
+  if(page==='maintenance') { renderMaintenance(); renderRevisions(); }
   if(page==='revisions') renderRevisions();
   if(page==='notes') renderNotes();
   if(page==='manual') renderManual();
