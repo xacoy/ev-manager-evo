@@ -153,7 +153,8 @@ button{cursor:pointer}
 .expandable-header h2{font-size:inherit;font-weight:inherit;margin:0}
 .expandable-header span:first-child{font-size:22px;flex-shrink:0}
 .expand-toggle{transition:transform .3s var(--ease);font-size:14px;flex-shrink:0;margin-left:auto}
-.expandable-content{padding:16px 0;margin-top:12px}
+.expandable-content{padding:16px 0;margin-top:12px;display:none}
+.expandable-content[style*="display: block"]{display:block !important}
 .chip{
   display:flex;align-items:center;gap:12px;padding:10px 20px;border-radius:var(--radius);
   background:linear-gradient(135deg, rgba(6,182,212,.12), rgba(14,165,233,.08));
@@ -807,7 +808,7 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
               <h2 style="margin:0;flex:1;text-align:left">Mantenimiento</h2>
               <span class="expand-toggle">▼</span>
             </button>
-            <div class="expandable-content" id="maintContent" style="display:none !important">
+            <div class="expandable-content" id="maintContent" style="display:none">
               <div class="card" style="margin-top:12px">
                 <div class="card-head"><h2>Registrar</h2></div>
                 <form id="maintForm">
@@ -833,9 +834,10 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
               <h2 style="margin:0;flex:1;text-align:left">Revisiones</h2>
               <span class="expand-toggle">▼</span>
             </button>
-            <div class="expandable-content" id="revisContent" style="display:none !important">
+            <div class="expandable-content" id="revisContent" style="display:none">
               <div class="card" style="margin-top:12px">
                 <div class="card-head"><h2>Calendario BYD</h2><span class="hint" id="revLangHint">cada 30k km / 24 meses</span></div>
+                <p style="font-size:12px;color:var(--text-faint)">Orientativo. Verifica los intervalos exactos en el manual oficial de tu mercado.</p>
                 <div id="revisionsList"></div>
               </div>
             </div>
