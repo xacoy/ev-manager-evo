@@ -18,13 +18,13 @@
   --bg:#0a0d12; --bg-1:#11151d; --bg-2:#151a24; --bg-card:#161b26;
   --border:#232a38; --border-strong:#323b4c;
   --text:#eef1f6; --text-muted:#9aa4b5; --text-faint:#6b7484;
-  --accent:#2fb3c7; --accent-2:#3ecf8e; --accent-3:#c96a8a;
-  --accent-soft:#2fb3c722; --accent-glow:#2fb3c735;
+  --accent:#0ac2dd; --accent-2:#3ecf8e; --accent-3:#c96a8a;
+  --accent-soft:#0ac2dd22; --accent-glow:#0ac2dd38;
   --on-accent:#04151a;
   --success:#3ecf8e; --success-soft:#3ecf8e1e;
   --warning:#dba043; --warning-soft:#dba0431e;
   --danger:#e2565f; --danger-soft:#e2565f1e;
-  --cyan:#2fb3c7; --cyan-soft:#2fb3c718;
+  --cyan:#0ac2dd; --cyan-soft:#0ac2dd18;
   --blue:#4b8fd6; --blue-soft:#4b8fd618;
   --purple:#8b7fd6; --purple-soft:#8b7fd618;
   --pink:#c96a8a; --pink-soft:#c96a8a18;
@@ -42,13 +42,13 @@
   --bg:#f7f8fa; --bg-1:#f1f3f6; --bg-2:#eaedf2; --bg-card:#ffffff;
   --border:rgba(20,30,45,.10); --border-strong:rgba(20,30,45,.18);
   --text:#12161f; --text-muted:#4a5566; --text-faint:#78829a;
-  --accent:#0a7f96; --accent-2:#12875a; --accent-3:#a5476a;
-  --accent-soft:rgba(10,127,150,.12); --accent-glow:rgba(10,127,150,.20);
+  --accent:#0092ab; --accent-2:#12875a; --accent-3:#a5476a;
+  --accent-soft:rgba(0,146,171,.12); --accent-glow:rgba(0,146,171,.20);
   --on-accent:#ffffff;
   --success:#12875a; --success-soft:rgba(18,135,90,.12);
   --warning:#a8681a; --warning-soft:rgba(168,104,26,.12);
   --danger:#b23a3a; --danger-soft:rgba(178,58,58,.12);
-  --cyan:#0a7f96; --cyan-soft:rgba(10,127,150,.10);
+  --cyan:#0092ab; --cyan-soft:rgba(0,146,171,.10);
   --blue:#3f6fb0; --blue-soft:rgba(63,111,176,.10);
   --purple:#6a5aad; --purple-soft:rgba(106,90,173,.10);
   --pink:#a5476a; --pink-soft:rgba(165,71,106,.10);
@@ -62,8 +62,10 @@ svg{width:1em;height:1em;display:inline-block}
 html,body{height:100%}
 body{
   font-family:var(--font); background:var(--bg);
+  background-image:radial-gradient(120% 100% at 50% -10%, rgba(255,255,255,.05), transparent 55%);
   color:var(--text); overflow:hidden; -webkit-font-smoothing:antialiased; font-size:15px;
 }
+:root[data-theme="light"] body{background-image:radial-gradient(120% 100% at 50% -10%, rgba(0,0,0,.03), transparent 55%)}
 input,textarea,select,button{font-family:inherit;color:inherit}
 button{cursor:pointer}
 ::-webkit-scrollbar{width:9px;height:9px}
@@ -81,13 +83,14 @@ button{cursor:pointer}
 }
 .rail-brand{margin-bottom:10px}
 .brand-mark{
-  width:52px;height:52px;border-radius:var(--radius-sm);flex-shrink:0;
+  width:56px;height:56px;border-radius:14px;flex-shrink:0;
   background:var(--accent);
   color:var(--on-accent);
   display:flex;align-items:center;justify-content:center;
   position:relative;
+  box-shadow:0 6px 18px -6px var(--accent-glow);
 }
-.brand-mark svg{width:22px;height:22px;stroke:none;fill:currentColor}
+.brand-mark svg{width:24px;height:24px;stroke:none;fill:currentColor}
 
 .nav-item{
   display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 8px;border-radius:12px;
@@ -111,7 +114,8 @@ button{cursor:pointer}
 }
 .nav-item.active{color:var(--accent); font-weight:700}
 .nav-item.active .ni-indicator{
-  background:var(--accent-soft); color:var(--accent);
+  background:var(--accent); color:var(--on-accent);
+  box-shadow:0 6px 16px -6px var(--accent-glow);
 }
 .nav-item .ni-label{line-height:1.15; font-size:12px; font-weight:600}
 
@@ -221,7 +225,7 @@ button{cursor:pointer}
   border-color:var(--border-strong); transform:translateY(-1px);
 }
 .card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
-.card-head h2{font-size:15px;font-weight:700;font-family:var(--font-display);color:var(--text)}
+.card-head h2{font-size:17px;font-weight:700;font-family:var(--font-display);color:var(--text);letter-spacing:-.2px}
 .card-head .hint{font-size:11px;color:var(--text-faint);font-weight:600; text-transform:uppercase}
 .chart-box{position:relative;height:220px;width:100%}
 .chart-box-wide{height:260px}
@@ -229,6 +233,11 @@ button{cursor:pointer}
 
 /* ---------- dashboard redesign ---------- */
 .dash-header{margin-bottom:24px}
+.vehicle-id{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:8px 20px;margin-bottom:16px}
+.vehicle-id-name{font-family:var(--font-display);font-size:38px;font-weight:700;letter-spacing:-1px;color:var(--text);line-height:1.1}
+.vehicle-id-name em{font-style:normal;color:var(--accent)}
+.vehicle-id-meta{font-size:12.5px;color:var(--text-faint);font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+@media(max-width:560px){.vehicle-id-name{font-size:28px}}
 .car-badge{font-size:11px;font-weight:800;padding:4px 10px;border-radius:var(--radius-full);background:var(--success-soft);color:var(--success);text-transform:uppercase;letter-spacing:.5px;width:fit-content}
 .car-badge.warning{background:var(--warning-soft);color:var(--warning)}
 .car-badge.danger{background:var(--danger-soft);color:var(--danger)}
@@ -261,17 +270,17 @@ button{cursor:pointer}
 }
 
 /* ---------- cockpit (dashboard hero) ---------- */
-.cockpit-card{padding:28px 32px}
-.cockpit{display:flex;align-items:center;gap:48px}
-.gauge-wrap{position:relative;width:220px;height:220px;flex-shrink:0}
+.cockpit-card{padding:36px 40px}
+.cockpit{display:flex;align-items:center;gap:56px}
+.gauge-wrap{position:relative;width:260px;height:260px;flex-shrink:0}
 .gauge-svg{width:100%;height:100%;transform:rotate(-90deg)}
-.gauge-track{fill:none;stroke:var(--border);stroke-width:12}
-.gauge-fill{fill:none;stroke:var(--accent);stroke-width:10;stroke-linecap:round;stroke-dasharray:653.45;stroke-dashoffset:653.45;transition:stroke-dashoffset .6s var(--ease),stroke .3s var(--ease)}
+.gauge-track{fill:none;stroke:var(--border);stroke-width:10}
+.gauge-fill{fill:none;stroke:var(--accent);stroke-width:10;stroke-linecap:round;stroke-dasharray:653.45;stroke-dashoffset:653.45;transition:stroke-dashoffset 1s var(--ease),stroke .3s var(--ease)}
 .gauge-fill.warning{stroke:var(--warning)}
 .gauge-fill.danger{stroke:var(--danger)}
 .gauge-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
-.gauge-value{font-size:44px;font-weight:800;letter-spacing:-1px;line-height:1;font-variant-numeric:tabular-nums;color:var(--text);font-family:var(--font-display)}
-.gauge-unit{font-size:13px;color:var(--text-muted);font-weight:600;letter-spacing:1px;margin-top:8px}
+.gauge-value{font-size:60px;font-weight:700;letter-spacing:-1.5px;line-height:1;font-variant-numeric:tabular-nums;color:var(--text);font-family:var(--font-display)}
+.gauge-unit{font-size:12.5px;color:var(--text-faint);font-weight:700;letter-spacing:1.5px;margin-top:10px;text-transform:uppercase}
 .cockpit-side{flex:1;min-width:0;display:flex;flex-direction:column}
 .side-status{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:700;padding-bottom:16px;margin-bottom:6px;border-bottom:1px solid var(--border)}
 .side-status svg{width:18px;height:18px;stroke:currentColor;flex-shrink:0}
@@ -282,7 +291,7 @@ button{cursor:pointer}
 .side-row:last-child{border-bottom:none}
 .side-label{font-size:14px;color:var(--text-muted);font-weight:600}
 .side-value{font-size:16px;font-weight:700;font-variant-numeric:tabular-nums;text-align:right}
-@media(max-width:720px){.cockpit{flex-direction:column;gap:24px}.gauge-wrap{width:180px;height:180px}.cockpit-side{width:100%}}
+@media(max-width:720px){.cockpit{flex-direction:column;gap:24px}.gauge-wrap{width:200px;height:200px}.gauge-value{font-size:42px}.cockpit-side{width:100%}}
 
 .quicklinks-strip{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 14px;margin-bottom:4px;scrollbar-width:none}
 .quicklinks-strip::-webkit-scrollbar{display:none}
@@ -482,9 +491,9 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
   .chip{display:none}
   .cockpit{flex-direction:column;gap:20px}
   .cockpit-card{padding:24px}
-  .gauge-wrap{width:190px;height:190px}
-  .gauge-value{font-size:38px}
-  .gauge-unit{font-size:12px}
+  .gauge-wrap{width:210px;height:210px}
+  .gauge-value{font-size:46px}
+  .gauge-unit{font-size:11.5px}
   .hero-banner{flex-direction:column;align-items:flex-start}
   .hero-progress{max-width:100%}
   .quicklinks-grid{grid-template-columns:repeat(3,1fr)}
@@ -575,6 +584,10 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
       <section class="page" id="page-dashboard">
         <!-- TOP: Cockpit hero — progress ring toward the next scheduled revision -->
         <div class="dash-header">
+          <div class="vehicle-id">
+            <div class="vehicle-id-name">BYD Atto 3 <em>EVO</em></div>
+            <div class="vehicle-id-meta" id="vehicleIdMeta">Design · RWD</div>
+          </div>
           <div class="card cockpit-card">
             <div class="card-head"><h2>Estado general</h2><div class="car-badge" id="carStatusBadge">OK</div></div>
             <div class="cockpit">
@@ -1018,6 +1031,19 @@ function deepMerge(base, incoming){
 const fmtEUR = n => (Number(n)||0).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' €';
 const fmtDate = d => { if(!d) return '—'; const dt = new Date(d); return isNaN(dt) ? d : dt.toLocaleDateString('es-ES'); };
 const uid = () => Date.now() + Math.floor(Math.random()*1000);
+function animateCountUp(el, target){
+  if(!el) return;
+  const from = Number(el.dataset.countFrom) || 0;
+  if(from === target){ el.textContent = target.toLocaleString('es-ES'); return; }
+  const duration = 700, start = performance.now();
+  function tick(now){
+    const p = Math.min(1, (now-start)/duration);
+    const eased = 1 - Math.pow(1-p, 3);
+    el.textContent = Math.round(from + (target-from)*eased).toLocaleString('es-ES');
+    if(p < 1) requestAnimationFrame(tick); else el.dataset.countFrom = target;
+  }
+  requestAnimationFrame(tick);
+}
 function monthsBetween(a,b){ if(!a) return 0; const d1=new Date(a), d2=b?new Date(b):new Date(); return (d2.getFullYear()-d1.getFullYear())*12 + (d2.getMonth()-d1.getMonth()); }
 
 function toast(msg, type='info'){
@@ -1144,7 +1170,9 @@ function renderDashboard(){
   const alerts = computeAlerts();
   const overdueCount = alerts.filter(a=>a.level==='overdue').length;
 
-  document.getElementById('gaugeKm').textContent = km.toLocaleString('es-ES');
+  animateCountUp(document.getElementById('gaugeKm'), km);
+  const meta = document.getElementById('vehicleIdMeta');
+  if(meta) meta.textContent = (VERSION_LABELS[c.version] || VERSION_LABELS.design) + ' · ' + VEHICLE_BATTERY_KWH + ' kWh';
   const carStatusBadge = document.getElementById('carStatusBadge');
 
   if(!c.purchaseDate){
