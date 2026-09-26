@@ -582,11 +582,6 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
                 <div class="info-label">KM RECORRIDOS</div>
                 <div class="info-value" id="gaugeKm">0</div>
               </div>
-              <div class="info-card-small tone-blue">
-                <div class="info-label">BATERÍA</div>
-                <div class="info-value" id="sideBattery">—</div>
-                <div class="info-sub">Blade Battery LFP</div>
-              </div>
               <div class="info-card-small tone-green" id="nextRevisionTile">
                 <div class="info-label">PRÓXIMA REVISIÓN</div>
                 <div class="info-value" id="sideNextRevision">—</div>
@@ -1229,30 +1224,23 @@ function renderDashboard(){
   const nextRevSubEl = document.getElementById('sideNextRevisionSub');
   const nextRevTile = document.getElementById('nextRevisionTile');
   const shortName = next ? next.name.split('·')[0].trim() : '—';
+  nextRevTile.className = 'info-card-small tone-green';
+  nextRevEl.className = 'info-value';
   if(!next){
     nextRevEl.textContent = '—';
     nextRevSubEl.textContent = '—';
-    nextRevEl.className = 'info-value';
-    nextRevTile.className = 'info-card-small tone-green';
   } else if(st.overdue || overdueCount){
     nextRevEl.textContent = overdueCount>1 ? overdueCount+' vencidas' : 'Vencida';
     nextRevSubEl.textContent = shortName;
-    nextRevEl.className = 'info-value danger';
-    nextRevTile.className = 'info-card-small tone-danger';
   } else if(st.upcoming){
     nextRevEl.textContent = fmtNum(st.kmRemaining)+' km';
     nextRevSubEl.textContent = shortName;
-    nextRevEl.className = 'info-value warning';
-    nextRevTile.className = 'info-card-small tone-warning';
   } else {
     nextRevEl.textContent = fmtNum(st.kmRemaining)+' km';
     nextRevSubEl.textContent = shortName;
-    nextRevEl.className = 'info-value ok';
-    nextRevTile.className = 'info-card-small tone-green';
   }
   document.getElementById('sideChargeCount').textContent = state.charges.length;
 
-  document.getElementById('sideBattery').textContent = VEHICLE_BATTERY_KWH + ' kWh';
   document.getElementById('sideConsumption').textContent = computeAvgConsumption(c).toFixed(1) + ' kWh/100km';
   document.getElementById('sideTotalKwh').textContent = state.charges.reduce((s,x)=>s+Number(x.kwh||0),0).toFixed(1) + ' kWh';
   document.getElementById('sideSpent').textContent = fmtEUR(totalCost);
