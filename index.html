@@ -233,10 +233,9 @@ button{cursor:pointer}
 
 /* ---------- dashboard redesign ---------- */
 .dash-header{margin-bottom:24px}
-.vehicle-id{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:8px 20px;margin-bottom:16px}
+.vehicle-id{margin-bottom:16px}
 .vehicle-id-name{font-family:var(--font-display);font-size:38px;font-weight:700;letter-spacing:-1px;color:var(--text);line-height:1.1}
 .vehicle-id-name em{font-style:normal;color:var(--accent)}
-.vehicle-id-meta{font-size:12.5px;color:var(--text-faint);font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
 @media(max-width:560px){.vehicle-id-name{font-size:28px}}
 .car-badge{font-size:11px;font-weight:800;padding:4px 10px;border-radius:var(--radius-full);background:var(--success-soft);color:var(--success);text-transform:uppercase;letter-spacing:.5px;width:fit-content}
 .car-badge.warning{background:var(--warning-soft);color:var(--warning)}
@@ -305,6 +304,8 @@ button{cursor:pointer}
 .stat-card.tone-violet,.info-card-small.tone-violet{border-left:3px solid var(--purple)}
 .stat-card.tone-green,.info-card-small.tone-green{border-left:3px solid var(--green)}
 .stat-card.tone-amber,.info-card-small.tone-amber{border-left:3px solid var(--orange)}
+.info-card-small.tone-blue{border-left:3px solid var(--blue)}
+.info-card-small.tone-pink{border-left:3px solid var(--pink)}
 .info-card-small.tone-warning{border-left:3px solid var(--warning)}
 .info-card-small.tone-danger{border-left:3px solid var(--danger)}
 
@@ -569,7 +570,6 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
         <div class="dash-header">
           <div class="vehicle-id">
             <div class="vehicle-id-name">BYD Atto 3 <em>EVO</em></div>
-            <div class="vehicle-id-meta" id="vehicleIdMeta">Design · RWD</div>
           </div>
           <div class="card cockpit-card">
             <div class="card-head"><h2>Estado general</h2><div class="car-badge" id="carStatusBadge">OK</div></div>
@@ -578,7 +578,7 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
                 <div class="info-label">KM RECORRIDOS</div>
                 <div class="info-value" id="gaugeKm">0</div>
               </div>
-              <div class="info-card-small tone-violet">
+              <div class="info-card-small tone-blue">
                 <div class="info-label">BATERÍA</div>
                 <div class="info-value" id="sideBattery">—</div>
                 <div class="info-sub">Blade Battery LFP</div>
@@ -588,26 +588,26 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
                 <div class="info-value" id="sideNextRevision">—</div>
                 <div class="info-sub" id="sideNextRevisionSub">—</div>
               </div>
-              <div class="info-card-small tone-amber">
+              <div class="info-card-small tone-pink">
                 <div class="info-label">CARGAS REGISTRADAS</div>
                 <div class="info-value" id="sideChargeCount">0</div>
               </div>
-              <div class="info-card-small tone-cyan">
+              <div class="info-card-small tone-violet">
                 <div class="info-label">ÚLTIMA CARGA</div>
                 <div class="info-value" id="lastChargeInfo" style="font-size:18px">—</div>
                 <div class="info-sub" id="lastChargeDate">—</div>
               </div>
-              <div class="info-card-small tone-violet">
+              <div class="info-card-small tone-amber">
                 <div class="info-label">CONSUMO EST.</div>
                 <div class="info-value" id="sideConsumption">—</div>
                 <div class="info-sub">kWh/100km</div>
               </div>
-              <div class="info-card-small tone-green">
+              <div class="info-card-small tone-pink">
                 <div class="info-label">KWH CARGADOS</div>
                 <div class="info-value" id="sideTotalKwh">—</div>
                 <div class="info-sub">histórico total</div>
               </div>
-              <div class="info-card-small tone-amber">
+              <div class="info-card-small tone-blue">
                 <div class="info-label">GASTO TOTAL</div>
                 <div class="info-value" id="sideSpent">—</div>
                 <div class="info-sub">cargas + servicio</div>
@@ -1163,8 +1163,6 @@ function renderDashboard(){
   const overdueCount = alerts.filter(a=>a.level==='overdue').length;
 
   animateCountUp(document.getElementById('gaugeKm'), km);
-  const meta = document.getElementById('vehicleIdMeta');
-  if(meta) meta.textContent = (VERSION_LABELS[c.version] || VERSION_LABELS.design) + ' · ' + VEHICLE_BATTERY_KWH + ' kWh';
   const carStatusBadge = document.getElementById('carStatusBadge');
 
   if(!c.purchaseDate){
