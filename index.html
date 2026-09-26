@@ -612,7 +612,7 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
                   <div class="info-sub">Blade Battery LFP</div>
                 </div>
                 <div class="info-card-small tone-violet">
-                  <div class="info-label">CONSUMO</div>
+                  <div class="info-label">CONSUMO EST.</div>
                   <div class="info-value" id="sideConsumption">—</div>
                   <div class="info-sub">kWh/100km</div>
                 </div>
@@ -1141,6 +1141,17 @@ function updateNotifStatus(){
 
 /* ---------------- dashboard ---------------- */
 const GAUGE_CIRCUMFERENCE = 2 * Math.PI * 104;
+function computeAvgConsumption(c){
+  const withData = state.charges.filter(x=>x.km!=null && Number(x.km)>0 && x.kwh!=null && Number(x.kwh)>0);
+  if(withData.length){
+    const sorted = [...withData].sort((a,b)=>Number(a.km)-Number(b.km));
+    const firstKm = Number(sorted[0].km);
+    const kmDriven = (Number(c.currentKm)||0) - firstKm;
+    const totalKwh = sorted.reduce((s,x)=>s+Number(x.kwh),0);
+    if(kmDriven > 0) return totalKwh/kmDriven*100;
+  }
+  return Number(c.avgConsumption)||0;
+}
 function renderDashboard(){
   renderQuickLinks();
   const c = state.config;
@@ -1211,7 +1222,7 @@ function renderDashboard(){
   document.getElementById('sideChargeCount').textContent = state.charges.length;
 
   document.getElementById('sideBattery').textContent = VEHICLE_BATTERY_KWH + ' kWh';
-  document.getElementById('sideConsumption').textContent = (Number(c.avgConsumption)||0).toFixed(1) + ' kWh/100km';
+  document.getElementById('sideConsumption').textContent = computeAvgConsumption(c).toFixed(1) + ' kWh/100km';
   document.getElementById('sideSpent').textContent = fmtEUR(totalCost);
 
   document.getElementById('chipKm').textContent = km.toLocaleString('es-ES') + ' km';
