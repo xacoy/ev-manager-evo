@@ -228,33 +228,18 @@ button{cursor:pointer}
 .chart-box canvas{position:absolute;inset:0;width:100%!important;height:100%!important}
 
 /* ---------- dashboard redesign ---------- */
-.dash-header{padding:16px 0 24px;border-bottom:1px solid var(--border);margin-bottom:24px}
-.car-compact{display:flex;gap:16px;align-items:center}
-.car-svg-compact{width:120px;height:90px}
-.car-info-compact{display:flex;flex-direction:column;gap:8px;flex:1}
-.car-km{display:flex;gap:4px;align-items:baseline}
-.km-val{font-size:32px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums}
-.km-unit{font-size:13px;font-weight:700;color:var(--text-muted);text-transform:uppercase}
-.car-status-line{font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;color:var(--text-muted)}
+.dash-header{margin-bottom:24px}
 .car-badge{font-size:11px;font-weight:800;padding:4px 10px;border-radius:var(--radius-full);background:var(--success-soft);color:var(--success);text-transform:uppercase;letter-spacing:.5px;width:fit-content}
 .car-badge.warning{background:var(--warning-soft);color:var(--warning)}
 .car-badge.danger{background:var(--danger-soft);color:var(--danger)}
 
 /* Info cards grid in bottom section */
-.info-cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .info-cards-grid-4{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .info-card-small{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;transition:border-color .2s var(--ease)}
 .info-card-small:hover{border-color:var(--border-strong)}
 .info-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--text-faint);margin-bottom:6px}
 .info-value{font-size:18px;font-weight:800;color:var(--text)}
 .info-sub{font-size:11px;color:var(--text-muted);margin-top:2px}
-.dash-info-grid{flex:1;display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
-.info-card{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius);padding:24px;transition:border-color .2s var(--ease)}
-.info-card:hover{border-color:var(--border-strong)}
-.info-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--text-faint);margin-bottom:8px}
-.info-content{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700}
-.info-value{font-size:22px;font-weight:800;color:var(--text);margin:8px 0}
-.info-sub{font-size:11px;color:var(--text-muted);font-weight:600}
 
 .quicklinks-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
 .ql-tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:28px 20px;border-radius:var(--radius);background:var(--bg-card);border:1px solid var(--border);color:var(--text);text-decoration:none;transition:border-color .2s var(--ease), transform .2s var(--ease);cursor:pointer;position:relative;overflow:hidden;min-height:140px}
@@ -267,30 +252,28 @@ button{cursor:pointer}
 .ql-tile:hover .ql-tile-delete{opacity:1}
 
 @media(max-width:1000px){
-  .car-compact{flex-direction:column;gap:12px;align-items:center}
-  .car-svg-compact{width:100px;height:75px}
-  .km-val{font-size:28px}
   .quicklinks-grid{grid-template-columns:repeat(2,1fr)}
   .grid-2{grid-template-columns:1fr!important}
 }
 @media(max-width:560px){
-  .dash-info-grid{grid-template-columns:1fr}
+  .info-cards-grid-4{grid-template-columns:1fr}
   .quicklinks-grid{grid-template-columns:1fr}
 }
 
-/* ---------- cockpit (dashboard) ---------- */
-.cockpit{display:flex;align-items:center;gap:80px;padding:20px 4px 50px}
-.gauge-wrap{position:relative;width:380px;height:380px;flex-shrink:0}
+/* ---------- cockpit (dashboard hero) ---------- */
+.cockpit-card{padding:28px 32px}
+.cockpit{display:flex;align-items:center;gap:48px}
+.gauge-wrap{position:relative;width:220px;height:220px;flex-shrink:0}
 .gauge-svg{width:100%;height:100%;transform:rotate(-90deg)}
 .gauge-track{fill:none;stroke:var(--border);stroke-width:12}
-.gauge-fill{fill:none;stroke:var(--accent);stroke-width:10;stroke-linecap:round;stroke-dasharray:653.45;stroke-dashoffset:653.45;transition:stroke-dashoffset .5s var(--ease),stroke .3s var(--ease)}
+.gauge-fill{fill:none;stroke:var(--accent);stroke-width:10;stroke-linecap:round;stroke-dasharray:653.45;stroke-dashoffset:653.45;transition:stroke-dashoffset .6s var(--ease),stroke .3s var(--ease)}
 .gauge-fill.warning{stroke:var(--warning)}
 .gauge-fill.danger{stroke:var(--danger)}
 .gauge-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
-.gauge-value{font-size:88px;font-weight:800;letter-spacing:-2px;line-height:1;font-variant-numeric:tabular-nums;color:var(--text)}
-.gauge-unit{font-size:20px;color:var(--text-muted);font-weight:600;letter-spacing:1px;margin-top:14px}
+.gauge-value{font-size:44px;font-weight:800;letter-spacing:-1px;line-height:1;font-variant-numeric:tabular-nums;color:var(--text);font-family:var(--font-display)}
+.gauge-unit{font-size:13px;color:var(--text-muted);font-weight:600;letter-spacing:1px;margin-top:8px}
 .cockpit-side{flex:1;min-width:0;display:flex;flex-direction:column}
-.side-status{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:700;padding-bottom:16px;margin-bottom:10px;border-bottom:1px solid var(--border)}
+.side-status{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:700;padding-bottom:16px;margin-bottom:6px;border-bottom:1px solid var(--border)}
 .side-status svg{width:18px;height:18px;stroke:currentColor;flex-shrink:0}
 .side-status.ok{color:var(--success)}
 .side-status.warning{color:var(--warning)}
@@ -298,8 +281,8 @@ button{cursor:pointer}
 .side-row{display:flex;align-items:baseline;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border)}
 .side-row:last-child{border-bottom:none}
 .side-label{font-size:14px;color:var(--text-muted);font-weight:600}
-.side-value{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums}
-@media(max-width:720px){.cockpit{flex-direction:column;gap:24px}.gauge-wrap{width:200px;height:200px}.cockpit-side{width:100%}}
+.side-value{font-size:16px;font-weight:700;font-variant-numeric:tabular-nums;text-align:right}
+@media(max-width:720px){.cockpit{flex-direction:column;gap:24px}.gauge-wrap{width:180px;height:180px}.cockpit-side{width:100%}}
 
 .quicklinks-strip{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 14px;margin-bottom:4px;scrollbar-width:none}
 .quicklinks-strip::-webkit-scrollbar{display:none}
@@ -406,6 +389,7 @@ tr:hover td{background:var(--bg-2)}
 .icon-action:hover{color:var(--text)}
 .icon-action.danger:hover{color:var(--danger)}
 .icon-action svg{width:15px;height:15px;stroke:currentColor}
+.activity-icon svg{width:16px;height:16px;stroke:currentColor}
 .empty-state{padding:48px 20px;text-align:center;color:var(--text-muted)}
 .empty-state svg{width:20px;height:20px;stroke:var(--text-faint);margin-bottom:14px;padding:16px;background:var(--bg-2);border-radius:50%;box-sizing:content-box}
 .empty-state p{font-size:13px;font-weight:600}
@@ -496,10 +480,11 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
   .topbar{padding:0 16px; height:76px}
   .topbar h1{font-size:22px}
   .chip{display:none}
-  .cockpit{flex-direction:column;gap:24px}
-  .gauge-wrap{width:240px;height:240px}
-  .gauge-value{font-size:48px}
-  .gauge-unit{font-size:14px}
+  .cockpit{flex-direction:column;gap:20px}
+  .cockpit-card{padding:24px}
+  .gauge-wrap{width:190px;height:190px}
+  .gauge-value{font-size:38px}
+  .gauge-unit{font-size:12px}
   .hero-banner{flex-direction:column;align-items:flex-start}
   .hero-progress{max-width:100%}
   .quicklinks-grid{grid-template-columns:repeat(3,1fr)}
@@ -520,6 +505,7 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
     <button class="nav-item" data-page="dashboard"><span class="ni-indicator"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></span><span class="ni-label">Inicio</span></button>
     <button class="nav-item" data-page="charges"><span class="ni-indicator"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span><span class="ni-label">Cargas</span></button>
     <button class="nav-item" data-page="maintenance"><span class="ni-indicator"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span><span class="ni-label">Taller</span></button>
+    <button class="nav-item" data-page="manual"><span class="ni-indicator"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="ni-label">Manual</span></button>
     <button class="nav-item" data-page="notes"><span class="ni-indicator"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg></span><span class="ni-label">Notas</span></button>
     <button class="nav-item" data-page="stats"><span class="ni-indicator"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18M18 17V9M13 17V5M8 17v-4"/></svg></span><span class="ni-label">Datos</span></button>
   </nav>
@@ -587,36 +573,39 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
 
       <!-- DASHBOARD -->
       <section class="page" id="page-dashboard">
-        <!-- TOP: Car Info Compact -->
+        <!-- TOP: Cockpit hero — progress ring toward the next scheduled revision -->
         <div class="dash-header">
-          <div class="car-compact">
-            <svg viewBox="0 0 200 140" class="car-svg-compact">
-              <defs>
-                <linearGradient id="carGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" style="stop-color:var(--cyan);stop-opacity:1" />
-                  <stop offset="100%" style="stop-color:var(--green);stop-opacity:1" />
-                </linearGradient>
-              </defs>
-              <rect x="30" y="60" width="140" height="55" rx="8" fill="url(#carGradient)" opacity="0.9"/>
-              <polygon points="50,60 60,30 140,30 150,60" fill="url(#carGradient)" opacity="0.85"/>
-              <rect x="65" y="40" width="25" height="25" rx="2" fill="rgba(47,179,199,.25)" stroke="var(--cyan)" stroke-width="2"/>
-              <rect x="110" y="40" width="25" height="25" rx="2" fill="rgba(47,179,199,.25)" stroke="var(--cyan)" stroke-width="2"/>
-              <circle cx="55" cy="120" r="12" fill="rgba(255,255,255,.2)" stroke="var(--text-muted)" stroke-width="2"/>
-              <circle cx="145" cy="120" r="12" fill="rgba(255,255,255,.2)" stroke="var(--text-muted)" stroke-width="2"/>
-            </svg>
-            <div class="car-info-compact">
-              <div class="car-km">
-                <span class="km-val" id="gaugeKm">0</span>
-                <span class="km-unit">km</span>
+          <div class="card cockpit-card">
+            <div class="card-head"><h2>Estado general</h2><div class="car-badge" id="carStatusBadge">OK</div></div>
+            <div class="cockpit">
+              <div class="gauge-wrap">
+                <svg class="gauge-svg" viewBox="0 0 220 220">
+                  <circle class="gauge-track" cx="110" cy="110" r="104"/>
+                  <circle class="gauge-fill" id="gaugeFill" cx="110" cy="110" r="104"/>
+                </svg>
+                <div class="gauge-center">
+                  <span class="gauge-value" id="gaugeKm">0</span>
+                  <span class="gauge-unit">km recorridos</span>
+                </div>
               </div>
-              <div class="car-status-line" id="sideStatus"></div>
-              <div class="car-badge" id="carStatusBadge">OK</div>
+              <div class="cockpit-side">
+                <div class="side-status" id="sideStatus"></div>
+                <div class="side-row"><span class="side-label">Versión</span><span class="side-value" id="cockpitVersion">—</span></div>
+                <div class="side-row"><span class="side-label">Próxima revisión</span><span class="side-value" id="sideNextRevision">—</span></div>
+                <div class="side-row"><span class="side-label">Cargas registradas</span><span class="side-value" id="sideChargeCount">0</span></div>
+              </div>
             </div>
           </div>
         </div>
 
         <!-- MIDDLE: Quick Links as Large Tiles -->
         <div class="quicklinks-grid" id="quickLinksGrid"></div>
+
+        <!-- ACTIVITY: Recent charges + maintenance -->
+        <div class="card" style="margin-bottom:24px">
+          <div class="card-head"><h2>Actividad reciente</h2></div>
+          <div id="dashRecentActivity"></div>
+        </div>
 
         <!-- BOTTOM: Consumption Chart + Vehicle Status -->
         <div class="grid grid-2">
@@ -812,6 +801,21 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
         </div>
       </section>
 
+      <!-- MANUAL -->
+      <section class="page" id="page-manual">
+        <div class="card" style="margin-bottom:16px">
+          <div class="manual-search">
+            <input id="manualSearch" type="text" placeholder="Buscar en el manual: fusibles, neumáticos, batería, carga...">
+            <div class="lang-toggle">
+              <button id="manLangEs" class="active">ES</button>
+              <button id="manLangEn">EN</button>
+            </div>
+          </div>
+          <p style="font-size:12px;color:var(--text-faint)">Guía de referencia rápida del BYD Atto 3 EVO. Para procedimientos completos y condiciones de garantía, consulta siempre el manual oficial.</p>
+        </div>
+        <div id="manualContent"></div>
+      </section>
+
       <!-- NOTES -->
       <section class="page" id="page-notes">
         <div class="grid grid-2">
@@ -869,6 +873,7 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
   <div class="more-sheet-overlay" id="moreSheetOverlay">
     <div class="more-sheet">
       <div class="sheet-handle"></div>
+      <button class="sheet-item nav-item" data-page="manual"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>Manual</button>
       <button class="sheet-item nav-item" data-page="notes"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg>Notas</button>
       <button class="sheet-item nav-item" data-page="stats"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18M18 17V9M13 17V5M8 17v-4"/></svg>Estadísticas</button>
       <button class="sheet-item nav-item" data-page="setup"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Configuración</button>
@@ -1145,18 +1150,21 @@ function renderDashboard(){
   if(!c.purchaseDate){
     carStatusBadge.style.display = 'none';
   } else if(st.overdue || overdueCount){
-    carStatusBadge.className = 'car-status-badge danger';
-    carStatusBadge.textContent = '⚠️ Revisión vencida';
+    carStatusBadge.style.display = '';
+    carStatusBadge.className = 'car-badge danger';
+    carStatusBadge.textContent = 'Revisión vencida';
     carStatusBadge.style.cursor = 'pointer';
     carStatusBadge.onclick = ()=>navigate('maintenance');
   } else if(st.upcoming){
-    carStatusBadge.className = 'car-status-badge warning';
-    carStatusBadge.textContent = '🔔 Próxima revisión';
+    carStatusBadge.style.display = '';
+    carStatusBadge.className = 'car-badge warning';
+    carStatusBadge.textContent = 'Próxima revisión';
     carStatusBadge.style.cursor = 'pointer';
     carStatusBadge.onclick = ()=>navigate('maintenance');
   } else {
-    carStatusBadge.className = 'car-status-badge';
-    carStatusBadge.textContent = '✓ OK';
+    carStatusBadge.style.display = '';
+    carStatusBadge.className = 'car-badge';
+    carStatusBadge.textContent = 'OK';
     carStatusBadge.style.cursor = 'default';
   }
 
@@ -1172,6 +1180,24 @@ function renderDashboard(){
     status.innerHTML = ICONS.check + `<span>Todo al día${next ? ' — próxima: '+next.name : ''}</span>`;
   }
 
+  const gaugeFill = document.getElementById('gaugeFill');
+  if(gaugeFill && next){
+    const schedIdx = sched.findIndex(r=>r.km===next.km);
+    const prevKm = schedIdx > 0 ? sched[schedIdx-1].km : 0;
+    const span = Math.max(1, next.km - prevKm);
+    const progress = Math.min(1, Math.max(0, (km - prevKm) / span));
+    const circumference = 653.45;
+    gaugeFill.style.strokeDashoffset = circumference * (1 - progress);
+    gaugeFill.classList.toggle('warning', st.upcoming && !st.overdue);
+    gaugeFill.classList.toggle('danger', st.overdue || !!overdueCount);
+  }
+
+  document.getElementById('cockpitVersion').textContent = VERSION_LABELS[c.version] || VERSION_LABELS.design;
+  document.getElementById('sideNextRevision').textContent = next
+    ? (st.overdue ? 'Vencida — '+next.name : st.kmRemaining.toLocaleString('es-ES')+' km · '+next.name)
+    : '—';
+  document.getElementById('sideChargeCount').textContent = state.charges.length;
+
   document.getElementById('sideVersion').textContent = VERSION_LABELS[c.version] || VERSION_LABELS.design;
   document.getElementById('sideBattery').textContent = VEHICLE_BATTERY_KWH + ' kWh';
   document.getElementById('sideConsumption').textContent = (Number(c.avgConsumption)||0).toFixed(1) + ' kWh/100km';
@@ -1182,6 +1208,7 @@ function renderDashboard(){
 
   buildConsumptionChart();
   updateLastChargeInfo();
+  buildRecentActivity();
 }
 
 function updateLastChargeInfo(){
@@ -1215,19 +1242,25 @@ function buildRecentActivity(){
     ...state.maintenance.map(m=>({type:'maintenance', date:m.date, data:m}))
   ].sort((a,b)=> new Date(b.date)-new Date(a.date)).slice(0, 5);
 
-  if(!allEvents.length){ container.innerHTML = '<div style="color:var(--text-faint);padding:12px">Sin actividad reciente</div>'; return; }
+  if(!allEvents.length){ container.innerHTML = `<div class="empty-state" style="padding:28px 10px"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18M18 17V9M13 17V5M8 17v-4"/></svg><p>Sin actividad reciente</p></div>`; return; }
 
   container.innerHTML = allEvents.map(ev=>{
     const icon = ev.type==='charge' ? ICONS.bolt : ICONS.wrench;
-    const label = ev.type==='charge' ?
-      `${ev.data.kwh?'⚡ '+Number(ev.data.kwh).toFixed(1)+' kWh':''} ${ev.data.location?'en '+ev.data.location:''}`.trim() :
-      `🔧 ${MAINT_LABELS[ev.data.type]||ev.data.type}`;
+    const label = ev.type==='charge'
+      ? (ev.data.kwh ? Number(ev.data.kwh).toFixed(1)+' kWh cargados' : 'Carga registrada') + (ev.data.location ? ' · '+ev.data.location : '')
+      : (MAINT_LABELS[ev.data.type]||ev.data.type);
     const cost = Number(ev.data.cost||0);
-    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:12px">
-      <div><span style="color:var(--text-muted)">${fmtDate(ev.date)}</span> ${label}</div>
-      <div style="font-weight:700;color:var(--green)">${fmtEUR(cost)}</div>
+    return `<div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)">
+      <div class="activity-icon" style="width:34px;height:34px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--accent-soft);color:var(--accent)">${icon}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13.5px;font-weight:600;color:var(--text)">${label}</div>
+        <div style="font-size:11.5px;color:var(--text-faint);margin-top:2px">${fmtDate(ev.date)}</div>
+      </div>
+      <div style="font-size:13.5px;font-weight:700;color:var(--text);flex-shrink:0">${cost ? fmtEUR(cost) : '—'}</div>
     </div>`;
   }).join('');
+  const rows = container.children;
+  if(rows.length) rows[rows.length-1].style.borderBottom = 'none';
 }
 function cssVar(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
 function hexAlpha(hex, a){
@@ -1394,21 +1427,21 @@ function renderManual(){
   const container = document.getElementById('manualContent');
   if(!items.length){ container.innerHTML = `<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg><p>Sin resultados para "${escapeHtml(q)}"</p><small>Consulta el manual oficial en los enlaces de arriba</small></div>`; return; }
   container.innerHTML = Object.keys(byCat).map(cat=>`
-    <div class="card"><div class="card-head"><h3>${cat}</h3></div><div style="display:grid;gap:12px">
+    <div class="card" style="margin-bottom:16px"><div class="card-head"><h3>${cat.replace(/^[^\p{L}]+/u,'').trim()}</h3></div><div style="display:grid;gap:10px">
     ${byCat[cat].map((it,idx)=>{
       const fullContent = highlight(escapeHtml(it.content).replace(/\n/g,'<br>'),q);
       const itemId = 'manual-item-'+cat.replace(/\s+/g,'-')+'-'+idx;
       return `
-      <div style="border:1px solid var(--border-strong);border-radius:8px;overflow:hidden">
-        <button onclick="document.getElementById('${itemId}').hidden=!document.getElementById('${itemId}').hidden;event.target.closest('[data-toggle]').style.opacity=event.target.closest('[data-toggle]').style.opacity==='0.6'?'1':'0.6'" data-toggle="true" style="width:100%;text-align:left;padding:12px;background:var(--bg-2);border:none;cursor:pointer;color:var(--text);font-weight:600;display:flex;justify-content:space-between;align-items:center">
+      <div style="border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden">
+        <button onclick="const c=document.getElementById('${itemId}');c.hidden=!c.hidden;this.querySelector('.man-arrow').style.transform=c.hidden?'':'rotate(90deg)'" style="width:100%;text-align:left;padding:14px;background:var(--bg-2);border:none;cursor:pointer;color:var(--text);font-weight:600;display:flex;justify-content:space-between;align-items:center;gap:10px">
           <span>${highlight(it.title,q)}</span>
-          <span style="font-size:12px">▶</span>
+          <span class="man-arrow" style="font-size:11px;color:var(--text-faint);transition:transform .2s var(--ease);flex-shrink:0">▶</span>
         </button>
-        <div id="${itemId}" hidden style="padding:12px;background:var(--bg-1)">
-          ${it.location ? `<div style="font-size:11px;color:var(--accent);margin-bottom:8px;font-weight:600">📍 ${it.location}</div>` : ''}
+        <div id="${itemId}" hidden style="padding:14px;background:var(--bg-1)">
+          ${it.location ? `<div style="font-size:11px;color:var(--accent);margin-bottom:8px;font-weight:700;text-transform:uppercase;letter-spacing:.4px">${escapeHtml(it.location)}</div>` : ''}
           <p style="font-size:13px;color:var(--text-muted);margin:8px 0;line-height:1.6;white-space:pre-wrap">${fullContent}</p>
-          ${it.keywords ? '<div style="font-size:11px;color:var(--text-faint);margin-top:12px"><strong>Tags:</strong> '+it.keywords.join(', ')+'</div>' : ''}
-          <a href="https://www.google.com/search?q=BYD+Atto+3+EVO+manual+PDF+filetype:pdf" target="_blank" class="btn btn-ghost btn-sm" style="margin-top:12px;display:inline-block">📖 Buscar en manual oficial →</a>
+          ${it.keywords ? '<div style="font-size:11px;color:var(--text-faint);margin-top:12px"><strong>Tags:</strong> '+it.keywords.map(k=>escapeHtml(k)).join(', ')+'</div>' : ''}
+          <a href="https://www.google.com/search?q=BYD+Atto+3+EVO+manual+PDF+filetype:pdf" target="_blank" class="btn btn-ghost btn-sm" style="margin-top:12px;display:inline-block">Buscar en manual oficial →</a>
         </div>
       </div>`;
     }).join('')}
@@ -1743,58 +1776,9 @@ function init(){
   document.getElementById('m_date').valueAsDate = new Date();
   navigate('dashboard');
   requestAnimationFrame(() => {
-    renderQuickLinks();
-  const c = state.config;
-  const km = Number(c.currentKm)||0;
-  const totalCost = state.charges.reduce((s,x)=>s+Number(x.cost||0),0) + state.maintenance.reduce((s,x)=>s+Number(x.cost||0),0);
-  const sched = REVISIONS_SCHEDULE[state.lang] || REVISIONS_SCHEDULE.es;
-  const months = monthsBetween(c.purchaseDate);
-  let next = sched.find(r=>!state.completedRevisions.includes(r.km) && (r.km>=km));
-  if(!next) next = sched.find(r=>!state.completedRevisions.includes(r.km)) || sched[sched.length-1];
-  const st = next ? getScheduleForRevision(next, km, months) : {overdue:false,upcoming:false,kmRemaining:0};
-  const alerts = computeAlerts();
-  const overdueCount = alerts.filter(a=>a.level==='overdue').length;
-  document.getElementById('gaugeKm').textContent = km.toLocaleString('es-ES');
-  const carStatusBadge = document.getElementById('carStatusBadge');
-  if(!c.purchaseDate){
-    carStatusBadge.style.display = 'none';
-  } else if(st.overdue || overdueCount){
-    carStatusBadge.className = 'car-status-badge danger';
-    carStatusBadge.textContent = '⚠️ Revisión vencida';
-    carStatusBadge.style.cursor = 'pointer';
-    carStatusBadge.onclick = ()=>navigate('maintenance');
-  } else if(st.upcoming){
-    carStatusBadge.className = 'car-status-badge warning';
-    carStatusBadge.textContent = '🔔 Próxima revisión';
-    carStatusBadge.style.cursor = 'pointer';
-    carStatusBadge.onclick = ()=>navigate('maintenance');
-  } else {
-    carStatusBadge.className = 'car-status-badge';
-    carStatusBadge.textContent = '✓ OK';
-    carStatusBadge.style.cursor = 'default';
-  }
-  const status = document.getElementById('sideStatus');
-  if(st.overdue || overdueCount){
-    status.className = 'side-status danger';
-    status.innerHTML = ICONS.alert + `<span>${overdueCount||1} revisión(es) vencida(s)</span>`;
-  } else if(st.upcoming){
-    status.className = 'side-status warning';
-    status.innerHTML = ICONS.clock + `<span>${next.name} — faltan ${st.kmRemaining.toLocaleString('es-ES')} km</span>`;
-  } else {
-    status.className = 'side-status ok';
-    status.innerHTML = ICONS.check + '<span>Revisiones al día</span>';
-  }
-  document.getElementById('sideBattery').textContent = c.version==='design' ? '74.8 kWh (RWD)' : '74.8 kWh (AWD)';
-  document.getElementById('sideVersion').textContent = c.version==='design' ? 'Design (RWD) · 313 CV' : 'Excellence (AWD) · 449 CV';
-  document.getElementById('sideConsumption').textContent = (c.avgConsumption||15).toFixed(1);
-  document.getElementById('sideSpent').textContent = fmtEUR(totalCost);
-  const lastCharge = state.charges[state.charges.length-1];
-  if(lastCharge){
-    document.getElementById('lastChargeInfo').innerHTML = `${lastCharge.kWh} kWh · ${fmtEUR(lastCharge.cost)}`;
-    document.getElementById('lastChargeDate').textContent = fmtDate(lastCharge.date);
-  }
-  renderAlerts();
-  setInterval(renderAlerts, 60000);
+    renderDashboard();
+    renderAlerts();
+    setInterval(renderAlerts, 60000);
   });
 }
 document.addEventListener('DOMContentLoaded', init);
