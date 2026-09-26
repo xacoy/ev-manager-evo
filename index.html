@@ -243,7 +243,7 @@ button{cursor:pointer}
 .car-badge.danger{background:var(--danger-soft);color:var(--danger)}
 
 /* Info cards grid in bottom section */
-.info-cards-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.info-cards-grid-4{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .info-card-small{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;transition:border-color .2s var(--ease)}
 .info-card-small:hover{border-color:var(--border-strong)}
 .info-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--text-faint);margin-bottom:6px}
@@ -263,7 +263,6 @@ button{cursor:pointer}
 @media(max-width:1000px){
   .quicklinks-grid{grid-template-columns:repeat(2,1fr)}
   .grid-2{grid-template-columns:1fr!important}
-  .info-cards-grid-4{grid-template-columns:1fr 1fr}
 }
 @media(max-width:560px){
   .info-cards-grid-4{grid-template-columns:1fr}
