@@ -70,6 +70,7 @@ button{cursor:pointer}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:10px}
 ::selection{background:var(--accent-soft)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
 
 /* ---------- layout: nav rail (desktop) + bottom nav (mobile) ---------- */
 .app{display:flex; height:100vh}
@@ -125,16 +126,20 @@ button{cursor:pointer}
 .top-right{display:flex;align-items:center;gap:8px}
 .expandable-section{margin-top:20px}
 .expandable-header{
-  display:flex;align-items:center;gap:14px;width:100%;padding:18px 24px;
-  background:var(--accent);
-  border:none;border-radius:var(--radius);cursor:pointer;
-  font-size:16px;color:var(--on-accent);font-weight:700;transition:filter .15s var(--ease);
+  display:flex;align-items:center;gap:14px;width:100%;padding:16px 20px;
+  background:var(--bg-card);
+  border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;
+  font-size:16px;color:var(--text);font-weight:700;transition:border-color .2s var(--ease), background .2s var(--ease);
+  box-shadow:var(--shadow-card);
 }
-.expandable-header:hover{filter:brightness(1.08)}
+.expandable-header:hover{border-color:var(--border-strong); background:var(--bg-2)}
 .expandable-header:active{transform:translateY(0)}
-.expandable-header h2{font-size:inherit;font-weight:inherit;margin:0}
-.expandable-header span:first-child{font-size:22px;flex-shrink:0}
-.expand-toggle{transition:transform .3s var(--ease);font-size:14px;flex-shrink:0;margin-left:auto}
+.expandable-header h2{font-size:15px;font-weight:700;margin:0;font-family:var(--font-display)}
+.expandable-header span:first-child{
+  font-size:17px;flex-shrink:0;width:38px;height:38px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;background:var(--accent-soft);
+}
+.expand-toggle{transition:transform .3s var(--ease);font-size:11px;flex-shrink:0;margin-left:auto;color:var(--text-faint)}
 .expandable-content{padding:16px 0;margin-top:12px;display:none}
 .expandable-content[style*="display: block"]{display:block !important}
 .chip{
@@ -320,17 +325,13 @@ button{cursor:pointer}
   padding:28px; box-shadow:var(--shadow-card);
 }
 .stat-card:hover{border-color:var(--border-strong)}
-.stat-card .icon-badge{
-  width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;
-}
-.stat-card .icon-badge svg{width:22px;height:22px;stroke:currentColor}
 .stat-card .label{font-size:13px;color:var(--text-faint);font-weight:600}
 .stat-card .value{font-size:42px;font-weight:800;margin-top:12px;letter-spacing:-.5px;color:var(--text);font-variant-numeric:tabular-nums}
 .stat-card .sub{font-size:13px;color:var(--text-muted);margin-top:10px;font-weight:500}
-.tone-cyan{color:var(--cyan); background:var(--cyan-soft)}
-.tone-violet{color:var(--purple);background:var(--purple-soft)}
-.tone-green{color:var(--green);background:var(--green-soft)}
-.tone-amber{color:var(--orange);background:var(--orange-soft)}
+.stat-card.tone-cyan,.info-card-small.tone-cyan{border-left:3px solid var(--cyan)}
+.stat-card.tone-violet,.info-card-small.tone-violet{border-left:3px solid var(--purple)}
+.stat-card.tone-green,.info-card-small.tone-green{border-left:3px solid var(--green)}
+.stat-card.tone-amber,.info-card-small.tone-amber{border-left:3px solid var(--orange)}
 
 .hero-banner{
   border-radius:var(--radius); padding:22px 26px; position:relative; overflow:hidden;
@@ -368,9 +369,9 @@ button{cursor:pointer}
 .btn-primary{
   background:var(--accent);
   color:var(--on-accent); border-color:transparent;
-  font-weight:700;
+  font-weight:700; box-shadow:0 1px 2px rgba(0,0,0,.18);
 }
-.btn-primary:hover{filter:brightness(1.08)}
+.btn-primary:hover{filter:brightness(1.08); transform:translateY(-1px); box-shadow:0 6px 16px rgba(0,0,0,.18)}
 .btn-ghost{background:transparent;border-color:var(--border-strong);color:var(--text)}
 .btn-ghost:hover{background:transparent; border-color:var(--accent); color:var(--accent)}
 .btn-danger{background:var(--danger-soft);color:var(--danger); border-color:transparent}
@@ -406,8 +407,9 @@ tr:hover td{background:var(--bg-2)}
 .icon-action.danger:hover{color:var(--danger)}
 .icon-action svg{width:15px;height:15px;stroke:currentColor}
 .empty-state{padding:48px 20px;text-align:center;color:var(--text-muted)}
-.empty-state svg{width:36px;height:36px;stroke:var(--text-faint);margin-bottom:10px}
+.empty-state svg{width:20px;height:20px;stroke:var(--text-faint);margin-bottom:14px;padding:16px;background:var(--bg-2);border-radius:50%;box-sizing:content-box}
 .empty-state p{font-size:13px;font-weight:600}
+.empty-state small{display:block;margin-top:6px;font-size:11.5px;color:var(--text-faint);font-weight:500}
 
 /* ---------- revisions ---------- */
 .rev-item{
@@ -625,22 +627,22 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
           <div class="card">
             <div class="card-head"><h2>Estado del vehículo</h2></div>
             <div class="info-cards-grid-4">
-              <div class="info-card-small">
+              <div class="info-card-small tone-cyan">
                 <div class="info-label">BATERÍA</div>
                 <div class="info-value" id="sideBattery">—</div>
                 <div class="info-sub" id="sideVersion">—</div>
               </div>
-              <div class="info-card-small">
+              <div class="info-card-small tone-violet">
                 <div class="info-label">CONSUMO</div>
                 <div class="info-value" id="sideConsumption">—</div>
                 <div class="info-sub">kWh/100km</div>
               </div>
-              <div class="info-card-small">
+              <div class="info-card-small tone-green">
                 <div class="info-label">GASTO TOTAL</div>
                 <div class="info-value" id="sideSpent">—</div>
                 <div class="info-sub">cargas + servicio</div>
               </div>
-              <div class="info-card-small">
+              <div class="info-card-small tone-amber">
                 <div class="info-label">ÚLTIMA CARGA</div>
                 <div id="lastChargeInfo" style="font-size:13px;font-weight:700;margin-top:4px">—</div>
                 <div style="font-size:11px;color:var(--text-muted);margin-top:2px" id="lastChargeDate">—</div>
@@ -726,10 +728,10 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
           <div class="card">
             <div class="card-head"><h2>Resumen</h2></div>
             <div class="grid grid-2" style="gap:12px">
-              <div class="stat-card"><div class="label">Total cargas</div><div class="value" id="chgTotal" style="font-size:20px">0</div></div>
-              <div class="stat-card"><div class="label">Total kWh</div><div class="value" id="chgKwh" style="font-size:20px">0</div></div>
-              <div class="stat-card"><div class="label">Gasto total</div><div class="value" id="chgCost" style="font-size:20px">0 €</div></div>
-              <div class="stat-card"><div class="label">Precio medio</div><div class="value" id="chgAvg" style="font-size:20px">0 €/kWh</div></div>
+              <div class="stat-card tone-cyan"><div class="label">Total cargas</div><div class="value" id="chgTotal" style="font-size:20px">0</div></div>
+              <div class="stat-card tone-violet"><div class="label">Total kWh</div><div class="value" id="chgKwh" style="font-size:20px">0</div></div>
+              <div class="stat-card tone-green"><div class="label">Gasto total</div><div class="value" id="chgCost" style="font-size:20px">0 €</div></div>
+              <div class="stat-card tone-amber"><div class="label">Precio medio</div><div class="value" id="chgAvg" style="font-size:20px">0 €/kWh</div></div>
             </div>
           </div>
         </div>
@@ -749,15 +751,15 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
         <div class="card" style="margin-bottom:24px">
           <div class="card-head"><h2 style="font-size:20px">Resumen del taller</h2></div>
           <div class="grid grid-3" style="gap:16px">
-            <div class="stat-card" style="padding:16px;border-radius:12px;border-left:3px solid var(--accent)">
+            <div class="stat-card tone-cyan" style="padding:16px">
               <div class="label" style="font-size:13px">Servicios registrados</div>
               <div class="value" id="mntTotal" style="font-size:32px;font-weight:800;color:var(--text)">0</div>
             </div>
-            <div class="stat-card" style="padding:16px;border-radius:12px;border-left:3px solid var(--accent-2)">
+            <div class="stat-card tone-green" style="padding:16px">
               <div class="label" style="font-size:13px">Gasto total</div>
               <div class="value" id="mntCost" style="font-size:32px;font-weight:800;color:var(--text)">0 €</div>
             </div>
-            <div class="stat-card" style="padding:16px;border-radius:12px;border-left:3px solid var(--accent-3)">
+            <div class="stat-card tone-violet" style="padding:16px">
               <div class="label" style="font-size:13px">Último servicio</div>
               <div class="value" id="mntLast" style="font-size:18px;font-weight:600;color:var(--text)">—</div>
             </div>
@@ -835,9 +837,9 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
 <!-- STATS -->
       <section class="page" id="page-stats">
         <div class="grid grid-3" style="margin-bottom:16px">
-          <div class="card stat-card"><div class="label">Coste / km</div><div class="value" id="st_costPerKm" style="font-size:22px">—</div><div class="sub">€ por km recorrido</div></div>
-          <div class="card stat-card"><div class="label">Precio medio energía</div><div class="value" id="st_avgPrice" style="font-size:22px">—</div><div class="sub">€ / kWh</div></div>
-          <div class="card stat-card"><div class="label">Proyección anual</div><div class="value" id="st_yearProj" style="font-size:22px">—</div><div class="sub">gasto estimado / año</div></div>
+          <div class="card stat-card tone-cyan"><div class="label">Coste / km</div><div class="value" id="st_costPerKm" style="font-size:22px">—</div><div class="sub">€ por km recorrido</div></div>
+          <div class="card stat-card tone-violet"><div class="label">Precio medio energía</div><div class="value" id="st_avgPrice" style="font-size:22px">—</div><div class="sub">€ / kWh</div></div>
+          <div class="card stat-card tone-green"><div class="label">Proyección anual</div><div class="value" id="st_yearProj" style="font-size:22px">—</div><div class="sub">gasto estimado / año</div></div>
         </div>
         <div class="card">
           <div class="card-head"><h2>Gasto mensual</h2><span class="hint">cargas + mantenimiento</span></div>
