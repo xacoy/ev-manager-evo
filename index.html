@@ -940,7 +940,6 @@ const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
   "es": [
-    { "km": 1000, "months": 1, "name": "Revisión de entrega · 1.000 km", "description": "Chequeo inicial centrado en los componentes que sí requieren mantenimiento habitual en un eléctrico.", "tasks": ["Frenos", "Presión y estado de neumáticos", "Sistemas eléctricos", "Batería de servicio 12V", "Actualización de software"] },
     { "km": 30000, "months": 25, "name": "Revisión 1 · 30.000 km / 24 meses", "description": "Primera revisión periódica bajo el intervalo ampliado de BYD.", "tasks": ["Frenos (pastillas y discos)", "Neumáticos (rotación y desgaste)", "Refrigerante de batería/motor", "Filtro de habitáculo", "Diagnóstico electrónico"] },
     { "km": 60000, "months": 49, "name": "Revisión 2 · 60.000 km / 48 meses", "description": "Revisión periódica estándar.", "tasks": ["Frenos", "Neumáticos", "Sistema de carga rápida", "Suspensión y dirección"] },
     { "km": 90000, "months": 73, "name": "Revisión 3 · 90.000 km / 72 meses", "description": "Revisión periódica estándar.", "tasks": ["Frenos", "Neumáticos", "Refrigerante", "Filtro de habitáculo"] },
@@ -949,7 +948,6 @@ const REVISIONS_SCHEDULE = {
     { "km": 250000, "months": 96, "name": "Revisión de batería · 250.000 km", "description": "Límite de la garantía de la Blade Battery (8 años / 250.000 km, SOH mínimo garantizado 70%).", "tasks": ["Informe de salud de batería (SOH)", "Inspección profesional de batería de alto voltaje", "Sistema de refrigeración de batería"] }
   ],
   "en": [
-    { "km": 1000, "months": 1, "name": "Delivery check · 1,000 km", "description": "Initial check focused on the components that do need regular maintenance on an EV.", "tasks": ["Brakes", "Tire pressure and condition", "Electrical systems", "12V service battery", "Software update"] },
     { "km": 30000, "months": 25, "name": "Service 1 · 30,000 km / 24 months", "description": "First periodic service under BYD's extended interval.", "tasks": ["Brakes (pads and discs)", "Tires (rotation and wear)", "Battery/motor coolant", "Cabin filter", "Electronic diagnostics"] },
     { "km": 60000, "months": 49, "name": "Service 2 · 60,000 km / 48 months", "description": "Standard periodic service.", "tasks": ["Brakes", "Tires", "Fast charging system", "Suspension and steering"] },
     { "km": 90000, "months": 73, "name": "Service 3 · 90,000 km / 72 months", "description": "Standard periodic service.", "tasks": ["Brakes", "Tires", "Coolant", "Cabin filter"] },
@@ -1084,7 +1082,7 @@ function toggleTheme(){
 function getScheduleForRevision(rev, currentKm, months){
   const overdue = currentKm >= rev.km || months >= rev.months;
   const kmRemaining = rev.km - currentKm;
-  const upcoming = !overdue && kmRemaining <= 1500;
+  const upcoming = !overdue && kmRemaining <= 100;
   return { overdue, upcoming, kmRemaining };
 }
 function computeAlerts(){
