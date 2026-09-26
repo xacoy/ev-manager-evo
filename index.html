@@ -242,12 +242,15 @@ button{cursor:pointer}
 .car-badge.warning{background:var(--warning-soft);color:var(--warning)}
 .car-badge.danger{background:var(--danger-soft);color:var(--danger)}
 
-/* Info cards grid in bottom section */
-.info-cards-grid-4{display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1.3;min-width:260px}
+/* Estado general: uniform grid of stat tiles */
+.status-tiles-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 .info-card-small{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;transition:border-color .2s var(--ease)}
 .info-card-small:hover{border-color:var(--border-strong)}
 .info-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--text-faint);margin-bottom:6px}
 .info-value{font-size:18px;font-weight:800;color:var(--text)}
+.info-value.ok{color:var(--success)}
+.info-value.warning{color:var(--warning)}
+.info-value.danger{color:var(--danger)}
 .info-sub{font-size:11px;color:var(--text-muted);margin-top:2px}
 
 .quicklinks-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
@@ -265,31 +268,11 @@ button{cursor:pointer}
   .grid-2{grid-template-columns:1fr!important}
 }
 @media(max-width:560px){
-  .info-cards-grid-4{grid-template-columns:1fr}
   .quicklinks-grid{grid-template-columns:1fr}
 }
 
 /* ---------- cockpit (dashboard hero) ---------- */
 .cockpit-card{padding:22px 26px}
-.cockpit{display:flex;align-items:center;gap:28px}
-.gauge-wrap{position:relative;width:150px;height:150px;flex-shrink:0}
-.gauge-svg{width:100%;height:100%;transform:rotate(-90deg)}
-.gauge-track{fill:none;stroke:var(--border);stroke-width:9}
-.gauge-fill{fill:none;stroke:var(--accent);stroke-width:9;stroke-linecap:round;stroke-dasharray:653.45;stroke-dashoffset:653.45;transition:stroke-dashoffset 1s var(--ease),stroke .3s var(--ease)}
-.gauge-fill.warning{stroke:var(--warning)}
-.gauge-fill.danger{stroke:var(--danger)}
-.gauge-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
-.gauge-value{font-size:34px;font-weight:700;letter-spacing:-1px;line-height:1;font-variant-numeric:tabular-nums;color:var(--text);font-family:var(--font-display)}
-.gauge-unit{font-size:10px;color:var(--text-faint);font-weight:700;letter-spacing:1px;margin-top:6px;text-transform:uppercase}
-.cockpit-side{flex:1;min-width:0;display:flex;flex-direction:column}
-.side-row{display:flex;align-items:baseline;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)}
-.side-row:last-child{border-bottom:none}
-.side-label{font-size:13px;color:var(--text-muted);font-weight:600}
-.side-value{font-size:14px;font-weight:700;font-variant-numeric:tabular-nums;text-align:right}
-.side-value.ok{color:var(--success)}
-.side-value.warning{color:var(--warning)}
-.side-value.danger{color:var(--danger)}
-@media(max-width:720px){.cockpit{flex-direction:column;gap:16px}.gauge-wrap{width:140px;height:140px}.gauge-value{font-size:30px}.cockpit-side,.info-cards-grid-4{width:100%}}
 
 .quicklinks-strip{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 14px;margin-bottom:4px;scrollbar-width:none}
 .quicklinks-strip::-webkit-scrollbar{display:none}
@@ -322,6 +305,8 @@ button{cursor:pointer}
 .stat-card.tone-violet,.info-card-small.tone-violet{border-left:3px solid var(--purple)}
 .stat-card.tone-green,.info-card-small.tone-green{border-left:3px solid var(--green)}
 .stat-card.tone-amber,.info-card-small.tone-amber{border-left:3px solid var(--orange)}
+.info-card-small.tone-warning{border-left:3px solid var(--warning)}
+.info-card-small.tone-danger{border-left:3px solid var(--danger)}
 
 .hero-banner{
   border-radius:var(--radius); padding:22px 26px; position:relative; overflow:hidden;
@@ -487,18 +472,17 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
   .topbar{padding:0 16px; height:76px}
   .topbar h1{font-size:22px}
   .chip{display:none}
-  .cockpit{flex-direction:column;gap:20px}
   .cockpit-card{padding:24px}
-  .gauge-wrap{width:210px;height:210px}
-  .gauge-value{font-size:46px}
-  .gauge-unit{font-size:11.5px}
-  .cockpit-side,.info-cards-grid-4{width:100%}
+  .status-tiles-grid{grid-template-columns:repeat(2,1fr)}
   .hero-banner{flex-direction:column;align-items:flex-start}
   .hero-progress{max-width:100%}
   .quicklinks-grid{grid-template-columns:repeat(3,1fr)}
   .quicklink-form{flex-direction:column}
   .quicklink-form button{width:100%}
   .grid-2{grid-template-columns:1fr}
+}
+@media(max-width:560px){
+  .status-tiles-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -589,43 +573,44 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
           </div>
           <div class="card cockpit-card">
             <div class="card-head"><h2>Estado general</h2><div class="car-badge" id="carStatusBadge">OK</div></div>
-            <div class="cockpit">
-              <div class="gauge-wrap">
-                <svg class="gauge-svg" viewBox="0 0 220 220">
-                  <circle class="gauge-track" cx="110" cy="110" r="104"/>
-                  <circle class="gauge-fill" id="gaugeFill" cx="110" cy="110" r="104"/>
-                </svg>
-                <div class="gauge-center">
-                  <span class="gauge-value" id="gaugeKm">0</span>
-                  <span class="gauge-unit">km recorridos</span>
-                </div>
+            <div class="status-tiles-grid">
+              <div class="info-card-small tone-cyan">
+                <div class="info-label">KM RECORRIDOS</div>
+                <div class="info-value" id="gaugeKm">0</div>
               </div>
-              <div class="cockpit-side">
-                <div class="side-row"><span class="side-label">Versión</span><span class="side-value" id="cockpitVersion">—</span></div>
-                <div class="side-row"><span class="side-label">Próxima revisión</span><span class="side-value" id="sideNextRevision">—</span></div>
-                <div class="side-row"><span class="side-label">Cargas registradas</span><span class="side-value" id="sideChargeCount">0</span></div>
+              <div class="info-card-small tone-violet">
+                <div class="info-label">BATERÍA</div>
+                <div class="info-value" id="sideBattery">—</div>
+                <div class="info-sub">Blade Battery LFP</div>
               </div>
-              <div class="info-cards-grid-4">
-                <div class="info-card-small tone-cyan">
-                  <div class="info-label">BATERÍA</div>
-                  <div class="info-value" id="sideBattery">—</div>
-                  <div class="info-sub">Blade Battery LFP</div>
-                </div>
-                <div class="info-card-small tone-violet">
-                  <div class="info-label">CONSUMO EST.</div>
-                  <div class="info-value" id="sideConsumption">—</div>
-                  <div class="info-sub">kWh/100km</div>
-                </div>
-                <div class="info-card-small tone-green">
-                  <div class="info-label">GASTO TOTAL</div>
-                  <div class="info-value" id="sideSpent">—</div>
-                  <div class="info-sub">cargas + servicio</div>
-                </div>
-                <div class="info-card-small tone-amber">
-                  <div class="info-label">ÚLTIMA CARGA</div>
-                  <div id="lastChargeInfo" style="font-size:13px;font-weight:700;margin-top:4px">—</div>
-                  <div style="font-size:11px;color:var(--text-muted);margin-top:2px" id="lastChargeDate">—</div>
-                </div>
+              <div class="info-card-small tone-green" id="nextRevisionTile">
+                <div class="info-label">PRÓXIMA REVISIÓN</div>
+                <div class="info-value" id="sideNextRevision">—</div>
+                <div class="info-sub" id="sideNextRevisionSub">—</div>
+              </div>
+              <div class="info-card-small tone-amber">
+                <div class="info-label">CARGAS REGISTRADAS</div>
+                <div class="info-value" id="sideChargeCount">0</div>
+              </div>
+              <div class="info-card-small tone-cyan">
+                <div class="info-label">ÚLTIMA CARGA</div>
+                <div class="info-value" id="lastChargeInfo" style="font-size:18px">—</div>
+                <div class="info-sub" id="lastChargeDate">—</div>
+              </div>
+              <div class="info-card-small tone-violet">
+                <div class="info-label">CONSUMO EST.</div>
+                <div class="info-value" id="sideConsumption">—</div>
+                <div class="info-sub">kWh/100km</div>
+              </div>
+              <div class="info-card-small tone-green">
+                <div class="info-label">KWH CARGADOS</div>
+                <div class="info-value" id="sideTotalKwh">—</div>
+                <div class="info-sub">histórico total</div>
+              </div>
+              <div class="info-card-small tone-amber">
+                <div class="info-label">GASTO TOTAL</div>
+                <div class="info-value" id="sideSpent">—</div>
+                <div class="info-sub">cargas + servicio</div>
               </div>
             </div>
           </div>
@@ -1152,7 +1137,6 @@ function updateNotifStatus(){
 }
 
 /* ---------------- dashboard ---------------- */
-const GAUGE_CIRCUMFERENCE = 2 * Math.PI * 104;
 function computeAvgConsumption(c){
   const withData = state.charges.filter(x=>x.km!=null && Number(x.km)>0 && x.kwh!=null && Number(x.kwh)>0);
   if(withData.length){
@@ -1204,37 +1188,36 @@ function renderDashboard(){
     carStatusBadge.style.cursor = 'default';
   }
 
-  const gaugeFill = document.getElementById('gaugeFill');
-  if(gaugeFill && next){
-    const schedIdx = sched.findIndex(r=>r.km===next.km);
-    const prevKm = schedIdx > 0 ? sched[schedIdx-1].km : 0;
-    const span = Math.max(1, next.km - prevKm);
-    const progress = Math.min(1, Math.max(0, (km - prevKm) / span));
-    const circumference = 653.45;
-    gaugeFill.style.strokeDashoffset = circumference * (1 - progress);
-    gaugeFill.classList.toggle('warning', st.upcoming && !st.overdue);
-    gaugeFill.classList.toggle('danger', st.overdue || !!overdueCount);
-  }
-
-  document.getElementById('cockpitVersion').textContent = VERSION_LABELS[c.version] || VERSION_LABELS.design;
   const nextRevEl = document.getElementById('sideNextRevision');
+  const nextRevSubEl = document.getElementById('sideNextRevisionSub');
+  const nextRevTile = document.getElementById('nextRevisionTile');
+  const shortName = next ? next.name.split('·')[0].trim() : '—';
   if(!next){
     nextRevEl.textContent = '—';
-    nextRevEl.className = 'side-value';
+    nextRevSubEl.textContent = '—';
+    nextRevEl.className = 'info-value';
+    nextRevTile.className = 'info-card-small tone-green';
   } else if(st.overdue || overdueCount){
-    nextRevEl.textContent = overdueCount>1 ? overdueCount+' revisiones vencidas' : 'Vencida — '+next.name.split('·')[0].trim();
-    nextRevEl.className = 'side-value danger';
+    nextRevEl.textContent = overdueCount>1 ? overdueCount+' vencidas' : 'Vencida';
+    nextRevSubEl.textContent = shortName;
+    nextRevEl.className = 'info-value danger';
+    nextRevTile.className = 'info-card-small tone-danger';
   } else if(st.upcoming){
-    nextRevEl.textContent = next.name.split('·')[0].trim()+' · '+fmtNum(st.kmRemaining)+' km';
-    nextRevEl.className = 'side-value warning';
+    nextRevEl.textContent = fmtNum(st.kmRemaining)+' km';
+    nextRevSubEl.textContent = shortName;
+    nextRevEl.className = 'info-value warning';
+    nextRevTile.className = 'info-card-small tone-warning';
   } else {
-    nextRevEl.textContent = next.name.split('·')[0].trim()+' · '+fmtNum(st.kmRemaining)+' km';
-    nextRevEl.className = 'side-value ok';
+    nextRevEl.textContent = fmtNum(st.kmRemaining)+' km';
+    nextRevSubEl.textContent = shortName;
+    nextRevEl.className = 'info-value ok';
+    nextRevTile.className = 'info-card-small tone-green';
   }
   document.getElementById('sideChargeCount').textContent = state.charges.length;
 
   document.getElementById('sideBattery').textContent = VEHICLE_BATTERY_KWH + ' kWh';
   document.getElementById('sideConsumption').textContent = computeAvgConsumption(c).toFixed(1) + ' kWh/100km';
+  document.getElementById('sideTotalKwh').textContent = state.charges.reduce((s,x)=>s+Number(x.kwh||0),0).toFixed(1) + ' kWh';
   document.getElementById('sideSpent').textContent = fmtEUR(totalCost);
 
   document.getElementById('chipKm').textContent = fmtNum(km) + ' km';
