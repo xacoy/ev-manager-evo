@@ -1013,18 +1013,30 @@ function deepMerge(base, incoming){
 }
 
 /* ---------------- utils ---------------- */
-const fmtEUR = n => (Number(n)||0).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2}) + ' €';
+// es-ES's toLocaleString only groups thousands from 10.000 up (e.g. 1037 stays "1037"),
+// so numbers are grouped by hand for consistent "1.037" style formatting everywhere.
+function fmtNum(n){
+  const num = Math.round(Number(n)||0);
+  const sign = num < 0 ? '-' : '';
+  return sign + Math.abs(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+const fmtEUR = n => {
+  const num = Number(n)||0;
+  const sign = num < 0 ? '-' : '';
+  const [intPart, decPart] = Math.abs(num).toFixed(2).split('.');
+  return sign + fmtNum(intPart) + ',' + decPart + ' €';
+};
 const fmtDate = d => { if(!d) return '—'; const dt = new Date(d); return isNaN(dt) ? d : dt.toLocaleDateString('es-ES'); };
 const uid = () => Date.now() + Math.floor(Math.random()*1000);
 function animateCountUp(el, target){
   if(!el) return;
   const from = Number(el.dataset.countFrom) || 0;
-  if(from === target){ el.textContent = target.toLocaleString('es-ES'); return; }
+  if(from === target){ el.textContent = fmtNum(target); return; }
   const duration = 700, start = performance.now();
   function tick(now){
     const p = Math.min(1, (now-start)/duration);
     const eased = 1 - Math.pow(1-p, 3);
-    el.textContent = Math.round(from + (target-from)*eased).toLocaleString('es-ES');
+    el.textContent = fmtNum(from + (target-from)*eased);
     if(p < 1) requestAnimationFrame(tick); else el.dataset.countFrom = target;
   }
   requestAnimationFrame(tick);
@@ -1213,10 +1225,10 @@ function renderDashboard(){
     nextRevEl.textContent = overdueCount>1 ? overdueCount+' revisiones vencidas' : 'Vencida — '+next.name.split('·')[0].trim();
     nextRevEl.className = 'side-value danger';
   } else if(st.upcoming){
-    nextRevEl.textContent = next.name.split('·')[0].trim()+' · '+st.kmRemaining.toLocaleString('es-ES')+' km';
+    nextRevEl.textContent = next.name.split('·')[0].trim()+' · '+fmtNum(st.kmRemaining)+' km';
     nextRevEl.className = 'side-value warning';
   } else {
-    nextRevEl.textContent = next.name.split('·')[0].trim()+' · '+st.kmRemaining.toLocaleString('es-ES')+' km';
+    nextRevEl.textContent = next.name.split('·')[0].trim()+' · '+fmtNum(st.kmRemaining)+' km';
     nextRevEl.className = 'side-value ok';
   }
   document.getElementById('sideChargeCount').textContent = state.charges.length;
@@ -1225,7 +1237,7 @@ function renderDashboard(){
   document.getElementById('sideConsumption').textContent = computeAvgConsumption(c).toFixed(1) + ' kWh/100km';
   document.getElementById('sideSpent').textContent = fmtEUR(totalCost);
 
-  document.getElementById('chipKm').textContent = km.toLocaleString('es-ES') + ' km';
+  document.getElementById('chipKm').textContent = fmtNum(km) + ' km';
   document.getElementById('chipBattery').textContent = (VERSION_LABELS[c.version] || VERSION_LABELS.design).split('·')[0].trim() + ' · ' + VEHICLE_BATTERY_KWH + ' kWh';
 
   updateLastChargeInfo();
@@ -1286,7 +1298,7 @@ function renderCharges(){
   tbody.innerHTML = sorted.map(c=>`
     <tr>
       <td>${fmtDate(c.date)}</td><td>${c.kwh!=null ? Number(c.kwh).toFixed(1) : '—'}</td><td>${c.cost!=null ? fmtEUR(c.cost) : '—'}</td>
-      <td>${(c.kwh && c.cost!=null) ? (c.cost/c.kwh).toFixed(3)+' €' : '—'}</td><td>${c.km ? Number(c.km).toLocaleString('es-ES') : '—'}</td>
+      <td>${(c.kwh && c.cost!=null) ? (c.cost/c.kwh).toFixed(3)+' €' : '—'}</td><td>${c.km ? fmtNum(c.km) : '—'}</td>
       <td>${c.location||'—'}</td>
       <td><button class="icon-action danger" onclick="deleteCharge(${c.id})">${ICONS.trash}</button></td>
     </tr>`).join('');
@@ -1312,7 +1324,7 @@ function renderMaintenance(){
   tbody.innerHTML = sorted.map(m=>`
     <tr>
       <td>${fmtDate(m.date)}</td><td>${MAINT_LABELS[m.type]||m.type}</td><td>${m.location||'—'}</td><td>${fmtEUR(m.cost)}</td>
-      <td>${m.km ? Number(m.km).toLocaleString('es-ES') : '—'}</td>
+      <td>${m.km ? fmtNum(m.km) : '—'}</td>
       <td><button class="icon-action danger" onclick="deleteMaint(${m.id})">${ICONS.trash}</button></td>
     </tr>`).join('');
   document.getElementById('maintEmpty').style.display = state.maintenance.length ? 'none' : 'block';
