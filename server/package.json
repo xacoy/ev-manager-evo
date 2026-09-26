@@ -1,0 +1,13 @@
+{
+  "name": "ev-manager-evo-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Servidor mínimo (estático + API de sincronización) para el despliegue autoalojado de EV Manager Evo.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

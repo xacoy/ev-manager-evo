@@ -990,7 +990,42 @@ function loadState(){
     if(raw){ const parsed = JSON.parse(raw); state = deepMerge(state, parsed); }
   }catch(e){ console.warn('No se pudo cargar el estado guardado', e); }
 }
-function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+function saveState(opts){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  if(!(opts && opts.skipPush)) queueServerPush();
+}
+
+/* ---------------- server sync (solo activo en el despliegue autoalojado con backend;
+   en GitHub Pages /api/data no existe y la app se queda en modo localStorage, sin cambios) ---------------- */
+const API_URL = 'api/data';
+let apiAvailable = false;
+let pushTimer = null;
+
+async function trySyncFromServer(){
+  try{
+    const res = await fetch(API_URL, { headers:{ 'Accept':'application/json' } });
+    if(!res.ok) return;
+    if(!(res.headers.get('content-type')||'').includes('application/json')) return;
+    apiAvailable = true;
+    const serverState = await res.json();
+    if(serverState && Object.keys(serverState).length){
+      state = deepMerge(state, serverState);
+      saveState({ skipPush:true });
+      applyStateToForms();
+      renderAlerts();
+      const activePage = document.querySelector('.page.active');
+      if(activePage) navigate(activePage.id.replace('page-',''));
+    }
+  }catch(e){ /* sin backend disponible: se queda en modo local, como siempre */ }
+}
+function queueServerPush(){
+  if(!apiAvailable) return;
+  clearTimeout(pushTimer);
+  pushTimer = setTimeout(()=>{
+    fetch(API_URL, { method:'PUT', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify(state) })
+      .catch(()=>{ /* se reintentará en el siguiente guardado */ });
+  }, 600);
+}
 function deepMerge(base, incoming){
   const out = Array.isArray(base) ? base.slice() : {...base};
   for(const k in incoming){
@@ -1782,6 +1817,7 @@ function init(){
     renderAlerts();
     setInterval(renderAlerts, 60000);
   });
+  trySyncFromServer();
 }
 document.addEventListener('DOMContentLoaded', init);
 </script>

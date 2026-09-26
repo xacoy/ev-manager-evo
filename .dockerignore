@@ -1,0 +1,9 @@
+.git
+.github
+README.md
+data
+public
+data-runtime
+.env
+node_modules
+server/node_modules

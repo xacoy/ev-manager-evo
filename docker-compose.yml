@@ -1,0 +1,14 @@
+services:
+  ev-manager:
+    build: .
+    container_name: ev-manager-evo
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data-runtime:/data
+    environment:
+      - PORT=3000
+      - DATA_FILE=/data/state.json
+      - AUTH_USER=${AUTH_USER}
+      - AUTH_PASS=${AUTH_PASS}
+    restart: unless-stopped
