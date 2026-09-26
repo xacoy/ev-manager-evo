@@ -282,15 +282,13 @@ button{cursor:pointer}
 .gauge-value{font-size:34px;font-weight:700;letter-spacing:-1px;line-height:1;font-variant-numeric:tabular-nums;color:var(--text);font-family:var(--font-display)}
 .gauge-unit{font-size:10px;color:var(--text-faint);font-weight:700;letter-spacing:1px;margin-top:6px;text-transform:uppercase}
 .cockpit-side{flex:1;min-width:0;display:flex;flex-direction:column}
-.side-status{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700;padding-bottom:10px;margin-bottom:2px;border-bottom:1px solid var(--border)}
-.side-status svg{width:16px;height:16px;stroke:currentColor;flex-shrink:0}
-.side-status.ok{color:var(--success)}
-.side-status.warning{color:var(--warning)}
-.side-status.danger{color:var(--danger)}
 .side-row{display:flex;align-items:baseline;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)}
 .side-row:last-child{border-bottom:none}
 .side-label{font-size:13px;color:var(--text-muted);font-weight:600}
 .side-value{font-size:14px;font-weight:700;font-variant-numeric:tabular-nums;text-align:right}
+.side-value.ok{color:var(--success)}
+.side-value.warning{color:var(--warning)}
+.side-value.danger{color:var(--danger)}
 @media(max-width:720px){.cockpit{flex-direction:column;gap:16px}.gauge-wrap{width:140px;height:140px}.gauge-value{font-size:30px}.cockpit-side,.info-cards-grid-4{width:100%}}
 
 .quicklinks-strip{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 14px;margin-bottom:4px;scrollbar-width:none}
@@ -603,7 +601,6 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
                 </div>
               </div>
               <div class="cockpit-side">
-                <div class="side-status" id="sideStatus"></div>
                 <div class="side-row"><span class="side-label">Versión</span><span class="side-value" id="cockpitVersion">—</span></div>
                 <div class="side-row"><span class="side-label">Próxima revisión</span><span class="side-value" id="sideNextRevision">—</span></div>
                 <div class="side-row"><span class="side-label">Cargas registradas</span><span class="side-value" id="sideChargeCount">0</span></div>
@@ -1184,18 +1181,6 @@ function renderDashboard(){
     carStatusBadge.style.cursor = 'default';
   }
 
-  const status = document.getElementById('sideStatus');
-  if(st.overdue || overdueCount){
-    status.className = 'side-status danger';
-    status.innerHTML = ICONS.alert + `<span>${overdueCount||1} revisión(es) vencida(s)</span>`;
-  } else if(st.upcoming){
-    status.className = 'side-status warning';
-    status.innerHTML = ICONS.clock + `<span>${next.name} — faltan ${st.kmRemaining.toLocaleString('es-ES')} km</span>`;
-  } else {
-    status.className = 'side-status ok';
-    status.innerHTML = ICONS.check + `<span>Todo al día${next ? ' — próxima: '+next.name : ''}</span>`;
-  }
-
   const gaugeFill = document.getElementById('gaugeFill');
   if(gaugeFill && next){
     const schedIdx = sched.findIndex(r=>r.km===next.km);
@@ -1209,9 +1194,20 @@ function renderDashboard(){
   }
 
   document.getElementById('cockpitVersion').textContent = VERSION_LABELS[c.version] || VERSION_LABELS.design;
-  document.getElementById('sideNextRevision').textContent = next
-    ? (st.overdue ? 'Vencida — '+next.name.split('·')[0].trim() : next.name.split('·')[0].trim()+' · '+st.kmRemaining.toLocaleString('es-ES')+' km')
-    : '—';
+  const nextRevEl = document.getElementById('sideNextRevision');
+  if(!next){
+    nextRevEl.textContent = '—';
+    nextRevEl.className = 'side-value';
+  } else if(st.overdue || overdueCount){
+    nextRevEl.textContent = overdueCount>1 ? overdueCount+' revisiones vencidas' : 'Vencida — '+next.name.split('·')[0].trim();
+    nextRevEl.className = 'side-value danger';
+  } else if(st.upcoming){
+    nextRevEl.textContent = next.name.split('·')[0].trim()+' · '+st.kmRemaining.toLocaleString('es-ES')+' km';
+    nextRevEl.className = 'side-value warning';
+  } else {
+    nextRevEl.textContent = next.name.split('·')[0].trim()+' · '+st.kmRemaining.toLocaleString('es-ES')+' km';
+    nextRevEl.className = 'side-value ok';
+  }
   document.getElementById('sideChargeCount').textContent = state.charges.length;
 
   document.getElementById('sideBattery').textContent = VEHICLE_BATTERY_KWH + ' kWh';
