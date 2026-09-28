@@ -458,11 +458,26 @@ mark{background:var(--accent-glow);color:var(--text);border-radius:3px;padding:0
 /* ---------- modal ---------- */
 .overlay{position:fixed;inset:0;background:rgba(3,6,14,.6);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:150;padding:20px}
 .overlay.open{display:flex}
-.modal{background:var(--bg-card);border:1px solid var(--border-strong);border-radius:var(--radius-lg);padding:28px;width:100%;max-width:420px;box-shadow:0 20px 60px -10px rgba(0,0,0,.4)}
+.modal{position:relative;background:var(--bg-card);border:1px solid var(--border-strong);border-radius:var(--radius-lg);padding:28px;width:100%;max-width:420px;box-shadow:0 20px 60px -10px rgba(0,0,0,.4)}
 .modal h3{font-size:15px;font-weight:800;margin-bottom:6px}
 .modal p{font-size:12.5px;color:var(--text-muted);margin-bottom:18px}
 .modal-actions{display:flex;gap:10px;margin-top:6px}
 .modal-actions .btn{flex:1}
+.modal-wide{max-width:540px;max-height:calc(100vh - 60px);overflow-y:auto}
+.modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;background:var(--bg-2);border:none;color:var(--text-muted);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s var(--ease)}
+.modal-close:hover{background:var(--border);color:var(--text)}
+.modal-close svg{width:16px;height:16px;stroke:currentColor}
+.advice-section{margin-top:20px}
+.advice-section:first-of-type{margin-top:0}
+.advice-section h4{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--text-faint);margin-bottom:10px}
+.advice-list{display:flex;flex-direction:column;gap:8px;list-style:none}
+.advice-list li{font-size:13.5px;color:var(--text-muted);line-height:1.5;padding-left:14px;position:relative}
+.advice-list li::before{content:'';position:absolute;left:0;top:7px;width:5px;height:5px;border-radius:50%;background:var(--accent)}
+.advice-list li strong{color:var(--text);font-weight:700}
+.advice-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.advice-stat{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px}
+.advice-stat-value{font-size:18px;font-weight:800;color:var(--text)}
+.advice-stat-label{font-size:10.5px;color:var(--text-faint);margin-top:2px;font-weight:600}
 
 footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-faint);font-weight:600}
 
@@ -709,7 +724,7 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
           </div>
         </div>
         <div class="card" style="margin-top:16px">
-          <div class="card-head"><h2>Historial de cargas</h2></div>
+          <div class="card-head"><h2>Historial de cargas</h2><button class="btn btn-ghost btn-sm" id="chargingAdviceBtn" style="gap:6px">⚡ Consejos de carga</button></div>
           <div class="table-wrap"><table>
             <thead><tr><th>Fecha</th><th>kWh</th><th>Coste</th><th>€/kWh</th><th>Km</th><th>Ubicación</th><th></th></tr></thead>
             <tbody id="chargesTable"></tbody>
@@ -887,6 +902,56 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
     <div class="modal-actions">
       <button class="btn btn-ghost" id="importCancel">Cancelar</button>
       <button class="btn btn-danger" id="importConfirm">Reemplazar datos</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="chargingAdviceOverlay">
+  <div class="modal modal-wide">
+    <button class="modal-close" id="chargingAdviceClose" aria-label="Cerrar">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <h3>⚡ Consejos de carga</h3>
+    <p style="margin-bottom:18px">Estrategia personalizada según tu patrón de uso semanal, basada en el modelo de degradación de baterías LFP de Naumann.</p>
+
+    <div class="advice-section">
+      <h4>Tus datos</h4>
+      <ul class="advice-list">
+        <li>Consumo semanal: ~100 km (40 km L-J, 7,5 km viernes, 50 km fin de semana)</li>
+        <li>Carga disponible: 1 vez/semana (jueves, 7h × 2,5 kW = 17,5 kWh)</li>
+        <li>Carga al 100%: cada 2 meses (1º domingo)</li>
+        <li>Límite de carga en operativa: 80%</li>
+        <li>Ubicación: La Laguna, Tenerife (garaje ~18°C)</li>
+        <li>Margen de seguridad: 5%</li>
+      </ul>
+    </div>
+
+    <div class="advice-section">
+      <h4>Mi estrategia óptima</h4>
+      <ul class="advice-list">
+        <li><strong>Jueves:</strong> carga en el trabajo hasta 80% (5h × 2,5 kW)</li>
+        <li><strong>Viernes-Domingo:</strong> uso normal (baja a ~50%)</li>
+        <li><strong>Lunes-Miércoles:</strong> uso normal (baja a ~47%)</li>
+        <li><strong>Cada 2 meses (1º domingo):</strong> carga al 100%</li>
+      </ul>
+    </div>
+
+    <div class="advice-section">
+      <h4>Proyección a 10 años</h4>
+      <div class="advice-stats">
+        <div class="advice-stat"><div class="advice-stat-value">90-91%</div><div class="advice-stat-label">Salud de batería</div></div>
+        <div class="advice-stat"><div class="advice-stat-value">~36.500 km</div><div class="advice-stat-label">Km acumulados</div></div>
+        <div class="advice-stat"><div class="advice-stat-value">~67,7 kWh</div><div class="advice-stat-label">Capacidad conservada</div></div>
+        <div class="advice-stat"><div class="advice-stat-value">+19 pts</div><div class="advice-stat-label">Ventaja vs. siempre 100%</div></div>
+      </div>
+    </div>
+
+    <div class="advice-section">
+      <h4>Coste</h4>
+      <ul class="advice-list">
+        <li>Coste anual estimado: ~12 €</li>
+        <li>Carga en el trabajo: gratis</li>
+      </ul>
     </div>
   </div>
 </div>
@@ -1618,6 +1683,10 @@ function setupEventListeners(){
 
     tryAdd('addLinkBtn', ()=>{ document.getElementById('addLinkOverlay').classList.add('open'); document.getElementById('moreMenuDropdown').classList.remove('open'); });
     tryAdd('addLinkCancel', ()=>{ document.getElementById('addLinkOverlay').classList.remove('open'); });
+
+    tryAdd('chargingAdviceBtn', ()=>document.getElementById('chargingAdviceOverlay').classList.add('open'));
+    tryAdd('chargingAdviceClose', ()=>document.getElementById('chargingAdviceOverlay').classList.remove('open'));
+    tryAdd('chargingAdviceOverlay', e=>{ if(e.target.id==='chargingAdviceOverlay') document.getElementById('chargingAdviceOverlay').classList.remove('open'); });
 
   document.getElementById('exportBtn').addEventListener('click', ()=>{ exportData(); document.getElementById('moreMenuDropdown').classList.remove('open'); });
   document.getElementById('importBtn').addEventListener('click', ()=>{ document.getElementById('importFile').click(); document.getElementById('moreMenuDropdown').classList.remove('open'); });
