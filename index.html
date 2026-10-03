@@ -265,6 +265,9 @@ button{cursor:pointer}
 .ql-tile-label{font-size:14px;font-weight:700;text-align:center;line-height:1.3}
 .ql-tile-delete{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;background:var(--danger-soft);color:var(--danger);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;font-size:12px}
 .ql-tile:hover .ql-tile-delete{opacity:1}
+.ql-tile-edit{position:absolute;top:8px;left:8px;width:28px;height:28px;border-radius:50%;background:var(--accent-soft);color:var(--accent);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s}
+.ql-tile-edit svg{width:14px;height:14px;stroke:currentColor}
+.ql-tile:hover .ql-tile-edit{opacity:1}
 
 @media(max-width:1000px){
   .quicklinks-grid{grid-template-columns:repeat(2,1fr)}
@@ -695,7 +698,10 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
                 <label>Especifica el lugar</label>
                 <input id="c_location_other" type="text" placeholder="Ej. Electrolinera Iberdrola">
               </div>
-              <button type="submit" class="btn btn-primary btn-block">Registrar carga</button>
+              <div style="display:flex;gap:8px">
+                <button type="submit" class="btn btn-primary btn-block" id="chargeSubmitBtn">Registrar carga</button>
+                <button type="button" class="btn btn-ghost" id="chargeCancelEdit" style="display:none">Cancelar</button>
+              </div>
             </form>
           </div>
           <div class="card">
@@ -756,7 +762,10 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
                   <div class="field-row"><div class="field"><label>Fecha</label><input id="m_date" type="date" required></div><div class="field"><label>Coste</label><input id="m_cost" type="number" step="0.01" min="0" required></div></div>
                   <div class="field-row"><div class="field"><label>Km</label><input id="m_km" type="number" min="0" placeholder="opcional"></div><div class="field"><label>Lugar</label><input id="m_location" type="text" placeholder="Ej: Taller BYD, Mecánico local..."></div></div>
                   <div class="field"><label>Notas</label><textarea id="m_notes" placeholder="Detalles..."></textarea></div>
-                  <button type="submit" class="btn btn-primary btn-block">Registrar</button>
+                  <div style="display:flex;gap:8px">
+                    <button type="submit" class="btn btn-primary btn-block" id="maintSubmitBtn">Registrar</button>
+                    <button type="button" class="btn btn-ghost" id="maintCancelEdit" style="display:none">Cancelar</button>
+                  </div>
                 </form>
               </div>
               <div class="card" style="margin-top:12px">
@@ -809,7 +818,10 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
               <div class="field"><label>Título</label><input id="n_title" type="text" required placeholder="Título de la nota"></div>
               <div class="field"><label>Contenido</label><textarea id="n_content" required placeholder="Escribe aquí..."></textarea></div>
               <div class="field"><label>Etiquetas (separadas por comas)</label><input id="n_tags" type="text" placeholder="batería, garantía, ruido..."></div>
-              <button type="submit" class="btn btn-primary btn-block">Guardar nota</button>
+              <div style="display:flex;gap:8px">
+                <button type="submit" class="btn btn-primary btn-block" id="noteSubmitBtn">Guardar nota</button>
+                <button type="button" class="btn btn-ghost" id="noteCancelEdit" style="display:none">Cancelar</button>
+              </div>
             </form>
           </div>
           <div class="card">
@@ -868,13 +880,13 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
 <!-- Import confirm modal -->
 <div class="overlay" id="addLinkOverlay">
   <div class="modal">
-    <h3>Añadir enlace rápido</h3>
+    <h3 id="quickLinkModalTitle">Añadir enlace rápido</h3>
     <form id="quickLinkFormModal" style="display:flex;flex-direction:column;gap:12px">
       <div class="field"><label>Nombre</label><input id="ql_title_modal" type="text" placeholder="Ej. Mi seguro" required maxlength="30"></div>
       <div class="field"><label>URL</label><input id="ql_url_modal" type="text" placeholder="https://..." required></div>
       <div class="modal-actions">
         <button type="button" class="btn btn-ghost" id="addLinkCancel">Cancelar</button>
-        <button type="submit" class="btn btn-primary">Guardar enlace</button>
+        <button type="submit" class="btn btn-primary" id="quickLinkSubmitBtn">Guardar enlace</button>
       </div>
     </form>
   </div>
@@ -909,7 +921,8 @@ const ICONS = {
   pin: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>',
   book: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>',
   wrench: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>',
-  link: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>'
+  link: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>',
+  edit: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg>'
 };
 const DEFAULT_QUICK_LINKS = [
   { id:'bydmanual', title:'Manual BYD', url:'https://www.byd.com/es-es/service-maintenance/owners-manual.html', icon:'book' },
@@ -1080,7 +1093,7 @@ function getScheduleForRevision(rev, currentKm, months){
 }
 function computeAlerts(){
   const sched = REVISIONS_SCHEDULE[state.lang] || REVISIONS_SCHEDULE.es;
-  const km = Number(state.config.currentKm)||0;
+  const km = getCurrentKm();
   const months = monthsBetween(state.config.purchaseDate);
   const alerts = [];
   sched.forEach(rev=>{
@@ -1136,12 +1149,21 @@ function updateNotifStatus(){
 }
 
 /* ---------------- dashboard ---------------- */
+function getCurrentKm(){
+  // Odómetro real = el mayor km conocido entre lo configurado a mano y lo registrado
+  // en cargas/mantenimiento. Antes solo las cargas podían subir este valor, así que un
+  // km más alto anotado en un mantenimiento se quedaba sin reflejar en el home.
+  let km = Number(state.config.currentKm)||0;
+  state.charges.forEach(c=>{ if(c.km) km = Math.max(km, Number(c.km)||0); });
+  state.maintenance.forEach(m=>{ if(m.km) km = Math.max(km, Number(m.km)||0); });
+  return km;
+}
 function computeAvgConsumption(c){
   const withData = state.charges.filter(x=>x.km!=null && Number(x.km)>0 && x.kwh!=null && Number(x.kwh)>0);
   if(withData.length){
     const sorted = [...withData].sort((a,b)=>Number(a.km)-Number(b.km));
     const firstKm = Number(sorted[0].km);
-    const kmDriven = (Number(c.currentKm)||0) - firstKm;
+    const kmDriven = getCurrentKm() - firstKm;
     const totalKwh = sorted.reduce((s,x)=>s+Number(x.kwh),0);
     if(kmDriven > 0) return totalKwh/kmDriven*100;
   }
@@ -1150,7 +1172,7 @@ function computeAvgConsumption(c){
 function renderDashboard(){
   renderQuickLinks();
   const c = state.config;
-  const km = Number(c.currentKm)||0;
+  const km = getCurrentKm();
   const totalCost = state.charges.reduce((s,x)=>s+Number(x.cost||0),0) + state.maintenance.reduce((s,x)=>s+Number(x.cost||0),0);
 
   const sched = REVISIONS_SCHEDULE[state.lang] || REVISIONS_SCHEDULE.es;
@@ -1273,7 +1295,10 @@ function renderCharges(){
       <td>${fmtDate(c.date)}</td><td>${c.kwh!=null ? Number(c.kwh).toFixed(1) : '—'}</td><td>${c.cost!=null ? fmtEUR(c.cost) : '—'}</td>
       <td>${(c.kwh && c.cost!=null) ? (c.cost/c.kwh).toFixed(3)+' €' : '—'}</td><td>${c.km ? fmtNum(c.km) : '—'}</td>
       <td>${c.location||'—'}</td>
-      <td><button class="icon-action danger" onclick="deleteCharge(${c.id})">${ICONS.trash}</button></td>
+      <td>
+        <button class="icon-action" onclick="editCharge(${c.id})">${ICONS.edit}</button>
+        <button class="icon-action danger" onclick="deleteCharge(${c.id})">${ICONS.trash}</button>
+      </td>
     </tr>`).join('');
   document.getElementById('chargesEmpty').style.display = state.charges.length ? 'none' : 'block';
 
@@ -1285,8 +1310,36 @@ function renderCharges(){
   document.getElementById('chgAvg').textContent = (totalKwh? totalCost/totalKwh : 0).toFixed(3) + ' €/kWh';
 }
 function deleteCharge(id){
+  if(editingChargeId===id) cancelChargeEdit();
   state.charges = state.charges.filter(c=>c.id!==id);
   saveState(); renderCharges(); renderDashboard(); toast('Carga eliminada', 'info');
+}
+let editingChargeId = null;
+function editCharge(id){
+  const c = state.charges.find(x=>x.id===id);
+  if(!c) return;
+  editingChargeId = id;
+  document.getElementById('c_date').value = c.date || '';
+  document.getElementById('c_time').value = c.time || '';
+  document.getElementById('c_kwh').value = c.kwh ?? '';
+  document.getElementById('c_cost').value = c.cost ?? '';
+  document.getElementById('c_cost').dataset.autocalculated = 'false';
+  document.getElementById('c_km').value = c.km ?? '';
+  const locType = (c.location==='Casa'||c.location==='Trabajo') ? c.location : 'Otro';
+  document.getElementById('c_location_type').value = locType;
+  document.getElementById('c_location_other_wrap').style.display = locType==='Otro' ? 'block' : 'none';
+  if(locType==='Otro') document.getElementById('c_location_other').value = c.location || '';
+  document.getElementById('chargeSubmitBtn').textContent = 'Guardar cambios';
+  document.getElementById('chargeCancelEdit').style.display = '';
+  document.getElementById('chargeForm').scrollIntoView({behavior:'smooth', block:'start'});
+}
+function cancelChargeEdit(){
+  editingChargeId = null;
+  document.getElementById('chargeForm').reset();
+  document.getElementById('c_date').valueAsDate = new Date();
+  document.getElementById('c_location_other_wrap').style.display = 'none';
+  document.getElementById('chargeSubmitBtn').textContent = 'Registrar carga';
+  document.getElementById('chargeCancelEdit').style.display = 'none';
 }
 
 /* ---------------- maintenance ---------------- */
@@ -1298,7 +1351,10 @@ function renderMaintenance(){
     <tr>
       <td>${fmtDate(m.date)}</td><td>${MAINT_LABELS[m.type]||m.type}</td><td>${m.location||'—'}</td><td>${fmtEUR(m.cost)}</td>
       <td>${m.km ? fmtNum(m.km) : '—'}</td>
-      <td><button class="icon-action danger" onclick="deleteMaint(${m.id})">${ICONS.trash}</button></td>
+      <td>
+        <button class="icon-action" onclick="editMaint(${m.id})">${ICONS.edit}</button>
+        <button class="icon-action danger" onclick="deleteMaint(${m.id})">${ICONS.trash}</button>
+      </td>
     </tr>`).join('');
   document.getElementById('maintEmpty').style.display = state.maintenance.length ? 'none' : 'block';
 
@@ -1309,14 +1365,38 @@ function renderMaintenance(){
   document.getElementById('mntLast').textContent = last ? (MAINT_LABELS[last.type]||last.type)+' · '+fmtDate(last.date) : '—';
 }
 function deleteMaint(id){
+  if(editingMaintId===id) cancelMaintEdit();
   state.maintenance = state.maintenance.filter(m=>m.id!==id);
   saveState(); renderMaintenance(); renderDashboard(); toast('Registro eliminado', 'info');
+}
+let editingMaintId = null;
+function editMaint(id){
+  const m = state.maintenance.find(x=>x.id===id);
+  if(!m) return;
+  editingMaintId = id;
+  document.getElementById('m_type').value = m.type || '';
+  document.getElementById('m_date').value = m.date || '';
+  document.getElementById('m_cost').value = m.cost ?? '';
+  document.getElementById('m_km').value = m.km ?? '';
+  document.getElementById('m_location').value = m.location || '';
+  document.getElementById('m_notes').value = m.notes || '';
+  document.getElementById('maintSubmitBtn').textContent = 'Guardar cambios';
+  document.getElementById('maintCancelEdit').style.display = '';
+  document.getElementById('maintContent').style.display = 'block';
+  document.getElementById('maintForm').scrollIntoView({behavior:'smooth', block:'start'});
+}
+function cancelMaintEdit(){
+  editingMaintId = null;
+  document.getElementById('maintForm').reset();
+  document.getElementById('m_date').valueAsDate = new Date();
+  document.getElementById('maintSubmitBtn').textContent = 'Registrar';
+  document.getElementById('maintCancelEdit').style.display = 'none';
 }
 
 /* ---------------- revisions ---------------- */
 function renderRevisions(){
   const sched = REVISIONS_SCHEDULE[state.lang] || REVISIONS_SCHEDULE.es;
-  const km = Number(state.config.currentKm)||0;
+  const km = getCurrentKm();
   const months = monthsBetween(state.config.purchaseDate);
   const container = document.getElementById('revisionsList');
   console.log('renderRevisions() called:', {sched: sched.length, km, months, container: !!container});
@@ -1368,12 +1448,36 @@ function renderNotes(){
       <h4>${escapeHtml(n.title)}</h4>
       <p>${escapeHtml(n.content)}</p>
       <div class="note-tags">${(n.tags||[]).filter(Boolean).map(t=>`<span class="tag-pill">#${t}</span>`).join('')}</div>
-      <div class="note-foot"><span class="date">${fmtDate(n.date)}</span><button class="icon-action danger" onclick="deleteNote(${n.id})">${ICONS.trash}</button></div>
+      <div class="note-foot"><span class="date">${fmtDate(n.date)}</span><span>
+        <button class="icon-action" onclick="editNote(${n.id})">${ICONS.edit}</button>
+        <button class="icon-action danger" onclick="deleteNote(${n.id})">${ICONS.trash}</button>
+      </span></div>
     </div>`).join('');
   document.getElementById('notesEmpty').style.display = filtered.length ? 'none' : 'block';
 }
 function toggleNoteTag(t){ activeNoteTags.has(t) ? activeNoteTags.delete(t) : activeNoteTags.add(t); renderNotes(); }
-function deleteNote(id){ state.notes = state.notes.filter(n=>n.id!==id); saveState(); renderNotes(); toast('Nota eliminada','info'); }
+function deleteNote(id){
+  if(editingNoteId===id) cancelNoteEdit();
+  state.notes = state.notes.filter(n=>n.id!==id); saveState(); renderNotes(); toast('Nota eliminada','info');
+}
+let editingNoteId = null;
+function editNote(id){
+  const n = state.notes.find(x=>x.id===id);
+  if(!n) return;
+  editingNoteId = id;
+  document.getElementById('n_title').value = n.title || '';
+  document.getElementById('n_content').value = n.content || '';
+  document.getElementById('n_tags').value = (n.tags||[]).join(', ');
+  document.getElementById('noteSubmitBtn').textContent = 'Guardar cambios';
+  document.getElementById('noteCancelEdit').style.display = '';
+  document.getElementById('noteForm').scrollIntoView({behavior:'smooth', block:'start'});
+}
+function cancelNoteEdit(){
+  editingNoteId = null;
+  document.getElementById('noteForm').reset();
+  document.getElementById('noteSubmitBtn').textContent = 'Guardar nota';
+  document.getElementById('noteCancelEdit').style.display = 'none';
+}
 function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
 function escapeAttr(s){ return (s||'').replace(/"/g,'&quot;'); }
 
@@ -1386,12 +1490,31 @@ function renderQuickLinks(){
     <a class="ql-tile" href="${escapeAttr(l.url)}" target="_blank" rel="noopener noreferrer" title="${escapeAttr(l.title)}">
       <div class="ql-tile-icon">${ICONS[l.icon]||ICONS.link}</div>
       <div class="ql-tile-label">${escapeHtml(l.title)}</div>
+      <button type="button" class="ql-tile-edit" title="Editar" onclick="event.preventDefault();event.stopPropagation();editQuickLink('${l.id}')">${ICONS.edit}</button>
       <button type="button" class="ql-tile-delete" title="Eliminar" onclick="event.preventDefault();event.stopPropagation();deleteQuickLink('${l.id}')">✕</button>
     </a>`).join('') : `<div style="grid-column:1/-1;text-align:center;padding:24px;color:var(--text-faint);font-size:13px">Sin enlaces todavía. Añade uno abajo.</div>`;
 }
 function deleteQuickLink(id){
+  if(editingQuickLinkId===id) cancelQuickLinkEdit();
   state.quickLinks = (state.quickLinks||[]).filter(l=>l.id!==id);
   saveState(); renderQuickLinks(); toast('Enlace eliminado','info');
+}
+let editingQuickLinkId = null;
+function editQuickLink(id){
+  const l = (state.quickLinks||[]).find(x=>x.id===id);
+  if(!l) return;
+  editingQuickLinkId = id;
+  document.getElementById('ql_title_modal').value = l.title || '';
+  document.getElementById('ql_url_modal').value = l.url || '';
+  document.getElementById('quickLinkModalTitle').textContent = 'Editar enlace';
+  document.getElementById('quickLinkSubmitBtn').textContent = 'Guardar cambios';
+  document.getElementById('addLinkOverlay').classList.add('open');
+}
+function cancelQuickLinkEdit(){
+  editingQuickLinkId = null;
+  document.getElementById('quickLinkFormModal').reset();
+  document.getElementById('quickLinkModalTitle').textContent = 'Añadir enlace rápido';
+  document.getElementById('quickLinkSubmitBtn').textContent = 'Guardar enlace';
 }
 
 /* ---------------- manual ---------------- */
@@ -1451,7 +1574,7 @@ function highlight(text,q){
 
 /* ---------------- stats ---------------- */
 function renderStats(){
-  const km = Number(state.config.currentKm)||0;
+  const km = getCurrentKm();
   const purchaseKm = state.charges.length ? Math.min(...state.charges.map(c=>Number(c.km)||km)) : 0;
   const totalCost = state.charges.reduce((s,x)=>s+Number(x.cost||0),0) + state.maintenance.reduce((s,x)=>s+Number(x.cost||0),0);
   const kmDriven = km || 1;
@@ -1535,7 +1658,7 @@ function applyStateToForms(){
   const c = state.config;
   document.getElementById('f_version').value = c.version || 'design';
   document.getElementById('f_vin').value = c.vin;
-  document.getElementById('f_km').value = c.currentKm;
+  document.getElementById('f_km').value = getCurrentKm();
   document.getElementById('f_purchase').value = c.purchaseDate;
   document.getElementById('f_consumption').value = c.avgConsumption;
   document.getElementById('f_rate').value = c.electricRate;
@@ -1581,8 +1704,8 @@ function setupEventListeners(){
       toggle.style.transform = isOpen ? '' : 'rotate(180deg)';
     });
 
-    tryAdd('addLinkBtn', ()=>{ document.getElementById('addLinkOverlay').classList.add('open'); document.getElementById('moreMenuDropdown').classList.remove('open'); });
-    tryAdd('addLinkCancel', ()=>{ document.getElementById('addLinkOverlay').classList.remove('open'); });
+    tryAdd('addLinkBtn', ()=>{ cancelQuickLinkEdit(); document.getElementById('addLinkOverlay').classList.add('open'); document.getElementById('moreMenuDropdown').classList.remove('open'); });
+    tryAdd('addLinkCancel', ()=>{ cancelQuickLinkEdit(); document.getElementById('addLinkOverlay').classList.remove('open'); });
 
   document.getElementById('exportBtn').addEventListener('click', ()=>{ exportData(); document.getElementById('moreMenuDropdown').classList.remove('open'); });
   document.getElementById('importBtn').addEventListener('click', ()=>{ document.getElementById('importFile').click(); document.getElementById('moreMenuDropdown').classList.remove('open'); });
@@ -1679,25 +1802,39 @@ function setupEventListeners(){
     const cost = costRaw==='' ? null : Number(costRaw);
     const locationType = document.getElementById('c_location_type').value;
     const location = locationType==='Otro' ? (document.getElementById('c_location_other').value.trim() || 'Otro') : locationType;
-    state.charges.push({ id:uid(), date:document.getElementById('c_date').value, time:document.getElementById('c_time').value,
-      kwh, cost, km:Number(document.getElementById('c_km').value)||null, location });
-    const kmVal = Number(document.getElementById('c_km').value);
-    if(kmVal && kmVal > (Number(state.config.currentKm)||0)) state.config.currentKm = kmVal;
-    saveState(); e.target.reset(); document.getElementById('c_date').valueAsDate = new Date();
-    document.getElementById('c_location_other_wrap').style.display = 'none';
-    renderCharges(); renderDashboard(); renderAlerts(); toast('Carga registrada', 'success');
+    const km = Number(document.getElementById('c_km').value)||null;
+    const data = { date:document.getElementById('c_date').value, time:document.getElementById('c_time').value, kwh, cost, km, location };
+    const wasEditing = editingChargeId!=null;
+    if(wasEditing){
+      const idx = state.charges.findIndex(c=>c.id===editingChargeId);
+      if(idx>-1) state.charges[idx] = { ...state.charges[idx], ...data };
+    } else {
+      state.charges.push({ id:uid(), ...data });
+    }
+    if(km && km > (Number(state.config.currentKm)||0)) state.config.currentKm = km;
+    cancelChargeEdit(); saveState();
+    renderCharges(); renderDashboard(); renderAlerts(); toast(wasEditing ? 'Carga actualizada' : 'Carga registrada', 'success');
   });
+  document.getElementById('chargeCancelEdit').addEventListener('click', cancelChargeEdit);
 
   document.getElementById('maintForm').addEventListener('submit', e=>{
     e.preventDefault();
     const type = document.getElementById('m_type').value;
     const cost = Number(document.getElementById('m_cost').value);
     if(!type){ toast('Selecciona un tipo de servicio', 'warning'); return; }
-    state.maintenance.push({ id:uid(), type, date:document.getElementById('m_date').value, cost,
-      km:Number(document.getElementById('m_km').value)||null, location:document.getElementById('m_location').value.trim(), notes:document.getElementById('m_notes').value.trim() });
-    saveState(); e.target.reset(); document.getElementById('m_date').valueAsDate = new Date();
-    renderMaintenance(); renderDashboard(); toast('Mantenimiento registrado', 'success');
+    const data = { type, date:document.getElementById('m_date').value, cost,
+      km:Number(document.getElementById('m_km').value)||null, location:document.getElementById('m_location').value.trim(), notes:document.getElementById('m_notes').value.trim() };
+    const wasEditing = editingMaintId!=null;
+    if(wasEditing){
+      const idx = state.maintenance.findIndex(m=>m.id===editingMaintId);
+      if(idx>-1) state.maintenance[idx] = { ...state.maintenance[idx], ...data };
+    } else {
+      state.maintenance.push({ id:uid(), ...data });
+    }
+    cancelMaintEdit(); saveState();
+    renderMaintenance(); renderDashboard(); toast(wasEditing ? 'Mantenimiento actualizado' : 'Mantenimiento registrado', 'success');
   });
+  document.getElementById('maintCancelEdit').addEventListener('click', cancelMaintEdit);
 
   document.getElementById('noteForm').addEventListener('submit', e=>{
     e.preventDefault();
@@ -1705,9 +1842,16 @@ function setupEventListeners(){
     const content = document.getElementById('n_content').value.trim();
     if(!title || !content){ toast('Completa título y contenido', 'warning'); return; }
     const tags = document.getElementById('n_tags').value.split(',').map(t=>t.trim()).filter(Boolean);
-    state.notes.push({ id:uid(), title, content, tags, date:new Date().toISOString() });
-    saveState(); e.target.reset(); renderNotes(); toast('Nota guardada', 'success');
+    const wasEditing = editingNoteId!=null;
+    if(wasEditing){
+      const idx = state.notes.findIndex(n=>n.id===editingNoteId);
+      if(idx>-1) state.notes[idx] = { ...state.notes[idx], title, content, tags };
+    } else {
+      state.notes.push({ id:uid(), title, content, tags, date:new Date().toISOString() });
+    }
+    cancelNoteEdit(); saveState(); renderNotes(); toast(wasEditing ? 'Nota actualizada' : 'Nota guardada', 'success');
   });
+  document.getElementById('noteCancelEdit').addEventListener('click', cancelNoteEdit);
   document.getElementById('noteSearch').addEventListener('input', renderNotes);
 
   document.getElementById('quickLinkFormModal').addEventListener('submit', e=>{
@@ -1717,10 +1861,16 @@ function setupEventListeners(){
     if(!title || !url) return;
     if(!/^https?:\/\//i.test(url) && !/^tel:/i.test(url)) url = 'https://' + url;
     state.quickLinks = state.quickLinks || [];
-    state.quickLinks.push({ id: 'custom-'+uid(), title, url, icon:'link' });
-    saveState(); renderQuickLinks(); e.target.reset();
+    const wasEditing = editingQuickLinkId!=null;
+    if(wasEditing){
+      const idx = state.quickLinks.findIndex(l=>l.id===editingQuickLinkId);
+      if(idx>-1) state.quickLinks[idx] = { ...state.quickLinks[idx], title, url };
+    } else {
+      state.quickLinks.push({ id: 'custom-'+uid(), title, url, icon:'link' });
+    }
+    cancelQuickLinkEdit(); saveState(); renderQuickLinks();
     document.getElementById('addLinkOverlay').classList.remove('open');
-    toast('Enlace añadido', 'success');
+    toast(wasEditing ? 'Enlace actualizado' : 'Enlace añadido', 'success');
   });
 
   const manualSearch = document.getElementById('manualSearch');
