@@ -680,7 +680,7 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
                 <div class="field"><label>Hora</label><input id="c_time" type="time"></div>
               </div>
               <div class="field-row">
-                <div class="field"><label>kWh cargados <span class="opt-hint">(opcional)</span></label><input id="c_kwh" type="number" step="0.1" min="0" placeholder="0.0"></div>
+                <div class="field"><label>kWh cargados <span class="opt-hint">(opcional)</span></label><input id="c_kwh" type="number" step="0.01" min="0" placeholder="0.00"></div>
                 <div class="field"><label>Coste (€) <span class="opt-hint">(opcional, 0 = gratis)</span></label><input id="c_cost" type="number" step="0.01" min="0" placeholder="0.00"></div>
               </div>
               <div class="field-row">
@@ -1229,7 +1229,7 @@ function renderDashboard(){
   document.getElementById('sideChargeCount').textContent = state.charges.length;
 
   document.getElementById('sideConsumption').textContent = computeAvgConsumption(c).toFixed(1) + ' kWh/100km';
-  document.getElementById('sideTotalKwh').textContent = state.charges.reduce((s,x)=>s+Number(x.kwh||0),0).toFixed(1) + ' kWh';
+  document.getElementById('sideTotalKwh').textContent = state.charges.reduce((s,x)=>s+Number(x.kwh||0),0).toFixed(2) + ' kWh';
   document.getElementById('sideSpent').textContent = fmtEUR(totalCost);
 
   document.getElementById('chipKm').textContent = fmtNum(km) + ' km';
@@ -1246,7 +1246,7 @@ function updateLastChargeInfo(){
   if(!state.charges.length){ infoEl.textContent = '—'; dateEl.textContent = '—'; return; }
   const last = state.charges.sort((a,b)=> new Date(b.date)-new Date(a.date))[0];
   if(!last){ infoEl.textContent = '—'; dateEl.textContent = '—'; return; }
-  infoEl.textContent = (last.kwh ? last.kwh.toFixed(1) + ' kWh' : '—') + (last.location ? ' · ' + last.location : '');
+  infoEl.textContent = (last.kwh ? last.kwh.toFixed(2) + ' kWh' : '—') + (last.location ? ' · ' + last.location : '');
   dateEl.textContent = fmtDate(last.date) + (last.cost ? ' · ' + fmtEUR(last.cost) : '');
 }
 function buildRecentActivity(){
@@ -1262,7 +1262,7 @@ function buildRecentActivity(){
   container.innerHTML = allEvents.map(ev=>{
     const icon = ev.type==='charge' ? ICONS.bolt : ICONS.wrench;
     const label = ev.type==='charge'
-      ? (ev.data.kwh ? Number(ev.data.kwh).toFixed(1)+' kWh cargados' : 'Carga registrada') + (ev.data.location ? ' · '+ev.data.location : '')
+      ? (ev.data.kwh ? Number(ev.data.kwh).toFixed(2)+' kWh cargados' : 'Carga registrada') + (ev.data.location ? ' · '+ev.data.location : '')
       : (MAINT_LABELS[ev.data.type]||ev.data.type);
     const cost = Number(ev.data.cost||0);
     return `<div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)">
@@ -1292,7 +1292,7 @@ function renderCharges(){
   const sorted = [...state.charges].sort((a,b)=> new Date(b.date)-new Date(a.date));
   tbody.innerHTML = sorted.map(c=>`
     <tr>
-      <td>${fmtDate(c.date)}</td><td>${c.kwh!=null ? Number(c.kwh).toFixed(1) : '—'}</td><td>${c.cost!=null ? fmtEUR(c.cost) : '—'}</td>
+      <td>${fmtDate(c.date)}</td><td>${c.kwh!=null ? Number(c.kwh).toFixed(2) : '—'}</td><td>${c.cost!=null ? fmtEUR(c.cost) : '—'}</td>
       <td>${(c.kwh && c.cost!=null) ? (c.cost/c.kwh).toFixed(3)+' €' : '—'}</td><td>${c.km ? fmtNum(c.km) : '—'}</td>
       <td>${c.location||'—'}</td>
       <td>
@@ -1305,7 +1305,7 @@ function renderCharges(){
   const totalKwh = state.charges.reduce((s,x)=>s+Number(x.kwh||0),0);
   const totalCost = state.charges.reduce((s,x)=>s+Number(x.cost||0),0);
   document.getElementById('chgTotal').textContent = state.charges.length;
-  document.getElementById('chgKwh').textContent = totalKwh.toFixed(1);
+  document.getElementById('chgKwh').textContent = totalKwh.toFixed(2);
   document.getElementById('chgCost').textContent = fmtEUR(totalCost);
   document.getElementById('chgAvg').textContent = (totalKwh? totalCost/totalKwh : 0).toFixed(3) + ' €/kWh';
 }
@@ -1605,7 +1605,7 @@ function renderStats(){
 
   const rows = [
     ['Total cargas registradas', state.charges.length],
-    ['Total kWh cargados', totalKwh.toFixed(1)+' kWh'],
+    ['Total kWh cargados', totalKwh.toFixed(2)+' kWh'],
     ['Gasto total en cargas', fmtEUR(chargeCost)],
     ['Registros de mantenimiento', state.maintenance.length],
     ['Gasto total en mantenimiento', fmtEUR(state.maintenance.reduce((s,x)=>s+Number(x.cost||0),0))],
