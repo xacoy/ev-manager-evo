@@ -1846,7 +1846,6 @@ function setupEventListeners(){
     } else {
       state.charges.push({ id:uid(), ...data });
     }
-    if(km && km > (Number(state.config.currentKm)||0)) state.config.currentKm = km;
     cancelChargeEdit(); saveState();
     renderCharges(); renderDashboard(); renderAlerts(); toast(wasEditing ? 'Carga actualizada' : 'Carga registrada', 'success');
   });
