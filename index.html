@@ -1248,16 +1248,20 @@ function getCurrentKm(){
   state.maintenance.forEach(m=>{ if(m.km) km = Math.max(km, Number(m.km)||0); });
   return km;
 }
+function getChargeWindow(){
+  const d = state.charges.filter(x=>x.km!=null && Number(x.km)>0 && x.kwh!=null && Number(x.kwh)>0)
+    .sort((a,b)=>Number(a.km)-Number(b.km));
+  if(d.length<2) return null;
+  const km = Number(d[d.length-1].km) - Number(d[0].km);
+  if(km<=0) return null;
+  const rest = d.slice(1);
+  return { km, kwh: rest.reduce((s,x)=>s+Number(x.kwh),0), cost: rest.reduce((s,x)=>s+Number(x.cost||0),0) };
+}
 function computeAvgConsumption(c){
-  const withData = state.charges.filter(x=>x.km!=null && Number(x.km)>0 && x.kwh!=null && Number(x.kwh)>0);
-  if(withData.length){
-    const sorted = [...withData].sort((a,b)=>Number(a.km)-Number(b.km));
-    const firstKm = Number(sorted[0].km);
-    const kmDriven = getCurrentKm() - firstKm;
-    const totalKwh = sorted.reduce((s,x)=>s+Number(x.kwh),0);
-    if(kmDriven > 0) return totalKwh/kmDriven*100;
-  }
-  return Number(c.avgConsumption)||0;
+  // La energía de una carga repone lo gastado desde la anterior: la 1ª carga no cuenta
+  // y los km se miden entre la 1ª y la última carga.
+  const w = getChargeWindow();
+  return w ? w.kwh/w.km*100 : (Number(c.avgConsumption)||0);
 }
 function renderDashboard(){
   renderQuickLinks();
@@ -1321,12 +1325,12 @@ function renderDashboard(){
   const cons = computeAvgConsumption(c);
   const totalKwh = state.charges.reduce((s,x)=>s+Number(x.kwh||0),0);
   const chargeCost = state.charges.reduce((s,x)=>s+Number(x.cost||0),0);
-  const kmDriven = getChargeKmDriven();
+  const w = getChargeWindow();
   document.getElementById('sideConsumption').textContent = cons.toFixed(1);
   document.getElementById('sideTotalKwh').textContent = totalKwh.toFixed(2) + ' kWh';
   document.getElementById('sideSpent').textContent = fmtEUR(totalCost);
-  const eurKm = kmDriven>0 && chargeCost>0 ? chargeCost/kmDriven : (Number(c.electricRate)||0)*cons/100;
-  const eurKmReal = kmDriven>0 && chargeCost>0;
+  const eurKmReal = !!(w && w.cost>0);
+  const eurKm = eurKmReal ? w.cost/w.km : (Number(c.electricRate)||0)*cons/100;
   document.getElementById('sideCostKm').textContent = eurKm>0 ? eurKm.toFixed(3) + ' €' : '—';
   document.getElementById('sideCostKmSub').textContent = eurKm>0 ? (eurKm*100).toFixed(2) + ' €/100 km' + (eurKmReal ? '' : ' (estim.)') : '—';
   document.getElementById('sideAvgPrice').textContent = totalKwh>0 && chargeCost>0 ? (chargeCost/totalKwh).toFixed(3) + ' €' : (Number(c.electricRate)>0 ? Number(c.electricRate).toFixed(3) + ' €' : '—');
@@ -1338,12 +1342,6 @@ function renderDashboard(){
   buildRecentActivity();
 }
 
-function getChargeKmDriven(){
-  const withKm = state.charges.filter(x=>x.km!=null && Number(x.km)>0);
-  if(!withKm.length) return 0;
-  const first = Math.min(...withKm.map(x=>Number(x.km)));
-  return Math.max(0, getCurrentKm() - first);
-}
 function renderBattery(cons){
   const pct = state.battery && state.battery.pct!=null ? Number(state.battery.pct) : null;
   const ring = document.getElementById('batRing');
@@ -1360,7 +1358,8 @@ function renderBattery(cons){
   ring.style.strokeDashoffset = C*(1-pct/100);
   ring.style.stroke = pct>=40 ? 'var(--success)' : pct>=20 ? 'var(--warning)' : 'var(--danger)';
   document.getElementById('batPct').textContent = pct + ' %';
-  const kmRange = cons>0 ? Math.round(VEHICLE_BATTERY_KWH*pct/100/cons*100) : 0;
+  const rangeCons = (cons>=12 && cons<=35) ? cons : (Number(state.config.avgConsumption)||17);
+  const kmRange = rangeCons>0 ? Math.round(VEHICLE_BATTERY_KWH*pct/100/rangeCons*100) : 0;
   document.getElementById('batRange').textContent = kmRange ? '≈ ' + kmRange + ' km' : 'Batería';
   slider.value = pct;
   const at = state.battery.at ? new Date(state.battery.at) : null;
