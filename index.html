@@ -255,6 +255,8 @@ button{cursor:pointer}
 .info-value.warning{color:var(--warning)}
 .info-value.danger{color:var(--danger)}
 .info-sub{font-size:11px;color:var(--text-muted);margin-top:2px}
+@media(min-width:1201px){.status-tiles-grid .info-card-small:last-child:nth-child(4n+1){grid-column:span 4}}
+@media(max-width:1200px) and (min-width:561px){.status-tiles-grid .info-card-small:last-child:nth-child(odd){grid-column:span 2}}
 
 .quicklinks-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
 .ql-tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:28px 20px;border-radius:var(--radius);background:var(--bg-card);border:1px solid var(--border);color:var(--text);text-decoration:none;transition:border-color .2s var(--ease), transform .2s var(--ease);cursor:pointer;position:relative;overflow:hidden;min-height:140px}
@@ -538,6 +540,7 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
   #page-dashboard .info-label{font-size:12px;margin-bottom:4px}
   #page-dashboard .info-value{font-size:24px;line-height:1.1;white-space:nowrap}
   footer.sig{display:none}
+  #page-dashboard .status-tiles-grid .info-card-small:last-child:nth-child(3n+2){grid-column:span 2}
   #page-dashboard .info-sub{font-size:14px;margin-top:4px}
   #page-dashboard .quicklinks-grid{grid-column:2;grid-row:1;margin:0;grid-template-columns:repeat(2,1fr);gap:10px;max-height:190px;overflow-y:auto}
   #page-dashboard .ql-tile{min-height:80px;padding:10px;gap:6px}
@@ -657,14 +660,9 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
                 <div class="info-sub">kWh/100km</div>
               </div>
               <div class="info-card-small tone-blue">
-                <div class="info-label">KWH CARGADOS</div>
+                <div class="info-label">ENERGÍA Y GASTO</div>
                 <div class="info-value" id="sideTotalKwh">—</div>
-                <div class="info-sub">histórico total</div>
-              </div>
-              <div class="info-card-small tone-blue">
-                <div class="info-label">GASTO TOTAL</div>
-                <div class="info-value" id="sideSpent">—</div>
-                <div class="info-sub">cargas + servicio</div>
+                <div class="info-sub"><span id="sideSpent">—</span> · cargas + servicio</div>
               </div>
             </div>
           </div>
