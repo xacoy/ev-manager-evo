@@ -492,6 +492,62 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
 @media(max-width:560px){
   .status-tiles-grid{grid-template-columns:1fr}
 }
+
+/* ---------- modo pantalla del coche (horizontal, tipo Atto 3: ~1280x720/800) ---------- */
+@media(orientation:landscape) and (min-width:900px) and (max-height:860px){
+  :root{--rail-w:96px}
+  .nav-rail{display:flex;padding:10px 4px;gap:4px}
+  .bottom-nav{display:none}
+  .rail-brand{margin-bottom:2px}
+  .brand-mark{width:44px;height:44px}
+  .nav-item{padding:6px 4px;gap:4px;flex:1;justify-content:center;max-height:92px}
+  .nav-item .ni-indicator{width:64px;height:48px}
+  .nav-item .ni-label{font-size:12px}
+  .topbar{height:60px;padding:0 20px}
+  .topbar h1{font-size:22px}
+  .chip{display:flex;padding:6px 14px}
+  .icon-btn{width:52px;height:52px}
+  .content{padding:10px 20px 10px;display:flex;flex-direction:column}
+  .content > *{flex-shrink:0}
+  .content > .page.active{flex:1 1 auto}
+  #backupBanner{padding:8px 14px!important;margin-bottom:10px!important}
+  .page{max-width:none}
+  .card{padding:16px 20px}
+  .card-head{margin-bottom:12px}
+  .grid{gap:16px}
+  .grid-2{grid-template-columns:1.4fr 1fr!important}
+  .grid-3{grid-template-columns:repeat(3,1fr)}
+  .grid-4{grid-template-columns:repeat(4,1fr)}
+  .btn,button.btn{min-height:48px}
+  input,select,textarea{min-height:46px}
+  .chart-box{height:170px}
+  .chart-box-wide{height:200px}
+  .dropdown{max-height:calc(100vh - 80px)}
+
+  /* Inicio: sin scroll, 2 columnas → estado a la izquierda, accesos + actividad a la derecha */
+  #page-dashboard.active{
+    display:grid;grid-template-columns:1.9fr 1fr;grid-template-rows:auto minmax(0,1fr);
+    gap:12px 16px;min-height:0;flex-shrink:1!important;
+  }
+  #page-dashboard .dash-header{grid-column:1;grid-row:1 / 3;margin:0;display:flex;flex-direction:column;min-height:0}
+  #page-dashboard .vehicle-id{margin-bottom:10px}
+  #page-dashboard .vehicle-id-name{font-size:26px}
+  #page-dashboard .cockpit-card{flex:1;display:flex;flex-direction:column;min-height:0}
+  #page-dashboard .status-tiles-grid{grid-template-columns:repeat(3,1fr);gap:10px;flex:1;grid-auto-rows:1fr}
+  #page-dashboard .info-card-small{padding:14px 16px;display:flex;flex-direction:column;justify-content:center}
+  #page-dashboard .info-label{font-size:12px;margin-bottom:4px}
+  #page-dashboard .info-value{font-size:24px;line-height:1.1;white-space:nowrap}
+  footer.sig{display:none}
+  #page-dashboard .info-sub{font-size:14px;margin-top:4px}
+  #page-dashboard .quicklinks-grid{grid-column:2;grid-row:1;margin:0;grid-template-columns:repeat(2,1fr);gap:10px;max-height:190px;overflow-y:auto}
+  #page-dashboard .ql-tile{min-height:80px;padding:10px;gap:6px}
+  #page-dashboard .ql-tile-icon{width:34px;height:34px}
+  #page-dashboard .ql-tile-icon svg{width:26px;height:26px}
+  #page-dashboard .ql-tile-label{font-size:14px}
+  #page-dashboard > .card{grid-column:2;grid-row:2;min-height:0;overflow-y:auto}
+  .car-badge{font-size:12px}
+  .toasts{bottom:20px}
+}
 </style>
 </head>
 <body>
