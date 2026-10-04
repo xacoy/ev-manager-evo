@@ -1,17 +1,19 @@
 {
+  "id": "./index.html",
   "name": "EV Manager Evo · BYD Atto 3 EVO",
-  "short_name": "EV Manager Evo",
+  "short_name": "EV Manager",
   "description": "Gestor integral del BYD Atto 3 EVO: cargas, mantenimiento, revisiones, notas y manual.",
+  "lang": "es",
   "start_url": "./index.html",
-  "display": "standalone",
+  "scope": "./",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone", "minimal-ui"],
+  "orientation": "any",
   "background_color": "#070b14",
   "theme_color": "#070b14",
-  "orientation": "portrait-primary",
   "icons": [
-    {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2322d3ee'%3E%3Cpolygon points='13 2 3 14 12 14 11 22 21 10 12 10 13 2'/%3E%3C/svg%3E",
-      "sizes": "any",
-      "type": "image/svg+xml"
-    }
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }
