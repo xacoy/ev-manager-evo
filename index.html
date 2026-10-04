@@ -762,24 +762,11 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
             <p style="font-size:11px;color:var(--text-faint);margin-top:10px" id="notifStatus"></p>
             <div class="card-head" style="margin-top:24px"><h2>Sincronizar con Google Drive</h2></div>
             <p style="font-size:12.5px;color:var(--text-muted);margin-bottom:12px">Guarda tus datos en una carpeta privada de tu Drive para tenerlos iguales en el móvil y en el coche. Gana siempre la versión más reciente.</p>
-            <div class="field"><label>Client ID de Google</label><input id="driveClientId" type="text" placeholder="123456-abc.apps.googleusercontent.com" autocomplete="off"></div>
             <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <button class="btn btn-primary" id="driveConnectBtn" type="button" style="flex:1">Conectar</button>
-              <button class="btn btn-ghost" id="driveSyncBtn" type="button" style="flex:1">Sincronizar ahora</button>
+              <button class="btn btn-primary" id="driveSyncBtn" type="button" style="flex:1">Sincronizar ahora</button>
               <button class="btn btn-ghost" id="driveDisconnectBtn" type="button">Desconectar</button>
             </div>
-            <p style="font-size:12px;color:var(--text-muted);margin-top:10px" id="driveStatus">Sin conectar.</p>
-            <details style="margin-top:10px;font-size:12px;color:var(--text-muted)">
-              <summary style="cursor:pointer;font-weight:700">¿Cómo consigo el Client ID? (una sola vez)</summary>
-              <ol style="margin:8px 0 0 18px;line-height:1.7">
-                <li>Entra en <b>console.cloud.google.com</b> y crea un proyecto.</li>
-                <li><b>APIs y servicios → Biblioteca</b>: activa <b>Google Drive API</b>.</li>
-                <li><b>Pantalla de consentimiento de OAuth</b>: tipo <i>Externo</i>, pon un nombre y tu correo, y añade tu cuenta de Google como <i>usuario de prueba</i>.</li>
-                <li><b>Credenciales → Crear credenciales → ID de cliente de OAuth</b>, tipo <i>Aplicación web</i>.</li>
-                <li>En <b>Orígenes de JavaScript autorizados</b> añade la dirección de esta web (por ejemplo <code>https://xacoy.github.io</code>).</li>
-                <li>Copia el Client ID, pégalo arriba y pulsa <b>Conectar</b>.</li>
-              </ol>
-            </details>
+            <p style="font-size:12px;color:var(--text-muted);margin-top:10px" id="driveStatus">Sin conectar. Pulsa Sync.</p>
           </div>
         </div>
       </section>
@@ -2097,7 +2084,7 @@ const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.appdata openid email'
 const drive = { token:null, exp:0, tokenClient:null, fileId:null, timer:null, busy:false, dirty:false };
 // El Client ID de Google es público por diseño (no es un secreto); la seguridad la dan los orígenes autorizados y los usuarios de prueba.
 const DEFAULT_GDRIVE_CLIENT_ID = '458791808941-9ulp1ffnouv83o0un40n2hjdtl09hpjj.apps.googleusercontent.com';
-const driveClientId = () => localStorage.getItem('gdriveClientId') || DEFAULT_GDRIVE_CLIENT_ID;
+const driveClientId = () => DEFAULT_GDRIVE_CLIENT_ID;
 const driveEnabled = () => !!driveClientId() && localStorage.getItem('gdriveOn')==='1';
 function driveStatus(msg){ const el = document.getElementById('driveStatus'); if(el) el.textContent = msg; }
 function driveHasToken(){ return drive.token && Date.now() < drive.exp - 30000; }
@@ -2225,7 +2212,6 @@ function setupDrive(){
   const syncBtn = document.getElementById('syncBtn');
   if(syncBtn){
     syncBtn.addEventListener('click', async ()=>{
-      if(!driveClientId()){ toast('Primero conecta Google Drive en Configuración', 'info'); navigate('setup'); return; }
       if(drive.busy) return;
       localStorage.setItem('gdriveOn', '1');
       syncBtn.classList.remove('ok','err'); syncBtn.classList.add('busy');
@@ -2235,19 +2221,8 @@ function setupDrive(){
       setTimeout(()=>syncBtn.classList.remove('ok','err'), 4000);
     });
   }
-  const idInput = document.getElementById('driveClientId');
-  if(!idInput) return;
-  idInput.value = driveClientId();
-  document.getElementById('driveConnectBtn').addEventListener('click', async ()=>{
-    const id = idInput.value.trim();
-    if(!id){ toast('Pega primero el Client ID de Google', 'error'); return; }
-    localStorage.setItem('gdriveClientId', id);
-    localStorage.setItem('gdriveOn', '1');
-    drive.token = null; localStorage.removeItem('gdriveToken');
-    await driveSync();
-  });
+  if(!document.getElementById('driveSyncBtn')) return;
   document.getElementById('driveSyncBtn').addEventListener('click', async ()=>{
-    if(!driveClientId()){ toast('Conecta primero con tu Client ID', 'error'); return; }
     localStorage.setItem('gdriveOn', '1');
     await driveSync();
   });
