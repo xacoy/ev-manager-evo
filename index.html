@@ -256,6 +256,22 @@ button{cursor:pointer}
 .info-value.danger{color:var(--danger)}
 .info-sub{font-size:11px;color:var(--text-muted);margin-top:2px}
 
+
+/* Panel: anillo de batería + fichas */
+.panel-grid{display:grid;grid-template-columns:230px 1fr;gap:16px;align-items:stretch}
+.panel-grid .status-tiles-grid{grid-template-columns:repeat(3,1fr)}
+.battery-hero{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+.ring-wrap{position:relative;width:100%;max-width:190px;aspect-ratio:1}
+.ring-svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring-svg circle{fill:none;stroke-width:12;stroke-linecap:round}
+.ring-bg{stroke:var(--border-strong)}
+.ring-fg{stroke:var(--accent);transition:stroke-dashoffset .5s var(--ease),stroke .3s}
+.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.ring-pct{font-family:var(--font-display);font-size:38px;font-weight:800;color:var(--text);line-height:1}
+.ring-sub{font-size:14px;font-weight:700;color:var(--text-muted);margin-top:6px}
+.ring-hint{font-size:11px;color:var(--text-faint);text-align:center}
+.bat-slider{width:100%;height:32px;accent-color:var(--accent);cursor:pointer}
+
 .quicklinks-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
 .ql-tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:28px 20px;border-radius:var(--radius);background:var(--bg-card);border:1px solid var(--border);color:var(--text);text-decoration:none;transition:border-color .2s var(--ease), transform .2s var(--ease);cursor:pointer;position:relative;overflow:hidden;min-height:140px}
 .ql-tile:hover{border-color:var(--accent);transform:translateY(-3px)}
@@ -481,7 +497,8 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
   .topbar h1{font-size:22px}
   .chip{display:none}
   .cockpit-card{padding:24px}
-  .status-tiles-grid{grid-template-columns:repeat(2,1fr)}
+  .panel-grid{grid-template-columns:1fr}
+  .panel-grid .status-tiles-grid{grid-template-columns:repeat(2,1fr)}
   .hero-banner{flex-direction:column;align-items:flex-start}
   .hero-progress{max-width:100%}
   .quicklinks-grid{grid-template-columns:repeat(3,1fr)}
@@ -490,7 +507,7 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
   .grid-2{grid-template-columns:1fr}
 }
 @media(max-width:560px){
-  .status-tiles-grid{grid-template-columns:1fr}
+  .panel-grid .status-tiles-grid{grid-template-columns:1fr}
 }
 
 /* ---------- modo pantalla del coche (horizontal, tipo Atto 3: ~1280x720/800) ---------- */
@@ -533,7 +550,10 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
   #page-dashboard .vehicle-id{margin-bottom:10px}
   #page-dashboard .vehicle-id-name{font-size:26px}
   #page-dashboard .cockpit-card{flex:1;display:flex;flex-direction:column;min-height:0}
-  #page-dashboard .status-tiles-grid{grid-template-columns:repeat(2,1fr);gap:10px;flex:1;grid-auto-rows:1fr}
+  #page-dashboard .panel-grid{flex:1;min-height:0;grid-template-columns:220px 1fr;gap:12px}
+  #page-dashboard .panel-grid .status-tiles-grid{grid-template-columns:repeat(2,1fr);gap:10px;grid-auto-rows:1fr}
+  #page-dashboard .ring-wrap{max-width:170px}
+  #page-dashboard .ring-pct{font-size:34px}
   #page-dashboard .info-card-small{padding:14px 16px;display:flex;flex-direction:column;justify-content:center}
   #page-dashboard .info-label{font-size:12px;margin-bottom:4px}
   #page-dashboard .info-value{font-size:24px;line-height:1.1;white-space:nowrap}
@@ -636,31 +656,56 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
           </div>
           <div class="card cockpit-card">
             <div class="card-head"><h2>Estado general</h2><div class="car-badge" id="carStatusBadge">OK</div></div>
-            <div class="status-tiles-grid">
-              <div class="info-card-small tone-blue">
-                <div class="info-label">KM RECORRIDOS</div>
-                <div class="info-value" id="gaugeKm">0</div>
+            <div class="panel-grid">
+              <div class="battery-hero">
+                <div class="ring-wrap">
+                  <svg viewBox="0 0 160 160" class="ring-svg">
+                    <circle class="ring-bg" cx="80" cy="80" r="68"/>
+                    <circle class="ring-fg" id="batRing" cx="80" cy="80" r="68" stroke-dasharray="427.3" stroke-dashoffset="427.3"/>
+                  </svg>
+                  <div class="ring-center">
+                    <div class="ring-pct" id="batPct">—</div>
+                    <div class="ring-sub" id="batRange">Batería</div>
+                  </div>
+                </div>
+                <input type="range" id="batSlider" class="bat-slider" min="0" max="100" step="1" value="50" aria-label="Nivel de batería">
+                <div class="ring-hint" id="batHint">Desliza para indicar tu batería</div>
               </div>
-              <div class="info-card-small tone-blue" id="nextRevisionTile">
-                <div class="info-label">PRÓXIMA REVISIÓN</div>
-                <div class="info-value" id="sideNextRevision">—</div>
-                <div class="info-sub" id="sideNextRevisionSub">—</div>
-              </div>
-              <div class="info-card-small tone-blue">
-                <div class="info-label">CONSUMO EST.</div>
-                <div class="info-value" id="sideConsumption">—</div>
-                <div class="info-sub">kWh/100km</div>
-              </div>
-              <div class="info-card-small tone-blue">
-                <div class="info-label">ENERGÍA</div>
-                <div class="info-value" id="sideTotalKwh">—</div>
-                <div class="info-sub">Cargas: <span id="sideChargeCount">0</span> - Gasto: <span id="sideSpent">—</span></div>
+              <div class="status-tiles-grid">
+                <div class="info-card-small tone-blue">
+                  <div class="info-label">KM RECORRIDOS</div>
+                  <div class="info-value" id="gaugeKm">0</div>
+                </div>
+                <div class="info-card-small tone-blue" id="nextRevisionTile">
+                  <div class="info-label">PRÓXIMA REVISIÓN</div>
+                  <div class="info-value" id="sideNextRevision">—</div>
+                  <div class="info-sub" id="sideNextRevisionSub">—</div>
+                </div>
+                <div class="info-card-small tone-blue">
+                  <div class="info-label">CONSUMO REAL</div>
+                  <div class="info-value" id="sideConsumption">—</div>
+                  <div class="info-sub">kWh/100km</div>
+                </div>
+                <div class="info-card-small tone-blue">
+                  <div class="info-label">€ / KM</div>
+                  <div class="info-value" id="sideCostKm">—</div>
+                  <div class="info-sub" id="sideCostKmSub">—</div>
+                </div>
+                <div class="info-card-small tone-blue">
+                  <div class="info-label">ENERGÍA</div>
+                  <div class="info-value" id="sideTotalKwh">—</div>
+                  <div class="info-sub">Cargas: <span id="sideChargeCount">0</span> - Gasto: <span id="sideSpent">—</span></div>
+                </div>
+                <div class="info-card-small tone-blue">
+                  <div class="info-label">PRECIO MEDIO</div>
+                  <div class="info-value" id="sideAvgPrice">—</div>
+                  <div class="info-sub">€ por kWh</div>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- MIDDLE: Quick Links as Large Tiles -->
         <div class="quicklinks-grid" id="quickLinksGrid"></div>
 
         <!-- ACTIVITY: Recent charges + maintenance -->
@@ -1030,6 +1075,7 @@ let state = {
   notes: [],
   completedRevisions: [],
   quickLinks: DEFAULT_QUICK_LINKS.slice(),
+  battery: { pct: null, at: '' },
   lang: 'es',
   meta: { notifiedRevisions: [], lastAlertCheck: '' }
 };
@@ -1272,16 +1318,55 @@ function renderDashboard(){
   }
   document.getElementById('sideChargeCount').textContent = state.charges.length;
 
-  document.getElementById('sideConsumption').textContent = computeAvgConsumption(c).toFixed(1) + ' kWh/100km';
-  document.getElementById('sideTotalKwh').textContent = state.charges.reduce((s,x)=>s+Number(x.kwh||0),0).toFixed(2) + ' kWh';
+  const cons = computeAvgConsumption(c);
+  const totalKwh = state.charges.reduce((s,x)=>s+Number(x.kwh||0),0);
+  const chargeCost = state.charges.reduce((s,x)=>s+Number(x.cost||0),0);
+  const kmDriven = getChargeKmDriven();
+  document.getElementById('sideConsumption').textContent = cons.toFixed(1);
+  document.getElementById('sideTotalKwh').textContent = totalKwh.toFixed(2) + ' kWh';
   document.getElementById('sideSpent').textContent = fmtEUR(totalCost);
+  const eurKm = kmDriven>0 && chargeCost>0 ? chargeCost/kmDriven : (Number(c.electricRate)||0)*cons/100;
+  const eurKmReal = kmDriven>0 && chargeCost>0;
+  document.getElementById('sideCostKm').textContent = eurKm>0 ? eurKm.toFixed(3) + ' €' : '—';
+  document.getElementById('sideCostKmSub').textContent = eurKm>0 ? (eurKm*100).toFixed(2) + ' €/100 km' + (eurKmReal ? '' : ' (estim.)') : '—';
+  document.getElementById('sideAvgPrice').textContent = totalKwh>0 && chargeCost>0 ? (chargeCost/totalKwh).toFixed(3) + ' €' : (Number(c.electricRate)>0 ? Number(c.electricRate).toFixed(3) + ' €' : '—');
+  renderBattery(cons);
 
   document.getElementById('chipKm').textContent = fmtNum(km) + ' km';
   document.getElementById('chipBattery').textContent = (VERSION_LABELS[c.version] || VERSION_LABELS.design).split('·')[0].trim() + ' · ' + VEHICLE_BATTERY_KWH + ' kWh';
 
-  updateLastChargeInfo();
   buildRecentActivity();
 }
+
+function getChargeKmDriven(){
+  const withKm = state.charges.filter(x=>x.km!=null && Number(x.km)>0);
+  if(!withKm.length) return 0;
+  const first = Math.min(...withKm.map(x=>Number(x.km)));
+  return Math.max(0, getCurrentKm() - first);
+}
+function renderBattery(cons){
+  const pct = state.battery && state.battery.pct!=null ? Number(state.battery.pct) : null;
+  const ring = document.getElementById('batRing');
+  const slider = document.getElementById('batSlider');
+  if(!ring) return;
+  const C = 2*Math.PI*68;
+  if(pct==null){
+    ring.style.strokeDashoffset = C;
+    document.getElementById('batPct').textContent = '—';
+    document.getElementById('batRange').textContent = 'Batería';
+    document.getElementById('batHint').textContent = 'Desliza para indicar tu batería';
+    return;
+  }
+  ring.style.strokeDashoffset = C*(1-pct/100);
+  ring.style.stroke = pct>=40 ? 'var(--success)' : pct>=20 ? 'var(--warning)' : 'var(--danger)';
+  document.getElementById('batPct').textContent = pct + ' %';
+  const kmRange = cons>0 ? Math.round(VEHICLE_BATTERY_KWH*pct/100/cons*100) : 0;
+  document.getElementById('batRange').textContent = kmRange ? '≈ ' + kmRange + ' km' : 'Batería';
+  slider.value = pct;
+  const at = state.battery.at ? new Date(state.battery.at) : null;
+  document.getElementById('batHint').textContent = at ? 'Actualizado ' + fmtDate(state.battery.at) + ' ' + at.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}) : 'Nivel de batería';
+}
+
 
 function updateLastChargeInfo(){
   const infoEl = document.getElementById('lastChargeInfo');
@@ -1770,6 +1855,14 @@ function setupEventListeners(){
   });
 
   document.getElementById('notifPermBtn').addEventListener('click', requestNotifPermission);
+
+  const batSlider = document.getElementById('batSlider');
+  if(batSlider){
+    batSlider.addEventListener('input', ()=>{
+      state.battery = { pct: Number(batSlider.value), at: new Date().toISOString() };
+      saveState(); renderBattery(computeAvgConsumption(state.config));
+    });
+  }
 
   document.getElementById('langEs').addEventListener('click', ()=>{ state.lang='es'; saveState(); applyStateToForms(); renderAlerts(); if(document.getElementById('page-maintenance').classList.contains('active')) renderRevisions(); renderDashboard(); });
   document.getElementById('langEn').addEventListener('click', ()=>{ state.lang='en'; saveState(); applyStateToForms(); renderAlerts(); if(document.getElementById('page-maintenance').classList.contains('active')) renderRevisions(); renderDashboard(); });
