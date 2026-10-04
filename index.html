@@ -992,7 +992,17 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
     <h3 id="quickLinkModalTitle">Añadir enlace rápido</h3>
     <form id="quickLinkFormModal" style="display:flex;flex-direction:column;gap:12px">
       <div class="field"><label>Nombre</label><input id="ql_title_modal" type="text" placeholder="Ej. Mi seguro" required maxlength="30"></div>
-      <div class="field"><label>URL</label><input id="ql_url_modal" type="text" placeholder="https://..." required></div>
+      <div class="field"><label>Destino</label><select id="ql_target_modal">
+        <option value="">Enlace externo (URL)</option>
+        <option value="inicio">Sección: Inicio</option>
+        <option value="cargas">Sección: Cargas</option>
+        <option value="taller">Sección: Taller</option>
+        <option value="manual">Sección: Manual</option>
+        <option value="notas">Sección: Notas</option>
+        <option value="datos">Sección: Datos</option>
+        <option value="configuracion">Sección: Configuración</option>
+      </select></div>
+      <div class="field" id="ql_url_field"><label>URL</label><input id="ql_url_modal" type="text" placeholder="https://..."></div>
       <div class="modal-actions">
         <button type="button" class="btn btn-ghost" id="addLinkCancel">Cancelar</button>
         <button type="submit" class="btn btn-primary" id="quickLinkSubmitBtn">Guardar enlace</button>
@@ -1168,13 +1178,25 @@ function toast(msg, type='info'){
 }
 
 /* ---------------- navigation ---------------- */
-function navigate(page){
+const ROUTES = { inicio:'dashboard', cargas:'charges', taller:'maintenance', manual:'manual', notas:'notes', datos:'stats', configuracion:'setup' };
+const PAGE_ROUTE = Object.fromEntries(Object.entries(ROUTES).map(([r,p])=>[p,r]));
+const ROUTE_LABELS = { inicio:'Inicio', cargas:'Cargas', taller:'Taller', manual:'Manual', notas:'Notas', datos:'Datos', configuracion:'Configuración' };
+const ROUTE_ICONS = { cargas:'bolt', taller:'wrench', manual:'book', notas:'edit' };
+function pageFromHash(){
+  const r = decodeURIComponent((location.hash||'').replace(/^#\/?/,'')).toLowerCase();
+  return ROUTES[r] || null;
+}
+function navigate(page, opts){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+page).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active', b.dataset.page===page));
   const titles = {dashboard:'Dashboard', setup:'Configuración', charges:'Cargas', maintenance:'Mantenimiento', revisions:'Revisiones', notes:'Notas', manual:'Manual', stats:'Estadísticas'};
   document.getElementById('pageTitle').textContent = titles[page] || page;
   document.getElementById('moreSheetOverlay').classList.remove('open');
+  if(!(opts && opts.fromHash) && PAGE_ROUTE[page]){
+    const h = '#' + PAGE_ROUTE[page];
+    try{ if(location.hash !== h) history.pushState(null, '', h); }catch(e){}
+  }
   if(page==='charges') renderCharges();
   if(page==='maintenance') { renderMaintenance(); renderRevisions(); }
   if(page==='revisions') renderRevisions();
@@ -1642,7 +1664,7 @@ function renderQuickLinks(){
   if(!grid) return;
   const links = state.quickLinks || [];
   grid.innerHTML = links.length ? links.map(l=>`
-    <a class="ql-tile" href="${escapeAttr(l.url)}" target="_blank" rel="noopener noreferrer" title="${escapeAttr(l.title)}">
+    <a class="ql-tile" href="${escapeAttr(l.url)}" ${/^#/.test(l.url) ? '' : 'target="_blank" rel="noopener noreferrer"'} title="${escapeAttr(l.title)}">
       <div class="ql-tile-icon">${ICONS[l.icon]||ICONS.link}</div>
       <div class="ql-tile-label">${escapeHtml(l.title)}</div>
       <button type="button" class="ql-tile-edit" title="Editar" onclick="event.preventDefault();event.stopPropagation();editQuickLink('${l.id}')">${ICONS.edit}</button>
@@ -1660,14 +1682,25 @@ function editQuickLink(id){
   if(!l) return;
   editingQuickLinkId = id;
   document.getElementById('ql_title_modal').value = l.title || '';
-  document.getElementById('ql_url_modal').value = l.url || '';
+  const route = /^#/.test(l.url||'') ? l.url.slice(1) : '';
+  document.getElementById('ql_target_modal').value = ROUTES[route] ? route : '';
+  document.getElementById('ql_url_modal').value = ROUTES[route] ? '' : (l.url || '');
+  syncQuickLinkTarget();
   document.getElementById('quickLinkModalTitle').textContent = 'Editar enlace';
   document.getElementById('quickLinkSubmitBtn').textContent = 'Guardar cambios';
   document.getElementById('addLinkOverlay').classList.add('open');
 }
+function syncQuickLinkTarget(){
+  const t = document.getElementById('ql_target_modal').value;
+  document.getElementById('ql_url_field').style.display = t ? 'none' : '';
+  document.getElementById('ql_url_modal').required = !t;
+  const title = document.getElementById('ql_title_modal');
+  if(t && !title.value.trim()) title.value = ROUTE_LABELS[t];
+}
 function cancelQuickLinkEdit(){
   editingQuickLinkId = null;
   document.getElementById('quickLinkFormModal').reset();
+  syncQuickLinkTarget();
   document.getElementById('quickLinkModalTitle').textContent = 'Añadir enlace rápido';
   document.getElementById('quickLinkSubmitBtn').textContent = 'Guardar enlace';
 }
@@ -2015,19 +2048,22 @@ function setupEventListeners(){
   document.getElementById('noteCancelEdit').addEventListener('click', cancelNoteEdit);
   document.getElementById('noteSearch').addEventListener('input', renderNotes);
 
+  document.getElementById('ql_target_modal').addEventListener('change', syncQuickLinkTarget);
   document.getElementById('quickLinkFormModal').addEventListener('submit', e=>{
     e.preventDefault();
     const title = document.getElementById('ql_title_modal').value.trim();
-    let url = document.getElementById('ql_url_modal').value.trim();
+    const target = document.getElementById('ql_target_modal').value;
+    let url = target ? '#' + target : document.getElementById('ql_url_modal').value.trim();
     if(!title || !url) return;
-    if(!/^https?:\/\//i.test(url) && !/^tel:/i.test(url)) url = 'https://' + url;
+    if(!target && !/^https?:\/\//i.test(url) && !/^tel:/i.test(url)) url = 'https://' + url;
+    const icon = target ? (ROUTE_ICONS[target] || 'link') : 'link';
     state.quickLinks = state.quickLinks || [];
     const wasEditing = editingQuickLinkId!=null;
     if(wasEditing){
       const idx = state.quickLinks.findIndex(l=>l.id===editingQuickLinkId);
-      if(idx>-1) state.quickLinks[idx] = { ...state.quickLinks[idx], title, url };
+      if(idx>-1) state.quickLinks[idx] = { ...state.quickLinks[idx], title, url, icon: (target || state.quickLinks[idx].icon==='link') ? icon : state.quickLinks[idx].icon };
     } else {
-      state.quickLinks.push({ id: 'custom-'+uid(), title, url, icon:'link' });
+      state.quickLinks.push({ id: 'custom-'+uid(), title, url, icon });
     }
     cancelQuickLinkEdit(); saveState(); renderQuickLinks();
     document.getElementById('addLinkOverlay').classList.remove('open');
@@ -2212,7 +2248,9 @@ function init(){
   updateNotifStatus();
   document.getElementById('c_date').valueAsDate = new Date();
   document.getElementById('m_date').valueAsDate = new Date();
-  navigate('dashboard');
+  navigate(pageFromHash() || 'dashboard', { fromHash: true });
+  window.addEventListener('hashchange', ()=>{ const p = pageFromHash(); if(p) navigate(p, { fromHash: true }); });
+  window.addEventListener('popstate', ()=>{ navigate(pageFromHash() || 'dashboard', { fromHash: true }); });
   requestAnimationFrame(() => {
     renderDashboard();
     renderAlerts();
