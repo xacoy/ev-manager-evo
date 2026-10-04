@@ -2095,7 +2095,9 @@ function setupEventListeners(){
 const DRIVE_FILE = 'ev-manager-evo.json';
 const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.appdata openid email';
 const drive = { token:null, exp:0, tokenClient:null, fileId:null, timer:null, busy:false, dirty:false };
-const driveClientId = () => localStorage.getItem('gdriveClientId') || '';
+// El Client ID de Google es público por diseño (no es un secreto); la seguridad la dan los orígenes autorizados y los usuarios de prueba.
+const DEFAULT_GDRIVE_CLIENT_ID = '458791808941-9ulp1ffnouv83o0un40n2hjdtl09hpjj.apps.googleusercontent.com';
+const driveClientId = () => localStorage.getItem('gdriveClientId') || DEFAULT_GDRIVE_CLIENT_ID;
 const driveEnabled = () => !!driveClientId() && localStorage.getItem('gdriveOn')==='1';
 function driveStatus(msg){ const el = document.getElementById('driveStatus'); if(el) el.textContent = msg; }
 function driveHasToken(){ return drive.token && Date.now() < drive.exp - 30000; }
