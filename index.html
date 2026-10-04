@@ -581,30 +581,26 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
           <div class="card cockpit-card">
             <div class="card-head"><h2>Estado general</h2><div class="car-badge" id="carStatusBadge">OK</div></div>
             <div class="status-tiles-grid">
-              <div class="info-card-small tone-cyan">
+              <div class="info-card-small tone-blue">
                 <div class="info-label">KM RECORRIDOS</div>
                 <div class="info-value" id="gaugeKm">0</div>
               </div>
-              <div class="info-card-small tone-green" id="nextRevisionTile">
+              <div class="info-card-small tone-blue" id="nextRevisionTile">
                 <div class="info-label">PRÓXIMA REVISIÓN</div>
                 <div class="info-value" id="sideNextRevision">—</div>
                 <div class="info-sub" id="sideNextRevisionSub">—</div>
               </div>
-              <div class="info-card-small tone-pink">
-                <div class="info-label">CARGAS REGISTRADAS</div>
+              <div class="info-card-small tone-blue">
+                <div class="info-label">CARGAS</div>
                 <div class="info-value" id="sideChargeCount">0</div>
+                <div class="info-sub"><span id="lastChargeInfo">—</span> · <span id="lastChargeDate">—</span></div>
               </div>
-              <div class="info-card-small tone-violet">
-                <div class="info-label">ÚLTIMA CARGA</div>
-                <div class="info-value" id="lastChargeInfo" style="font-size:18px">—</div>
-                <div class="info-sub" id="lastChargeDate">—</div>
-              </div>
-              <div class="info-card-small tone-amber">
+              <div class="info-card-small tone-blue">
                 <div class="info-label">CONSUMO EST.</div>
                 <div class="info-value" id="sideConsumption">—</div>
                 <div class="info-sub">kWh/100km</div>
               </div>
-              <div class="info-card-small tone-pink">
+              <div class="info-card-small tone-blue">
                 <div class="info-label">KWH CARGADOS</div>
                 <div class="info-value" id="sideTotalKwh">—</div>
                 <div class="info-sub">histórico total</div>
@@ -1213,7 +1209,7 @@ function renderDashboard(){
   const nextRevSubEl = document.getElementById('sideNextRevisionSub');
   const nextRevTile = document.getElementById('nextRevisionTile');
   const shortName = next ? next.name.split('·')[0].trim() : '—';
-  nextRevTile.className = 'info-card-small tone-green';
+  nextRevTile.className = 'info-card-small tone-blue';
   nextRevEl.className = 'info-value';
   if(!next){
     nextRevEl.textContent = '—';
