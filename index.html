@@ -156,6 +156,16 @@ button{cursor:pointer}
 .chip .l1{font-size:12px;font-weight:800; color:var(--text)}
 .chip .l2{font-size:10px;color:var(--text-muted);font-weight:600}
 
+.sync-btn{display:flex;align-items:center;gap:8px;height:44px;padding:0 18px;border-radius:var(--radius-full);border:1px solid var(--border-strong);background:var(--bg-2);color:var(--text);font-size:14px;font-weight:700;cursor:pointer;transition:all .2s var(--ease)}
+.sync-btn svg{width:18px;height:18px;stroke:currentColor}
+.sync-btn:hover{border-color:var(--accent);color:var(--accent)}
+.sync-btn:active{transform:scale(.96)}
+.sync-btn.busy svg{animation:syncspin 1s linear infinite}
+.sync-btn.ok{border-color:var(--success);color:var(--success)}
+.sync-btn.err{border-color:var(--danger);color:var(--danger)}
+@keyframes syncspin{to{transform:rotate(360deg)}}
+@media(max-width:560px){.sync-btn span{display:none}.sync-btn{padding:0 12px}}
+
 .bell-wrap,.menu-wrap{position:relative}
 .icon-btn{
   width:60px;height:60px;border-radius:var(--radius-full);display:flex;align-items:center;justify-content:center;
@@ -527,7 +537,6 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
   .content{padding:10px 20px 10px;display:flex;flex-direction:column}
   .content > *{flex-shrink:0}
   .content > .page.active{flex:1 1 auto}
-  #backupBanner{padding:8px 14px!important;margin-bottom:10px!important}
   .page{max-width:none}
   .card{padding:16px 20px}
   .card-head{margin-bottom:12px}
@@ -600,6 +609,10 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
           <span class="chip-dot"></span>
           <div><div class="l1" id="chipKm">— km</div><div class="l2" id="chipBattery">— kWh</div></div>
         </div>
+        <button class="sync-btn" id="syncBtn" type="button" title="Sincronizar con Google Drive">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5M3 21v-5h5"/></svg>
+          <span>Sync</span>
+        </button>
         <button class="icon-btn" id="themeToggle">
           <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="themeIcon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         </button>
@@ -632,17 +645,6 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
     </header>
 
     <div class="content">
-      <!-- BACKUP REMINDER BANNER -->
-      <div id="backupBanner" style="display:none; background:var(--warning-soft); border:1px solid var(--warning); border-radius:var(--radius); padding:16px 20px; margin-bottom:16px; display:flex; align-items:center; justify-content:space-between; gap:12px; animation:slideDown .3s var(--ease)">
-        <div style="flex:1">
-          <div style="font-weight:600; color:var(--warning); margin-bottom:4px">Es momento de hacer copia de seguridad</div>
-          <div style="font-size:14px; color:var(--text-muted)">Han pasado 7 días desde tu último backup. Exporta tus datos para no perderlos.</div>
-        </div>
-        <div style="display:flex; gap:8px; flex-shrink:0">
-          <button onclick="document.getElementById('exportBtn').click(); document.getElementById('backupBanner').style.display='none'" style="padding:8px 14px; background:var(--warning); color:var(--on-accent); border:none; border-radius:var(--radius-sm); font-weight:600; cursor:pointer; font-size:13px">Exportar ahora</button>
-          <button onclick="document.getElementById('backupBanner').style.display='none'" style="padding:8px 14px; background:transparent; border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text); cursor:pointer; font-size:13px">Cerrar</button>
-        </div>
-      </div>
       <style>
         @keyframes slideDown { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }
       </style>
@@ -1779,7 +1781,6 @@ function exportData(){
   document.body.appendChild(a); a.click(); a.remove();
   URL.revokeObjectURL(url);
   localStorage.setItem('lastBackupDate', new Date().toISOString());
-  document.getElementById('backupBanner').style.display = 'none';
   toast('Datos exportados correctamente', 'success');
 }
 let pendingImport = null;
@@ -2045,24 +2046,6 @@ function setupEventListeners(){
 }
 
 /* ---------------- backup reminder ---------------- */
-function checkBackupReminder(){
-  const lastBackup = localStorage.getItem('lastBackupDate');
-  if(!lastBackup) return;
-
-  const lastBackupDate = new Date(lastBackup);
-  const now = new Date();
-  const hoursSinceBackup = (now - lastBackupDate) / (1000 * 60 * 60);
-  const sevenDaysInHours = 7 * 24;
-
-  const currentHour = now.getHours();
-  const currentMinute = now.getMinutes();
-  const timeInMinutes = currentHour * 60 + currentMinute;
-  const sixAmTenMin = 6 * 60 + 10;
-
-  if(hoursSinceBackup >= sevenDaysInHours && timeInMinutes >= sixAmTenMin){
-    document.getElementById('backupBanner').style.display = 'flex';
-  }
-}
 
 /* ---------------- init ---------------- */
 
@@ -2177,6 +2160,19 @@ function driveSchedulePush(){
   }, 4000);
 }
 function setupDrive(){
+  const syncBtn = document.getElementById('syncBtn');
+  if(syncBtn){
+    syncBtn.addEventListener('click', async ()=>{
+      if(!driveClientId()){ toast('Primero conecta Google Drive en Configuración', 'info'); navigate('setup'); return; }
+      if(drive.busy) return;
+      localStorage.setItem('gdriveOn', '1');
+      syncBtn.classList.remove('ok','err'); syncBtn.classList.add('busy');
+      const ok = await driveSync();
+      syncBtn.classList.remove('busy'); syncBtn.classList.add(ok ? 'ok' : 'err');
+      toast(document.getElementById('driveStatus')?.textContent.replace(/^[✅⚠️\s]+/,'') || (ok?'Sincronizado':'Error al sincronizar'), ok ? 'success' : 'error');
+      setTimeout(()=>syncBtn.classList.remove('ok','err'), 4000);
+    });
+  }
   const idInput = document.getElementById('driveClientId');
   if(!idInput) return;
   idInput.value = driveClientId();
@@ -2209,7 +2205,6 @@ function setupDrive(){
 
 function init(){
   loadState();
-  checkBackupReminder();
   setupEventListeners();
   setupDrive();
   applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
