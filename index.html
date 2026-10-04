@@ -2252,7 +2252,9 @@ function setupDrive(){
   if(driveEnabled()){
     driveStatus('Pulsa "Sincronizar ahora" para actualizar con Drive.');
     // Intento silencioso al abrir; si el navegador bloquea la ventana, queda el botón manual.
-    driveSync(true);
+    // Sin token vigente no se abre ninguna ventana de Google: se espera a que pulses Sync.
+    if(driveHasToken()) driveSync(true);
+    else driveStatus('Pulsa Sync para sincronizar con Drive.');
     document.addEventListener('visibilitychange', ()=>{ if(!document.hidden && driveEnabled() && driveHasToken()) driveSync(); });
   }
 }
