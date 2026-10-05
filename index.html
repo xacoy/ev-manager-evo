@@ -273,7 +273,13 @@ button{cursor:pointer}
 /* Panel: anillo de batería + fichas */
 .panel-grid{display:grid;grid-template-columns:280px 1fr;gap:16px;align-items:stretch}
 .panel-grid .status-tiles-grid{grid-template-columns:repeat(3,1fr)}
-.car-img{width:100%;max-width:300px;aspect-ratio:900/689;background:var(--accent);-webkit-mask:url(images/atto3-evo-front.png) center/contain no-repeat;mask:url(images/atto3-evo-front.png) center/contain no-repeat}
+.car-wrap{position:relative;width:100%;max-width:300px;aspect-ratio:900/714}
+.car-img{position:absolute;inset:0;background:linear-gradient(100deg,#38bdf8 0%,#22d3ee 30%,#6ee7b7 50%,#22d3ee 70%,#38bdf8 100%);background-size:260% 100%;animation:carshine 7s ease-in-out infinite alternate;-webkit-mask:url(images/atto3-evo-front.png) center/contain no-repeat;mask:url(images/atto3-evo-front.png) center/contain no-repeat;filter:drop-shadow(0 0 5px rgba(34,211,238,.4))}
+.car-bolt{position:absolute;left:50%;top:50.9%;width:8%;transform:translate(-50%,-50%);fill:#22d3ee;filter:drop-shadow(0 0 4px rgba(34,211,238,.7))}
+:root[data-theme="light"] .car-img{background-image:linear-gradient(100deg,#0369a1 0%,#0e7490 30%,#047857 50%,#0e7490 70%,#0369a1 100%);filter:none}
+:root[data-theme="light"] .car-bolt{fill:#0e7490;filter:none}
+@keyframes carshine{from{background-position:0% 0}to{background-position:100% 0}}
+@media(prefers-reduced-motion:reduce){.car-img{animation:none}}
 .car-name{font-family:var(--font-display);font-size:15px;font-weight:700;color:var(--text);letter-spacing:-.2px}
 .save-block{text-align:center;border-top:1px solid var(--border);padding-top:12px;width:100%}
 .save-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--text-faint)}
@@ -665,7 +671,10 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
             <div class="card-head"><h2>Estado general</h2><div class="car-badge" id="carStatusBadge">OK</div></div>
             <div class="panel-grid">
               <div class="battery-hero car-hero">
-                <div class="car-img" role="img" aria-label="BYD Atto 3 EVO"></div>
+                <div class="car-wrap" role="img" aria-label="BYD Atto 3 EVO">
+                  <div class="car-img"></div>
+                  <svg class="car-bolt" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                </div>
                 <div class="save-block">
                   <div class="save-label">AHORRO VS GASOLINA</div>
                   <div class="save-value" id="saveValue">—</div>
