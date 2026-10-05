@@ -291,6 +291,7 @@ button{cursor:pointer}
 .ql-tile:active{transform:scale(.97)}
 .ql-tile-icon{width:52px;height:52px;display:flex;align-items:center;justify-content:center;color:var(--accent);flex-shrink:0}
 .ql-tile-icon svg{width:32px;height:32px;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ql-favicon{width:40px;height:40px;object-fit:contain;background:#fff;border-radius:10px;padding:5px;box-sizing:border-box}
 .ql-tile-label{font-size:14px;font-weight:700;text-align:center;line-height:1.3}
 .ql-tile-delete{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;background:var(--danger-soft);color:var(--danger);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;font-size:12px}
 .ql-tile:hover .ql-tile-delete{opacity:1}
@@ -1673,13 +1674,22 @@ function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s; 
 function escapeAttr(s){ return (s||'').replace(/"/g,'&quot;'); }
 
 /* ---------------- quick links ---------------- */
+// Icono oficial del sitio (favicon) para enlaces externos; si no carga, se usa el icono genérico.
+function quickLinkIconHtml(l){
+  const fallback = ICONS[l.icon] || ICONS.link;
+  if(!/^https?:\/\//i.test(l.url||'')) return fallback;
+  let host = '';
+  try{ host = new URL(l.url).hostname; }catch(e){ return fallback; }
+  const src = 'https://www.google.com/s2/favicons?sz=128&domain=' + encodeURIComponent(host);
+  return `<img class="ql-favicon" src="${src}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.outerHTML=this.dataset.fb" data-fb="${escapeAttr(fallback)}">`;
+}
 function renderQuickLinks(){
   const grid = document.getElementById('quickLinksGrid');
   if(!grid) return;
   const links = state.quickLinks || [];
   grid.innerHTML = links.length ? links.map(l=>`
     <a class="ql-tile" href="${escapeAttr(l.url)}" ${/^#/.test(l.url) ? '' : 'target="_blank" rel="noopener noreferrer"'} title="${escapeAttr(l.title)}">
-      <div class="ql-tile-icon">${ICONS[l.icon]||ICONS.link}</div>
+      <div class="ql-tile-icon">${quickLinkIconHtml(l)}</div>
       <div class="ql-tile-label">${escapeHtml(l.title)}</div>
       <button type="button" class="ql-tile-edit" title="Editar" onclick="event.preventDefault();event.stopPropagation();editQuickLink('${l.id}')">${ICONS.edit}</button>
       <button type="button" class="ql-tile-delete" title="Eliminar" onclick="event.preventDefault();event.stopPropagation();deleteQuickLink('${l.id}')">✕</button>
