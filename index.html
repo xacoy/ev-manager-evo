@@ -129,6 +129,7 @@ button{cursor:pointer}
 }
 .topbar h1{font-size:26px;font-weight:700;letter-spacing:-.3px;font-family:var(--font-display);color:var(--text)}
 
+.title-accent{font-style:normal;color:var(--accent)}
 .top-left{display:flex;align-items:center;gap:8px;flex:0 0 auto}
 .top-right{display:flex;align-items:center;gap:8px}
 .expandable-section{margin-top:20px}
@@ -611,7 +612,7 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
           <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
         </button>
       </div>
-      <h1 id="pageTitle">Dashboard</h1>
+      <h1 id="pageTitle">BYD Atto 3 <em class="title-accent">EVO</em></h1>
       <div class="top-right">
         <div class="chip">
           <span class="chip-dot"></span>
@@ -664,9 +665,6 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
       <section class="page" id="page-dashboard">
         <!-- TOP: Cockpit hero — progress ring toward the next scheduled revision -->
         <div class="dash-header">
-          <div class="vehicle-id">
-            <div class="vehicle-id-name">BYD Atto 3 <em>EVO</em></div>
-          </div>
           <div class="card cockpit-card">
             <div class="card-head"><h2>Estado general</h2><div class="car-badge" id="carStatusBadge">OK</div></div>
             <div class="panel-grid">
@@ -1223,8 +1221,8 @@ function navigate(page, opts){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+page).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active', b.dataset.page===page));
-  const titles = {dashboard:'Dashboard', setup:'Configuración', charges:'Cargas', maintenance:'Mantenimiento', revisions:'Revisiones', notes:'Notas', manual:'Manual', stats:'Estadísticas'};
-  document.getElementById('pageTitle').textContent = titles[page] || page;
+  const titles = {dashboard:'BYD Atto 3 <em class="title-accent">EVO</em>', setup:'Configuración', charges:'Cargas', maintenance:'Mantenimiento', revisions:'Revisiones', notes:'Notas', manual:'Manual', stats:'Estadísticas'};
+  document.getElementById('pageTitle').innerHTML = titles[page] || page;
   document.getElementById('moreSheetOverlay').classList.remove('open');
   if(!(opts && opts.fromHash) && PAGE_ROUTE[page]){
     const h = '#' + PAGE_ROUTE[page];
