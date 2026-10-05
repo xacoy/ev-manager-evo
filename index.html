@@ -2162,33 +2162,100 @@ function applyRemoteState(remote){
   renderDashboard(); renderAlerts();
   navigate(document.querySelector('.nav-item.active')?.dataset.page || 'dashboard');
 }
-async function driveSync(silent){
+function driveContentKey(st){
+  const c = Object.assign({}, st); delete c.meta; delete c.battery;
+  return JSON.stringify(c);
+}
+function driveSummary(st){
+  const km = Math.max(Number(st.config && st.config.currentKm)||0, ...(st.charges||[]).map(x=>Number(x.km)||0), ...(st.maintenance||[]).map(x=>Number(x.km)||0));
+  const at = Number(st.meta && st.meta.updatedAt) || 0;
+  return (st.charges||[]).length + ' cargas · ' + (st.maintenance||[]).length + ' mantenimientos · ' + (st.notes||[]).length + ' notas · ' + fmtNum(km) + ' km'
+    + (at ? '<br><span style="color:var(--text-faint)">Modificado: ' + new Date(at).toLocaleString('es-ES',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}) + '</span>' : '');
+}
+function driveAskConflict(remote){
+  return new Promise(resolve=>{
+    let ov = document.getElementById('driveConflictOverlay');
+    if(ov) ov.remove();
+    ov = document.createElement('div');
+    ov.className = 'overlay open'; ov.id = 'driveConflictOverlay';
+    ov.innerHTML = '<div class="modal"><h3>Los datos son distintos</h3>'
+      + '<p>Este dispositivo y Drive tienen datos diferentes. Elige cuáles quieres conservar. De los que se sustituyan se guarda una copia de seguridad en este dispositivo.</p>'
+      + '<div style="font-size:13px;line-height:1.6;margin-bottom:14px"><b>Este dispositivo</b><br>' + driveSummary(state) + '<br><br><b>Drive</b><br>' + driveSummary(remote) + '</div>'
+      + '<div style="display:flex;flex-direction:column;gap:8px">'
+      + '<button type="button" class="btn btn-primary" data-r="remote">Usar los de Drive</button>'
+      + '<button type="button" class="btn btn-ghost" data-r="local">Subir los de este dispositivo</button>'
+      + '<button type="button" class="btn btn-ghost" data-r="">Cancelar</button></div></div>';
+    ov.addEventListener('click', e=>{
+      const r = e.target.closest('[data-r]'); if(!r) return;
+      ov.remove(); resolve(r.dataset.r || null);
+    });
+    document.body.appendChild(ov);
+  });
+}
+function driveHash(st){
+  const str = driveContentKey(st); let h = 5381;
+  for(let i=0;i<str.length;i++) h = ((h<<5) + h + str.charCodeAt(i)) | 0;
+  return String(h);
+}
+function driveGetBase(){ try{ return JSON.parse(localStorage.getItem('gdriveBase') || 'null'); }catch(e){ return null; } }
+function driveSetBase(remoteSt, localSt){ localStorage.setItem('gdriveBase', JSON.stringify({ remote: driveHash(remoteSt), local: driveHash(localSt) })); }
+function driveDecide(remote){
+  if(!remote) return 'upload';
+  if(driveContentKey(state) === driveContentKey(remote)) return 'none';
+  const base = driveGetBase();
+  if(!base) return stateHasData() ? 'conflict' : 'download';
+  const remoteChanged = driveHash(remote) !== base.remote, localChanged = driveHash(state) !== base.local;
+  if(remoteChanged && localChanged) return 'conflict';
+  if(remoteChanged) return 'download';
+  if(localChanged) return 'upload';
+  return 'none';
+}
+function driveBackup(key, st){ try{ localStorage.setItem(key, JSON.stringify({ at: Date.now(), data: st })); }catch(e){} }
+async function driveFetchRemote(){
+  await driveFindFile();
+  if(!drive.fileId) return null;
+  return await (await driveApi('https://www.googleapis.com/drive/v3/files/' + drive.fileId + '?alt=media')).json();
+}
+const driveNow = () => new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+// mode: 'manual' (botón Sync, puede preguntar) | 'load' (al abrir) | 'auto' (tras guardar). Los dos últimos nunca sustituyen datos locales por los de Drive si hay dudas.
+async function driveSync(mode){
+  mode = mode || 'manual';
   if(drive.busy) return;
+  if(mode !== 'manual' && !driveHasToken()) { driveStatus('Pulsa Sync para sincronizar con Drive.'); return false; }
   drive.busy = true;
   try{
-    if(!driveHasToken()) await driveAuth(silent ? 'none' : '');
+    if(!driveHasToken()) await driveAuth('');
     driveStatus('Sincronizando…');
-    await driveFindFile();
-    const localAt = Number(state.meta && state.meta.updatedAt) || 0;
+    const remote = await driveFetchRemote();
+    let action = driveDecide(remote);
+    if(action === 'conflict'){
+      if(mode !== 'manual'){ driveStatus('⚠️ Drive tiene datos distintos — pulsa Sync para elegir cuáles conservar.'); return false; }
+      const choice = await driveAskConflict(remote);
+      if(!choice){ driveStatus('Sincronización cancelada. No se ha cambiado nada.'); return false; }
+      action = choice === 'remote' ? 'download' : 'upload';
+    } else if(action === 'download' && mode === 'auto'){
+      driveStatus('⚠️ Drive tiene cambios nuevos — pulsa Sync para traerlos.'); return false;
+    }
     let msg;
-    if(!drive.fileId){
-      await driveUpload(); msg = 'Datos subidos a Drive';
+    if(action === 'download'){
+      driveBackup('gdriveBackupLocal', state);
+      applyRemoteState(remote);
+      driveSetBase(remote, state);
+      msg = 'Datos descargados de Drive';
+    } else if(action === 'upload'){
+      if(remote && driveContentKey(remote) !== driveContentKey(state)) driveBackup('gdriveBackupRemote', remote);
+      await driveUpload();
+      driveSetBase(state, state);
+      msg = 'Datos subidos a Drive';
     } else {
-      const remote = await (await driveApi('https://www.googleapis.com/drive/v3/files/' + drive.fileId + '?alt=media')).json();
-      const remoteAt = Number(remote.meta && remote.meta.updatedAt) || 0;
-      let useRemote = remoteAt > localAt;
-      if(!localAt && stateHasData() && remoteAt){
-        useRemote = confirm('Drive ya tiene datos y este dispositivo también.\n\nAceptar: usar los de Drive (se sustituyen los de aquí).\nCancelar: subir los de este dispositivo a Drive.');
-      }
-      if(useRemote){ applyRemoteState(remote); msg = 'Datos descargados de Drive'; }
-      else if(localAt > remoteAt || (!remoteAt && localAt)){ await driveUpload(); msg = 'Datos subidos a Drive'; }
-      else { msg = 'Todo al día'; }
+      driveSetBase(remote || state, state);
+      msg = 'Todo al día';
     }
     localStorage.setItem('gdriveLast', String(Date.now()));
-    driveStatus('✅ ' + msg + ' · ' + new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}));
+    driveStatus('✅ ' + msg + ' · ' + driveNow());
     return true;
   }catch(e){
-    driveStatus(silent ? 'Pulsa Sync para sincronizar con Drive.' : '⚠️ ' + e.message + ' — pulsa "Sincronizar ahora".');
+    driveStatus(mode === 'manual' ? '⚠️ ' + e.message + ' — pulsa "Sincronizar ahora".' : 'Pulsa Sync para sincronizar con Drive.');
     return false;
   }finally{ drive.busy = false; }
 }
@@ -2196,16 +2263,9 @@ function driveSchedulePush(){
   if(!driveEnabled()) return;
   drive.dirty = true;
   clearTimeout(drive.timer);
-  drive.timer = setTimeout(async ()=>{
-    if(!driveHasToken()){ driveStatus('⚠️ Cambios sin subir — pulsa "Sincronizar ahora".'); return; }
-    try{
-      if(drive.busy) return;
-      drive.busy = true;
-      if(!drive.fileId) await driveFindFile();
-      await driveUpload();
-      driveStatus('✅ Subido a Drive · ' + new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}));
-    }catch(e){ driveStatus('⚠️ ' + e.message + ' — pulsa "Sincronizar ahora".'); }
-    finally{ drive.busy = false; }
+  drive.timer = setTimeout(()=>{
+    if(!driveHasToken()){ driveStatus('⚠️ Cambios sin subir — pulsa Sync.'); return; }
+    driveSync('auto');
   }, 4000);
 }
 function setupDrive(){
@@ -2236,9 +2296,9 @@ function setupDrive(){
     driveStatus('Pulsa "Sincronizar ahora" para actualizar con Drive.');
     // Intento silencioso al abrir; si el navegador bloquea la ventana, queda el botón manual.
     // Sin token vigente no se abre ninguna ventana de Google: se espera a que pulses Sync.
-    if(driveHasToken()) driveSync(true);
+    if(driveHasToken()) driveSync('load');
     else driveStatus('Pulsa Sync para sincronizar con Drive.');
-    document.addEventListener('visibilitychange', ()=>{ if(!document.hidden && driveEnabled() && driveHasToken()) driveSync(); });
+    document.addEventListener('visibilitychange', ()=>{ if(!document.hidden && driveEnabled() && driveHasToken()) driveSync('load'); });
   }
 }
 
