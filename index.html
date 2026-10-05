@@ -291,7 +291,10 @@ button{cursor:pointer}
 .ql-tile:active{transform:scale(.97)}
 .ql-tile-icon{width:52px;height:52px;display:flex;align-items:center;justify-content:center;color:var(--accent);flex-shrink:0}
 .ql-tile-icon svg{width:32px;height:32px;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.ql-favicon{width:40px;height:40px;object-fit:contain;background:#fff;border-radius:10px;padding:5px;box-sizing:border-box}
+.icon-picker{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.icon-pick{display:flex;align-items:center;justify-content:center;height:46px;border-radius:10px;border:1px solid var(--border);background:var(--bg-2);color:var(--text-muted);cursor:pointer;padding:0}
+.icon-pick svg{width:22px;height:22px;stroke:currentColor}
+.icon-pick.sel{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
 .ql-tile-label{font-size:14px;font-weight:700;text-align:center;line-height:1.3}
 .ql-tile-delete{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;background:var(--danger-soft);color:var(--danger);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;font-size:12px}
 .ql-tile:hover .ql-tile-delete{opacity:1}
@@ -996,6 +999,7 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
         <option value="datos">Sección: Datos</option>
         <option value="configuracion">Sección: Configuración</option>
       </select></div>
+      <div class="field"><label>Icono</label><div class="icon-picker" id="ql_icon_picker"></div><input type="hidden" id="ql_icon_modal" value="link"></div>
       <div class="field" id="ql_url_field"><label>URL</label><input id="ql_url_modal" type="text" placeholder="https://..."></div>
       <div class="modal-actions">
         <button type="button" class="btn btn-ghost" id="addLinkCancel">Cancelar</button>
@@ -1026,6 +1030,20 @@ const STORAGE_KEY = 'evManagerEvo:v1';
 const THEME_KEY = 'evManagerEvo:theme';
 
 const ICONS = {
+  home: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',
+  shield: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+  phone: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>',
+  card: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>',
+  file: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
+  globe: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
+  calendar: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
+  mail: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>',
+  cart: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>',
+  euro: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 7a6 6 0 1 0 0 10M4 10h10M4 14h10"/></svg>',
+  battery: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="6" width="18" height="12" rx="2" ry="2"/><line x1="23" y1="13" x2="23" y2="11"/></svg>',
+  car: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17h18v-4l-2-6H5l-2 6z"/><circle cx="7.5" cy="17" r="1.5"/><circle cx="16.5" cy="17" r="1.5"/></svg>',
+  star: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+  parking: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9"/></svg>',
   check: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
   alert: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
   clock: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
@@ -1674,22 +1692,14 @@ function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s; 
 function escapeAttr(s){ return (s||'').replace(/"/g,'&quot;'); }
 
 /* ---------------- quick links ---------------- */
-// Icono oficial del sitio (favicon) para enlaces externos; si no carga, se usa el icono genérico.
-function quickLinkIconHtml(l){
-  const fallback = ICONS[l.icon] || ICONS.link;
-  if(!/^https?:\/\//i.test(l.url||'')) return fallback;
-  let host = '';
-  try{ host = new URL(l.url).hostname; }catch(e){ return fallback; }
-  const src = 'https://www.google.com/s2/favicons?sz=128&domain=' + encodeURIComponent(host);
-  return `<img class="ql-favicon" src="${src}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.outerHTML=this.dataset.fb" data-fb="${escapeAttr(fallback)}">`;
-}
+const ICON_CHOICES = [['link','Enlace'],['globe','Web'],['home','Casa'],['car','Coche'],['bolt','Carga'],['battery','Batería'],['wrench','Taller'],['book','Manual'],['file','Documento'],['shield','Seguro'],['card','Pago'],['euro','Gasto'],['cart','Tienda'],['parking','Parking'],['pin','Lugar'],['phone','Teléfono'],['mail','Correo'],['calendar','Calendario'],['clock','Horario'],['star','Favorito']];
 function renderQuickLinks(){
   const grid = document.getElementById('quickLinksGrid');
   if(!grid) return;
   const links = state.quickLinks || [];
   grid.innerHTML = links.length ? links.map(l=>`
     <a class="ql-tile" href="${escapeAttr(l.url)}" ${/^#/.test(l.url) ? '' : 'target="_blank" rel="noopener noreferrer"'} title="${escapeAttr(l.title)}">
-      <div class="ql-tile-icon">${quickLinkIconHtml(l)}</div>
+      <div class="ql-tile-icon">${ICONS[l.icon]||ICONS.link}</div>
       <div class="ql-tile-label">${escapeHtml(l.title)}</div>
       <button type="button" class="ql-tile-edit" title="Editar" onclick="event.preventDefault();event.stopPropagation();editQuickLink('${l.id}')">${ICONS.edit}</button>
       <button type="button" class="ql-tile-delete" title="Eliminar" onclick="event.preventDefault();event.stopPropagation();deleteQuickLink('${l.id}')">✕</button>
@@ -1710,9 +1720,22 @@ function editQuickLink(id){
   document.getElementById('ql_target_modal').value = ROUTES[route] ? route : '';
   document.getElementById('ql_url_modal').value = ROUTES[route] ? '' : (l.url || '');
   syncQuickLinkTarget();
+  qlIconManual = true; setQuickLinkIcon(l.icon || 'link');
   document.getElementById('quickLinkModalTitle').textContent = 'Editar enlace';
   document.getElementById('quickLinkSubmitBtn').textContent = 'Guardar cambios';
   document.getElementById('addLinkOverlay').classList.add('open');
+}
+let qlIconManual = false;
+function setQuickLinkIcon(key){
+  document.getElementById('ql_icon_modal').value = key;
+  document.querySelectorAll('#ql_icon_picker .icon-pick').forEach(b=>b.classList.toggle('sel', b.dataset.icon===key));
+}
+function buildIconPicker(){
+  const box = document.getElementById('ql_icon_picker');
+  if(!box || box.children.length) return;
+  box.innerHTML = ICON_CHOICES.map(([k,label])=>`<button type="button" class="icon-pick" data-icon="${k}" title="${label}" aria-label="${label}">${ICONS[k]}</button>`).join('');
+  box.addEventListener('click', e=>{ const b = e.target.closest('.icon-pick'); if(!b) return; qlIconManual = true; setQuickLinkIcon(b.dataset.icon); });
+  setQuickLinkIcon('link');
 }
 function syncQuickLinkTarget(){
   const t = document.getElementById('ql_target_modal').value;
@@ -1720,11 +1743,15 @@ function syncQuickLinkTarget(){
   document.getElementById('ql_url_modal').required = !t;
   const title = document.getElementById('ql_title_modal');
   if(t && !title.value.trim()) title.value = ROUTE_LABELS[t];
+  buildIconPicker();
+  if(t && !qlIconManual) setQuickLinkIcon(ROUTE_ICONS[t] || 'link');
 }
 function cancelQuickLinkEdit(){
   editingQuickLinkId = null;
+  qlIconManual = false;
   document.getElementById('quickLinkFormModal').reset();
   syncQuickLinkTarget();
+  setQuickLinkIcon('link');
   document.getElementById('quickLinkModalTitle').textContent = 'Añadir enlace rápido';
   document.getElementById('quickLinkSubmitBtn').textContent = 'Guardar enlace';
 }
@@ -2080,12 +2107,12 @@ function setupEventListeners(){
     let url = target ? '#' + target : document.getElementById('ql_url_modal').value.trim();
     if(!title || !url) return;
     if(!target && !/^https?:\/\//i.test(url) && !/^tel:/i.test(url)) url = 'https://' + url;
-    const icon = target ? (ROUTE_ICONS[target] || 'link') : 'link';
+    const icon = document.getElementById('ql_icon_modal').value || (target ? (ROUTE_ICONS[target] || 'link') : 'link');
     state.quickLinks = state.quickLinks || [];
     const wasEditing = editingQuickLinkId!=null;
     if(wasEditing){
       const idx = state.quickLinks.findIndex(l=>l.id===editingQuickLinkId);
-      if(idx>-1) state.quickLinks[idx] = { ...state.quickLinks[idx], title, url, icon: (target || state.quickLinks[idx].icon==='link') ? icon : state.quickLinks[idx].icon };
+      if(idx>-1) state.quickLinks[idx] = { ...state.quickLinks[idx], title, url, icon };
     } else {
       state.quickLinks.push({ id: 'custom-'+uid(), title, url, icon });
     }
