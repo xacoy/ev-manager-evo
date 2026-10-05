@@ -271,19 +271,15 @@ button{cursor:pointer}
 
 
 /* Panel: anillo de batería + fichas */
-.panel-grid{display:grid;grid-template-columns:230px 1fr;gap:16px;align-items:stretch}
+.panel-grid{display:grid;grid-template-columns:280px 1fr;gap:16px;align-items:stretch}
 .panel-grid .status-tiles-grid{grid-template-columns:repeat(3,1fr)}
+.car-art{width:100%;height:auto}
+.car-name{font-family:var(--font-display);font-size:15px;font-weight:700;color:var(--text);letter-spacing:-.2px}
+.save-block{text-align:center;border-top:1px solid var(--border);padding-top:12px;width:100%}
+.save-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--text-faint)}
+.save-value{font-size:28px;font-weight:800;color:var(--success);margin-top:4px;line-height:1.1}
+.save-sub{font-size:11px;color:var(--text-muted);margin-top:4px;line-height:1.4}
 .battery-hero{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
-.ring-wrap{position:relative;width:100%;max-width:190px;aspect-ratio:1}
-.ring-svg{width:100%;height:100%;transform:rotate(-90deg)}
-.ring-svg circle{fill:none;stroke-width:12;stroke-linecap:round}
-.ring-bg{stroke:var(--border-strong)}
-.ring-fg{stroke:var(--accent);transition:stroke-dashoffset .5s var(--ease),stroke .3s}
-.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
-.ring-pct{font-family:var(--font-display);font-size:38px;font-weight:800;color:var(--text);line-height:1}
-.ring-sub{font-size:14px;font-weight:700;color:var(--text-muted);margin-top:6px}
-.ring-hint{font-size:11px;color:var(--text-faint);text-align:center}
-.bat-slider{width:100%;height:32px;accent-color:var(--accent);cursor:pointer}
 
 .quicklinks-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
 .ql-tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:28px 20px;border-radius:var(--radius);background:var(--bg-card);border:1px solid var(--border);color:var(--text);text-decoration:none;transition:border-color .2s var(--ease), transform .2s var(--ease);cursor:pointer;position:relative;overflow:hidden;min-height:140px}
@@ -566,10 +562,9 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
   #page-dashboard .vehicle-id{margin-bottom:10px}
   #page-dashboard .vehicle-id-name{font-size:26px}
   #page-dashboard .cockpit-card{flex:1;display:flex;flex-direction:column;min-height:0}
-  #page-dashboard .panel-grid{flex:1;min-height:0;grid-template-columns:220px 1fr;gap:12px}
+  #page-dashboard .panel-grid{flex:1;min-height:0;grid-template-columns:240px 1fr;gap:12px}
   #page-dashboard .panel-grid .status-tiles-grid{grid-template-columns:repeat(2,1fr);gap:10px;grid-auto-rows:1fr}
-  #page-dashboard .ring-wrap{max-width:170px}
-  #page-dashboard .ring-pct{font-size:34px}
+  #page-dashboard .save-value{font-size:26px}
   #page-dashboard .info-card-small{padding:14px 16px;display:flex;flex-direction:column;justify-content:center}
   #page-dashboard .info-label{font-size:12px;margin-bottom:4px}
   #page-dashboard .info-value{font-size:24px;line-height:1.1;white-space:nowrap}
@@ -669,19 +664,41 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
           <div class="card cockpit-card">
             <div class="card-head"><h2>Estado general</h2><div class="car-badge" id="carStatusBadge">OK</div></div>
             <div class="panel-grid">
-              <div class="battery-hero">
-                <div class="ring-wrap">
-                  <svg viewBox="0 0 160 160" class="ring-svg">
-                    <circle class="ring-bg" cx="80" cy="80" r="68"/>
-                    <circle class="ring-fg" id="batRing" cx="80" cy="80" r="68" stroke-dasharray="427.3" stroke-dashoffset="427.3"/>
-                  </svg>
-                  <div class="ring-center">
-                    <div class="ring-pct" id="batPct">—</div>
-                    <div class="ring-sub" id="batRange">Batería</div>
-                  </div>
+              <div class="battery-hero car-hero">
+                <svg class="car-art" viewBox="0 0 400 180" role="img" aria-label="BYD Atto 3 EVO (ilustración)">
+                  <defs>
+                    <linearGradient id="carBody" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0" stop-color="var(--accent)"/><stop offset="1" stop-color="#0e7490"/>
+                    </linearGradient>
+                    <linearGradient id="carGlass" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0" stop-color="#0b1220" stop-opacity=".92"/><stop offset="1" stop-color="#1e293b" stop-opacity=".85"/>
+                    </linearGradient>
+                  </defs>
+                  <ellipse cx="202" cy="168" rx="176" ry="9" fill="#000" opacity=".3"/>
+                  <path d="M24 124 C24 108 32 100 50 96 L84 90 C92 64 112 42 148 38 L246 38 C276 38 296 56 310 84 L352 92 C370 96 378 106 378 120 L378 134 Q378 140 372 140 L30 140 Q24 140 24 134 Z" fill="url(#carBody)"/>
+                  <path d="M24 126 L378 126 L378 134 Q378 140 372 140 L30 140 Q24 140 24 134 Z" fill="#0b1220" opacity=".5"/>
+                  <path d="M104 88 C112 66 128 50 152 48 L244 48 C266 48 282 62 294 88 Z" fill="url(#carGlass)"/>
+                  <path d="M198 48 L198 88" stroke="var(--accent)" stroke-opacity=".6" stroke-width="4"/>
+                  <path d="M198 90 L198 126" stroke="#fff" stroke-opacity=".2" stroke-width="2"/>
+                  <path d="M96 92 L330 94" stroke="#fff" stroke-opacity=".25" stroke-width="2" fill="none"/>
+                  <rect x="176" y="100" width="14" height="4" rx="2" fill="#fff" opacity=".35"/>
+                  <rect x="212" y="100" width="14" height="4" rx="2" fill="#fff" opacity=".35"/>
+                  <path d="M356 98 L376 102 L374 111 L354 107 Z" fill="#fef9c3"/>
+                  <path d="M24 104 L42 101 L43 113 L25 115 Z" fill="#ef4444"/>
+                  <circle cx="96" cy="138" r="34" fill="#0b1220"/>
+                  <circle cx="96" cy="138" r="30" fill="#111827"/>
+                  <circle cx="96" cy="138" r="20" fill="#1e293b" stroke="#cbd5e1" stroke-width="3"/>
+                  <path d="M96 118 V158 M76 138 H116 M82 124 L110 152 M110 124 L82 152" stroke="#cbd5e1" stroke-width="2" opacity=".7"/>
+                  <circle cx="310" cy="138" r="34" fill="#0b1220"/>
+                  <circle cx="310" cy="138" r="30" fill="#111827"/>
+                  <circle cx="310" cy="138" r="20" fill="#1e293b" stroke="#cbd5e1" stroke-width="3"/>
+                  <path d="M310 118 V158 M290 138 H330 M296 124 L324 152 M324 124 L296 152" stroke="#cbd5e1" stroke-width="2" opacity=".7"/>
+                </svg>
+                <div class="save-block">
+                  <div class="save-label">AHORRO VS GASOLINA</div>
+                  <div class="save-value" id="saveValue">—</div>
+                  <div class="save-sub" id="saveSub">SEAT León FR 2018 125 CV</div>
                 </div>
-                <input type="range" id="batSlider" class="bat-slider" min="0" max="100" step="1" value="50" aria-label="Nivel de batería">
-                <div class="ring-hint" id="batHint">Desliza para indicar tu batería</div>
               </div>
               <div class="status-tiles-grid">
                 <div class="info-card-small tone-blue">
@@ -749,6 +766,10 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
               <div class="field-row">
                 <div class="field"><label>Consumo medio (kWh/100km)</label><input id="f_consumption" type="number" step="0.1" placeholder="15"></div>
                 <div class="field"><label>Tarifa eléctrica (€/kWh)</label><input id="f_rate" type="number" step="0.01" placeholder="0.15"></div>
+              </div>
+              <div class="field-row">
+                <div class="field"><label>León FR 125 CV (l/100km)</label><input id="f_refcons" type="number" step="0.1" placeholder="6.5"></div>
+                <div class="field"><label>Precio gasolina (€/l)</label><input id="f_fuel" type="number" step="0.01" placeholder="1.55"></div>
               </div>
               <button type="submit" class="btn btn-primary btn-block">Guardar configuración</button>
             </form>
@@ -1133,13 +1154,12 @@ const MANUAL_CONTENT = {
 
 /* ---------------- state ---------------- */
 let state = {
-  config: { version: 'design', vin: '', currentKm: 0, purchaseDate: '', avgConsumption: 17, electricRate: 0.15 },
+  config: { version: 'design', vin: '', currentKm: 0, purchaseDate: '', avgConsumption: 17, electricRate: 0.15, refConsumption: 6.5, fuelPrice: 1.55 },
   charges: [],
   maintenance: [],
   notes: [],
   completedRevisions: [],
   quickLinks: DEFAULT_QUICK_LINKS.slice(),
-  battery: { pct: null, at: '' },
   lang: 'es',
   meta: { notifiedRevisions: [], lastAlertCheck: '' }
 };
@@ -1415,7 +1435,7 @@ function renderDashboard(){
   document.getElementById('sideCostKm').textContent = eurKm>0 ? eurKm.toFixed(3) + ' €' : '—';
   document.getElementById('sideCostKmSub').textContent = eurKm>0 ? (eurKm*100).toFixed(2) + ' €/100 km' + (eurKmReal ? '' : ' (estim.)') : '—';
   document.getElementById('sideAvgPrice').textContent = totalKwh>0 && chargeCost>0 ? (chargeCost/totalKwh).toFixed(3) + ' €' : (Number(c.electricRate)>0 ? Number(c.electricRate).toFixed(3) + ' €' : '—');
-  renderBattery(cons);
+  renderSavings();
 
   document.getElementById('chipKm').textContent = fmtNum(km) + ' km';
   document.getElementById('chipBattery').textContent = (VERSION_LABELS[c.version] || VERSION_LABELS.design).split('·')[0].trim() + ' · ' + VEHICLE_BATTERY_KWH + ' kWh';
@@ -1423,28 +1443,20 @@ function renderDashboard(){
   buildRecentActivity();
 }
 
-function renderBattery(cons){
-  const pct = state.battery && state.battery.pct!=null ? Number(state.battery.pct) : null;
-  const ring = document.getElementById('batRing');
-  const slider = document.getElementById('batSlider');
-  if(!ring) return;
-  const C = 2*Math.PI*68;
-  if(pct==null){
-    ring.style.strokeDashoffset = C;
-    document.getElementById('batPct').textContent = '—';
-    document.getElementById('batRange').textContent = 'Batería';
-    document.getElementById('batHint').textContent = 'Desliza para indicar tu batería';
-    return;
-  }
-  ring.style.strokeDashoffset = C*(1-pct/100);
-  ring.style.stroke = pct>=40 ? 'var(--success)' : pct>=20 ? 'var(--warning)' : 'var(--danger)';
-  document.getElementById('batPct').textContent = pct + ' %';
-  const rangeCons = (cons>=12 && cons<=35) ? cons : (Number(state.config.avgConsumption)||17);
-  const kmRange = rangeCons>0 ? Math.round(VEHICLE_BATTERY_KWH*pct/100/rangeCons*100) : 0;
-  document.getElementById('batRange').textContent = kmRange ? '≈ ' + kmRange + ' km' : 'Batería';
-  slider.value = pct;
-  const at = state.battery.at ? new Date(state.battery.at) : null;
-  document.getElementById('batHint').textContent = at ? 'Actualizado ' + fmtDate(state.battery.at) + ' ' + at.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}) : 'Nivel de batería';
+function renderSavings(){
+  const c = state.config;
+  const el = document.getElementById('saveValue');
+  if(!el) return;
+  const km = getCurrentKm();
+  const refL = Number(c.refConsumption) || 6.5, price = Number(c.fuelPrice) || 1.55;
+  const chargeCost = state.charges.reduce((s,x)=>s+Number(x.cost||0),0);
+  const gasCost = km * refL / 100 * price;
+  const saved = gasCost - chargeCost;
+  el.textContent = km > 0 ? fmtEUR(saved) : '—';
+  el.style.color = saved < 0 ? 'var(--danger)' : 'var(--success)';
+  document.getElementById('saveSub').innerHTML = km > 0
+    ? 'SEAT León FR 2018 125 CV · ' + fmtNum(km) + ' km<br>Gasolina ' + fmtEUR(gasCost) + ' − electricidad ' + fmtEUR(chargeCost)
+    : 'SEAT León FR 2018 125 CV<br>Registra km y cargas para calcularlo';
 }
 
 
@@ -1920,6 +1932,8 @@ function applyStateToForms(){
   document.getElementById('f_purchase').value = c.purchaseDate;
   document.getElementById('f_consumption').value = c.avgConsumption;
   document.getElementById('f_rate').value = c.electricRate;
+  document.getElementById('f_refcons').value = c.refConsumption ?? 6.5;
+  document.getElementById('f_fuel').value = c.fuelPrice ?? 1.55;
   document.getElementById('langEs').classList.toggle('active', state.lang==='es');
   document.getElementById('langEn').classList.toggle('active', state.lang==='en');
 }
@@ -1985,13 +1999,6 @@ function setupEventListeners(){
 
   document.getElementById('notifPermBtn').addEventListener('click', requestNotifPermission);
 
-  const batSlider = document.getElementById('batSlider');
-  if(batSlider){
-    batSlider.addEventListener('input', ()=>{
-      state.battery = { pct: Number(batSlider.value), at: new Date().toISOString() };
-      saveState(); renderBattery(computeAvgConsumption(state.config));
-    });
-  }
 
   document.getElementById('langEs').addEventListener('click', ()=>{ state.lang='es'; saveState(); applyStateToForms(); renderAlerts(); if(document.getElementById('page-maintenance').classList.contains('active')) renderRevisions(); renderDashboard(); });
   document.getElementById('langEn').addEventListener('click', ()=>{ state.lang='en'; saveState(); applyStateToForms(); renderAlerts(); if(document.getElementById('page-maintenance').classList.contains('active')) renderRevisions(); renderDashboard(); });
@@ -2004,7 +2011,9 @@ function setupEventListeners(){
       currentKm: Number(document.getElementById('f_km').value)||0,
       purchaseDate: document.getElementById('f_purchase').value,
       avgConsumption: Number(document.getElementById('f_consumption').value)||17,
-      electricRate: Number(document.getElementById('f_rate').value)||0.15
+      electricRate: Number(document.getElementById('f_rate').value)||0.15,
+      refConsumption: Number(document.getElementById('f_refcons').value)||6.5,
+      fuelPrice: Number(document.getElementById('f_fuel').value)||1.55
     };
     saveState(); renderDashboard(); renderAlerts(); toast('Configuración guardada', 'success');
   });
