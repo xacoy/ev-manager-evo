@@ -772,6 +772,7 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
               <button class="btn btn-ghost" id="driveDisconnectBtn" type="button">Desconectar</button>
             </div>
             <p style="font-size:12px;color:var(--text-muted);margin-top:10px" id="driveStatus">Sin conectar. Pulsa Sync.</p>
+            <p style="font-size:11px;color:var(--text-faint);margin-top:14px" id="appVersion"></p>
           </div>
         </div>
       </section>
@@ -1081,6 +1082,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
+const APP_VERSION = '2026-10-05.4';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2350,6 +2352,7 @@ function driveSchedulePush(){
   }, 4000);
 }
 function setupDrive(){
+  const av = document.getElementById('appVersion'); if(av) av.textContent = 'Versión de la web: ' + APP_VERSION;
   const syncBtn = document.getElementById('syncBtn');
   if(syncBtn){
     syncBtn.addEventListener('click', async ()=>{
