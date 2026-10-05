@@ -670,6 +670,7 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
                   <div class="save-label">AHORRO VS GASOLINA</div>
                   <div class="save-value" id="saveValue">—</div>
                   <div class="save-sub" id="saveSub">Gasolina: — - Electricidad: —</div>
+                  <div class="save-sub" id="savePrice">Precio medio de hoy: —</div>
                 </div>
               </div>
               <div class="status-tiles-grid">
@@ -952,7 +953,6 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
         </div>
       </section>
 
-      <footer class="sig">EV Manager Evo · datos guardados localmente en este navegador</footer>
     </div>
   </main>
 
@@ -1442,6 +1442,7 @@ function renderSavings(){
   el.style.color = saved < 0 ? 'var(--danger)' : 'var(--success)';
   const sub = document.getElementById('saveSub');
   sub.textContent = km > 0 ? 'Gasolina: ' + fmtEUR(gasCost) + ' - Electricidad: ' + fmtEUR(chargeCost) : 'Gasolina: — - Electricidad: —';
+  document.getElementById('savePrice').textContent = 'Precio medio de hoy: ' + price.toFixed(3) + '€/l' + (auto ? '' : ' (manual)');
   sub.title = 'SEAT León FR 2018 125 CV (' + refL + ' l/100 km) · gasolina 95 a ' + price.toFixed(3) + ' €/l' + (auto ? ' (media Canarias' + (fuelAuto.updated ? ', ' + fuelAuto.updated.slice(0,10) : '') + ')' : ' (precio manual)');
 }
 
