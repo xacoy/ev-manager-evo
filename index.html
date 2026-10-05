@@ -273,7 +273,7 @@ button{cursor:pointer}
 /* Panel: anillo de batería + fichas */
 .panel-grid{display:grid;grid-template-columns:280px 1fr;gap:16px;align-items:stretch}
 .panel-grid .status-tiles-grid{grid-template-columns:repeat(3,1fr)}
-.car-art{width:100%;height:auto}
+.car-img{width:100%;max-width:300px;aspect-ratio:900/689;background:var(--accent);-webkit-mask:url(images/atto3-evo-front.png) center/contain no-repeat;mask:url(images/atto3-evo-front.png) center/contain no-repeat}
 .car-name{font-family:var(--font-display);font-size:15px;font-weight:700;color:var(--text);letter-spacing:-.2px}
 .save-block{text-align:center;border-top:1px solid var(--border);padding-top:12px;width:100%}
 .save-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--text-faint)}
@@ -665,39 +665,11 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
             <div class="card-head"><h2>Estado general</h2><div class="car-badge" id="carStatusBadge">OK</div></div>
             <div class="panel-grid">
               <div class="battery-hero car-hero">
-                <svg class="car-art" viewBox="0 0 400 180" role="img" aria-label="BYD Atto 3 EVO (ilustración)">
-                  <defs>
-                    <linearGradient id="carBody" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0" stop-color="var(--accent)"/><stop offset="1" stop-color="#0e7490"/>
-                    </linearGradient>
-                    <linearGradient id="carGlass" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0" stop-color="#0b1220" stop-opacity=".92"/><stop offset="1" stop-color="#1e293b" stop-opacity=".85"/>
-                    </linearGradient>
-                  </defs>
-                  <ellipse cx="202" cy="168" rx="176" ry="9" fill="#000" opacity=".3"/>
-                  <path d="M24 124 C24 108 32 100 50 96 L84 90 C92 64 112 42 148 38 L246 38 C276 38 296 56 310 84 L352 92 C370 96 378 106 378 120 L378 134 Q378 140 372 140 L30 140 Q24 140 24 134 Z" fill="url(#carBody)"/>
-                  <path d="M24 126 L378 126 L378 134 Q378 140 372 140 L30 140 Q24 140 24 134 Z" fill="#0b1220" opacity=".5"/>
-                  <path d="M104 88 C112 66 128 50 152 48 L244 48 C266 48 282 62 294 88 Z" fill="url(#carGlass)"/>
-                  <path d="M198 48 L198 88" stroke="var(--accent)" stroke-opacity=".6" stroke-width="4"/>
-                  <path d="M198 90 L198 126" stroke="#fff" stroke-opacity=".2" stroke-width="2"/>
-                  <path d="M96 92 L330 94" stroke="#fff" stroke-opacity=".25" stroke-width="2" fill="none"/>
-                  <rect x="176" y="100" width="14" height="4" rx="2" fill="#fff" opacity=".35"/>
-                  <rect x="212" y="100" width="14" height="4" rx="2" fill="#fff" opacity=".35"/>
-                  <path d="M356 98 L376 102 L374 111 L354 107 Z" fill="#fef9c3"/>
-                  <path d="M24 104 L42 101 L43 113 L25 115 Z" fill="#ef4444"/>
-                  <circle cx="96" cy="138" r="34" fill="#0b1220"/>
-                  <circle cx="96" cy="138" r="30" fill="#111827"/>
-                  <circle cx="96" cy="138" r="20" fill="#1e293b" stroke="#cbd5e1" stroke-width="3"/>
-                  <path d="M96 118 V158 M76 138 H116 M82 124 L110 152 M110 124 L82 152" stroke="#cbd5e1" stroke-width="2" opacity=".7"/>
-                  <circle cx="310" cy="138" r="34" fill="#0b1220"/>
-                  <circle cx="310" cy="138" r="30" fill="#111827"/>
-                  <circle cx="310" cy="138" r="20" fill="#1e293b" stroke="#cbd5e1" stroke-width="3"/>
-                  <path d="M310 118 V158 M290 138 H330 M296 124 L324 152 M324 124 L296 152" stroke="#cbd5e1" stroke-width="2" opacity=".7"/>
-                </svg>
+                <div class="car-img" role="img" aria-label="BYD Atto 3 EVO"></div>
                 <div class="save-block">
                   <div class="save-label">AHORRO VS GASOLINA</div>
                   <div class="save-value" id="saveValue">—</div>
-                  <div class="save-sub" id="saveSub">SEAT León FR 2018 125 CV</div>
+                  <div class="save-sub" id="saveSub">Gasolina: — - Electricidad: —</div>
                 </div>
               </div>
               <div class="status-tiles-grid">
@@ -769,7 +741,7 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
               </div>
               <div class="field-row">
                 <div class="field"><label>León FR 125 CV (l/100km)</label><input id="f_refcons" type="number" step="0.1" placeholder="6.5"></div>
-                <div class="field"><label>Precio gasolina (€/l)</label><input id="f_fuel" type="number" step="0.01" placeholder="1.55"></div>
+                <div class="field"><label>Gasolina de respaldo (€/l)</label><input id="f_fuel" type="number" step="0.01" placeholder="1.35"></div>
               </div>
               <button type="submit" class="btn btn-primary btn-block">Guardar configuración</button>
             </form>
@@ -1154,7 +1126,7 @@ const MANUAL_CONTENT = {
 
 /* ---------------- state ---------------- */
 let state = {
-  config: { version: 'design', vin: '', currentKm: 0, purchaseDate: '', avgConsumption: 17, electricRate: 0.15, refConsumption: 6.5, fuelPrice: 1.55 },
+  config: { version: 'design', vin: '', currentKm: 0, purchaseDate: '', avgConsumption: 17, electricRate: 0.15, refConsumption: 6.5, fuelPrice: 1.35 },
   charges: [],
   maintenance: [],
   notes: [],
@@ -1443,20 +1415,34 @@ function renderDashboard(){
   buildRecentActivity();
 }
 
+// Precio medio de la gasolina 95 en Canarias, actualizado a diario por una acción de GitHub (data/fuel-canarias.json).
+let fuelAuto = null;
+try{ fuelAuto = JSON.parse(localStorage.getItem('fuelCache') || 'null'); }catch(e){}
+function loadFuelPrice(){
+  fetch('data/fuel-canarias.json', { cache: 'no-cache' }).then(r=>r.ok ? r.json() : null).then(d=>{
+    if(d && Number(d.price) > 0.8 && Number(d.price) < 3.5){
+      fuelAuto = { price: Number(d.price), updated: d.updated };
+      try{ localStorage.setItem('fuelCache', JSON.stringify(fuelAuto)); }catch(e){}
+      renderSavings();
+    }
+  }).catch(()=>{});
+}
 function renderSavings(){
   const c = state.config;
   const el = document.getElementById('saveValue');
   if(!el) return;
   const km = getCurrentKm();
-  const refL = Number(c.refConsumption) || 6.5, price = Number(c.fuelPrice) || 1.55;
+  const refL = Number(c.refConsumption) || 6.5;
+  const auto = fuelAuto && Number(fuelAuto.price) > 0;
+  const price = auto ? Number(fuelAuto.price) : (Number(c.fuelPrice) || 1.35);
   const chargeCost = state.charges.reduce((s,x)=>s+Number(x.cost||0),0);
   const gasCost = km * refL / 100 * price;
   const saved = gasCost - chargeCost;
   el.textContent = km > 0 ? fmtEUR(saved) : '—';
   el.style.color = saved < 0 ? 'var(--danger)' : 'var(--success)';
-  document.getElementById('saveSub').innerHTML = km > 0
-    ? 'SEAT León FR 2018 125 CV · ' + fmtNum(km) + ' km<br>Gasolina ' + fmtEUR(gasCost) + ' − electricidad ' + fmtEUR(chargeCost)
-    : 'SEAT León FR 2018 125 CV<br>Registra km y cargas para calcularlo';
+  const sub = document.getElementById('saveSub');
+  sub.textContent = km > 0 ? 'Gasolina: ' + fmtEUR(gasCost) + ' - Electricidad: ' + fmtEUR(chargeCost) : 'Gasolina: — - Electricidad: —';
+  sub.title = 'SEAT León FR 2018 125 CV (' + refL + ' l/100 km) · gasolina 95 a ' + price.toFixed(3) + ' €/l' + (auto ? ' (media Canarias' + (fuelAuto.updated ? ', ' + fuelAuto.updated.slice(0,10) : '') + ')' : ' (precio manual)');
 }
 
 
@@ -1933,7 +1919,7 @@ function applyStateToForms(){
   document.getElementById('f_consumption').value = c.avgConsumption;
   document.getElementById('f_rate').value = c.electricRate;
   document.getElementById('f_refcons').value = c.refConsumption ?? 6.5;
-  document.getElementById('f_fuel').value = c.fuelPrice ?? 1.55;
+  document.getElementById('f_fuel').value = c.fuelPrice ?? 1.35;
   document.getElementById('langEs').classList.toggle('active', state.lang==='es');
   document.getElementById('langEn').classList.toggle('active', state.lang==='en');
 }
@@ -2013,7 +1999,7 @@ function setupEventListeners(){
       avgConsumption: Number(document.getElementById('f_consumption').value)||17,
       electricRate: Number(document.getElementById('f_rate').value)||0.15,
       refConsumption: Number(document.getElementById('f_refcons').value)||6.5,
-      fuelPrice: Number(document.getElementById('f_fuel').value)||1.55
+      fuelPrice: Number(document.getElementById('f_fuel').value)||1.35
     };
     saveState(); renderDashboard(); renderAlerts(); toast('Configuración guardada', 'success');
   });
@@ -2417,6 +2403,7 @@ function init(){
   setupEventListeners();
   setupDrive();
   setupFullscreen();
+  loadFuelPrice();
   applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
   applyStateToForms();
   updateNotifStatus();
