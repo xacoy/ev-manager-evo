@@ -582,7 +582,7 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
   #page-dashboard .ql-tile-icon{width:34px;height:34px}
   #page-dashboard .ql-tile-icon svg{width:26px;height:26px}
   #page-dashboard .ql-tile-label{font-size:14px}
-  #page-dashboard > .card{grid-column:2;grid-row:2;min-height:0;overflow-y:auto}
+  #page-dashboard > .card{grid-column:2;grid-row:2;min-height:0;max-height:100%;align-self:start;overflow-y:auto}
   .car-badge{font-size:12px}
   .toasts{bottom:20px}
 }
@@ -1470,7 +1470,7 @@ function buildRecentActivity(){
   const allEvents = [
     ...state.charges.map(c=>({type:'charge', date:c.date, ts:chargeTs(c), data:c})),
     ...state.maintenance.map(m=>({type:'maintenance', date:m.date, ts:(new Date(m.date).getTime()||0), data:m}))
-  ].sort((a,b)=> (b.ts-a.ts) || ((b.type==='charge'?chargeAddedAt(b.data):0) - (a.type==='charge'?chargeAddedAt(a.data):0))).slice(0, 5);
+  ].sort((a,b)=> (b.ts-a.ts) || ((b.type==='charge'?chargeAddedAt(b.data):0) - (a.type==='charge'?chargeAddedAt(a.data):0))).slice(0, 6);
 
   if(!allEvents.length){ container.innerHTML = `<div class="empty-state" style="padding:28px 10px"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18M18 17V9M13 17V5M8 17v-4"/></svg><p>Sin actividad reciente</p></div>`; return; }
 
