@@ -283,7 +283,7 @@ button{cursor:pointer}
 .car-name{font-family:var(--font-display);font-size:15px;font-weight:700;color:var(--text);letter-spacing:-.2px}
 .save-block{text-align:center;border-top:1px solid var(--border);padding-top:12px;width:100%}
 .save-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--text-faint)}
-.save-value{font-size:28px;font-weight:800;color:var(--success);margin-top:4px;line-height:1.1}
+.save-value{font-size:28px;font-weight:800;color:var(--accent);margin-top:4px;line-height:1.1}
 .save-sub{font-size:11px;color:var(--text-muted);margin-top:4px;line-height:1.4}
 .battery-hero{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
 
@@ -1448,7 +1448,7 @@ function renderSavings(){
   const gasCost = km * refL / 100 * price;
   const saved = gasCost - chargeCost;
   el.textContent = km > 0 ? fmtEUR(saved) : '—';
-  el.style.color = saved < 0 ? 'var(--danger)' : 'var(--success)';
+  el.style.color = saved < 0 ? 'var(--danger)' : 'var(--accent)';
   const sub = document.getElementById('saveSub');
   sub.textContent = km > 0 ? 'Gasolina: ' + fmtEUR(gasCost) + ' - Electricidad: ' + fmtEUR(chargeCost) : 'Gasolina: — - Electricidad: —';
   document.getElementById('savePrice').textContent = 'Precio medio de hoy: ' + price.toFixed(3) + '€/l' + (auto ? '' : ' (manual)');
