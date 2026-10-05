@@ -1423,9 +1423,9 @@ function buildRecentActivity(){
   const container = document.getElementById('dashRecentActivity');
   if(!container) return;
   const allEvents = [
-    ...state.charges.map(c=>({type:'charge', date:c.date, data:c})),
-    ...state.maintenance.map(m=>({type:'maintenance', date:m.date, data:m}))
-  ].sort((a,b)=> new Date(b.date)-new Date(a.date)).slice(0, 5);
+    ...state.charges.map(c=>({type:'charge', date:c.date, ts:chargeTs(c), data:c})),
+    ...state.maintenance.map(m=>({type:'maintenance', date:m.date, ts:(new Date(m.date).getTime()||0), data:m}))
+  ].sort((a,b)=> (b.ts-a.ts) || ((b.type==='charge'?chargeAddedAt(b.data):0) - (a.type==='charge'?chargeAddedAt(a.data):0))).slice(0, 5);
 
   if(!allEvents.length){ container.innerHTML = `<div class="empty-state" style="padding:28px 10px"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18M18 17V9M13 17V5M8 17v-4"/></svg><p>Sin actividad reciente</p></div>`; return; }
 
@@ -1439,7 +1439,7 @@ function buildRecentActivity(){
       <div class="activity-icon" style="width:34px;height:34px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--accent-soft);color:var(--accent)">${icon}</div>
       <div style="flex:1;min-width:0">
         <div style="font-size:13.5px;font-weight:600;color:var(--text)">${label}</div>
-        <div style="font-size:11.5px;color:var(--text-faint);margin-top:2px">${fmtDate(ev.date)}</div>
+        <div style="font-size:11.5px;color:var(--text-faint);margin-top:2px">${ev.type==='charge' ? chargeDateTimeHtml(ev.data) : fmtDate(ev.date)}</div>
       </div>
       <div style="font-size:13.5px;font-weight:700;color:var(--text);flex-shrink:0">${cost ? fmtEUR(cost) : '—'}</div>
     </div>`;
@@ -1457,12 +1457,33 @@ function baseChartOpts(){
 function refreshCharts(){ renderDashboard(); if(document.getElementById('page-stats').classList.contains('active')) renderStats(); }
 
 /* ---------------- charges ---------------- */
+
+/* Hora de una carga: la indicada o, si falta, la de cuando se añadió (el id es la marca de tiempo de alta). */
+function chargeAddedAt(c){ const n = Number(c.createdAt) || (Number(c.id) > 1e12 ? Number(c.id) : 0); return n; }
+function chargeTimeInfo(c){
+  if(c.time) return { text: c.time, inferred: false };
+  const at = chargeAddedAt(c);
+  if(!at) return { text: '', inferred: false };
+  const d = new Date(at);
+  return { text: String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0'), inferred: true };
+}
+function chargeTs(c){
+  const t = chargeTimeInfo(c).text || '00:00';
+  const ms = new Date((c.date || '') + 'T' + t).getTime();
+  return isNaN(ms) ? (new Date(c.date).getTime() || 0) : ms;
+}
+const chargeCmpDesc = (a,b) => (chargeTs(b) - chargeTs(a)) || (chargeAddedAt(b) - chargeAddedAt(a));
+function chargeDateTimeHtml(c){
+  const t = chargeTimeInfo(c);
+  if(!t.text) return fmtDate(c.date);
+  return fmtDate(c.date) + ' · ' + (t.inferred ? '<span style="color:var(--text-faint)" title="Hora a la que se añadió">' + t.text + '</span>' : t.text);
+}
 function renderCharges(){
   const tbody = document.getElementById('chargesTable');
-  const sorted = [...state.charges].sort((a,b)=> new Date(b.date)-new Date(a.date));
+  const sorted = [...state.charges].sort(chargeCmpDesc);
   tbody.innerHTML = sorted.map(c=>`
     <tr>
-      <td>${fmtDate(c.date)}</td><td>${c.kwh!=null ? Number(c.kwh).toFixed(2) : '—'}</td><td>${c.cost!=null ? fmtEUR(c.cost) : '—'}</td>
+      <td>${chargeDateTimeHtml(c)}</td><td>${c.kwh!=null ? Number(c.kwh).toFixed(2) : '—'}</td><td>${c.cost!=null ? fmtEUR(c.cost) : '—'}</td>
       <td>${(c.kwh && c.cost!=null) ? (c.cost/c.kwh).toFixed(3)+' €' : '—'}</td><td>${c.km ? fmtNum(c.km) : '—'}</td>
       <td>${c.location||'—'}</td>
       <td>
