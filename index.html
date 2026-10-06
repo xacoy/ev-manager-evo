@@ -530,63 +530,83 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
   .panel-grid .status-tiles-grid{grid-template-columns:1fr}
 }
 
-/* ---------- modo pantalla del coche (horizontal, tipo Atto 3: ~1280x720/800) ---------- */
-@media(orientation:landscape) and (min-width:900px) and (max-height:860px){
-  :root{--rail-w:96px}
-  .nav-rail{display:flex;padding:10px 4px;gap:4px}
-  .bottom-nav{display:none}
-  .rail-brand{margin-bottom:2px}
-  .brand-mark{width:44px;height:44px}
-  .nav-item{padding:6px 4px;gap:4px;flex:1;justify-content:center;max-height:92px}
-  .nav-item .ni-indicator{width:64px;height:48px}
-  .nav-item .ni-label{font-size:12px}
-  .topbar{height:60px;padding:0 20px}
-  .topbar h1{font-size:22px}
-  .chip{display:flex;padding:6px 14px}
-  .icon-btn{width:52px;height:52px}
-  .content{padding:10px 20px 10px;display:flex;flex-direction:column}
-  .content > *{flex-shrink:0}
-  .content > .page.active{flex:1 1 auto}
-  .page{max-width:none}
-  .card{padding:16px 20px}
-  .card-head{margin-bottom:12px}
-  .grid{gap:16px}
-  .grid-2{grid-template-columns:1.4fr 1fr!important}
-  .grid-3{grid-template-columns:repeat(3,1fr)}
-  .grid-4{grid-template-columns:repeat(4,1fr)}
-  .btn,button.btn{min-height:48px}
-  input,select,textarea{min-height:46px}
-  .chart-box{height:170px}
-  .chart-box-wide{height:200px}
-  .dropdown{max-height:calc(100vh - 80px)}
-
+/* ---------- modo pantalla del coche (clase html.car: automática en pantallas apaisadas o activable a mano) ---------- */
+  html.car{--rail-w:96px}
+  html.car .nav-rail{display:flex;padding:10px 4px;gap:4px}
+  html.car .bottom-nav{display:none}
+  html.car .rail-brand{margin-bottom:2px}
+  html.car .brand-mark{width:44px;height:44px}
+  html.car .nav-item{padding:6px 4px;gap:4px;flex:1;justify-content:center;max-height:92px}
+  html.car .nav-item .ni-indicator{width:64px;height:48px}
+  html.car .nav-item .ni-label{font-size:12px}
+  html.car .topbar{height:60px;padding:0 20px}
+  html.car .topbar h1{font-size:22px}
+  html.car .chip{display:flex;padding:6px 14px}
+  html.car .icon-btn{width:52px;height:52px}
+  html.car .content{padding:10px 20px 10px;display:flex;flex-direction:column}
+  html.car .content > *{flex-shrink:0}
+  html.car .content > .page.active{flex:1 1 auto}
+  html.car .page{max-width:none}
+  html.car .card{padding:16px 20px}
+  html.car .card-head{margin-bottom:12px}
+  html.car .grid{gap:16px}
+  html.car .grid-2{grid-template-columns:1.4fr 1fr!important}
+  html.car .grid-3{grid-template-columns:repeat(3,1fr)}
+  html.car .grid-4{grid-template-columns:repeat(4,1fr)}
+  html.car .btn,html.car button.btn{min-height:48px}
+  html.car input,html.car select,html.car textarea{min-height:46px}
+  html.car .chart-box{height:170px}
+  html.car .chart-box-wide{height:200px}
+  html.car .dropdown{max-height:calc(100vh - 80px)}
   /* Inicio: sin scroll, 2 columnas → estado a la izquierda, accesos + actividad a la derecha */
-  #page-dashboard.active{
+  html.car #page-dashboard.active{
     display:grid;grid-template-columns:1.9fr 1fr;grid-template-rows:minmax(0,1fr) auto;
     gap:12px 16px;min-height:0;flex-shrink:1!important;width:100%;
   }
-  #page-dashboard .dash-header{grid-column:1;grid-row:1 / 3;margin:0;display:flex;flex-direction:column;min-height:0}
-  #page-dashboard .vehicle-id{margin-bottom:10px}
-  #page-dashboard .vehicle-id-name{font-size:26px}
-  #page-dashboard .cockpit-card{flex:1;display:flex;flex-direction:column;min-height:0}
-  #page-dashboard .panel-grid{flex:1;min-height:0;grid-template-columns:240px 1fr;gap:12px}
-  #page-dashboard .panel-grid .status-tiles-grid{grid-template-columns:repeat(2,1fr);gap:10px;grid-auto-rows:1fr}
-  #page-dashboard .save-value{font-size:26px}
-  #page-dashboard .info-card-small{padding:14px 16px;display:flex;flex-direction:column;justify-content:center}
-  #page-dashboard .info-label{font-size:12px;margin-bottom:4px}
-  #page-dashboard .info-value{font-size:24px;line-height:1.1;white-space:nowrap}
-  footer.sig{display:none}
-  #page-dashboard .info-sub{font-size:14px;margin-top:4px}
-  #page-dashboard .quicklinks-grid{grid-column:2;grid-row:1;margin:0;grid-template-columns:repeat(2,1fr);grid-auto-rows:minmax(110px,1fr);gap:10px;min-height:0;overflow-y:auto}
-  #page-dashboard .ql-tile{min-height:0;padding:12px;gap:10px}
-  #page-dashboard .ql-tile-icon{width:52px;height:52px}
-  #page-dashboard .ql-tile-icon svg{width:40px;height:40px}
-  #page-dashboard .ql-tile-label{font-size:17px}
-  #page-dashboard > .card{grid-column:2;grid-row:2;min-height:0;max-height:100%;align-self:end;overflow-y:auto}
-  .car-badge{font-size:12px}
-  .toasts{bottom:20px}
-}
-</style>
+  html.car #page-dashboard .dash-header{grid-column:1;grid-row:1 / 3;margin:0;display:flex;flex-direction:column;min-height:0}
+  html.car #page-dashboard .vehicle-id{margin-bottom:10px}
+  html.car #page-dashboard .vehicle-id-name{font-size:26px}
+  html.car #page-dashboard .cockpit-card{flex:1;display:flex;flex-direction:column;min-height:0}
+  html.car #page-dashboard .panel-grid{flex:1;min-height:0;grid-template-columns:240px 1fr;gap:12px}
+  html.car #page-dashboard .panel-grid .status-tiles-grid{grid-template-columns:repeat(2,1fr);gap:10px;grid-auto-rows:1fr}
+  html.car #page-dashboard .save-value{font-size:26px}
+  html.car #page-dashboard .info-card-small{padding:14px 16px;display:flex;flex-direction:column;justify-content:center}
+  html.car #page-dashboard .info-label{font-size:12px;margin-bottom:4px}
+  html.car #page-dashboard .info-value{font-size:24px;line-height:1.1;white-space:nowrap}
+  html.car footer.sig{display:none}
+  html.car #page-dashboard .info-sub{font-size:14px;margin-top:4px}
+  html.car #page-dashboard .quicklinks-grid{grid-column:2;grid-row:1;margin:0;grid-template-columns:repeat(2,1fr);grid-auto-rows:minmax(110px,1fr);gap:10px;min-height:0;overflow-y:auto}
+  html.car #page-dashboard .ql-tile{min-height:0;padding:12px;gap:10px}
+  html.car #page-dashboard .ql-tile-icon{width:52px;height:52px}
+  html.car #page-dashboard .ql-tile-icon svg{width:40px;height:40px}
+  html.car #page-dashboard .ql-tile-label{font-size:17px}
+  html.car #page-dashboard > .card{grid-column:2;grid-row:2;min-height:0;max-height:100%;align-self:end;overflow-y:auto}
+  html.car .car-badge{font-size:12px}
+  /* Legibilidad en el coche: textos más grandes, más contraste y botones más cómodos */
+  html.car:not([data-theme="light"]){--text-muted:#c0cada;--text-faint:#98a4b8}
+  html.car .nav-item .ni-label{font-size:14px}
+  html.car .nav-item .ni-indicator{width:68px;height:52px}
+  html.car .nav-item .ni-indicator svg{width:30px;height:30px}
+  html.car .topbar h1{font-size:28px}
+  html.car .chip .l1{font-size:15px}
+  html.car .chip .l2{font-size:12px}
+  html.car .sync-btn{height:52px;font-size:16px;padding:0 20px}
+  html.car .sync-btn svg{width:22px;height:22px}
+  html.car .icon-btn{width:56px;height:56px}
+  html.car .icon-btn svg{width:26px;height:26px}
+  html.car .card-head h2{font-size:21px}
+  html.car .car-badge{font-size:14px;padding:5px 12px}
+  html.car #page-dashboard .info-label{font-size:14px;letter-spacing:.6px}
+  html.car #page-dashboard .info-value{font-size:36px}
+  html.car #page-dashboard .info-sub{font-size:16px}
+  html.car #page-dashboard .save-label{font-size:13px}
+  html.car #page-dashboard .save-value{font-size:36px}
+  html.car #page-dashboard .save-sub{font-size:14px}
+  html.car #page-dashboard .ql-tile-label{font-size:20px}
+  html.car #dashRecentActivity > div > div:nth-child(2) > div:first-child{font-size:16px!important}
+  html.car #dashRecentActivity > div > div:nth-child(2) > div:last-child{font-size:13px!important}
+  html.car #dashRecentActivity > div > div:last-child{font-size:16px!important}
+  html.car .toasts{bottom:20px}</style>
 </head>
 <body>
 
@@ -648,6 +668,7 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
             <hr style="border:none;border-top:1px solid var(--border);margin:4px 0">
             <button class="dropdown-item" id="addLinkBtn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Añadir enlace</button>
             <a href="https://github.com/xacoy/ev-manager-evo/raw/master/public/manuals/manual-es.pdf" target="_blank" class="dropdown-item" style="text-decoration:none;color:inherit"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>Manual PDF</a>
+            <button class="dropdown-item" id="carModeBtn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17h18v-4l-2-6H5l-2 6z"/><circle cx="7.5" cy="17" r="1.5"/><circle cx="16.5" cy="17" r="1.5"/></svg><span>Modo coche: Auto</span></button>
             <button class="dropdown-item" id="exportBtn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Exportar datos</button>
             <button class="dropdown-item" id="importBtn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>Importar datos</button>
           </div>
@@ -1082,7 +1103,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-05.4';
+const APP_VERSION = '2026-10-06.2';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2409,11 +2430,35 @@ if('serviceWorker' in navigator && /^https?:$/.test(location.protocol)){
   window.addEventListener('load', ()=>{ navigator.serviceWorker.register('sw.js').catch(()=>{}); });
 }
 
+/* ---------------- modo coche ---------------- */
+// auto: pantalla apaisada y ancha, baja (navegador con barras) o Android a pantalla completa. Se puede forzar desde el menú ⋮.
+function carModePref(){ try{ return localStorage.getItem('carMode') || 'auto'; }catch(e){ return 'auto'; } }
+function applyCarMode(){
+  const pref = carModePref();
+  const landscape = window.innerWidth >= 900 && window.innerWidth > window.innerHeight;
+  const auto = landscape && (window.innerHeight <= 860 || /Android/i.test(navigator.userAgent));
+  document.documentElement.classList.toggle('car', pref === 'on' || (pref === 'auto' && auto));
+  const b = document.getElementById('carModeBtn');
+  if(b) b.querySelector('span').textContent = 'Modo coche: ' + ({auto:'Auto', on:'Sí', off:'No'}[pref]);
+}
+function setupCarMode(){
+  applyCarMode();
+  window.addEventListener('resize', applyCarMode);
+  window.addEventListener('orientationchange', applyCarMode);
+  const b = document.getElementById('carModeBtn');
+  if(b) b.addEventListener('click', e=>{
+    e.stopPropagation();
+    const next = { auto:'on', on:'off', off:'auto' }[carModePref()];
+    try{ localStorage.setItem('carMode', next); }catch(err){}
+    applyCarMode();
+  });
+}
 function init(){
   loadState();
   setupEventListeners();
   setupDrive();
   setupFullscreen();
+  setupCarMode();
   loadFuelPrice();
   applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
   applyStateToForms();
