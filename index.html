@@ -289,18 +289,17 @@ button{cursor:pointer}
 .battery-hero{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
 
 /* Resumen de cargas */
-.sum-hero{border:1px solid var(--border);border-radius:var(--radius);padding:22px 22px 16px;text-align:center;background:linear-gradient(145deg,var(--accent-soft),transparent 75%)}
+.sum-hero{border:1px solid var(--border);border-top:2px solid var(--accent);border-radius:var(--radius);padding:22px 22px 16px;text-align:center;background:linear-gradient(180deg,var(--accent-soft),transparent 70%)}
 .sum-amount{font-family:var(--font-display);font-size:42px;font-weight:800;color:var(--accent);line-height:1.1;margin:6px 0 16px;letter-spacing:-1px}
-.sum-bars{display:grid;gap:12px;text-align:left}
-.sum-bar-row{display:flex;justify-content:space-between;font-size:13px;color:var(--text-muted);margin-bottom:5px}
-.sum-bar-row b{color:var(--text);font-weight:700}
-.sum-bar{height:8px;border-radius:99px;background:var(--bg-2);overflow:hidden}
-.sum-bar i{display:block;height:100%;border-radius:99px;transition:width .6s var(--ease)}
+.sum-chips{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.sum-chip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--border);background:var(--bg-card);border-radius:99px;padding:6px 13px;font-size:12.5px;color:var(--text-muted)}
+.sum-chip i{width:8px;height:8px;border-radius:50%}
+.sum-chip b{color:var(--text);font-weight:700}
 .sum-foot{font-size:12px;color:var(--text-faint);margin-top:14px}
-.sum-tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
-.sum-tiles .info-card-small{padding:12px 14px}
-.sum-tiles .info-value{font-size:20px;white-space:nowrap}
-
+.sum-stats{display:grid;grid-template-columns:repeat(3,1fr);margin-top:16px;text-align:center}
+.sum-stats > div{padding:4px 8px}
+.sum-stats > div + div{border-left:1px solid var(--border)}
+.sum-stat{font-size:20px;font-weight:800;color:var(--text);margin-top:2px;white-space:nowrap}
 .quicklinks-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
 .ql-tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:28px 20px;border-radius:var(--radius);background:var(--bg-card);border:1px solid var(--border);color:var(--text);text-decoration:none;transition:border-color .2s var(--ease), transform .2s var(--ease);cursor:pointer;position:relative;overflow:hidden;min-height:140px}
 .ql-tile:hover{border-color:var(--accent);transform:translateY(-3px)}
@@ -851,23 +850,16 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
             <div class="sum-hero">
               <div class="save-label">AHORRO VS GASOLINA</div>
               <div class="sum-amount" data-save="value">—</div>
-              <div class="sum-bars">
-                <div>
-                  <div class="sum-bar-row"><span>Gasolina</span><b data-save="gas">—</b></div>
-                  <div class="sum-bar"><i data-save="gasbar" style="width:0;background:var(--warning)"></i></div>
-                </div>
-                <div>
-                  <div class="sum-bar-row"><span>Electricidad</span><b data-save="elec">—</b></div>
-                  <div class="sum-bar"><i data-save="elecbar" style="width:0;background:var(--accent)"></i></div>
-                </div>
+              <div class="sum-chips">
+                <span class="sum-chip"><i style="background:var(--warning)"></i>Gasolina <b data-save="gas">—</b></span>
+                <span class="sum-chip"><i style="background:var(--accent)"></i>Electricidad <b data-save="elec">—</b></span>
               </div>
               <div class="sum-foot" data-save="price">Precio medio de hoy: —</div>
             </div>
-            <div class="sum-tiles">
-              <div class="info-card-small tone-blue"><div class="info-label">Cargas</div><div class="info-value" id="chgTotal">0</div></div>
-              <div class="info-card-small tone-blue"><div class="info-label">kWh totales</div><div class="info-value" id="chgKwh">0</div></div>
-              <div class="info-card-small tone-blue"><div class="info-label">Gasto total</div><div class="info-value" id="chgCost">0 €</div></div>
-              <div class="info-card-small tone-blue"><div class="info-label">Precio medio €/kWh</div><div class="info-value" id="chgAvg">0 €</div></div>
+            <div class="sum-stats">
+              <div><div class="info-label">Cargas</div><div class="sum-stat" id="chgTotal">0</div></div>
+              <div><div class="info-label">kWh</div><div class="sum-stat" id="chgKwh">0</div></div>
+              <div><div class="info-label">€/kWh</div><div class="sum-stat" id="chgAvg">0</div></div>
             </div>
           </div>
         </div>
@@ -1131,7 +1123,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-09.2';
+const APP_VERSION = '2026-10-09.3';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -1598,8 +1590,7 @@ function renderCharges(){
   const totalCost = state.charges.reduce((s,x)=>s+Number(x.cost||0),0);
   document.getElementById('chgTotal').textContent = state.charges.length;
   document.getElementById('chgKwh').textContent = totalKwh.toFixed(2);
-  document.getElementById('chgCost').textContent = fmtEUR(totalCost);
-  document.getElementById('chgAvg').textContent = (totalKwh? totalCost/totalKwh : 0).toFixed(3) + ' €';
+  document.getElementById('chgAvg').textContent = (totalKwh? totalCost/totalKwh : 0).toFixed(3);
   renderSavings();
 }
 function deleteCharge(id){
