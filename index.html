@@ -726,7 +726,7 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
                 <div class="info-card-small tone-blue">
                   <div class="info-label">CONSUMO REAL</div>
                   <div class="info-value" id="sideConsumption">—</div>
-                  <div class="info-sub">kWh/100km</div>
+                  <div class="info-sub" id="sideConsSub">kWh/100km</div>
                 </div>
                 <div class="info-card-small tone-blue">
                   <div class="info-label">€ / KM</div>
@@ -1123,7 +1123,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-09.6';
+const APP_VERSION = '2026-10-09.7';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -1371,6 +1371,8 @@ function getCurrentKm(){
   state.maintenance.forEach(m=>{ if(m.km) km = Math.max(km, Number(m.km)||0); });
   return km;
 }
+// El consumo medido solo es fiable con varios puntos y un tramo largo; con menos datos baila mucho (basta añadir un km) y se usa el configurado.
+function consumptionIsReliable(w){ return !!(w && w.n >= 3 && w.km >= 150); }
 function getChargeWindow(){
   const d = state.charges.filter(x=>x.km!=null && Number(x.km)>0 && x.kwh!=null && Number(x.kwh)>0)
     .sort((a,b)=>Number(a.km)-Number(b.km));
@@ -1378,7 +1380,7 @@ function getChargeWindow(){
   const km = Number(d[d.length-1].km) - Number(d[0].km);
   if(km<=0) return null;
   const rest = d.slice(1);
-  return { km, kwh: rest.reduce((s,x)=>s+Number(x.kwh),0), cost: rest.reduce((s,x)=>s+Number(x.cost||0),0) };
+  return { km, n: d.length, kwh: rest.reduce((s,x)=>s+Number(x.kwh),0), cost: rest.reduce((s,x)=>s+chargeCostOf(x),0) };
 }
 // Coste de una carga: el anotado (0 = gratis) o, si no consta, los kWh por la tarifa configurada.
 function chargeCostOf(c){
@@ -1398,7 +1400,7 @@ function computeAvgConsumption(c){
   // La energía de una carga repone lo gastado desde la anterior: la 1ª carga no cuenta
   // y los km se miden entre la 1ª y la última carga.
   const w = getChargeWindow();
-  return w ? w.kwh/w.km*100 : (Number(c.avgConsumption)||0);
+  return consumptionIsReliable(w) ? w.kwh/w.km*100 : (Number(c.avgConsumption)||0);
 }
 function renderDashboard(){
   renderQuickLinks();
@@ -1464,9 +1466,10 @@ function renderDashboard(){
   const chargeCost = state.charges.reduce((s,x)=>s+chargeCostOf(x),0);
   const w = getChargeWindow();
   document.getElementById('sideConsumption').textContent = cons.toFixed(1);
+  document.getElementById('sideConsSub').textContent = consumptionIsReliable(w) ? 'kWh/100km (medido)' : 'kWh/100km (configurado)';
   document.getElementById('sideTotalKwh').textContent = totalKwh.toFixed(2) + ' kWh';
   document.getElementById('sideSpent').textContent = fmtEUR(chargeCost);
-  const eurKmReal = !!w;
+  const eurKmReal = consumptionIsReliable(w);
   const eurKm = eurKmReal ? w.cost/w.km : (Number(c.electricRate)||0)*cons/100;
   document.getElementById('sideCostKm').textContent = (eurKmReal || eurKm>0) ? eurKm.toFixed(3) + ' €' : '—';
   document.getElementById('sideCostKmSub').textContent = (eurKmReal || eurKm>0) ? (eurKm*100).toFixed(2) + ' €/100 km' + (eurKmReal ? '' : ' (estim.)') : '—';
@@ -1529,7 +1532,7 @@ function computeSavings(){
     gas += km * refL / 100 * p;
     elec += cost;
   });
-  return { gas, elec, saved: gas - elec, kmEq, kwhTotal, cons, refL, price, auto };
+  return { gas, elec, saved: gas - elec, kmEq, kwhTotal, cons, refL, price, auto, measured: consumptionIsReliable(getChargeWindow()) && cons === computeAvgConsumption(c) };
 }
 function renderSavings(){
   const vals = document.querySelectorAll('[data-save="value"]');
@@ -1538,7 +1541,7 @@ function renderSavings(){
   const has = r.kwhTotal > 0;
   const priceText = 'Precio medio de hoy: ' + r.price.toFixed(3) + '€/l' + (r.auto ? '' : ' (manual)');
   const title = 'SEAT León FR 2018 125 CV (' + r.refL + ' l/100 km) · gasolina 95 a ' + r.price.toFixed(3) + ' €/l' + (r.auto ? ' (media Canarias' + (fuelAuto.updated ? ', ' + fuelAuto.updated.slice(0,10) : '') + ')' : ' (precio manual)')
-    + ' · cada carga usa el precio del día en que se hizo · ' + Math.round(r.kmEq) + ' km equivalentes a ' + r.kwhTotal.toFixed(1) + ' kWh con ' + r.cons.toFixed(1) + ' kWh/100 km';
+    + ' · cada carga usa el precio del día en que se hizo · ' + Math.round(r.kmEq) + ' km equivalentes a ' + r.kwhTotal.toFixed(1) + ' kWh con ' + r.cons.toFixed(1) + ' kWh/100 km (' + (r.measured ? 'medido' : 'configurado') + ')';
   vals.forEach(el=>{ el.textContent = has ? fmtEUR(r.saved) : '—'; el.style.color = r.saved < 0 ? 'var(--danger)' : 'var(--accent)'; });
   document.querySelectorAll('[data-save="sub"]').forEach(el=>{ el.textContent = has ? 'Gasolina: ' + fmtEUR(r.gas) + ' - Electricidad: ' + fmtEUR(r.elec) : 'Gasolina: — - Electricidad: —'; el.title = title; });
   document.querySelectorAll('[data-save="price"]').forEach(el=>{ el.textContent = priceText; el.title = title; });
