@@ -1123,7 +1123,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-09.4';
+const APP_VERSION = '2026-10-09.5';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -1471,7 +1471,7 @@ try{ fuelAuto = JSON.parse(localStorage.getItem('fuelCache') || 'null'); }catch(
 function loadFuelPrice(){
   fetch('data/fuel-canarias.json', { cache: 'no-cache' }).then(r=>r.ok ? r.json() : null).then(d=>{
     if(d && Number(d.price) > 0.8 && Number(d.price) < 3.5){
-      fuelAuto = { price: Number(d.price), updated: d.updated };
+      fuelAuto = { price: Number(d.price), updated: d.updated, history: (d.history || []).slice(-800) };
       try{ localStorage.setItem('fuelCache', JSON.stringify(fuelAuto)); }catch(e){}
       renderSavings();
     }
@@ -1482,6 +1482,18 @@ function savingsConsumption(){
   const real = computeAvgConsumption(state.config);
   return (real >= 12 && real <= 35) ? real : (Number(state.config.avgConsumption) || 17);
 }
+// Precio de la gasolina 95 en una fecha: último dato del histórico diario anterior o igual a ese día
+// (si la fecha es anterior al primer dato, el primero; sin histórico, el precio actual o el de respaldo).
+function currentFuelPrice(){
+  return (fuelAuto && Number(fuelAuto.price) > 0) ? Number(fuelAuto.price) : (Number(state.config.fuelPrice) || 1.35);
+}
+function fuelPriceForDate(date){
+  const h = (fuelAuto && fuelAuto.history) || [];
+  if(!h.length || !date) return currentFuelPrice();
+  let best = null;
+  for(const e of h){ if(e.date <= date) best = e; else break; }
+  return Number((best || h[0]).price) || currentFuelPrice();
+}
 // Cada carga se valora por sí misma: los kWh que entran equivalen a unos km, y esos km en gasolina habrían costado X.
 // Lo pagado es el coste real de la carga (0 si fue gratis, p. ej. en el trabajo).
 function computeSavings(){
@@ -1489,7 +1501,7 @@ function computeSavings(){
   const cons = savingsConsumption();
   const refL = Number(c.refConsumption) || 6.5;
   const auto = !!(fuelAuto && Number(fuelAuto.price) > 0);
-  const price = auto ? Number(fuelAuto.price) : (Number(c.fuelPrice) || 1.35);
+  const price = currentFuelPrice();
   const rate = Number(c.electricRate) || 0.15;
   let gas = 0, elec = 0, kmEq = 0, kwhTotal = 0;
   state.charges.forEach(ch=>{
@@ -1500,7 +1512,8 @@ function computeSavings(){
     if(kwh <= 0) return;
     const km = kwh / cons * 100;
     kmEq += km; kwhTotal += kwh;
-    gas += km * refL / 100 * price;
+    const p = Number(ch.fuelPrice) > 0 ? Number(ch.fuelPrice) : fuelPriceForDate(ch.date);  // precio guardado el día de la carga
+    gas += km * refL / 100 * p;
     elec += cost;
   });
   return { gas, elec, saved: gas - elec, kmEq, kwhTotal, cons, refL, price, auto };
@@ -1512,7 +1525,7 @@ function renderSavings(){
   const has = r.kwhTotal > 0;
   const priceText = 'Precio medio de hoy: ' + r.price.toFixed(3) + '€/l' + (r.auto ? '' : ' (manual)');
   const title = 'SEAT León FR 2018 125 CV (' + r.refL + ' l/100 km) · gasolina 95 a ' + r.price.toFixed(3) + ' €/l' + (r.auto ? ' (media Canarias' + (fuelAuto.updated ? ', ' + fuelAuto.updated.slice(0,10) : '') + ')' : ' (precio manual)')
-    + ' · ' + Math.round(r.kmEq) + ' km equivalentes a ' + r.kwhTotal.toFixed(1) + ' kWh con ' + r.cons.toFixed(1) + ' kWh/100 km';
+    + ' · cada carga usa el precio del día en que se hizo · ' + Math.round(r.kmEq) + ' km equivalentes a ' + r.kwhTotal.toFixed(1) + ' kWh con ' + r.cons.toFixed(1) + ' kWh/100 km';
   vals.forEach(el=>{ el.textContent = has ? fmtEUR(r.saved) : '—'; el.style.color = r.saved < 0 ? 'var(--danger)' : 'var(--accent)'; });
   document.querySelectorAll('[data-save="sub"]').forEach(el=>{ el.textContent = has ? 'Gasolina: ' + fmtEUR(r.gas) + ' - Electricidad: ' + fmtEUR(r.elec) : 'Gasolina: — - Electricidad: —'; el.title = title; });
   document.querySelectorAll('[data-save="price"]').forEach(el=>{ el.textContent = priceText; el.title = title; });
@@ -2143,9 +2156,14 @@ function setupEventListeners(){
     const wasEditing = editingChargeId!=null;
     if(wasEditing){
       const idx = state.charges.findIndex(c=>c.id===editingChargeId);
-      if(idx>-1) state.charges[idx] = { ...state.charges[idx], ...data };
+      if(idx>-1){
+        const prev = state.charges[idx];
+        // se conserva el precio guardado; solo se recalcula si cambia la fecha
+        const fuelPrice = (prev.fuelPrice && prev.date === data.date) ? prev.fuelPrice : fuelPriceForDate(data.date);
+        state.charges[idx] = { ...prev, ...data, fuelPrice };
+      }
     } else {
-      state.charges.push({ id:uid(), ...data });
+      state.charges.push({ id:uid(), ...data, fuelPrice: fuelPriceForDate(data.date) });
     }
     cancelChargeEdit(); saveState();
     renderCharges(); renderDashboard(); renderAlerts(); toast(wasEditing ? 'Carga actualizada' : 'Carga registrada', 'success');
