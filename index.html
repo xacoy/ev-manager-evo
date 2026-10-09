@@ -696,9 +696,9 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
                 </div>
                 <div class="save-block">
                   <div class="save-label">AHORRO VS GASOLINA</div>
-                  <div class="save-value" id="saveValue">—</div>
-                  <div class="save-sub" id="saveSub">Gasolina: — - Electricidad: —</div>
-                  <div class="save-sub" id="savePrice">Precio medio de hoy: —</div>
+                  <div class="save-value" data-save="value">—</div>
+                  <div class="save-sub" data-save="sub">Gasolina: — - Electricidad: —</div>
+                  <div class="save-sub" data-save="price">Precio medio de hoy: —</div>
                 </div>
               </div>
               <div class="status-tiles-grid">
@@ -840,6 +840,12 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
               <div class="stat-card tone-violet"><div class="label">Total kWh</div><div class="value" id="chgKwh" style="font-size:20px">0</div></div>
               <div class="stat-card tone-green"><div class="label">Gasto total</div><div class="value" id="chgCost" style="font-size:20px">0 €</div></div>
               <div class="stat-card tone-amber"><div class="label">Precio medio</div><div class="value" id="chgAvg" style="font-size:20px">0 €/kWh</div></div>
+            </div>
+            <div class="save-block" style="margin-top:18px">
+              <div class="save-label">AHORRO VS GASOLINA</div>
+              <div class="save-value" data-save="value">—</div>
+              <div class="save-sub" data-save="sub">Gasolina: — - Electricidad: —</div>
+              <div class="save-sub" data-save="price">Precio medio de hoy: —</div>
             </div>
           </div>
         </div>
@@ -1103,7 +1109,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-06.2';
+const APP_VERSION = '2026-10-09.1';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -1459,8 +1465,8 @@ function loadFuelPrice(){
 }
 function renderSavings(){
   const c = state.config;
-  const el = document.getElementById('saveValue');
-  if(!el) return;
+  const vals = document.querySelectorAll('[data-save="value"]');
+  if(!vals.length) return;
   const km = getCurrentKm();
   const refL = Number(c.refConsumption) || 6.5;
   const auto = fuelAuto && Number(fuelAuto.price) > 0;
@@ -1468,12 +1474,12 @@ function renderSavings(){
   const chargeCost = state.charges.reduce((s,x)=>s+Number(x.cost||0),0);
   const gasCost = km * refL / 100 * price;
   const saved = gasCost - chargeCost;
-  el.textContent = km > 0 ? fmtEUR(saved) : '—';
-  el.style.color = saved < 0 ? 'var(--danger)' : 'var(--accent)';
-  const sub = document.getElementById('saveSub');
-  sub.textContent = km > 0 ? 'Gasolina: ' + fmtEUR(gasCost) + ' - Electricidad: ' + fmtEUR(chargeCost) : 'Gasolina: — - Electricidad: —';
-  document.getElementById('savePrice').textContent = 'Precio medio de hoy: ' + price.toFixed(3) + '€/l' + (auto ? '' : ' (manual)');
-  sub.title = 'SEAT León FR 2018 125 CV (' + refL + ' l/100 km) · gasolina 95 a ' + price.toFixed(3) + ' €/l' + (auto ? ' (media Canarias' + (fuelAuto.updated ? ', ' + fuelAuto.updated.slice(0,10) : '') + ')' : ' (precio manual)');
+  const subText = km > 0 ? 'Gasolina: ' + fmtEUR(gasCost) + ' - Electricidad: ' + fmtEUR(chargeCost) : 'Gasolina: — - Electricidad: —';
+  const priceText = 'Precio medio de hoy: ' + price.toFixed(3) + '€/l' + (auto ? '' : ' (manual)');
+  const title = 'SEAT León FR 2018 125 CV (' + refL + ' l/100 km) · gasolina 95 a ' + price.toFixed(3) + ' €/l' + (auto ? ' (media Canarias' + (fuelAuto.updated ? ', ' + fuelAuto.updated.slice(0,10) : '') + ')' : ' (precio manual)');
+  vals.forEach(el=>{ el.textContent = km > 0 ? fmtEUR(saved) : '—'; el.style.color = saved < 0 ? 'var(--danger)' : 'var(--accent)'; });
+  document.querySelectorAll('[data-save="sub"]').forEach(el=>{ el.textContent = subText; el.title = title; });
+  document.querySelectorAll('[data-save="price"]').forEach(el=>{ el.textContent = priceText; });
 }
 
 
@@ -1567,6 +1573,7 @@ function renderCharges(){
   document.getElementById('chgKwh').textContent = totalKwh.toFixed(2);
   document.getElementById('chgCost').textContent = fmtEUR(totalCost);
   document.getElementById('chgAvg').textContent = (totalKwh? totalCost/totalKwh : 0).toFixed(3) + ' €/kWh';
+  renderSavings();
 }
 function deleteCharge(id){
   if(editingChargeId===id) cancelChargeEdit();
