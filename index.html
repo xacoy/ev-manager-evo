@@ -306,6 +306,32 @@ button{cursor:pointer}
 .sum-card .sum-foot{margin-top:22px}
 .sum-card .sum-stats{margin-top:20px}
 .sum-stat{font-size:20px;font-weight:800;color:var(--text);margin-top:2px;white-space:nowrap}
+/* Gráficas propias (SVG) */
+.grid-2eq{grid-template-columns:1fr 1fr}
+@media(max-width:1000px){.grid-2eq{grid-template-columns:1fr}}
+.svg-chart svg{display:block;width:100%;height:auto}
+.svg-chart .empty{padding:36px 8px;text-align:center;color:var(--text-faint);font-size:13px}
+.svg-chart text{font-family:var(--font);font-size:13.5px;fill:var(--text-muted)}
+.svg-chart .val{fill:var(--text);font-weight:700}
+.place-row{display:grid;grid-template-columns:110px 1fr auto;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}
+.place-row:last-child{border-bottom:0}
+.place-row .name{font-weight:700;color:var(--text)}
+.place-bar{height:10px;border-radius:99px;background:var(--bg-2);overflow:hidden}
+.place-bar i{display:block;height:100%;border-radius:99px;background:var(--accent)}
+.place-row .info{color:var(--text-muted);text-align:right;white-space:nowrap}
+@media(max-width:560px){.place-row{grid-template-columns:80px 1fr;}.place-row .info{grid-column:1/-1;text-align:left;white-space:normal}}
+
+/* Adjuntos */
+.att-list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.att-list:empty{display:none}
+.att-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid var(--border);border-radius:10px;background:var(--bg-2);font-size:13px;min-width:0}
+.att-item .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)}
+.att-item .sz{color:var(--text-faint);font-size:12px;white-space:nowrap}
+.att-item.removed .nm{text-decoration:line-through;opacity:.5}
+.att-item button,.att-item a{background:none;border:1px solid var(--border);border-radius:8px;color:var(--accent);padding:5px 10px;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none}
+.att-prev{width:100%;max-height:60vh;object-fit:contain;border-radius:8px;margin-top:8px;background:var(--bg-2)}
+.icon-action small{font-size:11px;font-weight:800;margin-left:2px}
+
 .quicklinks-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
 .ql-tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:28px 20px;border-radius:var(--radius);background:var(--bg-card);border:1px solid var(--border);color:var(--text);text-decoration:none;transition:border-color .2s var(--ease), transform .2s var(--ease);cursor:pointer;position:relative;overflow:hidden;min-height:140px}
 .ql-tile:hover{border-color:var(--accent);transform:translateY(-3px)}
@@ -841,6 +867,10 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
                   </select>
                 </div>
               </div>
+              <div class="field-row">
+                <div class="field"><label>Batería al empezar (%) <span class="opt-hint">(opcional)</span></label><input id="c_soc0" type="number" min="0" max="100" step="1" placeholder="Ej. 35"></div>
+                <div class="field"><label>Batería al terminar (%) <span class="opt-hint">(opcional)</span></label><input id="c_soc1" type="number" min="0" max="100" step="1" placeholder="Ej. 80"></div>
+              </div>
               <div class="field" id="c_location_other_wrap" style="display:none">
                 <label>Especifica el lugar</label>
                 <input id="c_location_other" type="text" placeholder="Ej. Electrolinera Iberdrola">
@@ -872,7 +902,7 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
         <div class="card" style="margin-top:16px">
           <div class="card-head"><h2>Historial de cargas</h2></div>
           <div class="table-wrap"><table>
-            <thead><tr><th>Fecha</th><th>kWh</th><th>Coste</th><th>€/kWh</th><th>Km</th><th>Ubicación</th><th></th></tr></thead>
+            <thead><tr><th>Fecha</th><th>kWh</th><th>Coste</th><th>€/kWh</th><th>Km</th><th>Batería</th><th>Ubicación</th><th></th></tr></thead>
             <tbody id="chargesTable"></tbody>
           </table></div>
           <div id="chargesEmpty" class="empty-state" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><p>Aún no hay cargas registradas</p></div>
@@ -917,6 +947,10 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
                   <div class="field-row"><div class="field"><label>Fecha</label><input id="m_date" type="date" required></div><div class="field"><label>Coste</label><input id="m_cost" type="number" step="0.01" min="0" required></div></div>
                   <div class="field-row"><div class="field"><label>Km</label><input id="m_km" type="number" min="0" placeholder="opcional"></div><div class="field"><label>Lugar</label><input id="m_location" type="text" placeholder="Ej: Taller BYD, Mecánico local..."></div></div>
                   <div class="field"><label>Notas</label><textarea id="m_notes" placeholder="Detalles..."></textarea></div>
+                  <div class="field"><label>Adjuntos <span class="opt-hint">(facturas, fotos o PDF · se guardan en tu Drive)</span></label>
+                    <input id="m_files" type="file" multiple accept="image/*,application/pdf">
+                    <div class="att-list" id="m_existing"></div>
+                  </div>
                   <div style="display:flex;gap:8px">
                     <button type="submit" class="btn btn-primary btn-block" id="maintSubmitBtn">Registrar</button>
                     <button type="button" class="btn btn-ghost" id="maintCancelEdit" style="display:none">Cancelar</button>
@@ -996,6 +1030,25 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
           <div class="card stat-card tone-violet"><div class="label">Precio medio energía</div><div class="value" id="st_avgPrice" style="font-size:22px">—</div><div class="sub">€ / kWh</div></div>
           <div class="card stat-card tone-green"><div class="label">Proyección anual</div><div class="value" id="st_yearProj" style="font-size:22px">—</div><div class="sub">gasto estimado / año</div></div>
         </div>
+        <div class="grid grid-3" style="margin-bottom:16px">
+          <div class="card stat-card tone-amber"><div class="label">Consumo (de la red)</div><div class="value" id="st_cons" style="font-size:22px">—</div><div class="sub" id="st_consSub">kWh / 100 km</div></div>
+          <div class="card stat-card tone-cyan"><div class="label">Capacidad estimada</div><div class="value" id="st_cap" style="font-size:22px">—</div><div class="sub" id="st_capSub">Anota el % de batería al cargar</div></div>
+          <div class="card stat-card tone-green"><div class="label">Ahorro vs gasolina</div><div class="value" id="st_saved" style="font-size:22px">—</div><div class="sub">acumulado</div></div>
+        </div>
+        <div class="grid grid-2eq" style="margin-bottom:16px">
+          <div class="card">
+            <div class="card-head"><h2>Consumo por tramo</h2><span class="hint">kWh / 100 km</span></div>
+            <div class="svg-chart" id="chConsumo"></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h2>Ahorro acumulado</h2><span class="hint">€ por mes</span></div>
+            <div class="svg-chart" id="chAhorro"></div>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-head"><h2>Dónde cargas</h2><span class="hint">kWh, gasto y precio por lugar</span></div>
+          <div id="chLugares"></div>
+        </div>
         <div class="card">
           <div class="card-head"><h2>Gasto mensual</h2><span class="hint">cargas + mantenimiento</span></div>
           <div class="chart-box chart-box-wide"><canvas id="chartMonthly"></canvas></div>
@@ -1032,6 +1085,13 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
 </div>
 
 <!-- Import confirm modal -->
+<div class="overlay" id="attachOverlay">
+  <div class="modal">
+    <h3>Adjuntos</h3>
+    <div class="att-list" id="attachList"></div>
+    <div class="modal-actions"><button type="button" class="btn btn-ghost" id="attachClose">Cerrar</button></div>
+  </div>
+</div>
 <div class="overlay" id="addLinkOverlay">
   <div class="modal">
     <h3 id="quickLinkModalTitle">Añadir enlace rápido</h3>
@@ -1078,6 +1138,7 @@ const STORAGE_KEY = 'evManagerEvo:v1';
 const THEME_KEY = 'evManagerEvo:theme';
 
 const ICONS = {
+  clip: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>',
   music: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>',
   film: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>',
   play: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>',
@@ -1129,7 +1190,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-09.10';
+const APP_VERSION = '2026-10-09.12';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -1402,9 +1463,47 @@ function avgPricePerKwh(){
   });
   return kwh > 0 ? cost / kwh : null;
 }
+// Pérdidas de la carga en corriente alterna: lo que marca el contador es más que lo que entra en la batería.
+const CHARGE_EFF = 0.9;
+// Tramos entre dos cargas consecutivas con km y % de batería: lo que baja la batería entre una y otra es la energía realmente gastada.
+function socSegments(){
+  const list = [...state.charges].sort((a,b)=> chargeTs(a) - chargeTs(b));
+  const segs = [];
+  for(let i = 1; i < list.length; i++){
+    const p = list[i-1], c = list[i];
+    if(p.socEnd == null || c.socStart == null || !(Number(p.km) > 0) || !(Number(c.km) > 0)) continue;
+    const km = Number(c.km) - Number(p.km), drop = Number(p.socEnd) - Number(c.socStart);
+    if(km < 20 || drop < 5) continue;                       // tramos muy cortos dan ruido
+    const kwhBattery = drop / 100 * VEHICLE_BATTERY_KWH;
+    segs.push({ date: c.date, km, drop, kwhBattery, consBattery: kwhBattery / km * 100 });
+  }
+  return segs;
+}
+function getSocConsumption(){
+  const segs = socSegments();
+  if(segs.length < 2) return null;
+  const km = segs.reduce((s,x)=>s+x.km,0), kwh = segs.reduce((s,x)=>s+x.kwhBattery,0);
+  if(km < 100) return null;
+  const battery = kwh / km * 100;
+  return { battery, wall: battery / CHARGE_EFF, km, n: segs.length };
+}
+// Estimación de la capacidad de la batería con las cargas que indican % de inicio y fin (descontando pérdidas de carga).
+function estimateBatteryCapacity(){
+  const vals = state.charges.filter(c=>c.socStart!=null && c.socEnd!=null && Number(c.kwh) > 0 && (c.socEnd - c.socStart) >= 20)
+    .map(c=> Number(c.kwh) * CHARGE_EFF / ((c.socEnd - c.socStart) / 100)).sort((a,b)=>a-b);
+  if(!vals.length) return null;
+  const mid = vals.length % 2 ? vals[(vals.length-1)/2] : (vals[vals.length/2-1] + vals[vals.length/2]) / 2;
+  return { kwh: mid, pct: mid / VEHICLE_BATTERY_KWH * 100, n: vals.length };
+}
+// Origen del consumo que se usa: por % de batería, por kWh y km de las cargas, o el configurado.
+function consumptionSource(){
+  if(getSocConsumption()) return 'soc';
+  if(consumptionIsReliable(getChargeWindow())) return 'window';
+  return 'config';
+}
 function computeAvgConsumption(c){
-  // La energía de una carga repone lo gastado desde la anterior: la 1ª carga no cuenta
-  // y los km se miden entre la 1ª y la última carga.
+  const soc = getSocConsumption();
+  if(soc) return soc.wall;
   const w = getChargeWindow();
   return consumptionIsReliable(w) ? w.kwh/w.km*100 : (Number(c.avgConsumption)||0);
 }
@@ -1472,7 +1571,7 @@ function renderDashboard(){
   const chargeCost = state.charges.reduce((s,x)=>s+chargeCostOf(x),0);
   const w = getChargeWindow();
   document.getElementById('sideConsumption').textContent = cons.toFixed(1);
-  document.getElementById('sideConsSub').textContent = consumptionIsReliable(w) ? 'kWh/100km (medido)' : 'kWh/100km (configurado)';
+  document.getElementById('sideConsSub').textContent = 'kWh/100km (' + ({soc:'por batería',window:'medido',config:'configurado'}[consumptionSource()]) + ')';
   document.getElementById('sideTotalKwh').textContent = totalKwh.toFixed(2) + ' kWh';
   document.getElementById('sideSpent').textContent = fmtEUR(chargeCost);
   const eurKmReal = consumptionIsReliable(w);
@@ -1519,6 +1618,16 @@ function fuelPriceForDate(date){
 }
 // Cada carga se valora por sí misma: los kWh que entran equivalen a unos km, y esos km en gasolina habrían costado X.
 // Lo pagado es el coste real de la carga (0 si fue gratis, p. ej. en el trabajo).
+// Ahorro de una sola carga: kWh -> km equivalentes -> gasolina que habrían gastado, frente a lo que costó la carga.
+function chargeSavingParts(ch, cons, refL, rate){
+  let kwh = Number(ch.kwh) || 0;
+  const cost = chargeCostOf(ch);   // sin coste anotado: tarifa configurada
+  if(kwh <= 0 && cost > 0) kwh = cost / rate;                 // sin kWh pero con coste: se estima
+  if(kwh <= 0) return null;
+  const km = kwh / cons * 100;
+  const p = Number(ch.fuelPrice) > 0 ? Number(ch.fuelPrice) : fuelPriceForDate(ch.date);  // precio guardado el día de la carga
+  return { kwh, km, cost, gas: km * refL / 100 * p };
+}
 function computeSavings(){
   const c = state.config;
   const cons = savingsConsumption();
@@ -1528,17 +1637,11 @@ function computeSavings(){
   const rate = Number(c.electricRate) || 0.15;
   let gas = 0, elec = 0, kmEq = 0, kwhTotal = 0;
   state.charges.forEach(ch=>{
-    let kwh = Number(ch.kwh) || 0;
-    const cost = chargeCostOf(ch);   // sin coste anotado: tarifa configurada
-    if(kwh <= 0 && cost > 0) kwh = cost / rate;                 // sin kWh pero con coste: se estima
-    if(kwh <= 0) return;
-    const km = kwh / cons * 100;
-    kmEq += km; kwhTotal += kwh;
-    const p = Number(ch.fuelPrice) > 0 ? Number(ch.fuelPrice) : fuelPriceForDate(ch.date);  // precio guardado el día de la carga
-    gas += km * refL / 100 * p;
-    elec += cost;
+    const r = chargeSavingParts(ch, cons, refL, rate);
+    if(!r) return;
+    kmEq += r.km; kwhTotal += r.kwh; gas += r.gas; elec += r.cost;
   });
-  return { gas, elec, saved: gas - elec, kmEq, kwhTotal, cons, refL, price, auto, measured: consumptionIsReliable(getChargeWindow()) && cons === computeAvgConsumption(c) };
+  return { gas, elec, saved: gas - elec, kmEq, kwhTotal, cons, refL, price, auto, measured: consumptionSource() !== 'config', source: consumptionSource() };
 }
 function renderSavings(){
   const vals = document.querySelectorAll('[data-save="value"]');
@@ -1547,7 +1650,7 @@ function renderSavings(){
   const has = r.kwhTotal > 0;
   const priceText = 'Precio medio de hoy: ' + r.price.toFixed(3) + '€/l' + (r.auto ? '' : ' (manual)');
   const title = 'SEAT León FR 2018 125 CV (' + r.refL + ' l/100 km) · gasolina 95 a ' + r.price.toFixed(3) + ' €/l' + (r.auto ? ' (media Canarias' + (fuelAuto.updated ? ', ' + fuelAuto.updated.slice(0,10) : '') + ')' : ' (precio manual)')
-    + ' · cada carga usa el precio del día en que se hizo · ' + Math.round(r.kmEq) + ' km equivalentes a ' + r.kwhTotal.toFixed(1) + ' kWh con ' + r.cons.toFixed(1) + ' kWh/100 km (' + (r.measured ? 'medido' : 'configurado') + ')';
+    + ' · cada carga usa el precio del día en que se hizo · ' + Math.round(r.kmEq) + ' km equivalentes a ' + r.kwhTotal.toFixed(1) + ' kWh con ' + r.cons.toFixed(1) + ' kWh/100 km (' + ({soc:'calculado con el % de batería',window:'medido con kWh y km',config:'configurado'}[r.source]) + ')';
   vals.forEach(el=>{ el.textContent = has ? fmtEUR(r.saved) : '—'; el.style.color = r.saved < 0 ? 'var(--danger)' : 'var(--accent)'; });
   document.querySelectorAll('[data-save="sub"]').forEach(el=>{ el.textContent = has ? 'Gasolina: ' + fmtEUR(r.gas) + ' - Electricidad: ' + fmtEUR(r.elec) : 'Gasolina: — - Electricidad: —'; el.title = title; });
   document.querySelectorAll('[data-save="price"]').forEach(el=>{ el.textContent = priceText; el.title = title; });
@@ -1632,6 +1735,7 @@ function renderCharges(){
     <tr>
       <td>${chargeDateTimeHtml(c)}</td><td>${c.kwh!=null ? Number(c.kwh).toFixed(2) : '—'}</td><td>${c.cost!=null ? fmtEUR(c.cost) : '—'}</td>
       <td>${(c.kwh && c.cost!=null) ? (c.cost/c.kwh).toFixed(3)+' €' : '—'}</td><td>${c.km ? fmtNum(c.km) : '—'}</td>
+      <td>${(c.socStart!=null||c.socEnd!=null) ? ((c.socStart!=null?c.socStart:'?')+' → '+(c.socEnd!=null?c.socEnd:'?')+' %') : '—'}</td>
       <td>${c.location||'—'}</td>
       <td>
         <button class="icon-action" onclick="editCharge(${c.id})">${ICONS.edit}</button>
@@ -1663,6 +1767,8 @@ function editCharge(id){
   document.getElementById('c_cost').value = c.cost ?? '';
   document.getElementById('c_cost').dataset.autocalculated = 'false';
   document.getElementById('c_km').value = c.km ?? '';
+  document.getElementById('c_soc0').value = c.socStart ?? '';
+  document.getElementById('c_soc1').value = c.socEnd ?? '';
   const locType = (c.location==='Casa'||c.location==='Trabajo') ? c.location : 'Otro';
   document.getElementById('c_location_type').value = locType;
   document.getElementById('c_location_other_wrap').style.display = locType==='Otro' ? 'block' : 'none';
@@ -1682,6 +1788,66 @@ function cancelChargeEdit(){
 
 /* ---------------- maintenance ---------------- */
 const MAINT_LABELS = { revision:'Revisión general', oil:'Cambio aceite reductora', brake:'Frenos', tire:'Neumáticos', battery:'Batería AV', filter:'Filtros', alignment:'Alineación', repair:'Reparación', other:'Otro' };
+
+/* ---------------- adjuntos del taller (se guardan en la carpeta privada de tu Drive) ---------------- */
+let editingAtt = [];
+const ATT_MAX_BYTES = 10 * 1024 * 1024;
+function formatSize(b){ return b >= 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB'; }
+function renderMaintAttachments(){
+  const box = document.getElementById('m_existing'); if(!box) return;
+  box.innerHTML = editingAtt.map((a, i)=>
+    '<div class="att-item' + (a.removed ? ' removed' : '') + '"><span class="nm">' + escapeHtml(a.name) + '</span><span class="sz">' + formatSize(a.size || 0) + '</span>' +
+    '<button type="button" data-att="' + i + '">' + (a.removed ? 'Deshacer' : 'Quitar') + '</button></div>').join('');
+}
+// Las fotos se reducen (máx. 1600 px, JPEG) antes de subirlas; los PDF se suben tal cual.
+async function prepareAttachment(file){
+  let blob = file, mime = file.type || 'application/octet-stream', name = file.name || 'adjunto';
+  if(mime.startsWith('image/') && mime !== 'image/gif'){
+    try{
+      const bmp = await createImageBitmap(file);
+      const k = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
+      const cv = document.createElement('canvas'); cv.width = Math.round(bmp.width * k); cv.height = Math.round(bmp.height * k);
+      cv.getContext('2d').drawImage(bmp, 0, 0, cv.width, cv.height);
+      const out = await new Promise(res=>cv.toBlob(res, 'image/jpeg', 0.82));
+      if(out && out.size < file.size){ blob = out; mime = 'image/jpeg'; name = name.replace(/\.[^.]+$/, '') + '.jpg'; }
+    }catch(e){}
+  }
+  if(blob.size > ATT_MAX_BYTES) throw new Error('"' + name + '" pesa más de 10 MB');
+  return { blob, name, mime, size: blob.size };
+}
+async function driveEnsureToken(){
+  if(driveHasToken()) return;
+  await driveAuth('');
+  localStorage.setItem('gdriveOn', '1');
+}
+async function driveUploadFile(blob, name, mime){
+  const b = 'evoatt' + Date.now();
+  const meta = JSON.stringify({ name: 'adj-' + Date.now() + '-' + name, parents: ['appDataFolder'], mimeType: mime });
+  const body = new Blob(['--' + b + '\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n', meta, '\r\n--' + b + '\r\nContent-Type: ' + mime + '\r\n\r\n', blob, '\r\n--' + b + '--']);
+  const r = await driveApi('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id', { method: 'POST', headers: { 'Content-Type': 'multipart/related; boundary=' + b }, body });
+  return (await r.json()).id;
+}
+async function driveDeleteFile(id){ try{ await driveApi('https://www.googleapis.com/drive/v3/files/' + id, { method: 'DELETE' }); }catch(e){} }
+async function driveFetchBlob(id){ return await (await driveApi('https://www.googleapis.com/drive/v3/files/' + id + '?alt=media')).blob(); }
+function openAttachments(id){
+  const m = state.maintenance.find(x=>x.id===id); if(!m) return;
+  const list = document.getElementById('attachList');
+  list.innerHTML = (m.attachments || []).map((a, i)=>
+    '<div><div class="att-item"><span class="nm">' + escapeHtml(a.name) + '</span><span class="sz">' + formatSize(a.size || 0) + '</span><button type="button" data-view="' + i + '">Ver</button></div><div id="attView' + i + '"></div></div>').join('');
+  list.onclick = async e=>{
+    const btn = e.target.closest('[data-view]'); if(!btn) return;
+    const a = m.attachments[Number(btn.dataset.view)], slot = document.getElementById('attView' + btn.dataset.view);
+    btn.disabled = true; btn.textContent = 'Cargando…';
+    try{
+      await driveEnsureToken();
+      const blob = await driveFetchBlob(a.id), url = URL.createObjectURL(blob);
+      slot.innerHTML = (a.mime || '').startsWith('image/') ? '<img class="att-prev" alt="' + escapeAttr(a.name) + '" src="' + url + '">' : '<a class="att-item" style="display:inline-block;margin-top:8px" href="' + url + '" target="_blank" rel="noopener">Abrir ' + escapeHtml(a.name) + '</a>';
+      btn.remove();
+    }catch(err){ btn.disabled = false; btn.textContent = 'Ver'; toast('No se pudo abrir el adjunto: ' + err.message, 'danger'); }
+  };
+  document.getElementById('attachOverlay').classList.add('open');
+}
+
 function renderMaintenance(){
   const tbody = document.getElementById('maintTable');
   const sorted = [...state.maintenance].sort((a,b)=> new Date(b.date)-new Date(a.date));
@@ -1690,6 +1856,7 @@ function renderMaintenance(){
       <td>${fmtDate(m.date)}</td><td>${MAINT_LABELS[m.type]||m.type}</td><td>${m.location||'—'}</td><td>${fmtEUR(m.cost)}</td>
       <td>${m.km ? fmtNum(m.km) : '—'}</td>
       <td>
+        ${(m.attachments&&m.attachments.length) ? `<button class="icon-action" onclick="openAttachments(${m.id})" title="Adjuntos">${ICONS.clip}<small>${m.attachments.length}</small></button>` : ''}
         <button class="icon-action" onclick="editMaint(${m.id})">${ICONS.edit}</button>
         <button class="icon-action danger" onclick="deleteMaint(${m.id})">${ICONS.trash}</button>
       </td>
@@ -1704,6 +1871,8 @@ function renderMaintenance(){
 }
 function deleteMaint(id){
   if(editingMaintId===id) cancelMaintEdit();
+  const gone = state.maintenance.find(m=>m.id===id);
+  if(gone && gone.attachments && gone.attachments.length && driveHasToken()) gone.attachments.forEach(a=>driveDeleteFile(a.id));
   state.maintenance = state.maintenance.filter(m=>m.id!==id);
   saveState(); renderMaintenance(); renderDashboard(); toast('Registro eliminado', 'info');
 }
@@ -1718,6 +1887,8 @@ function editMaint(id){
   document.getElementById('m_km').value = m.km ?? '';
   document.getElementById('m_location').value = m.location || '';
   document.getElementById('m_notes').value = m.notes || '';
+  editingAtt = (m.attachments || []).map(a=>({ ...a }));
+  renderMaintAttachments();
   document.getElementById('maintSubmitBtn').textContent = 'Guardar cambios';
   document.getElementById('maintCancelEdit').style.display = '';
   document.getElementById('maintContent').style.display = 'block';
@@ -1725,6 +1896,8 @@ function editMaint(id){
 }
 function cancelMaintEdit(){
   editingMaintId = null;
+  editingAtt = [];
+  renderMaintAttachments();
   document.getElementById('maintForm').reset();
   document.getElementById('m_date').valueAsDate = new Date();
   document.getElementById('maintSubmitBtn').textContent = 'Registrar';
@@ -1940,6 +2113,124 @@ function highlight(text,q){
 }
 
 /* ---------------- stats ---------------- */
+
+/* ---------------- gráficas SVG ---------------- */
+function niceMax(v){ if(!(v > 0)) return 1; const p = Math.pow(10, Math.floor(Math.log10(v))), n = v / p; return (n <= 1 ? 1 : n <= 2 ? 2 : n <= 5 ? 5 : 10) * p; }
+function shortDate(d){ const x = new Date(d); return isNaN(x) ? '' : x.getDate() + '/' + (x.getMonth() + 1); }
+function emptyChart(el, msg){ el.innerHTML = '<div class="empty">' + msg + '</div>'; }
+function svgBarChart(el, items, o){
+  o = o || {};
+  const W = 640, H = 250, L = 46, R = 14, T = 24, B = 38, iw = W - L - R, ih = H - T - B;
+  const max = niceMax(Math.max(...items.map(i=>i.value), o.avg || 0) * 1.08);
+  const y = v => T + ih - v / max * ih;
+  const step = iw / items.length, bw = Math.min(46, step * 0.62);
+  let g = '';
+  for(let i = 0; i <= 4; i++){
+    const v = max / 4 * i, yy = y(v);
+    g += '<line x1="' + L + '" y1="' + yy + '" x2="' + (W - R) + '" y2="' + yy + '" style="stroke:var(--border)"/>';
+    g += '<text x="' + (L - 6) + '" y="' + (yy + 4) + '" text-anchor="end">' + (o.axis ? o.axis(v) : Math.round(v)) + '</text>';
+  }
+  const every = items.length > 14 ? Math.ceil(items.length / 14) : 1;
+  items.forEach((it, i)=>{
+    const x = L + step * i + (step - bw) / 2, yy = y(it.value);
+    g += '<rect x="' + x + '" y="' + yy + '" width="' + bw + '" height="' + Math.max(1, T + ih - yy) + '" rx="4" style="fill:var(--accent)"/>';
+    if(items.length <= 12) g += '<text class="val" x="' + (x + bw / 2) + '" y="' + (yy - 5) + '" text-anchor="middle">' + (o.fmt ? o.fmt(it.value) : it.value.toFixed(1)) + '</text>';
+    if(i % every === 0) g += '<text x="' + (x + bw / 2) + '" y="' + (H - 13) + '" text-anchor="middle">' + it.label + '</text>';
+  });
+  if(o.avg){
+    const ya = y(o.avg);
+    g += '<line x1="' + L + '" y1="' + ya + '" x2="' + (W - R) + '" y2="' + ya + '" stroke-dasharray="5 4" style="stroke:var(--warning)" stroke-width="1.6"/>';
+    g += '<text x="' + (L + 6) + '" y="' + (ya - 6) + '" text-anchor="start" style="fill:var(--warning);font-weight:700">media ' + (o.fmt ? o.fmt(o.avg) : o.avg.toFixed(1)) + '</text>';
+  }
+  el.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + (o.aria || 'Gráfica') + '">' + g + '</svg>';
+}
+function svgLineChart(el, items, o){
+  o = o || {};
+  const W = 640, H = 250, L = 52, R = 22, T = 28, B = 38, iw = W - L - R, ih = H - T - B;
+  const vals = items.map(i=>i.value);
+  const lo = Math.min(0, ...vals), hi = Math.max(...vals, 1);
+  const max = niceMax(hi * 1.1), min = lo < 0 ? -niceMax(-lo * 1.1) : 0;
+  const y = v => T + ih - (v - min) / (max - min) * ih;
+  const x = i => items.length === 1 ? L + iw / 2 : L + iw * i / (items.length - 1);
+  let g = '<defs><linearGradient id="lcFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--accent);stop-opacity:.35"/><stop offset="1" style="stop-color:var(--accent);stop-opacity:0"/></linearGradient></defs>';
+  for(let i = 0; i <= 4; i++){
+    const v = min + (max - min) / 4 * i, yy = y(v);
+    g += '<line x1="' + L + '" y1="' + yy + '" x2="' + (W - R) + '" y2="' + yy + '" style="stroke:var(--border)"/>';
+    g += '<text x="' + (L - 6) + '" y="' + (yy + 4) + '" text-anchor="end">' + (o.axis ? o.axis(v) : Math.round(v)) + '</text>';
+  }
+  const pts = items.map((it, i)=> x(i) + ',' + y(it.value));
+  if(items.length > 1) g += '<polygon points="' + x(0) + ',' + y(Math.max(min, 0)) + ' ' + pts.join(' ') + ' ' + x(items.length - 1) + ',' + y(Math.max(min, 0)) + '" fill="url(#lcFill)"/>';
+  g += '<polyline points="' + pts.join(' ') + '" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="stroke:var(--accent)"/>';
+  items.forEach((it, i)=>{
+    g += '<circle cx="' + x(i) + '" cy="' + y(it.value) + '" r="' + (i === items.length - 1 ? 5 : 3.2) + '" style="fill:var(--accent)"/>';
+    g += '<text x="' + x(i) + '" y="' + (H - 13) + '" text-anchor="middle">' + it.label + '</text>';
+  });
+  const last = items[items.length - 1];
+  g += '<text class="val" x="' + Math.min(x(items.length - 1), W - R - 4) + '" y="' + (y(last.value) - 11) + '" text-anchor="' + (items.length > 1 ? 'end' : 'middle') + '">' + (o.fmt ? o.fmt(last.value) : Math.round(last.value)) + '</text>';
+  el.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + (o.aria || 'Gráfica') + '">' + g + '</svg>';
+}
+// Consumo de cada tramo entre dos cargas: con el % de batería si lo hay; si no, kWh de la carga entre los km recorridos.
+function consumptionByTrip(){
+  const soc = socSegments();
+  if(soc.length) return { source: 'soc', items: soc.map(s=>({ label: shortDate(s.date), value: s.consBattery / CHARGE_EFF })) };
+  const list = state.charges.filter(c=>Number(c.km) > 0).sort((a,b)=> chargeTs(a) - chargeTs(b));
+  const items = [];
+  for(let i = 1; i < list.length; i++){
+    const km = Number(list[i].km) - Number(list[i-1].km), kwh = Number(list[i].kwh) || 0;
+    if(km < 20 || kwh <= 0) continue;
+    const v = kwh / km * 100;
+    if(v >= 5 && v <= 60) items.push({ label: shortDate(list[i].date), value: v });
+  }
+  return { source: 'kwh', items };
+}
+function monthlySavingsSeries(){
+  const cons = savingsConsumption(), refL = Number(state.config.refConsumption) || 6.5, rate = Number(state.config.electricRate) || 0.15;
+  const per = {};
+  [...state.charges].sort((a,b)=> chargeTs(a) - chargeTs(b)).forEach(ch=>{
+    const r = chargeSavingParts(ch, cons, refL, rate);
+    if(!r || !ch.date) return;
+    const k = String(ch.date).slice(0, 7);
+    per[k] = (per[k] || 0) + (r.gas - r.cost);
+  });
+  let acc = 0;
+  return Object.keys(per).sort().map(k=>{ acc += per[k]; const d = new Date(k + '-01T12:00:00'); return { label: d.toLocaleDateString('es-ES', { month: 'short', year: '2-digit' }), value: acc }; });
+}
+function renderPlaces(){
+  const el = document.getElementById('chLugares'); if(!el) return;
+  const places = {};
+  state.charges.forEach(c=>{
+    const k = c.location || 'Otro', p = places[k] || (places[k] = { n: 0, kwh: 0, cost: 0 });
+    p.n++; p.kwh += Number(c.kwh) || 0; p.cost += chargeCostOf(c);
+  });
+  const rows = Object.entries(places).sort((a,b)=> b[1].kwh - a[1].kwh);
+  if(!rows.length){ el.innerHTML = '<div class="svg-chart"><div class="empty">Sin cargas todavía</div></div>'; return; }
+  const max = Math.max(...rows.map(r=>r[1].kwh), 0.01);
+  el.innerHTML = rows.map(([name, p])=>
+    '<div class="place-row"><span class="name">' + escapeHtml(name) + ' <span style="color:var(--text-faint);font-weight:500">· ' + p.n + '</span></span>' +
+    '<div class="place-bar"><i style="width:' + (p.kwh / max * 100) + '%"></i></div>' +
+    '<span class="info">' + p.kwh.toFixed(1) + ' kWh · ' + fmtEUR(p.cost) + ' · ' + (p.kwh > 0 ? (p.cost / p.kwh).toFixed(3) : '0.000') + ' €/kWh</span></div>').join('');
+}
+function renderStatsExtra(){
+  if(!document.getElementById('chConsumo')) return;
+  const cons = computeAvgConsumption(state.config), src = consumptionSource();
+  document.getElementById('st_cons').textContent = cons > 0 ? cons.toFixed(1) : '—';
+  document.getElementById('st_consSub').textContent = 'kWh / 100 km · ' + ({soc:'por % de batería',window:'por kWh y km',config:'configurado'}[src]);
+  const cap = estimateBatteryCapacity();
+  document.getElementById('st_cap').textContent = cap ? cap.kwh.toFixed(1) + ' kWh' : '—';
+  document.getElementById('st_capSub').textContent = cap ? '≈ ' + Math.round(cap.pct) + ' % de ' + VEHICLE_BATTERY_KWH + ' kWh · ' + cap.n + (cap.n === 1 ? ' carga' : ' cargas') : 'Anota el % de batería al empezar y terminar (tramos de 20 % o más)';
+  const sv = computeSavings();
+  document.getElementById('st_saved').textContent = sv.kwhTotal > 0 ? fmtEUR(sv.saved) : '—';
+  const trips = consumptionByTrip(), cEl = document.getElementById('chConsumo');
+  if(trips.items.length){
+    const avg = trips.items.reduce((s,x)=>s+x.value,0) / trips.items.length;
+    svgBarChart(cEl, trips.items, { avg, fmt: v=>v.toFixed(1), aria: 'Consumo por tramo' });
+  } else emptyChart(cEl, 'Anota los km en al menos dos cargas (y el % de batería para más precisión).');
+  const ms = monthlySavingsSeries(), aEl = document.getElementById('chAhorro');
+  if(ms.length) svgLineChart(aEl, ms, { fmt: v=>fmtEUR(v), axis: v=>Math.round(v) + '€', aria: 'Ahorro acumulado' });
+  else emptyChart(aEl, 'Registra cargas con kWh para ver el ahorro.');
+  renderPlaces();
+}
+
 function renderStats(){
   const km = getCurrentKm();
   const purchaseKm = state.charges.length ? Math.min(...state.charges.map(c=>Number(c.km)||km)) : 0;
@@ -1980,6 +2271,7 @@ function renderStats(){
     ['Revisiones completadas', state.completedRevisions.length + ' / ' + (REVISIONS_SCHEDULE[state.lang]||REVISIONS_SCHEDULE.es).length],
     ['Antigüedad del vehículo', months + ' meses'],
   ];
+  renderStatsExtra();
   document.getElementById('statsSummaryTable').innerHTML = rows.map(r=>`<tr><td style="color:var(--text-muted);font-weight:600">${r[0]}</td><td style="text-align:right;font-weight:800">${r[1]}</td></tr>`).join('');
 }
 
@@ -2173,7 +2465,11 @@ function setupEventListeners(){
     const locationType = document.getElementById('c_location_type').value;
     const location = locationType==='Otro' ? (document.getElementById('c_location_other').value.trim() || 'Otro') : locationType;
     const km = Number(document.getElementById('c_km').value)||null;
-    const data = { date:document.getElementById('c_date').value, time:document.getElementById('c_time').value, kwh, cost, km, location };
+    const socRaw0 = document.getElementById('c_soc0').value, socRaw1 = document.getElementById('c_soc1').value;
+    const socStart = socRaw0==='' ? null : Math.min(100, Math.max(0, Number(socRaw0)));
+    const socEnd = socRaw1==='' ? null : Math.min(100, Math.max(0, Number(socRaw1)));
+    if(socStart!=null && socEnd!=null && socEnd < socStart){ toast('La batería al terminar no puede ser menor que al empezar', 'warning'); return; }
+    const data = { date:document.getElementById('c_date').value, time:document.getElementById('c_time').value, kwh, cost, km, location, socStart, socEnd };
     const wasEditing = editingChargeId!=null;
     if(wasEditing){
       const idx = state.charges.findIndex(c=>c.id===editingChargeId);
@@ -2191,7 +2487,7 @@ function setupEventListeners(){
   });
   document.getElementById('chargeCancelEdit').addEventListener('click', cancelChargeEdit);
 
-  document.getElementById('maintForm').addEventListener('submit', e=>{
+  document.getElementById('maintForm').addEventListener('submit', async e=>{
     e.preventDefault();
     const type = document.getElementById('m_type').value;
     const cost = Number(document.getElementById('m_cost').value);
@@ -2199,15 +2495,45 @@ function setupEventListeners(){
     const data = { type, date:document.getElementById('m_date').value, cost,
       km:Number(document.getElementById('m_km').value)||null, location:document.getElementById('m_location').value.trim(), notes:document.getElementById('m_notes').value.trim() };
     const wasEditing = editingMaintId!=null;
+    // adjuntos: se suben a Drive; los marcados como quitados se borran después de guardar
+    const files = Array.from(document.getElementById('m_files').files || []);
+    const keep = editingAtt.filter(a=>!a.removed).map(({removed, ...a})=>a);
+    const drop = editingAtt.filter(a=>a.removed);
+    const uploaded = [];
+    if(files.length){
+      const btn = document.getElementById('maintSubmitBtn'); const label = btn.textContent;
+      btn.disabled = true; btn.textContent = 'Subiendo adjuntos…';
+      try{
+        await driveEnsureToken();
+        for(const f of files){
+          const p = await prepareAttachment(f);
+          const id = await driveUploadFile(p.blob, p.name, p.mime);
+          uploaded.push({ id, name: p.name, mime: p.mime, size: p.size });
+        }
+      }catch(err){
+        uploaded.forEach(u=>driveDeleteFile(u.id));
+        btn.disabled = false; btn.textContent = label;
+        toast('No se pudieron subir los adjuntos: ' + err.message, 'danger');
+        return;
+      }
+      btn.disabled = false; btn.textContent = label;
+    }
+    data.attachments = [...keep, ...uploaded];
     if(wasEditing){
       const idx = state.maintenance.findIndex(m=>m.id===editingMaintId);
       if(idx>-1) state.maintenance[idx] = { ...state.maintenance[idx], ...data };
     } else {
       state.maintenance.push({ id:uid(), ...data });
     }
+    if(drop.length && driveHasToken()) drop.forEach(a=>driveDeleteFile(a.id));
     cancelMaintEdit(); saveState();
     renderMaintenance(); renderDashboard(); toast(wasEditing ? 'Mantenimiento actualizado' : 'Mantenimiento registrado', 'success');
   });
+  document.getElementById('m_existing').addEventListener('click', e=>{
+    const b = e.target.closest('[data-att]'); if(!b) return;
+    const a = editingAtt[Number(b.dataset.att)]; if(a){ a.removed = !a.removed; renderMaintAttachments(); }
+  });
+  document.getElementById('attachClose').addEventListener('click', ()=>document.getElementById('attachOverlay').classList.remove('open'));
   document.getElementById('maintCancelEdit').addEventListener('click', cancelMaintEdit);
 
   document.getElementById('noteForm').addEventListener('submit', e=>{
