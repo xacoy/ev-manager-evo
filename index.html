@@ -299,6 +299,11 @@ button{cursor:pointer}
 .sum-stats{display:grid;grid-template-columns:repeat(3,1fr);margin-top:16px;text-align:center}
 .sum-stats > div{padding:4px 8px}
 .sum-stats > div + div{border-left:1px solid var(--border)}
+.sum-card{display:flex;flex-direction:column}
+.sum-list{display:flex;flex-direction:column;flex:1;margin-top:14px;border-top:1px solid var(--border)}
+.sum-row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex:1;min-height:42px;border-bottom:1px solid var(--border);font-size:13px;color:var(--text-muted)}
+.sum-row:last-child{border-bottom:0}
+.sum-row b{color:var(--text);font-weight:700;text-align:right}
 .sum-stat{font-size:20px;font-weight:800;color:var(--text);margin-top:2px;white-space:nowrap}
 .quicklinks-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
 .ql-tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:28px 20px;border-radius:var(--radius);background:var(--bg-card);border:1px solid var(--border);color:var(--text);text-decoration:none;transition:border-color .2s var(--ease), transform .2s var(--ease);cursor:pointer;position:relative;overflow:hidden;min-height:140px}
@@ -845,7 +850,7 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
               </div>
             </form>
           </div>
-          <div class="card">
+          <div class="card sum-card">
             <div class="card-head"><h2>Resumen</h2></div>
             <div class="sum-hero">
               <div class="save-label">AHORRO VS GASOLINA</div>
@@ -860,6 +865,12 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
               <div><div class="info-label">Cargas</div><div class="sum-stat" id="chgTotal">0</div></div>
               <div><div class="info-label">kWh</div><div class="sum-stat" id="chgKwh">0</div></div>
               <div><div class="info-label">€/kWh</div><div class="sum-stat" id="chgAvg">0</div></div>
+            </div>
+            <div class="sum-list">
+              <div class="sum-row"><span>Última carga</span><b id="sumLast">—</b></div>
+              <div class="sum-row"><span>Km equivalentes</span><b id="sumKm">—</b></div>
+              <div class="sum-row"><span>Coste cada 100 km</span><b id="sumPer100">—</b></div>
+              <div class="sum-row"><span>Por ubicación</span><b id="sumPlaces">—</b></div>
             </div>
           </div>
         </div>
@@ -1123,7 +1134,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-09.7';
+const APP_VERSION = '2026-10-09.8';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -1619,6 +1630,18 @@ function chargeDateTimeHtml(c){
   if(!t.text) return fmtDate(c.date);
   return fmtDate(c.date) + ' · ' + (t.inferred ? '<span style="color:var(--text-faint)" title="Hora a la que se añadió">' + t.text + '</span>' : t.text);
 }
+function renderChargeDetails(){
+  if(!document.getElementById('sumLast')) return;
+  const r = computeSavings();
+  const set = (id, v) => { document.getElementById(id).textContent = v; };
+  const last = [...state.charges].sort(chargeCmpDesc)[0];
+  set('sumLast', last ? ((Number(last.kwh) ? Number(last.kwh).toFixed(2) + ' kWh' : '—') + (last.location ? ' · ' + last.location : '') + ' · ' + fmtDate(last.date)) : '—');
+  set('sumKm', r.kmEq > 0 ? '≈ ' + fmtNum(Math.round(r.kmEq)) + ' km' : '—');
+  set('sumPer100', r.kmEq > 0 ? fmtEUR(r.elec / r.kmEq * 100) + ' (gasolina ' + fmtEUR(r.gas / r.kmEq * 100) + ')' : '—');
+  const places = {};
+  state.charges.forEach(c=>{ const k = c.location || 'Otro'; places[k] = (places[k] || 0) + 1; });
+  set('sumPlaces', Object.keys(places).length ? Object.entries(places).sort((a,b)=>b[1]-a[1]).map(([k,n])=>k + ' ' + n).join(' · ') : '—');
+}
 function renderCharges(){
   const tbody = document.getElementById('chargesTable');
   const sorted = [...state.charges].sort(chargeCmpDesc);
@@ -1640,6 +1663,7 @@ function renderCharges(){
   document.getElementById('chgKwh').textContent = totalKwh.toFixed(2);
   { const ap = avgPricePerKwh(); document.getElementById('chgAvg').textContent = ap!=null ? ap.toFixed(3) : '—'; }
   renderSavings();
+  renderChargeDetails();
 }
 function deleteCharge(id){
   if(editingChargeId===id) cancelChargeEdit();
