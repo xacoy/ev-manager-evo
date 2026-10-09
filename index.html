@@ -13,7 +13,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Exo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
@@ -37,8 +37,8 @@
   --shadow-card:0 3px 14px rgba(0,0,0,.28);
   --shadow-1:0 6px 20px rgba(0,0,0,.32);
   --ease:cubic-bezier(.2,0,.3,1);
-  --font:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
-  --font-display:Syne,sans-serif;
+  --font:"Plus Jakarta Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  --font-display:"Exo 2","Plus Jakarta Sans",sans-serif;
   --rail-w:140px; --bottomnav-h:64px;
 }
 :root[data-theme="light"]{
@@ -130,6 +130,7 @@ button{cursor:pointer}
 .topbar h1{font-size:26px;font-weight:700;letter-spacing:-.3px;font-family:var(--font-display);color:var(--text)}
 
 .title-accent{font-style:normal;color:var(--accent)}
+.info-value,.sum-stat,.save-value,.stat-card .value,.chip .l1,.sync-btn,.ql-tile-label{font-family:var(--font-display)}
 .top-left{display:flex;align-items:center;gap:8px;flex:0 0 auto}
 .top-right{display:flex;align-items:center;gap:8px}
 .expandable-section{margin-top:20px}
@@ -1128,7 +1129,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-09.9';
+const APP_VERSION = '2026-10-09.10';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
