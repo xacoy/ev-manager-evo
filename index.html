@@ -1123,7 +1123,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-09.3';
+const APP_VERSION = '2026-10-09.4';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -1452,11 +1452,11 @@ function renderDashboard(){
   document.getElementById('sideConsumption').textContent = cons.toFixed(1);
   document.getElementById('sideTotalKwh').textContent = totalKwh.toFixed(2) + ' kWh';
   document.getElementById('sideSpent').textContent = fmtEUR(totalCost);
-  const eurKmReal = !!(w && w.cost>0);
+  const eurKmReal = !!w;
   const eurKm = eurKmReal ? w.cost/w.km : (Number(c.electricRate)||0)*cons/100;
-  document.getElementById('sideCostKm').textContent = eurKm>0 ? eurKm.toFixed(3) + ' €' : '—';
-  document.getElementById('sideCostKmSub').textContent = eurKm>0 ? (eurKm*100).toFixed(2) + ' €/100 km' + (eurKmReal ? '' : ' (estim.)') : '—';
-  document.getElementById('sideAvgPrice').textContent = totalKwh>0 && chargeCost>0 ? (chargeCost/totalKwh).toFixed(3) + ' €' : (Number(c.electricRate)>0 ? Number(c.electricRate).toFixed(3) + ' €' : '—');
+  document.getElementById('sideCostKm').textContent = (eurKmReal || eurKm>0) ? eurKm.toFixed(3) + ' €' : '—';
+  document.getElementById('sideCostKmSub').textContent = (eurKmReal || eurKm>0) ? (eurKm*100).toFixed(2) + ' €/100 km' + (eurKmReal ? '' : ' (estim.)') : '—';
+  document.getElementById('sideAvgPrice').textContent = totalKwh>0 ? (chargeCost/totalKwh).toFixed(3) + ' €' : (Number(c.electricRate)>0 ? Number(c.electricRate).toFixed(3) + ' €' : '—');
   renderSavings();
 
   document.getElementById('chipKm').textContent = fmtNum(km) + ' km';
@@ -1477,28 +1477,47 @@ function loadFuelPrice(){
     }
   }).catch(()=>{});
 }
-function renderSavings(){
+// Consumo del coche eléctrico para convertir kWh en km: el real medido si es plausible, o el configurado.
+function savingsConsumption(){
+  const real = computeAvgConsumption(state.config);
+  return (real >= 12 && real <= 35) ? real : (Number(state.config.avgConsumption) || 17);
+}
+// Cada carga se valora por sí misma: los kWh que entran equivalen a unos km, y esos km en gasolina habrían costado X.
+// Lo pagado es el coste real de la carga (0 si fue gratis, p. ej. en el trabajo).
+function computeSavings(){
   const c = state.config;
+  const cons = savingsConsumption();
+  const refL = Number(c.refConsumption) || 6.5;
+  const auto = !!(fuelAuto && Number(fuelAuto.price) > 0);
+  const price = auto ? Number(fuelAuto.price) : (Number(c.fuelPrice) || 1.35);
+  const rate = Number(c.electricRate) || 0.15;
+  let gas = 0, elec = 0, kmEq = 0, kwhTotal = 0;
+  state.charges.forEach(ch=>{
+    const hasCost = ch.cost != null && ch.cost !== '';
+    let kwh = Number(ch.kwh) || 0;
+    const cost = hasCost ? Number(ch.cost) || 0 : kwh * rate;   // sin coste anotado: tarifa configurada
+    if(kwh <= 0 && cost > 0) kwh = cost / rate;                 // sin kWh pero con coste: se estima
+    if(kwh <= 0) return;
+    const km = kwh / cons * 100;
+    kmEq += km; kwhTotal += kwh;
+    gas += km * refL / 100 * price;
+    elec += cost;
+  });
+  return { gas, elec, saved: gas - elec, kmEq, kwhTotal, cons, refL, price, auto };
+}
+function renderSavings(){
   const vals = document.querySelectorAll('[data-save="value"]');
   if(!vals.length) return;
-  const km = getCurrentKm();
-  const refL = Number(c.refConsumption) || 6.5;
-  const auto = fuelAuto && Number(fuelAuto.price) > 0;
-  const price = auto ? Number(fuelAuto.price) : (Number(c.fuelPrice) || 1.35);
-  const chargeCost = state.charges.reduce((s,x)=>s+Number(x.cost||0),0);
-  const gasCost = km * refL / 100 * price;
-  const saved = gasCost - chargeCost;
-  const subText = km > 0 ? 'Gasolina: ' + fmtEUR(gasCost) + ' - Electricidad: ' + fmtEUR(chargeCost) : 'Gasolina: — - Electricidad: —';
-  const priceText = 'Precio medio de hoy: ' + price.toFixed(3) + '€/l' + (auto ? '' : ' (manual)');
-  const title = 'SEAT León FR 2018 125 CV (' + refL + ' l/100 km) · gasolina 95 a ' + price.toFixed(3) + ' €/l' + (auto ? ' (media Canarias' + (fuelAuto.updated ? ', ' + fuelAuto.updated.slice(0,10) : '') + ')' : ' (precio manual)');
-  vals.forEach(el=>{ el.textContent = km > 0 ? fmtEUR(saved) : '—'; el.style.color = saved < 0 ? 'var(--danger)' : 'var(--accent)'; });
-  document.querySelectorAll('[data-save="sub"]').forEach(el=>{ el.textContent = subText; el.title = title; });
-  document.querySelectorAll('[data-save="price"]').forEach(el=>{ el.textContent = priceText; });
-  document.querySelectorAll('[data-save="gas"]').forEach(el=>{ el.textContent = km > 0 ? fmtEUR(gasCost) : '—'; });
-  document.querySelectorAll('[data-save="elec"]').forEach(el=>{ el.textContent = km > 0 ? fmtEUR(chargeCost) : '—'; });
-  const gmax = Math.max(gasCost, chargeCost, 0.01);
-  document.querySelectorAll('[data-save="gasbar"]').forEach(el=>{ el.style.width = (km > 0 ? gasCost/gmax*100 : 0) + '%'; });
-  document.querySelectorAll('[data-save="elecbar"]').forEach(el=>{ el.style.width = (km > 0 ? chargeCost/gmax*100 : 0) + '%'; });
+  const r = computeSavings();
+  const has = r.kwhTotal > 0;
+  const priceText = 'Precio medio de hoy: ' + r.price.toFixed(3) + '€/l' + (r.auto ? '' : ' (manual)');
+  const title = 'SEAT León FR 2018 125 CV (' + r.refL + ' l/100 km) · gasolina 95 a ' + r.price.toFixed(3) + ' €/l' + (r.auto ? ' (media Canarias' + (fuelAuto.updated ? ', ' + fuelAuto.updated.slice(0,10) : '') + ')' : ' (precio manual)')
+    + ' · ' + Math.round(r.kmEq) + ' km equivalentes a ' + r.kwhTotal.toFixed(1) + ' kWh con ' + r.cons.toFixed(1) + ' kWh/100 km';
+  vals.forEach(el=>{ el.textContent = has ? fmtEUR(r.saved) : '—'; el.style.color = r.saved < 0 ? 'var(--danger)' : 'var(--accent)'; });
+  document.querySelectorAll('[data-save="sub"]').forEach(el=>{ el.textContent = has ? 'Gasolina: ' + fmtEUR(r.gas) + ' - Electricidad: ' + fmtEUR(r.elec) : 'Gasolina: — - Electricidad: —'; el.title = title; });
+  document.querySelectorAll('[data-save="price"]').forEach(el=>{ el.textContent = priceText; el.title = title; });
+  document.querySelectorAll('[data-save="gas"]').forEach(el=>{ el.textContent = has ? fmtEUR(r.gas) : '—'; });
+  document.querySelectorAll('[data-save="elec"]').forEach(el=>{ el.textContent = has ? fmtEUR(r.elec) : '—'; });
 }
 
 
