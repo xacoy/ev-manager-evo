@@ -986,7 +986,7 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
 <!-- STATS -->
       <section class="page" id="page-stats">
         <div class="grid grid-3" style="margin-bottom:16px">
-          <div class="card stat-card tone-cyan"><div class="label">Coste / km</div><div class="value" id="st_costPerKm" style="font-size:22px">—</div><div class="sub">€ por km recorrido</div></div>
+          <div class="card stat-card tone-cyan"><div class="label">Coste / km</div><div class="value" id="st_costPerKm" style="font-size:22px">—</div><div class="sub">€ por km (cargas + mantenimiento)</div></div>
           <div class="card stat-card tone-violet"><div class="label">Precio medio energía</div><div class="value" id="st_avgPrice" style="font-size:22px">—</div><div class="sub">€ / kWh</div></div>
           <div class="card stat-card tone-green"><div class="label">Proyección anual</div><div class="value" id="st_yearProj" style="font-size:22px">—</div><div class="sub">gasto estimado / año</div></div>
         </div>
@@ -1123,7 +1123,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-09.5';
+const APP_VERSION = '2026-10-09.6';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -1380,6 +1380,20 @@ function getChargeWindow(){
   const rest = d.slice(1);
   return { km, kwh: rest.reduce((s,x)=>s+Number(x.kwh),0), cost: rest.reduce((s,x)=>s+Number(x.cost||0),0) };
 }
+// Coste de una carga: el anotado (0 = gratis) o, si no consta, los kWh por la tarifa configurada.
+function chargeCostOf(c){
+  if(c.cost != null && c.cost !== '') return Number(c.cost) || 0;
+  return (Number(c.kwh) || 0) * (Number(state.config.electricRate) || 0.15);
+}
+// Precio medio por kWh: solo con cargas que tienen kWh y coste anotado (0 = gratis cuenta); así no se falsea con datos a medias.
+function avgPricePerKwh(){
+  let kwh = 0, cost = 0;
+  state.charges.forEach(c=>{
+    const k = Number(c.kwh) || 0;
+    if(k > 0 && c.cost != null && c.cost !== ''){ kwh += k; cost += Number(c.cost) || 0; }
+  });
+  return kwh > 0 ? cost / kwh : null;
+}
 function computeAvgConsumption(c){
   // La energía de una carga repone lo gastado desde la anterior: la 1ª carga no cuenta
   // y los km se miden entre la 1ª y la última carga.
@@ -1447,16 +1461,16 @@ function renderDashboard(){
 
   const cons = computeAvgConsumption(c);
   const totalKwh = state.charges.reduce((s,x)=>s+Number(x.kwh||0),0);
-  const chargeCost = state.charges.reduce((s,x)=>s+Number(x.cost||0),0);
+  const chargeCost = state.charges.reduce((s,x)=>s+chargeCostOf(x),0);
   const w = getChargeWindow();
   document.getElementById('sideConsumption').textContent = cons.toFixed(1);
   document.getElementById('sideTotalKwh').textContent = totalKwh.toFixed(2) + ' kWh';
-  document.getElementById('sideSpent').textContent = fmtEUR(totalCost);
+  document.getElementById('sideSpent').textContent = fmtEUR(chargeCost);
   const eurKmReal = !!w;
   const eurKm = eurKmReal ? w.cost/w.km : (Number(c.electricRate)||0)*cons/100;
   document.getElementById('sideCostKm').textContent = (eurKmReal || eurKm>0) ? eurKm.toFixed(3) + ' €' : '—';
   document.getElementById('sideCostKmSub').textContent = (eurKmReal || eurKm>0) ? (eurKm*100).toFixed(2) + ' €/100 km' + (eurKmReal ? '' : ' (estim.)') : '—';
-  document.getElementById('sideAvgPrice').textContent = totalKwh>0 ? (chargeCost/totalKwh).toFixed(3) + ' €' : (Number(c.electricRate)>0 ? Number(c.electricRate).toFixed(3) + ' €' : '—');
+  { const ap = avgPricePerKwh(); document.getElementById('sideAvgPrice').textContent = ap!=null ? ap.toFixed(3) + ' €' : (Number(c.electricRate)>0 ? Number(c.electricRate).toFixed(3) + ' €' : '—'); }
   renderSavings();
 
   document.getElementById('chipKm').textContent = fmtNum(km) + ' km';
@@ -1505,9 +1519,8 @@ function computeSavings(){
   const rate = Number(c.electricRate) || 0.15;
   let gas = 0, elec = 0, kmEq = 0, kwhTotal = 0;
   state.charges.forEach(ch=>{
-    const hasCost = ch.cost != null && ch.cost !== '';
     let kwh = Number(ch.kwh) || 0;
-    const cost = hasCost ? Number(ch.cost) || 0 : kwh * rate;   // sin coste anotado: tarifa configurada
+    const cost = chargeCostOf(ch);   // sin coste anotado: tarifa configurada
     if(kwh <= 0 && cost > 0) kwh = cost / rate;                 // sin kWh pero con coste: se estima
     if(kwh <= 0) return;
     const km = kwh / cons * 100;
@@ -1622,7 +1635,7 @@ function renderCharges(){
   const totalCost = state.charges.reduce((s,x)=>s+Number(x.cost||0),0);
   document.getElementById('chgTotal').textContent = state.charges.length;
   document.getElementById('chgKwh').textContent = totalKwh.toFixed(2);
-  document.getElementById('chgAvg').textContent = (totalKwh? totalCost/totalKwh : 0).toFixed(3);
+  { const ap = avgPricePerKwh(); document.getElementById('chgAvg').textContent = ap!=null ? ap.toFixed(3) : '—'; }
   renderSavings();
 }
 function deleteCharge(id){
@@ -1921,20 +1934,19 @@ function highlight(text,q){
 function renderStats(){
   const km = getCurrentKm();
   const purchaseKm = state.charges.length ? Math.min(...state.charges.map(c=>Number(c.km)||km)) : 0;
-  const totalCost = state.charges.reduce((s,x)=>s+Number(x.cost||0),0) + state.maintenance.reduce((s,x)=>s+Number(x.cost||0),0);
-  const kmDriven = km || 1;
-  document.getElementById('st_costPerKm').textContent = (totalCost/kmDriven).toFixed(3) + ' €';
+  const totalCost = state.charges.reduce((s,x)=>s+chargeCostOf(x),0) + state.maintenance.reduce((s,x)=>s+Number(x.cost||0),0);
+  document.getElementById('st_costPerKm').textContent = km > 0 ? (totalCost/km).toFixed(3) + ' €' : '—';
   const totalKwh = state.charges.reduce((s,x)=>s+Number(x.kwh||0),0);
-  const chargeCost = state.charges.reduce((s,x)=>s+Number(x.cost||0),0);
-  document.getElementById('st_avgPrice').textContent = (totalKwh? chargeCost/totalKwh:0).toFixed(3) + ' €';
+  const chargeCost = state.charges.reduce((s,x)=>s+chargeCostOf(x),0);
+  { const ap = avgPricePerKwh(); document.getElementById('st_avgPrice').textContent = ap!=null ? ap.toFixed(3) + ' €' : '—'; }
 
   const months = Math.max(1, monthsBetween(state.config.purchaseDate));
   const monthlyAvg = totalCost / months;
-  document.getElementById('st_yearProj').textContent = fmtEUR(monthlyAvg*12);
+  document.getElementById('st_yearProj').textContent = state.config.purchaseDate ? fmtEUR(monthlyAvg*12) : '—';
 
   const monthly = {};
-  [...state.charges.map(c=>({date:c.date, cost:c.cost})), ...state.maintenance.map(m=>({date:m.date,cost:m.cost}))].forEach(x=>{
-    if(!x.date) return;
+  [...state.charges.map(c=>({date:c.date, cost:c.cost})), ...state.maintenance.map(m=>({date:m.date,cost:m.cost}))]
+    .filter(x=>x.date).sort((a,b)=>String(a.date).localeCompare(String(b.date))).forEach(x=>{
     const key = new Date(x.date).toLocaleDateString('es-ES',{month:'short',year:'2-digit'});
     monthly[key] = (monthly[key]||0) + Number(x.cost||0);
   });
