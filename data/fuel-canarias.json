@@ -2,17 +2,17 @@
   "fuel": "Gasolina 95",
   "area": "Canarias (Las Palmas + Santa Cruz de Tenerife)",
   "source": "Ministerio para la Transición Ecológica - Geoportal de gasolineras",
-  "updated": "2026-10-09T13:11:22Z",
-  "price": 1.556,
-  "stations": 498,
+  "updated": "2026-10-10T12:26:10Z",
+  "price": 1.558,
+  "stations": 496,
   "provinces": {
     "laspalmas": {
-      "price": 1.529,
+      "price": 1.531,
       "stations": 257
     },
     "tenerife": {
-      "price": 1.585,
-      "stations": 241
+      "price": 1.587,
+      "stations": 239
     }
   },
   "history": [
@@ -35,6 +35,10 @@
     {
       "date": "2026-10-09",
       "price": 1.556
+    },
+    {
+      "date": "2026-10-10",
+      "price": 1.558
     }
   ]
 }
