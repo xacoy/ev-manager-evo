@@ -1390,7 +1390,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-14.3';
+const APP_VERSION = '2026-10-14.4';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -1848,10 +1848,19 @@ function currentFuelPrice(){
 }
 function fuelPriceForDate(date){
   const h = (fuelAuto && fuelAuto.history) || [];
+  const today = new Date().toISOString().slice(0, 10);
+  // hoy (o una fecha futura): el último precio conocido, sin esperar a la actualización diaria
+  if(date && date >= today && fuelAuto && Number(fuelAuto.price) > 0) return Number(fuelAuto.price);
   if(!h.length || !date) return currentFuelPrice();
   let best = null;
   for(const e of h){ if(e.date <= date) best = e; else break; }
   return Number((best || h[0]).price) || currentFuelPrice();
+}
+// Precio que se guarda junto a la carga: solo si hay dato real del día; si no, se deja vacío y se resuelve después con el histórico
+// (así no se queda guardado el precio de respaldo).
+function fuelPriceToStore(date){
+  if(!(fuelAuto && (Number(fuelAuto.price) > 0 || (fuelAuto.history || []).length))) return null;
+  return fuelPriceForDate(date);
 }
 // Cada carga se valora por sí misma: los kWh que entran equivalen a unos km, y esos km en gasolina habrían costado X.
 // Lo pagado es el coste real de la carga (0 si fue gratis, p. ej. en el trabajo).
@@ -1971,7 +1980,7 @@ function renderCharges(){
   const sorted = [...state.charges].sort(chargeCmpDesc);
   tbody.innerHTML = sorted.map(c=>`
     <tr>
-      <td>${chargeDateTimeHtml(c)}</td><td>${c.kwh!=null ? Number(c.kwh).toFixed(2) : '—'}</td><td>${(c.cost!=null && c.cost!=='') ? fmtEUR(c.cost) : '—'}</td>
+      <td title="Gasolina ese día: ${(Number(c.fuelPrice) > 0 ? Number(c.fuelPrice) : fuelPriceForDate(c.date)).toFixed(3)} €/l">${chargeDateTimeHtml(c)}</td><td>${c.kwh!=null ? Number(c.kwh).toFixed(2) : '—'}</td><td>${(c.cost!=null && c.cost!=='') ? fmtEUR(c.cost) : '—'}</td>
       <td>${(c.kwh && c.cost!=null) ? (c.cost/c.kwh).toFixed(3)+' €' : '—'}</td><td>${c.km ? fmtNum(c.km) : '—'}</td>
       <td>${(c.socStart!=null||c.socEnd!=null) ? ((c.socStart!=null?c.socStart:'?')+' → '+(c.socEnd!=null?c.socEnd:'?')+' %') : '—'}</td>
       <td>${c.location||'—'}</td>
@@ -2718,11 +2727,14 @@ function setupEventListeners(){
       if(idx>-1){
         const prev = state.charges[idx];
         // se conserva el precio guardado; solo se recalcula si cambia la fecha
-        const fuelPrice = (prev.fuelPrice && prev.date === data.date) ? prev.fuelPrice : fuelPriceForDate(data.date);
-        state.charges[idx] = { ...prev, ...data, fuelPrice };
+        const fuelPrice = (prev.fuelPrice && prev.date === data.date) ? prev.fuelPrice : fuelPriceToStore(data.date);
+        state.charges[idx] = { ...prev, ...data };
+        if(fuelPrice) state.charges[idx].fuelPrice = fuelPrice; else delete state.charges[idx].fuelPrice;
       }
     } else {
-      state.charges.push({ id:uid(), ...data, fuelPrice: fuelPriceForDate(data.date) });
+      const nc = { id:uid(), ...data }, fp = fuelPriceToStore(data.date);
+      if(fp) nc.fuelPrice = fp;
+      state.charges.push(nc);
     }
     cancelChargeEdit(); saveState();
     renderCharges(); renderDashboard(); renderAlerts(); toast(wasEditing ? 'Carga actualizada' : 'Carga registrada', 'success');
