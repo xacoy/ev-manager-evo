@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="description" content="EV Manager Evo — gestor integral del BYD Atto 3 EVO: cargas, mantenimiento, revisiones, notas y manual.">
 <meta name="theme-color" content="#070b14">
+<script>try{var _t=localStorage.getItem("evManagerEvo:theme");if(_t)document.documentElement.setAttribute("data-theme",_t)}catch(e){}</script>
 <title>EV Manager Evo · BYD Atto 3 EVO</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2322d3ee' stroke-width='2.5'%3E%3Cpolygon points='13 2 3 14 12 14 11 22 21 10 12 10 13 2'/%3E%3C/svg%3E">
 <link rel="manifest" href="manifest.json">
@@ -18,6 +19,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
 :root{
+  color-scheme:dark;
   --bg:#0a0d12; --bg-1:#11151d; --bg-2:#151a24; --bg-card:#161b26;
   --border:#232a38; --border-strong:#323b4c;
   --text:#eef1f6; --text-muted:#9aa4b5; --text-faint:#6b7484;
@@ -42,6 +44,7 @@
   --rail-w:140px; --bottomnav-h:64px;
 }
 :root[data-theme="light"]{
+  color-scheme:light;
   --bg:#f7f8fa; --bg-1:#f1f3f6; --bg-2:#eaedf2; --bg-card:#ffffff;
   --border:rgba(20,30,45,.10); --border-strong:rgba(20,30,45,.18);
   --text:#12161f; --text-muted:#4a5566; --text-faint:#78829a;
@@ -60,6 +63,146 @@
   --shadow-card:0 2px 10px rgba(20,30,45,.06);
   --shadow-1:0 2px 8px rgba(0,0,0,.06);
 }
+/* ---------- temas ---------- */
+:root[data-theme="midnight"]{
+  color-scheme:dark;
+  --bg:#000000; --bg-1:#06070a; --bg-2:#0c0e12; --bg-card:#0e1116;
+  --border:#1a1e26; --border-strong:#2a303b;
+  --text:#f2f4f8; --text-muted:#9aa3b2; --text-faint:#646d7c;
+  --accent:#0ac2dd; --accent-2:#3ecf8e; --accent-3:#c96a8a;
+  --accent-soft:rgba(10,194,221,0.13); --accent-glow:rgba(10,194,221,0.22);
+  --on-accent:#04151a;
+  --success:#3ecf8e; --success-soft:rgba(62,207,142,0.13);
+  --warning:#dba043; --warning-soft:rgba(219,160,67,0.13);
+  --danger:#e2565f; --danger-soft:rgba(226,86,95,0.13);
+  --cyan:#0ac2dd; --cyan-soft:rgba(10,194,221,0.1);
+  --blue:#4b8fd6; --blue-soft:rgba(75,143,214,0.1);
+  --purple:#8b7fd6; --purple-soft:rgba(139,127,214,0.1);
+  --pink:#c96a8a; --pink-soft:rgba(201,106,138,0.1);
+  --green:#3ecf8e; --green-soft:rgba(62,207,142,0.1);
+  --orange:#cf9350; --orange-soft:rgba(207,147,80,0.1);
+  --shadow-card:0 3px 14px rgba(0,0,0,.28); --shadow-1:0 6px 20px rgba(0,0,0,.32);
+}
+:root[data-theme="ocean"]{
+  color-scheme:dark;
+  --bg:#071522; --bg-1:#0a1c2e; --bg-2:#0e2539; --bg-card:#11293f;
+  --border:#1c3a55; --border-strong:#2a4f70;
+  --text:#eaf3fb; --text-muted:#93b0c9; --text-faint:#5f7f9b;
+  --accent:#38bdf8; --accent-2:#2dd4bf; --accent-3:#818cf8;
+  --accent-soft:rgba(56,189,248,0.13); --accent-glow:rgba(56,189,248,0.22);
+  --on-accent:#04141f;
+  --success:#3ecf8e; --success-soft:rgba(62,207,142,0.13);
+  --warning:#dba043; --warning-soft:rgba(219,160,67,0.13);
+  --danger:#e2565f; --danger-soft:rgba(226,86,95,0.13);
+  --cyan:#38bdf8; --cyan-soft:rgba(56,189,248,0.1);
+  --blue:#4b8fd6; --blue-soft:rgba(75,143,214,0.1);
+  --purple:#8b7fd6; --purple-soft:rgba(139,127,214,0.1);
+  --pink:#c96a8a; --pink-soft:rgba(201,106,138,0.1);
+  --green:#3ecf8e; --green-soft:rgba(62,207,142,0.1);
+  --orange:#cf9350; --orange-soft:rgba(207,147,80,0.1);
+  --shadow-card:0 3px 14px rgba(0,0,0,.28); --shadow-1:0 6px 20px rgba(0,0,0,.32);
+}
+:root[data-theme="forest"]{
+  color-scheme:dark;
+  --bg:#0a130e; --bg-1:#0e1a13; --bg-2:#13231a; --bg-card:#162a1e;
+  --border:#223a2b; --border-strong:#315040;
+  --text:#ecf5ee; --text-muted:#9db8a5; --text-faint:#67806f;
+  --accent:#4ade80; --accent-2:#a3e635; --accent-3:#f59e0b;
+  --accent-soft:rgba(74,222,128,0.13); --accent-glow:rgba(74,222,128,0.22);
+  --on-accent:#04140a;
+  --success:#3ecf8e; --success-soft:rgba(62,207,142,0.13);
+  --warning:#dba043; --warning-soft:rgba(219,160,67,0.13);
+  --danger:#e2565f; --danger-soft:rgba(226,86,95,0.13);
+  --cyan:#4ade80; --cyan-soft:rgba(74,222,128,0.1);
+  --blue:#4b8fd6; --blue-soft:rgba(75,143,214,0.1);
+  --purple:#8b7fd6; --purple-soft:rgba(139,127,214,0.1);
+  --pink:#c96a8a; --pink-soft:rgba(201,106,138,0.1);
+  --green:#3ecf8e; --green-soft:rgba(62,207,142,0.1);
+  --orange:#cf9350; --orange-soft:rgba(207,147,80,0.1);
+  --shadow-card:0 3px 14px rgba(0,0,0,.28); --shadow-1:0 6px 20px rgba(0,0,0,.32);
+}
+:root[data-theme="sunset"]{
+  color-scheme:dark;
+  --bg:#140c0f; --bg-1:#1b1013; --bg-2:#24151a; --bg-card:#2a1920;
+  --border:#402630; --border-strong:#5a3744;
+  --text:#fbeff0; --text-muted:#c9a4aa; --text-faint:#8d6b72;
+  --accent:#fb923c; --accent-2:#f472b6; --accent-3:#facc15;
+  --accent-soft:rgba(251,146,60,0.13); --accent-glow:rgba(251,146,60,0.22);
+  --on-accent:#1a0a02;
+  --success:#3ecf8e; --success-soft:rgba(62,207,142,0.13);
+  --warning:#dba043; --warning-soft:rgba(219,160,67,0.13);
+  --danger:#e2565f; --danger-soft:rgba(226,86,95,0.13);
+  --cyan:#fb923c; --cyan-soft:rgba(251,146,60,0.1);
+  --blue:#4b8fd6; --blue-soft:rgba(75,143,214,0.1);
+  --purple:#8b7fd6; --purple-soft:rgba(139,127,214,0.1);
+  --pink:#c96a8a; --pink-soft:rgba(201,106,138,0.1);
+  --green:#3ecf8e; --green-soft:rgba(62,207,142,0.1);
+  --orange:#cf9350; --orange-soft:rgba(207,147,80,0.1);
+  --shadow-card:0 3px 14px rgba(0,0,0,.28); --shadow-1:0 6px 20px rgba(0,0,0,.32);
+}
+:root[data-theme="neon"]{
+  color-scheme:dark;
+  --bg:#0b0716; --bg-1:#110a22; --bg-2:#190f31; --bg-card:#1c1136;
+  --border:#31205a; --border-strong:#46307c;
+  --text:#f5f0ff; --text-muted:#b4a5d6; --text-faint:#7d6ea3;
+  --accent:#e879f9; --accent-2:#22d3ee; --accent-3:#a3e635;
+  --accent-soft:rgba(232,121,249,0.13); --accent-glow:rgba(232,121,249,0.22);
+  --on-accent:#1a0620;
+  --success:#3ecf8e; --success-soft:rgba(62,207,142,0.13);
+  --warning:#dba043; --warning-soft:rgba(219,160,67,0.13);
+  --danger:#e2565f; --danger-soft:rgba(226,86,95,0.13);
+  --cyan:#e879f9; --cyan-soft:rgba(232,121,249,0.1);
+  --blue:#4b8fd6; --blue-soft:rgba(75,143,214,0.1);
+  --purple:#8b7fd6; --purple-soft:rgba(139,127,214,0.1);
+  --pink:#c96a8a; --pink-soft:rgba(201,106,138,0.1);
+  --green:#3ecf8e; --green-soft:rgba(62,207,142,0.1);
+  --orange:#cf9350; --orange-soft:rgba(207,147,80,0.1);
+  --shadow-card:0 3px 14px rgba(0,0,0,.28); --shadow-1:0 6px 20px rgba(0,0,0,.32);
+}
+:root[data-theme="contrast"]{
+  color-scheme:dark;
+  --bg:#000000; --bg-1:#0a0a0a; --bg-2:#141414; --bg-card:#0f0f0f;
+  --border:#6a6a6a; --border-strong:#9a9a9a;
+  --text:#ffffff; --text-muted:#e6e6e6; --text-faint:#c4c4c4;
+  --accent:#ffd60a; --accent-2:#00e5ff; --accent-3:#ff5ec4;
+  --accent-soft:rgba(255,214,10,0.13); --accent-glow:rgba(255,214,10,0.22);
+  --on-accent:#000000;
+  --success:#2ee86b; --success-soft:rgba(46,232,107,0.13);
+  --warning:#ffb400; --warning-soft:rgba(255,180,0,0.13);
+  --danger:#ff5252; --danger-soft:rgba(255,82,82,0.13);
+  --cyan:#ffd60a; --cyan-soft:rgba(255,214,10,0.1);
+  --blue:#5aa9ff; --blue-soft:rgba(90,169,255,0.1);
+  --purple:#b39dff; --purple-soft:rgba(179,157,255,0.1);
+  --pink:#ff7ac8; --pink-soft:rgba(255,122,200,0.1);
+  --green:#2ee86b; --green-soft:rgba(46,232,107,0.1);
+  --orange:#ffa24a; --orange-soft:rgba(255,162,74,0.1);
+  --shadow-card:0 3px 14px rgba(0,0,0,.28); --shadow-1:0 6px 20px rgba(0,0,0,.32);
+}
+:root[data-theme="mint"]{
+  color-scheme:light;
+  --bg:#eef7f2; --bg-1:#e4f1ea; --bg-2:#d9eadf; --bg-card:#ffffff;
+  --border:rgba(10,60,40,.12); --border-strong:rgba(10,60,40,.22);
+  --text:#10201a; --text-muted:#42584d; --text-faint:#728579;
+  --accent:#0a8f66; --accent-2:#0f766e; --accent-3:#b45309;
+  --accent-soft:rgba(10,143,102,0.12); --accent-glow:rgba(10,143,102,0.2);
+  --on-accent:#ffffff;
+  --success:#12875a; --success-soft:rgba(18,135,90,0.13);
+  --warning:#a8681a; --warning-soft:rgba(168,104,26,0.13);
+  --danger:#b23a3a; --danger-soft:rgba(178,58,58,0.13);
+  --cyan:#0a8f66; --cyan-soft:rgba(10,143,102,0.1);
+  --blue:#3f6fb0; --blue-soft:rgba(63,111,176,0.1);
+  --purple:#6a5aad; --purple-soft:rgba(106,90,173,0.1);
+  --pink:#a5476a; --pink-soft:rgba(165,71,106,0.1);
+  --green:#12875a; --green-soft:rgba(18,135,90,0.1);
+  --orange:#a8681a; --orange-soft:rgba(168,104,26,0.1);
+  --shadow-card:0 2px 10px rgba(20,30,45,.06); --shadow-1:0 2px 8px rgba(0,0,0,.06);
+}
+:root[data-theme="contrast"] body,:root[data-theme="midnight"] body{background-image:none}
+:root[data-theme="mint"] body{background-image:radial-gradient(120% 100% at 50% -10%, rgba(0,0,0,.03), transparent 55%)}
+:root[data-theme="neon"] body{background-image:radial-gradient(90% 70% at 85% -10%, rgba(232,121,249,.16), transparent 60%),radial-gradient(80% 60% at 0% 100%, rgba(34,211,238,.10), transparent 60%)}
+:root[data-theme="sunset"] body{background-image:radial-gradient(100% 80% at 50% -10%, rgba(251,146,60,.14), transparent 60%)}
+:root[data-theme="ocean"] body{background-image:radial-gradient(110% 80% at 50% -10%, rgba(56,189,248,.12), transparent 60%)}
+:root[data-theme="forest"] body{background-image:radial-gradient(110% 80% at 50% -10%, rgba(74,222,128,.10), transparent 60%)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 svg{width:1em;height:1em;display:inline-block}
 html,body{height:100%}
@@ -276,10 +419,10 @@ button{cursor:pointer}
 .panel-grid{display:grid;grid-template-columns:280px 1fr;gap:16px;align-items:stretch}
 .panel-grid .status-tiles-grid{grid-template-columns:repeat(3,1fr)}
 .car-wrap{position:relative;width:100%;max-width:300px;aspect-ratio:900/714}
-.car-img{position:absolute;inset:0;background:linear-gradient(100deg,#38bdf8 0%,#22d3ee 30%,#6ee7b7 50%,#22d3ee 70%,#38bdf8 100%);background-size:260% 100%;animation:carshine 7s ease-in-out infinite alternate;-webkit-mask:url(images/atto3-evo-front.png) center/contain no-repeat;mask:url(images/atto3-evo-front.png) center/contain no-repeat;filter:drop-shadow(0 0 5px rgba(34,211,238,.4))}
-.car-bolt{position:absolute;left:50%;top:50.9%;width:8%;transform:translate(-50%,-50%);fill:#22d3ee;filter:drop-shadow(0 0 4px rgba(34,211,238,.7))}
-:root[data-theme="light"] .car-img{background-image:linear-gradient(100deg,#0369a1 0%,#0e7490 30%,#047857 50%,#0e7490 70%,#0369a1 100%);filter:none}
-:root[data-theme="light"] .car-bolt{fill:#0e7490;filter:none}
+.car-img{position:absolute;inset:0;background:linear-gradient(100deg,var(--accent) 0%,var(--accent-2) 50%,var(--accent) 100%);background-size:260% 100%;animation:carshine 7s ease-in-out infinite alternate;-webkit-mask:url(images/atto3-evo-front.png) center/contain no-repeat;mask:url(images/atto3-evo-front.png) center/contain no-repeat;filter:drop-shadow(0 0 5px var(--accent-glow))}
+.car-bolt{position:absolute;left:50%;top:50.9%;width:8%;transform:translate(-50%,-50%);fill:var(--accent);filter:drop-shadow(0 0 4px var(--accent-glow))}
+:root[data-theme="light"] .car-img,:root[data-theme="mint"] .car-img{filter:none}
+:root[data-theme="light"] .car-bolt,:root[data-theme="mint"] .car-bolt{filter:none}
 @keyframes carshine{from{background-position:0% 0}to{background-position:100% 0}}
 @media(prefers-reduced-motion:reduce){.car-img{animation:none}}
 .car-name{font-family:var(--font-display);font-size:15px;font-weight:700;color:var(--text);letter-spacing:-.2px}
@@ -331,6 +474,17 @@ button{cursor:pointer}
 .att-item button,.att-item a{background:none;border:1px solid var(--border);border-radius:8px;color:var(--accent);padding:5px 10px;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none}
 .att-prev{width:100%;max-height:60vh;object-fit:contain;border-radius:8px;margin-top:8px;background:var(--bg-2)}
 .icon-action small{font-size:11px;font-weight:800;margin-left:2px}
+
+/* Selector de tema */
+.theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:4px 0 14px}
+.theme-card{display:flex;flex-direction:column;gap:8px;padding:8px;border:2px solid var(--border);border-radius:12px;background:var(--bg-2);cursor:pointer;text-align:center;min-width:0}
+.theme-card.sel{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.theme-prev{display:flex;align-items:center;justify-content:center;height:70px;border-radius:8px;padding:10px}
+.tp-card{display:grid;grid-template-columns:1fr 1fr;gap:4px;width:100%;padding:8px;border-radius:6px;border:1px solid}
+.tp-card i{display:block;height:5px;border-radius:3px;grid-column:1/-1}
+.tp-card b{display:block;height:9px;border-radius:4px}
+.theme-name{font-size:12.5px;font-weight:700;color:var(--text)}
+@media(max-width:420px){.theme-grid{grid-template-columns:repeat(2,1fr)}}
 
 .quicklinks-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
 .ql-tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:28px 20px;border-radius:var(--radius);background:var(--bg-card);border:1px solid var(--border);color:var(--text);text-decoration:none;transition:border-color .2s var(--ease), transform .2s var(--ease);cursor:pointer;position:relative;overflow:hidden;min-height:140px}
@@ -627,7 +781,7 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
   html.car #page-dashboard > .card{grid-column:2;grid-row:2;min-height:0;max-height:100%;align-self:end;overflow-y:auto}
   html.car .car-badge{font-size:12px}
   /* Legibilidad en el coche: textos más grandes, más contraste y botones más cómodos */
-  html.car:not([data-theme="light"]){--text-muted:#c0cada;--text-faint:#98a4b8}
+  html.car:not([data-theme="light"]):not([data-theme="mint"]):not([data-theme="contrast"]){--text-muted:#c0cada;--text-faint:#98a4b8}
   html.car .nav-item .ni-label{font-size:14px}
   html.car .nav-item .ni-indicator{width:68px;height:52px}
   html.car .nav-item .ni-indicator svg{width:30px;height:30px}
@@ -712,6 +866,7 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
             <hr style="border:none;border-top:1px solid var(--border);margin:4px 0">
             <button class="dropdown-item" id="addLinkBtn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Añadir enlace</button>
             <a href="https://github.com/xacoy/ev-manager-evo/raw/master/public/manuals/manual-es.pdf" target="_blank" class="dropdown-item" style="text-decoration:none;color:inherit"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>Manual PDF</a>
+            <button class="dropdown-item" id="themeMenuBtn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.9 0 1.7-.8 1.7-1.7 0-.4-.2-.8-.4-1.1-.3-.3-.4-.7-.4-1.1 0-.9.8-1.7 1.7-1.7H16c3.3 0 6-2.7 6-6 0-4.9-4.5-8.4-10-8.4z"/></svg><span>Tema: Oscuro</span></button>
             <button class="dropdown-item" id="carModeBtn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17h18v-4l-2-6H5l-2 6z"/><circle cx="7.5" cy="17" r="1.5"/><circle cx="16.5" cy="17" r="1.5"/></svg><span>Modo coche: Auto</span></button>
             <button class="dropdown-item" id="exportBtn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Exportar datos</button>
             <button class="dropdown-item" id="importBtn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>Importar datos</button>
@@ -1085,6 +1240,14 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
 </div>
 
 <!-- Import confirm modal -->
+<div class="overlay" id="themeOverlay">
+  <div class="modal" style="max-width:520px">
+    <h3>Elegir tema</h3>
+    <p>El tema se guarda en este dispositivo.</p>
+    <div class="theme-grid" id="themeGrid"></div>
+    <div class="modal-actions"><button type="button" class="btn btn-primary" id="themeClose">Listo</button></div>
+  </div>
+</div>
 <div class="overlay" id="attachOverlay">
   <div class="modal">
     <h3>Adjuntos</h3>
@@ -1226,7 +1389,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-09.14';
+const APP_VERSION = '2026-10-14.1';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -1386,18 +1549,53 @@ function navigate(page, opts){
 }
 
 /* ---------------- theme ---------------- */
+const THEMES = [
+  { id:'dark',     name:'Oscuro',        light:false, sw:['#0a0d12','#161b26','#0ac2dd','#3ecf8e','#eef1f6'] },
+  { id:'light',    name:'Claro',         light:true,  sw:['#f7f8fa','#ffffff','#0092ab','#12875a','#12161f'] },
+  { id:'midnight', name:'Medianoche',    light:false, sw:['#000000','#0e1116','#0ac2dd','#3ecf8e','#f2f4f8'] },
+  { id:'ocean',    name:'Océano',        light:false, sw:['#071522','#11293f','#38bdf8','#2dd4bf','#eaf3fb'] },
+  { id:'forest',   name:'Bosque',        light:false, sw:['#0a130e','#162a1e','#4ade80','#a3e635','#ecf5ee'] },
+  { id:'sunset',   name:'Atardecer',     light:false, sw:['#140c0f','#2a1920','#fb923c','#f472b6','#fbeff0'] },
+  { id:'neon',     name:'Neón',          light:false, sw:['#0b0716','#1c1136','#e879f9','#22d3ee','#f5f0ff'] },
+  { id:'mint',     name:'Menta',         light:true,  sw:['#eef7f2','#ffffff','#0a8f66','#0f766e','#10201a'] },
+  { id:'contrast', name:'Alto contraste',light:false, sw:['#000000','#0f0f0f','#ffd60a','#00e5ff','#ffffff'] }
+];
+const themeInfo = id => THEMES.find(t=>t.id===id) || THEMES[0];
+const SUN_ICON = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
+const MOON_ICON = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
 function applyTheme(theme){
-  document.documentElement.setAttribute('data-theme', theme);
-  document.getElementById('themeToggle').title = theme==='dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro';
-  document.getElementById('themeIcon').innerHTML = theme==='dark'
-    ? '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>'
-    : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
-  localStorage.setItem(THEME_KEY, theme);
+  const t = themeInfo(theme);
+  document.documentElement.setAttribute('data-theme', t.id);
+  const tog = document.getElementById('themeToggle');
+  if(tog){
+    // el botón rápido alterna entre el último tema oscuro y el claro
+    tog.title = t.light ? 'Volver al tema oscuro' : 'Cambiar al tema claro';
+    document.getElementById('themeIcon').innerHTML = t.light ? MOON_ICON : SUN_ICON;
+  }
+  const mb = document.getElementById('themeMenuBtn');
+  if(mb) mb.querySelector('span').textContent = 'Tema: ' + t.name;
+  try{
+    localStorage.setItem(THEME_KEY, t.id);
+    if(!t.light) localStorage.setItem(THEME_KEY + ':lastDark', t.id);
+  }catch(e){}
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if(meta) meta.setAttribute('content', t.sw[0]);
+  document.querySelectorAll('#themeGrid .theme-card').forEach(c=>c.classList.toggle('sel', c.dataset.theme === t.id));
   refreshCharts();
 }
 function toggleTheme(){
-  const cur = document.documentElement.getAttribute('data-theme') || 'dark';
-  applyTheme(cur==='dark' ? 'light' : 'dark');
+  const cur = themeInfo(document.documentElement.getAttribute('data-theme'));
+  let last = 'dark'; try{ last = localStorage.getItem(THEME_KEY + ':lastDark') || 'dark'; }catch(e){}
+  applyTheme(cur.light ? last : 'light');
+}
+function buildThemePicker(){
+  const grid = document.getElementById('themeGrid'); if(!grid || grid.children.length) return;
+  grid.innerHTML = THEMES.map(t=>
+    '<button type="button" class="theme-card" data-theme="' + t.id + '" aria-label="' + t.name + '">' +
+      '<span class="theme-prev" style="background:' + t.sw[0] + '"><span class="tp-card" style="background:' + t.sw[1] + ';border-color:' + t.sw[4] + '33"><i style="background:' + t.sw[4] + '"></i><i style="background:' + t.sw[4] + ';width:55%;opacity:.5"></i><b style="background:' + t.sw[2] + '"></b><b style="background:' + t.sw[3] + '"></b></span></span>' +
+      '<span class="theme-name">' + t.name + '</span></button>').join('');
+  grid.addEventListener('click', e=>{ const c = e.target.closest('.theme-card'); if(c) applyTheme(c.dataset.theme); });
+  grid.querySelectorAll('.theme-card').forEach(c=>c.classList.toggle('sel', c.dataset.theme === document.documentElement.getAttribute('data-theme')));
 }
 
 /* ---------------- revisions logic ---------------- */
@@ -2380,6 +2578,8 @@ function setupEventListeners(){
     tryAdd('homeTopBtn', ()=>{ navigate('dashboard'); const dd = document.getElementById('moreMenuDropdown'); if(dd) dd.classList.remove('open'); });
     tryAdd('setupTopBtn', ()=>{ navigate('setup'); const dd = document.getElementById('moreMenuDropdown'); if(dd) dd.classList.remove('open'); });
     tryAdd('themeToggle', toggleTheme);
+    tryAdd('themeMenuBtn', ()=>{ buildThemePicker(); document.getElementById('themeOverlay').classList.add('open'); const dd = document.getElementById('moreMenuDropdown'); if(dd) dd.classList.remove('open'); });
+    tryAdd('themeClose', ()=>document.getElementById('themeOverlay').classList.remove('open'));
 
     tryAdd('maintSection', e=>{
       e.preventDefault();
@@ -2906,6 +3106,7 @@ function init(){
   setupCarMode();
   loadFuelPrice();
   applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
+  buildThemePicker();
   applyStateToForms();
   updateNotifStatus();
   document.getElementById('c_date').valueAsDate = new Date();
