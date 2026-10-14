@@ -967,6 +967,7 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
                 <div class="field"><label>Consumo medio (kWh/100km)</label><input id="f_consumption" type="number" step="0.1" placeholder="15"></div>
                 <div class="field"><label>Tarifa eléctrica (€/kWh)</label><input id="f_rate" type="number" step="0.01" placeholder="0.15"></div>
               </div>
+              <div class="field"><label>Consumo del coche (AEC acumulado, kWh/100km) <span class="opt-hint">(opcional)</span></label><input id="f_aec" type="number" step="0.1" min="0" placeholder="Ej. 16.6"><div class="muted" style="font-size:11.5px;color:var(--text-faint);margin-top:4px">Es el dato "AEC acumulativo" de la pantalla del coche. Mide la energía que sale de la batería; se convierte a kWh de la red dividiendo entre 0,9.</div></div>
               <div class="field-row">
                 <div class="field"><label>León FR 125 CV (l/100km)</label><input id="f_refcons" type="number" step="0.1" placeholder="6.5"></div>
                 <div class="field"><label>Gasolina de respaldo (€/l)</label><input id="f_fuel" type="number" step="0.01" placeholder="1.35"></div>
@@ -1389,7 +1390,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-14.2';
+const APP_VERSION = '2026-10-14.3';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -1442,7 +1443,7 @@ const MANUAL_CONTENT = {
 
 /* ---------------- state ---------------- */
 let state = {
-  config: { version: 'design', vin: '', currentKm: 0, purchaseDate: '', avgConsumption: 17, electricRate: 0.15, refConsumption: 6.5, fuelPrice: 1.35 },
+  config: { version: 'design', vin: '', currentKm: 0, purchaseDate: '', avgConsumption: 17, electricRate: 0.15, refConsumption: 6.5, fuelPrice: 1.35, carAec: null },
   charges: [],
   maintenance: [],
   notes: [],
@@ -1732,12 +1733,14 @@ function estimateBatteryCapacity(){
 // Origen del consumo que se usa: por % de batería, por kWh y km de las cargas, o el configurado.
 function consumptionSource(){
   if(getSocConsumption()) return 'soc';
+  if(Number(state.config.carAec) > 0) return 'aec';
   if(consumptionIsReliable(getChargeWindow())) return 'window';
   return 'config';
 }
 function computeAvgConsumption(c){
   const soc = getSocConsumption();
   if(soc) return soc.wall;
+  if(Number(c.carAec) > 0) return Number(c.carAec) / CHARGE_EFF;   // consumo medido por el propio coche (batería) pasado a kWh de la red
   const w = getChargeWindow();
   return consumptionIsReliable(w) ? w.kwh/w.km*100 : (Number(c.avgConsumption)||0);
 }
@@ -1805,7 +1808,7 @@ function renderDashboard(){
   const chargeCost = state.charges.reduce((s,x)=>s+chargeCostOf(x),0);
   const w = getChargeWindow();
   document.getElementById('sideConsumption').textContent = cons.toFixed(1);
-  document.getElementById('sideConsSub').textContent = 'kWh/100km (' + ({soc:'por batería',window:'medido',config:'configurado'}[consumptionSource()]) + ')';
+  document.getElementById('sideConsSub').textContent = 'kWh/100km (' + ({soc:'por batería',aec:'AEC del coche',window:'medido',config:'configurado'}[consumptionSource()]) + ')';
   document.getElementById('sideTotalKwh').textContent = totalKwh.toFixed(2) + ' kWh';
   document.getElementById('sideSpent').textContent = fmtEUR(chargeCost);
   const eurKmReal = consumptionIsReliable(w);
@@ -1884,7 +1887,7 @@ function renderSavings(){
   const has = r.kwhTotal > 0;
   const priceText = 'Precio medio de hoy: ' + r.price.toFixed(3) + '€/l' + (r.auto ? '' : ' (manual)');
   const title = 'SEAT León FR 2018 125 CV (' + r.refL + ' l/100 km) · gasolina 95 a ' + r.price.toFixed(3) + ' €/l' + (r.auto ? ' (media Canarias' + (fuelAuto.updated ? ', ' + fuelAuto.updated.slice(0,10) : '') + ')' : ' (precio manual)')
-    + ' · cada carga usa el precio del día en que se hizo · ' + Math.round(r.kmEq) + ' km equivalentes a ' + r.kwhTotal.toFixed(1) + ' kWh con ' + r.cons.toFixed(1) + ' kWh/100 km (' + ({soc:'calculado con el % de batería',window:'medido con kWh y km',config:'configurado'}[r.source]) + ')';
+    + ' · cada carga usa el precio del día en que se hizo · ' + Math.round(r.kmEq) + ' km equivalentes a ' + r.kwhTotal.toFixed(1) + ' kWh con ' + r.cons.toFixed(1) + ' kWh/100 km (' + ({soc:'calculado con el % de batería',aec:'AEC del coche ÷ 0,9',window:'medido con kWh y km',config:'configurado'}[r.source]) + ')';
   vals.forEach(el=>{ el.textContent = has ? fmtEUR(r.saved) : '—'; el.style.color = r.saved < 0 ? 'var(--danger)' : 'var(--accent)'; });
   document.querySelectorAll('[data-save="sub"]').forEach(el=>{ el.textContent = has ? 'Gasolina: ' + fmtEUR(r.gas) + ' - Electricidad: ' + fmtEUR(r.elec) : 'Gasolina: — - Electricidad: —'; el.title = title; });
   document.querySelectorAll('[data-save="price"]').forEach(el=>{ el.textContent = priceText; el.title = title; });
@@ -2449,7 +2452,7 @@ function renderStatsExtra(){
   if(!document.getElementById('chConsumo')) return;
   const cons = computeAvgConsumption(state.config), src = consumptionSource();
   document.getElementById('st_cons').textContent = cons > 0 ? cons.toFixed(1) : '—';
-  document.getElementById('st_consSub').textContent = 'kWh / 100 km · ' + ({soc:'por % de batería',window:'por kWh y km',config:'configurado'}[src]);
+  document.getElementById('st_consSub').textContent = 'kWh / 100 km · ' + ({soc:'por % de batería',aec:'AEC del coche',window:'por kWh y km',config:'configurado'}[src]);
   const cap = estimateBatteryCapacity();
   document.getElementById('st_cap').textContent = cap ? cap.kwh.toFixed(1) + ' kWh' : '—';
   document.getElementById('st_capSub').textContent = cap ? '≈ ' + Math.round(cap.pct) + ' % de ' + VEHICLE_BATTERY_KWH + ' kWh · ' + cap.n + (cap.n === 1 ? ' carga' : ' cargas') : 'Anota el % de batería al empezar y terminar (tramos de 20 % o más)';
@@ -2553,6 +2556,7 @@ function applyStateToForms(){
   document.getElementById('f_km').value = getCurrentKm();
   document.getElementById('f_purchase').value = c.purchaseDate;
   document.getElementById('f_consumption').value = c.avgConsumption;
+  document.getElementById('f_aec').value = c.carAec ?? '';
   document.getElementById('f_rate').value = c.electricRate;
   document.getElementById('f_refcons').value = c.refConsumption ?? 6.5;
   document.getElementById('f_fuel').value = c.fuelPrice ?? 1.35;
@@ -2635,6 +2639,7 @@ function setupEventListeners(){
       currentKm: Number(document.getElementById('f_km').value)||0,
       purchaseDate: document.getElementById('f_purchase').value,
       avgConsumption: Number(document.getElementById('f_consumption').value)||17,
+      carAec: Number(document.getElementById('f_aec').value) > 0 ? Number(document.getElementById('f_aec').value) : null,
       electricRate: Number(document.getElementById('f_rate').value)||0.15,
       refConsumption: Number(document.getElementById('f_refcons').value)||6.5,
       fuelPrice: Number(document.getElementById('f_fuel').value)||1.35
