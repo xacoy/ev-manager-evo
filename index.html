@@ -1389,7 +1389,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-14.1';
+const APP_VERSION = '2026-10-14.2';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -1901,7 +1901,7 @@ function updateLastChargeInfo(){
   const last = state.charges.sort((a,b)=> new Date(b.date)-new Date(a.date))[0];
   if(!last){ infoEl.textContent = '—'; dateEl.textContent = '—'; return; }
   infoEl.textContent = (last.kwh ? last.kwh.toFixed(2) + ' kWh' : '—') + (last.location ? ' · ' + last.location : '');
-  dateEl.textContent = fmtDate(last.date) + (last.cost ? ' · ' + fmtEUR(last.cost) : '');
+  dateEl.textContent = fmtDate(last.date) + (last.cost != null && last.cost !== '' ? ' · ' + fmtEUR(last.cost) : '');
 }
 function buildRecentActivity(){
   const container = document.getElementById('dashRecentActivity');
@@ -1918,6 +1918,7 @@ function buildRecentActivity(){
     const label = ev.type==='charge'
       ? (ev.data.kwh ? Number(ev.data.kwh).toFixed(2)+' kWh cargados' : 'Carga registrada') + (ev.data.location ? ' · '+ev.data.location : '')
       : (MAINT_LABELS[ev.data.type]||ev.data.type);
+    const hasCost = ev.data.cost != null && ev.data.cost !== '';
     const cost = Number(ev.data.cost||0);
     return `<div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)">
       <div class="activity-icon" style="width:34px;height:34px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--accent-soft);color:var(--accent)">${icon}</div>
@@ -1925,7 +1926,7 @@ function buildRecentActivity(){
         <div style="font-size:13.5px;font-weight:600;color:var(--text)">${label}</div>
         <div style="font-size:11.5px;color:var(--text-faint);margin-top:2px">${ev.type==='charge' ? chargeDateTimeHtml(ev.data) : fmtDate(ev.date)}</div>
       </div>
-      <div style="font-size:13.5px;font-weight:700;color:var(--text);flex-shrink:0">${cost ? fmtEUR(cost) : '—'}</div>
+      <div style="font-size:13.5px;font-weight:700;color:var(--text);flex-shrink:0">${hasCost ? fmtEUR(cost) : '—'}</div>
     </div>`;
   }).join('');
   const rows = container.children;
@@ -1967,7 +1968,7 @@ function renderCharges(){
   const sorted = [...state.charges].sort(chargeCmpDesc);
   tbody.innerHTML = sorted.map(c=>`
     <tr>
-      <td>${chargeDateTimeHtml(c)}</td><td>${c.kwh!=null ? Number(c.kwh).toFixed(2) : '—'}</td><td>${c.cost!=null ? fmtEUR(c.cost) : '—'}</td>
+      <td>${chargeDateTimeHtml(c)}</td><td>${c.kwh!=null ? Number(c.kwh).toFixed(2) : '—'}</td><td>${(c.cost!=null && c.cost!=='') ? fmtEUR(c.cost) : '—'}</td>
       <td>${(c.kwh && c.cost!=null) ? (c.cost/c.kwh).toFixed(3)+' €' : '—'}</td><td>${c.km ? fmtNum(c.km) : '—'}</td>
       <td>${(c.socStart!=null||c.socEnd!=null) ? ((c.socStart!=null?c.socStart:'?')+' → '+(c.socEnd!=null?c.socEnd:'?')+' %') : '—'}</td>
       <td>${c.location||'—'}</td>
