@@ -472,17 +472,24 @@ button{cursor:pointer}
 .att-item .sz{color:var(--text-faint);font-size:12px;white-space:nowrap}
 .att-item.removed .nm{text-decoration:line-through;opacity:.5}
 .att-item button,.att-item a{background:none;border:1px solid var(--border);border-radius:8px;color:var(--accent);padding:5px 10px;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none}
-.doc-card{display:flex;flex-direction:column;gap:8px}
-.doc-card .doc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
-.doc-card h3{font-size:15px;margin:0;overflow-wrap:anywhere}
-.doc-cat{font-size:11px;font-weight:700;color:var(--accent);background:var(--accent-soft,var(--bg-2));border-radius:99px;padding:3px 9px;white-space:nowrap}
-.doc-meta{font-size:12px;color:var(--text-faint)}
-.doc-note{font-size:13px;color:var(--text-dim);white-space:pre-wrap;overflow-wrap:anywhere}
-.doc-exp{font-size:12px;font-weight:700}
-.doc-exp.bad{color:var(--danger)} .doc-exp.soon{color:var(--warning)}
-.doc-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto}
-.doc-actions button{background:none;border:1px solid var(--border);border-radius:8px;color:var(--accent);padding:6px 11px;font-size:12px;font-weight:700;cursor:pointer}
-.doc-actions button.del{color:var(--danger)}
+.doc-tabs{display:flex;gap:6px;margin-bottom:14px;background:var(--bg-2);border:1px solid var(--border);border-radius:12px;padding:4px}
+.doc-tabs button{flex:1;background:none;border:0;border-radius:9px;padding:9px 10px;font-size:13px;font-weight:700;color:var(--text-dim);cursor:pointer}
+.doc-tabs button.active{background:var(--accent-soft);color:var(--accent)}
+.doc-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.doc-sum{font-size:13px;color:var(--text-dim)}
+.doc-sum b{color:var(--text)}
+.doc-row{display:flex;gap:12px;align-items:flex-start;padding:12px 2px;border-top:1px solid var(--border)}
+.doc-row:first-child{border-top:0}
+.dr-main{flex:1;min-width:0}
+.dr-title{font-size:14.5px;font-weight:700;color:var(--text);overflow-wrap:anywhere}
+.dr-sub{font-size:12px;color:var(--text-faint);margin-top:2px;overflow-wrap:anywhere}
+.dr-note{font-size:12.5px;color:var(--text-dim);margin-top:4px;white-space:pre-wrap;overflow-wrap:anywhere}
+.dr-exp{font-size:12px;font-weight:700;margin-top:3px}
+.dr-exp.bad{color:var(--danger)} .dr-exp.soon{color:var(--warning)}
+.dr-side{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0}
+.dr-price{font-size:14px;font-weight:800;color:var(--text);white-space:nowrap}
+.dr-act{display:flex;gap:4px;align-items:center}
+.dr-act .icon-action{white-space:nowrap}
 .att-prev{width:100%;max-height:60vh;object-fit:contain;border-radius:8px;margin-top:8px;background:var(--bg-2)}
 .icon-action small{font-size:11px;font-weight:800;margin-left:2px}
 
@@ -827,7 +834,7 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
     <div class="rail-brand"><div class="brand-mark"><svg viewBox="0 0 24 24" stroke-width="0"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div></div>
     <button class="nav-item" data-page="dashboard"><span class="ni-indicator"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></span><span class="ni-label">Inicio</span></button>
     <button class="nav-item" data-page="charges"><span class="ni-indicator"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span><span class="ni-label">Cargas</span></button>
-    <button class="nav-item" data-page="maintenance"><span class="ni-indicator"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span><span class="ni-label">Taller</span></button>
+    <button class="nav-item" data-page="docs"><span class="ni-indicator"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg></span><span class="ni-label">Documentos</span></button>
     <button class="nav-item" data-page="manual"><span class="ni-indicator"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="ni-label">Manual</span></button>
     <button class="nav-item" data-page="notes"><span class="ni-indicator"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg></span><span class="ni-label">Notas</span></button>
     <button class="nav-item" data-page="stats"><span class="ni-indicator"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18M18 17V9M13 17V5M8 17v-4"/></svg></span><span class="ni-label">Datos</span></button>
@@ -1078,79 +1085,6 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
       </section>
 
       <!-- TALLER -->
-      <section class="page" id="page-maintenance">
-        <!-- RESUMEN SIEMPRE VISIBLE - EXPANDIDO -->
-        <div class="card" style="margin-bottom:24px">
-          <div class="card-head"><h2 style="font-size:20px">Resumen del taller</h2></div>
-          <div class="grid grid-3" style="gap:16px">
-            <div class="stat-card tone-cyan" style="padding:16px">
-              <div class="label" style="font-size:13px">Servicios registrados</div>
-              <div class="value" id="mntTotal" style="font-size:32px;font-weight:800;color:var(--text)">0</div>
-            </div>
-            <div class="stat-card tone-green" style="padding:16px">
-              <div class="label" style="font-size:13px">Gasto total</div>
-              <div class="value" id="mntCost" style="font-size:32px;font-weight:800;color:var(--text)">0 €</div>
-            </div>
-            <div class="stat-card tone-violet" style="padding:16px">
-              <div class="label" style="font-size:13px">Último servicio</div>
-              <div class="value" id="mntLast" style="font-size:18px;font-weight:600;color:var(--text)">—</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- SECCIONES EXPANDIBLES -->
-        <div class="grid grid-1" style="gap:16px;margin-bottom:20px">
-          <!-- MANTENIMIENTO SECTION -->
-          <div class="expandable-section">
-            <button class="expandable-header" id="maintSection">
-              <span style="font-size:18px">🔧</span>
-              <h2 style="margin:0;flex:1;text-align:left">Mantenimiento</h2>
-              <span class="expand-toggle">▼</span>
-            </button>
-            <div class="expandable-content" id="maintContent" style="display:none">
-              <div class="card" style="margin-top:12px">
-                <div class="card-head"><h2>Registrar</h2></div>
-                <form id="maintForm">
-                  <div class="field"><label>Tipo</label><select id="m_type" required><option value="">Selecciona…</option><option value="revision">Revisión general</option><option value="oil">Aceite reductora</option><option value="brake">Frenos</option><option value="tire">Neumáticos</option><option value="battery">Batería</option><option value="filter">Filtros</option><option value="alignment">Alineación</option><option value="repair">Reparación</option><option value="other">Otro</option></select></div>
-                  <div class="field-row"><div class="field"><label>Fecha</label><input id="m_date" type="date" required></div><div class="field"><label>Coste</label><input id="m_cost" type="number" step="0.01" min="0" required></div></div>
-                  <div class="field-row"><div class="field"><label>Km</label><input id="m_km" type="number" min="0" placeholder="opcional"></div><div class="field"><label>Lugar</label><input id="m_location" type="text" placeholder="Ej: Taller BYD, Mecánico local..."></div></div>
-                  <div class="field"><label>Notas</label><textarea id="m_notes" placeholder="Detalles..."></textarea></div>
-                  <div class="field"><label>Adjuntos <span class="opt-hint">(facturas, fotos o PDF · se guardan en tu Drive)</span></label>
-                    <input id="m_files" type="file" multiple accept="image/*,application/pdf">
-                    <div class="att-list" id="m_existing"></div>
-                  </div>
-                  <div style="display:flex;gap:8px">
-                    <button type="submit" class="btn btn-primary btn-block" id="maintSubmitBtn">Registrar</button>
-                    <button type="button" class="btn btn-ghost" id="maintCancelEdit" style="display:none">Cancelar</button>
-                  </div>
-                </form>
-              </div>
-              <div class="card" style="margin-top:12px">
-                <div class="card-head"><h2>Historial</h2></div>
-                <div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Tipo</th><th>Lugar</th><th>Coste</th><th>Km</th><th></th></tr></thead><tbody id="maintTable"></tbody></table></div>
-                <div id="maintEmpty" class="empty-state" style="display:none"><p>Sin servicios</p></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- REVISIONES SECTION -->
-          <div class="expandable-section">
-            <button class="expandable-header" id="revisSection">
-              <span style="font-size:18px">📅</span>
-              <h2 style="margin:0;flex:1;text-align:left">Revisiones</h2>
-              <span class="expand-toggle">▼</span>
-            </button>
-            <div class="expandable-content" id="revisContent" style="display:none">
-              <div class="card" style="margin-top:12px">
-                <div class="card-head"><h2>Calendario BYD</h2><span class="hint" id="revLangHint">cada 20k km / 24 meses</span></div>
-                <p style="font-size:12px;color:var(--text-faint)">Orientativo. Verifica los intervalos exactos en el manual oficial de tu mercado.</p>
-                <div id="revisionsList"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <!-- MANUAL -->
       <section class="page" id="page-manual">
         <div class="card" style="margin-bottom:16px">
@@ -1193,30 +1127,27 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
 
       <!-- DOCUMENTS -->
       <section class="page" id="page-docs">
-        <div class="grid grid-2">
-          <div class="card">
-            <div class="card-head"><h2 id="docFormTitle">Subir documento</h2></div>
-            <form id="docForm">
-              <div class="field" id="d_file_wrap"><label>Archivo (PDF o imagen, máx. 10 MB)</label><input id="d_file" type="file" accept="application/pdf,image/*"></div>
-              <div class="field"><label>Nombre</label><input id="d_name" type="text" required placeholder="Ej.: Seguro 2026"></div>
-              <div class="field"><label>Categoría</label><select id="d_cat"></select></div>
-              <div class="field"><label>Nota (qué documento es)</label><textarea id="d_note" placeholder="Ej.: Póliza a todo riesgo, vence en octubre"></textarea></div>
-              <div class="field"><label>Caducidad (opcional)</label><input id="d_exp" type="date"></div>
-              <div style="display:flex;gap:8px">
-                <button type="submit" class="btn btn-primary btn-block" id="docSubmitBtn">Subir documento</button>
-                <button type="button" class="btn btn-ghost" id="docCancelEdit" style="display:none">Cancelar</button>
-              </div>
-              <p style="font-size:12px;color:var(--text-faint);margin-top:10px">Se guardan en la carpeta privada de tu Google Drive. Hace falta tener Sync conectado.</p>
-            </form>
-          </div>
-          <div class="card">
-            <div class="card-head"><h2>Filtrar</h2></div>
-            <div class="tags-bar" id="docCatBar"></div>
-            <input id="docSearch" type="text" placeholder="Buscar por nombre o nota..." style="width:100%;background:var(--bg-2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:13px">
+        <div class="doc-tabs" id="docTabs"><button type="button" class="active" data-tab="docs">Documentos</button><button type="button" data-tab="revs">Revisiones</button></div>
+        <div id="docsTab">
+          <div class="card" style="padding:16px">
+            <div class="doc-head">
+              <div class="doc-sum" id="docSummary"></div>
+              <button type="button" class="btn btn-primary btn-sm" id="docAddBtn">+ Añadir</button>
+            </div>
+            <div class="tags-bar" id="docCatBar" style="margin-bottom:8px"></div>
+            <div class="tags-bar" id="docSubBar" style="margin-bottom:10px"></div>
+            <input id="docSearch" type="text" placeholder="Buscar por nombre o nota..." style="width:100%;background:var(--bg-2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:13px;margin-bottom:6px">
+            <div class="doc-list" id="docsList"></div>
+            <div id="docsEmpty" class="empty-state" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg><p>No hay documentos</p></div>
           </div>
         </div>
-        <div class="grid grid-3" id="docsList" style="margin-top:16px"></div>
-        <div id="docsEmpty" class="empty-state" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg><p>No hay documentos</p></div>
+        <div id="revsTab" style="display:none">
+          <div class="card">
+            <div class="card-head"><h2>Calendario BYD</h2><span class="hint" id="revLangHint">cada 20k km / 24 meses</span></div>
+            <p style="font-size:12px;color:var(--text-faint)">Orientativo. Verifica los intervalos exactos en el manual oficial de tu mercado.</p>
+            <div id="revisionsList"></div>
+          </div>
+        </div>
       </section>
 
 <!-- STATS -->
@@ -1264,7 +1195,7 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
   <nav class="bottom-nav" id="bottomNav">
     <button class="nav-item" data-page="dashboard"><span class="ni-indicator"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></span><span class="ni-label">Inicio</span></button>
     <button class="nav-item" data-page="charges"><span class="ni-indicator"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span><span class="ni-label">Cargas</span></button>
-    <button class="nav-item" data-page="maintenance"><span class="ni-indicator"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span><span class="ni-label">Taller</span></button>
+    <button class="nav-item" data-page="docs"><span class="ni-indicator"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg></span><span class="ni-label">Documentos</span></button>
     <button class="nav-item" id="moreNavBtn"><span class="ni-indicator"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></span><span class="ni-label">Más</span></button>
   </nav>
 
@@ -1289,11 +1220,34 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
     <div class="modal-actions"><button type="button" class="btn btn-primary" id="themeClose">Listo</button></div>
   </div>
 </div>
-<div class="overlay" id="attachOverlay">
-  <div class="modal">
-    <h3>Adjuntos</h3>
-    <div class="att-list" id="attachList"></div>
-    <div class="modal-actions"><button type="button" class="btn btn-ghost" id="attachClose">Cerrar</button></div>
+<div class="overlay" id="docFormOverlay">
+  <div class="modal" style="max-height:92vh;overflow:auto">
+    <h3 id="docFormTitle">Añadir documento</h3>
+    <form id="docForm">
+      <div class="field"><label>Archivos <span class="opt-hint">(PDF o imagen, máx. 10 MB · se guardan en tu Drive)</span></label>
+        <input id="d_files" type="file" multiple accept="image/*,application/pdf">
+        <div class="att-list" id="d_existing"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Categoría</label><select id="d_cat"></select></div>
+        <div class="field"><label>Subcategoría</label><select id="d_sub"></select></div>
+      </div>
+      <div class="field"><label>Nombre</label><input id="d_name" type="text" placeholder="Ej.: Seguro 2026"></div>
+      <div class="field-row">
+        <div class="field"><label>Fecha</label><input id="d_date" type="date" required></div>
+        <div class="field"><label>Precio <span class="opt-hint">(vacío = N/A)</span></label><input id="d_price" type="number" step="0.01" min="0" placeholder="N/A"></div>
+      </div>
+      <div class="field-row" id="d_taller_row">
+        <div class="field"><label>Km</label><input id="d_km" type="number" min="0" placeholder="opcional"></div>
+        <div class="field"><label>Lugar</label><input id="d_loc" type="text" placeholder="Ej: Taller BYD"></div>
+      </div>
+      <div class="field"><label>Nota (qué documento es)</label><textarea id="d_note" placeholder="Detalles..."></textarea></div>
+      <div class="field"><label>Caducidad (opcional)</label><input id="d_exp" type="date"></div>
+      <div style="display:flex;gap:8px">
+        <button type="submit" class="btn btn-primary btn-block" id="docSubmitBtn">Guardar</button>
+        <button type="button" class="btn btn-ghost" id="docCancelEdit">Cancelar</button>
+      </div>
+    </form>
   </div>
 </div>
 <div class="overlay" id="docViewOverlay">
@@ -1444,7 +1398,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-16.4';
+const APP_VERSION = '2026-10-16.5';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -1513,7 +1467,7 @@ let charts = {};
 function loadState(){
   try{
     const raw = localStorage.getItem(STORAGE_KEY);
-    if(raw){ const parsed = JSON.parse(raw); state = deepMerge(state, parsed); }
+    if(raw){ const parsed = JSON.parse(raw); state = deepMerge(state, parsed); if(normalizeState()) saveState({ noSync:true }); }
   }catch(e){ console.warn('No se pudo cargar el estado guardado', e); }
 }
 function saveState(opts){
@@ -1583,6 +1537,7 @@ function pageFromHash(){
   return ROUTES[r] || null;
 }
 function navigate(page, opts){
+  if(page==='maintenance'){ page = 'docs'; docFilterCat = 'Taller'; docFilterSub = ''; docTab = 'docs'; }
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+page).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active', b.dataset.page===page));
@@ -1594,10 +1549,9 @@ function navigate(page, opts){
     try{ if(location.hash !== h) history.pushState(null, '', h); }catch(e){}
   }
   if(page==='charges') renderCharges();
-  if(page==='maintenance') { renderMaintenance(); renderRevisions(); }
   if(page==='revisions') renderRevisions();
   if(page==='notes') renderNotes();
-  if(page==='docs') renderDocs();
+  if(page==='docs') setDocTab(docTab);
   if(page==='manual') renderManual();
   if(page==='stats') renderStats();
   if(page==='dashboard') {
@@ -1730,7 +1684,7 @@ function getCurrentKm(){
   // km más alto anotado en un mantenimiento se quedaba sin reflejar en el home.
   let km = Number(state.config.currentKm)||0;
   state.charges.forEach(c=>{ if(c.km) km = Math.max(km, Number(c.km)||0); });
-  state.maintenance.forEach(m=>{ if(m.km) km = Math.max(km, Number(m.km)||0); });
+  maintList().forEach(m=>{ if(m.km) km = Math.max(km, Number(m.km)||0); });
   return km;
 }
 // El consumo medido solo es fiable con varios puntos y un tramo largo; con menos datos baila mucho (basta añadir un km) y se usa el configurado.
@@ -1820,7 +1774,7 @@ function renderDashboard(){
   renderQuickLinks();
   const c = state.config;
   const km = getCurrentKm();
-  const totalCost = state.charges.reduce((s,x)=>s+Number(x.cost||0),0) + state.maintenance.reduce((s,x)=>s+Number(x.cost||0),0);
+  const totalCost = state.charges.reduce((s,x)=>s+Number(x.cost||0),0) + maintList().reduce((s,x)=>s+Number(x.cost||0),0);
 
   const sched = REVISIONS_SCHEDULE[state.lang] || REVISIONS_SCHEDULE.es;
   const months = monthsBetween(c.purchaseDate);
@@ -1840,13 +1794,13 @@ function renderDashboard(){
     carStatusBadge.className = 'car-badge danger';
     carStatusBadge.textContent = 'Revisión vencida';
     carStatusBadge.style.cursor = 'pointer';
-    carStatusBadge.onclick = ()=>navigate('maintenance');
+    carStatusBadge.onclick = openRevisions;
   } else if(st.upcoming){
     carStatusBadge.style.display = '';
     carStatusBadge.className = 'car-badge warning';
     carStatusBadge.textContent = 'Próxima revisión';
     carStatusBadge.style.cursor = 'pointer';
-    carStatusBadge.onclick = ()=>navigate('maintenance');
+    carStatusBadge.onclick = openRevisions;
   } else {
     carStatusBadge.style.display = '';
     carStatusBadge.className = 'car-badge';
@@ -1992,7 +1946,7 @@ function buildRecentActivity(){
   if(!container) return;
   const allEvents = [
     ...state.charges.map(c=>({type:'charge', date:c.date, ts:chargeTs(c), data:c})),
-    ...state.maintenance.map(m=>({type:'maintenance', date:m.date, ts:(new Date(m.date).getTime()||0), data:m}))
+    ...maintList().map(m=>({type:'maintenance', date:m.date, ts:(new Date(m.date).getTime()||0), data:m}))
   ].sort((a,b)=> (b.ts-a.ts) || ((b.type==='charge'?chargeAddedAt(b.data):0) - (a.type==='charge'?chargeAddedAt(a.data):0))).slice(0, 6);
 
   if(!allEvents.length){ container.innerHTML = `<div class="empty-state" style="padding:28px 10px"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18M18 17V9M13 17V5M8 17v-4"/></svg><p>Sin actividad reciente</p></div>`; return; }
@@ -2001,7 +1955,7 @@ function buildRecentActivity(){
     const icon = ev.type==='charge' ? ICONS.bolt : ICONS.wrench;
     const label = ev.type==='charge'
       ? (kwhOf(ev.data) ? (kwhIsEst(ev.data) ? '≈ ' : '') + kwhOf(ev.data).toFixed(2)+' kWh cargados' : 'Carga registrada') + (ev.data.location ? ' · '+ev.data.location : '')
-      : (MAINT_LABELS[ev.data.type]||ev.data.type);
+      : (ev.data.label);
     const hasCost = ev.data.cost != null && ev.data.cost !== '';
     const cost = Number(ev.data.cost||0);
     return `<div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)">
@@ -2108,16 +2062,9 @@ function cancelChargeEdit(){
 /* ---------------- maintenance ---------------- */
 const MAINT_LABELS = { revision:'Revisión general', oil:'Cambio aceite reductora', brake:'Frenos', tire:'Neumáticos', battery:'Batería AV', filter:'Filtros', alignment:'Alineación', repair:'Reparación', other:'Otro' };
 
-/* ---------------- adjuntos del taller (se guardan en la carpeta privada de tu Drive) ---------------- */
-let editingAtt = [];
+/* ---------------- archivos en Drive (carpeta privada de la app) ---------------- */
 const ATT_MAX_BYTES = 10 * 1024 * 1024;
 function formatSize(b){ return b >= 1048576 ? (b / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB'; }
-function renderMaintAttachments(){
-  const box = document.getElementById('m_existing'); if(!box) return;
-  box.innerHTML = editingAtt.map((a, i)=>
-    '<div class="att-item' + (a.removed ? ' removed' : '') + '"><span class="nm">' + escapeHtml(a.name) + '</span><span class="sz">' + formatSize(a.size || 0) + '</span>' +
-    '<button type="button" data-att="' + i + '">' + (a.removed ? 'Deshacer' : 'Quitar') + '</button></div>').join('');
-}
 // Las fotos se reducen (máx. 1600 px, JPEG) antes de subirlas; los PDF se suben tal cual.
 async function prepareAttachment(file){
   let blob = file, mime = file.type || 'application/octet-stream', name = file.name || 'adjunto';
@@ -2148,117 +2095,181 @@ async function driveUploadFile(blob, name, mime){
 }
 async function driveDeleteFile(id){ try{ await driveApi('https://www.googleapis.com/drive/v3/files/' + id, { method: 'DELETE' }); }catch(e){} }
 async function driveFetchBlob(id){ return await (await driveApi('https://www.googleapis.com/drive/v3/files/' + id + '?alt=media')).blob(); }
-function openAttachments(id){
-  const m = state.maintenance.find(x=>x.id===id); if(!m) return;
-  const list = document.getElementById('attachList');
-  list.innerHTML = (m.attachments || []).map((a, i)=>
-    '<div><div class="att-item"><span class="nm">' + escapeHtml(a.name) + '</span><span class="sz">' + formatSize(a.size || 0) + '</span><button type="button" data-view="' + i + '">Ver</button></div><div id="attView' + i + '"></div></div>').join('');
-  list.onclick = async e=>{
-    const btn = e.target.closest('[data-view]'); if(!btn) return;
-    const a = m.attachments[Number(btn.dataset.view)], slot = document.getElementById('attView' + btn.dataset.view);
-    btn.disabled = true; btn.textContent = 'Cargando…';
-    try{
-      await driveEnsureToken();
-      const blob = await driveFetchBlob(a.id), url = URL.createObjectURL(blob);
-      slot.innerHTML = (a.mime || '').startsWith('image/') ? '<img class="att-prev" alt="' + escapeAttr(a.name) + '" src="' + url + '">' : '<a class="att-item" style="display:inline-block;margin-top:8px" href="' + url + '" target="_blank" rel="noopener">Abrir ' + escapeHtml(a.name) + '</a>';
-      btn.remove();
-    }catch(err){ btn.disabled = false; btn.textContent = 'Ver'; toast('No se pudo abrir el adjunto: ' + err.message, 'danger'); }
-  };
-  document.getElementById('attachOverlay').classList.add('open');
-}
-
-/* ---------------- documentos (archivos en la carpeta privada de tu Drive) ---------------- */
-const DOC_CATS = ['Seguro','ITV','Facturas','Multas','Vehículo','Otros'];
+/* ---------------- documentos y taller (los archivos van a la carpeta privada de tu Drive) ---------------- */
+const DOC_CATS = ['Taller','Seguro','ITV','Vehículo','Facturas','Multas','Otros'];
+const DOC_SUBS = {
+  'Taller': Object.values(MAINT_LABELS),
+  'Vehículo': ['Permiso de circulación','Ficha técnica','Garantía','Manual','Otro'],
+  'Seguro': ['Póliza','Recibo','Parte'],
+  'ITV': ['Informe','Recibo'],
+  'Facturas': [], 'Multas': [], 'Otros': []
+};
 const DOC_CAT_ALIAS = { 'Permiso de circulación':'Vehículo', 'Ficha técnica':'Vehículo', 'Garantía':'Vehículo', 'Manual':'Vehículo' };
-function docCat(d){ return DOC_CAT_ALIAS[d.category] || d.category || 'Otros'; }
-let editingDocId = null, docFilterCat = '';
+let docTab = 'docs', docFilterCat = '', docFilterSub = '', editingDocId = null, editingDocFiles = [];
+function maintTypeOf(sub){ return Object.keys(MAINT_LABELS).find(k=>MAINT_LABELS[k] === sub) || 'other'; }
+// Las intervenciones de taller son documentos de categoría "Taller"; esta vista alimenta estadísticas, km y actividad reciente.
+function maintList(){
+  return (state.docs || []).filter(d=>d.category === 'Taller').map(d=>({ id:d.id, date:d.date, type:maintTypeOf(d.sub), label:d.sub || d.name || 'Servicio',
+    cost:(d.price == null ? null : d.price), km:d.km || null, location:d.location || '', notes:d.note || '' }));
+}
+// Migra datos antiguos: mantenimiento -> documentos de Taller, categorías sueltas -> Vehículo + subcategoría, un archivo -> lista de archivos.
+function normalizeState(){
+  let changed = false;
+  if(!Array.isArray(state.docs)){ state.docs = []; changed = true; }
+  state.docs.forEach(d=>{
+    if(DOC_CAT_ALIAS[d.category]){ d.sub = d.sub || d.category; d.category = DOC_CAT_ALIAS[d.category]; changed = true; }
+    if(d.driveId && !d.files){ d.files = [{ id:d.driveId, name:d.fname || d.name, mime:d.mime, size:d.size }]; delete d.driveId; delete d.fname; delete d.mime; delete d.size; changed = true; }
+    if(!Array.isArray(d.files)){ d.files = []; changed = true; }
+    if(d.price === undefined){ d.price = null; changed = true; }
+  });
+  const old = Array.isArray(state.maintenance) ? state.maintenance : [];
+  old.forEach(m=>{
+    if(state.docs.some(d=>d.id === m.id)) return;
+    const label = MAINT_LABELS[m.type] || 'Otro';
+    state.docs.push({ id:m.id, name:label, category:'Taller', sub:label, note:m.notes || '', price:(m.cost === '' || m.cost == null) ? null : Number(m.cost),
+      km:m.km || null, location:m.location || '', date:m.date || '', expires:'', files:(m.attachments || []).map(a=>({ ...a })) });
+  });
+  if(old.length){ state.maintenance = []; changed = true; }
+  return changed;
+}
 function docDaysLeft(d){ if(!d.expires) return null; return Math.ceil((new Date(d.expires + 'T00:00:00') - new Date(new Date().toDateString())) / 86400000); }
+function docCat(d){ return DOC_CATS.includes(d.category) ? d.category : 'Otros'; }
+function openRevisions(){ docTab = 'revs'; navigate('docs'); }
+function setDocTab(t){
+  docTab = t;
+  document.querySelectorAll('#docTabs button').forEach(b=>b.classList.toggle('active', b.dataset.tab === t));
+  document.getElementById('docsTab').style.display = t === 'docs' ? '' : 'none';
+  document.getElementById('revsTab').style.display = t === 'revs' ? '' : 'none';
+  if(t === 'revs') renderRevisions(); else renderDocs();
+}
 function renderDocs(){
-  const sel = document.getElementById('d_cat');
-  if(!sel.options.length) sel.innerHTML = DOC_CATS.map(c=>'<option>' + c + '</option>').join('');
   const docs = state.docs || [];
+  const chip = (attr, val, label, on)=>'<button type="button" class="tag-toggle ' + (on ? 'active' : '') + '" data-' + attr + '="' + escapeAttr(val) + '">' + label + '</button>';
   const cats = DOC_CATS.filter(c=>docs.some(d=>docCat(d) === c));
+  if(docFilterCat && !cats.includes(docFilterCat)){ docFilterCat = ''; docFilterSub = ''; }
   document.getElementById('docCatBar').innerHTML = cats.length
-    ? ['', ...cats].map(c=>'<button type="button" class="tag-toggle ' + (docFilterCat === c ? 'active' : '') + '" data-cat="' + escapeAttr(c) + '">' + (c || 'Todos') + '</button>').join('')
+    ? chip('cat', '', 'Todos', !docFilterCat) + cats.map(c=>chip('cat', c, c + ' (' + docs.filter(d=>docCat(d) === c).length + ')', docFilterCat === c)).join('')
     : '<span style="font-size:12px;color:var(--text-faint)">Sin documentos todavía</span>';
+  const inCat = docs.filter(d=>!docFilterCat || docCat(d) === docFilterCat);
+  const subs = docFilterCat ? (DOC_SUBS[docFilterCat] || []).filter(sb=>inCat.some(d=>d.sub === sb)) : [];
+  if(docFilterSub && !subs.includes(docFilterSub)) docFilterSub = '';
+  const subBar = document.getElementById('docSubBar');
+  subBar.style.display = subs.length > 1 ? '' : 'none';
+  subBar.innerHTML = subs.length > 1 ? chip('sub', '', 'Todas', !docFilterSub) + subs.map(sb=>chip('sub', sb, sb, docFilterSub === sb)).join('') : '';
   const q = (document.getElementById('docSearch').value || '').toLowerCase();
-  const list = docs.filter(d=>(!docFilterCat || docCat(d) === docFilterCat) && (!q || (d.name + ' ' + (d.note || '')).toLowerCase().includes(q)))
-    .sort((a,b)=>(b.date || '').localeCompare(a.date || ''));
+  const list = inCat.filter(d=>(!docFilterSub || d.sub === docFilterSub) && (!q || ((d.name || '') + ' ' + (d.note || '') + ' ' + (d.sub || '') + ' ' + (d.location || '')).toLowerCase().includes(q)))
+    .sort((a,b)=>(b.date || '').localeCompare(a.date || '') || (b.id - a.id));
+  const priced = list.filter(d=>d.price != null && d.price !== '');
+  document.getElementById('docSummary').innerHTML = '<b>' + list.length + '</b> ' + (list.length === 1 ? 'documento' : 'documentos') + (priced.length ? ' · Total <b>' + fmtEUR(priced.reduce((t,d)=>t + Number(d.price), 0)) + '</b>' : '');
   document.getElementById('docsEmpty').style.display = list.length ? 'none' : 'block';
   document.getElementById('docsList').innerHTML = list.map(d=>{
+    const title = d.name || d.sub || docCat(d);
     const left = docDaysLeft(d);
-    const exp = left === null ? '' : left < 0 ? '<div class="doc-exp bad">Caducado hace ' + (-left) + ' días</div>' : left <= 30 ? '<div class="doc-exp soon">Caduca en ' + left + ' días (' + d.expires + ')</div>' : '<div class="doc-meta">Caduca: ' + d.expires + '</div>';
-    return '<div class="card doc-card" data-id="' + d.id + '"><div class="doc-top"><h3>' + escapeHtml(d.name) + '</h3><span class="doc-cat">' + escapeHtml(docCat(d)) + '</span></div>' +
-      (d.note ? '<div class="doc-note">' + escapeHtml(d.note) + '</div>' : '') + exp +
-      '<div class="doc-meta">' + escapeHtml(d.fname || '') + ' · ' + formatSize(d.size || 0) + ' · ' + (d.date || '') + '</div>' +
-      '<div class="doc-actions"><button data-act="view">Ver</button><button data-act="dl">Descargar</button><button data-act="edit">Editar</button><button class="del" data-act="del">Eliminar</button></div></div>';
+    const exp = left === null ? '' : left < 0 ? '<div class="dr-exp bad">Caducado hace ' + (-left) + ' días</div>' : left <= 30 ? '<div class="dr-exp soon">Caduca en ' + left + ' días</div>' : '';
+    const parts = [docCat(d) + (d.sub && d.sub !== title ? ' › ' + d.sub : ''), d.date ? fmtDate(d.date) : '', d.km ? fmtNum(d.km) + ' km' : '', d.location || '', left !== null && left > 30 ? 'Caduca ' + fmtDate(d.expires) : ''].filter(Boolean);
+    const nf = (d.files || []).length;
+    return '<div class="doc-row" data-id="' + d.id + '"><div class="dr-main"><div class="dr-title">' + escapeHtml(title) + '</div><div class="dr-sub">' + escapeHtml(parts.join(' · ')) + '</div>' +
+      (d.note ? '<div class="dr-note">' + escapeHtml(d.note) + '</div>' : '') + exp + '</div>' +
+      '<div class="dr-side">' + (d.price != null && d.price !== '' ? '<div class="dr-price">' + fmtEUR(d.price) + '</div>' : '') +
+      '<div class="dr-act">' + (nf ? '<button class="icon-action" data-act="view" title="Ver archivos">' + ICONS.clip + '<small>' + nf + '</small></button>' : '') +
+      '<button class="icon-action" data-act="edit" title="Editar">' + ICONS.edit + '</button><button class="icon-action danger" data-act="del" title="Eliminar">' + ICONS.trash + '</button></div></div></div>';
   }).join('');
 }
-function resetDocForm(){
-  editingDocId = null;
-  document.getElementById('docForm').reset();
-  document.getElementById('d_file_wrap').style.display = '';
-  document.getElementById('docFormTitle').textContent = 'Subir documento';
-  document.getElementById('docSubmitBtn').textContent = 'Subir documento';
-  document.getElementById('docCancelEdit').style.display = 'none';
+function fillDocSubs(cat, selected){
+  const subs = DOC_SUBS[cat] || [], sel = document.getElementById('d_sub');
+  sel.innerHTML = subs.map(x=>'<option' + (x === selected ? ' selected' : '') + '>' + x + '</option>').join('');
+  sel.closest('.field').style.display = subs.length ? '' : 'none';
+  document.getElementById('d_taller_row').style.display = cat === 'Taller' ? '' : 'none';
 }
+function renderDocExisting(){
+  document.getElementById('d_existing').innerHTML = editingDocFiles.map((a, i)=>
+    '<div class="att-item' + (a.removed ? ' removed' : '') + '"><span class="nm">' + escapeHtml(a.name) + '</span><span class="sz">' + formatSize(a.size || 0) + '</span><button type="button" data-att="' + i + '">' + (a.removed ? 'Deshacer' : 'Quitar') + '</button></div>').join('');
+}
+function openDocForm(d){
+  const catSel = document.getElementById('d_cat');
+  if(!catSel.options.length) catSel.innerHTML = DOC_CATS.map(c=>'<option>' + c + '</option>').join('');
+  document.getElementById('docForm').reset();
+  editingDocId = d ? d.id : null;
+  editingDocFiles = d ? (d.files || []).map(f=>({ ...f })) : [];
+  const cat = d ? docCat(d) : (docFilterCat || 'Otros');
+  catSel.value = cat; fillDocSubs(cat, d && d.sub);
+  document.getElementById('d_name').value = d ? (d.name || '') : '';
+  document.getElementById('d_date').value = d ? (d.date || '') : new Date().toISOString().slice(0,10);
+  document.getElementById('d_price').value = d && d.price != null ? d.price : '';
+  document.getElementById('d_km').value = d && d.km ? d.km : '';
+  document.getElementById('d_loc').value = d ? (d.location || '') : '';
+  document.getElementById('d_note').value = d ? (d.note || '') : '';
+  document.getElementById('d_exp').value = d ? (d.expires || '') : '';
+  document.getElementById('docFormTitle').textContent = d ? 'Editar documento' : 'Añadir documento';
+  renderDocExisting();
+  document.getElementById('docFormOverlay').classList.add('open');
+}
+function closeDocForm(){ document.getElementById('docFormOverlay').classList.remove('open'); editingDocId = null; editingDocFiles = []; }
 async function submitDoc(e){
   e.preventDefault();
-  const name = document.getElementById('d_name').value.trim();
-  const category = document.getElementById('d_cat').value, note = document.getElementById('d_note').value.trim(), expires = document.getElementById('d_exp').value || '';
-  if(editingDocId){
-    const d = state.docs.find(x=>x.id === editingDocId);
-    if(d){ Object.assign(d, { name, category, note, expires }); saveState(); }
-    resetDocForm(); renderDocs(); renderAlerts(); toast('Documento actualizado', 'success'); return;
+  const category = document.getElementById('d_cat').value;
+  const sub = (DOC_SUBS[category] || []).length ? document.getElementById('d_sub').value : '';
+  const priceRaw = document.getElementById('d_price').value;
+  const taller = category === 'Taller';
+  const data = { category, sub, name: document.getElementById('d_name').value.trim() || sub || category, date: document.getElementById('d_date').value,
+    price: priceRaw === '' ? null : Number(priceRaw), km: taller ? (Number(document.getElementById('d_km').value) || null) : null,
+    location: taller ? document.getElementById('d_loc').value.trim() : '', note: document.getElementById('d_note').value.trim(), expires: document.getElementById('d_exp').value || '' };
+  const files = Array.from(document.getElementById('d_files').files || []);
+  const keep = editingDocFiles.filter(a=>!a.removed).map(({removed, ...a})=>a), drop = editingDocFiles.filter(a=>a.removed), uploaded = [];
+  const btn = document.getElementById('docSubmitBtn'), label = btn.textContent;
+  if(files.length){
+    btn.disabled = true; btn.textContent = 'Subiendo…';
+    try{
+      await driveEnsureToken();
+      for(const f of files){ const pr = await prepareAttachment(f); const id = await driveUploadFile(pr.blob, pr.name, pr.mime); uploaded.push({ id, name: pr.name, mime: pr.mime, size: pr.size }); }
+    }catch(err){
+      uploaded.forEach(u=>driveDeleteFile(u.id));
+      btn.disabled = false; btn.textContent = label;
+      toast('No se pudo subir: ' + err.message, 'danger'); return;
+    }
+    btn.disabled = false; btn.textContent = label;
   }
-  const file = document.getElementById('d_file').files[0];
-  if(!file){ toast('Elige un archivo', 'warning'); return; }
-  const btn = document.getElementById('docSubmitBtn'); btn.disabled = true; btn.textContent = 'Subiendo…';
-  try{
-    const prep = await prepareAttachment(file);
-    await driveEnsureToken();
-    const driveId = await driveUploadFile(prep.blob, prep.name, prep.mime);
-    state.docs.push({ id: Date.now(), name, category, note, expires, driveId, fname: prep.name, mime: prep.mime, size: prep.size, date: new Date().toISOString().slice(0,10) });
-    saveState(); resetDocForm(); renderDocs(); renderAlerts(); toast('Documento subido a tu Drive', 'success');
-  }catch(err){ toast('No se pudo subir: ' + err.message, 'danger'); }
-  btn.disabled = false; btn.textContent = editingDocId ? 'Guardar cambios' : 'Subir documento';
+  data.files = [...keep, ...uploaded];
+  const wasEditing = editingDocId != null;
+  if(wasEditing){ const d = state.docs.find(x=>x.id === editingDocId); if(d) Object.assign(d, data); }
+  else state.docs.push({ id: uid(), ...data });
+  if(drop.length && driveHasToken()) drop.forEach(a=>driveDeleteFile(a.id));
+  saveState(); closeDocForm(); renderDocs(); renderAlerts(); renderDashboard();
+  toast(wasEditing ? 'Documento actualizado' : 'Documento guardado', 'success');
 }
-async function docBlob(d){ await driveEnsureToken(); return await driveFetchBlob(d.driveId); }
-async function viewDoc(d){
+async function fetchDocFile(f){ await driveEnsureToken(); return await driveFetchBlob(f.id); }
+function openDocFiles(d){
+  document.getElementById('docViewTitle').textContent = d.name || 'Archivos';
   const body = document.getElementById('docViewBody');
-  document.getElementById('docViewTitle').textContent = d.name;
-  body.innerHTML = '<p style="font-size:13px;color:var(--text-dim)">Cargando…</p>';
+  body.innerHTML = (d.files || []).map((f, i)=>
+    '<div style="margin-bottom:8px"><div class="att-item"><span class="nm">' + escapeHtml(f.name) + '</span><span class="sz">' + formatSize(f.size || 0) + '</span><button type="button" data-fv="' + i + '">Ver</button><button type="button" data-fd="' + i + '">Descargar</button></div><div id="docSlot' + i + '"></div></div>').join('');
+  body.onclick = async e=>{
+    const v = e.target.closest('[data-fv]'), dl = e.target.closest('[data-fd]'); if(!v && !dl) return;
+    const btn = v || dl, f = d.files[Number((v || dl).dataset[v ? 'fv' : 'fd'])], old = btn.textContent;
+    btn.disabled = true; btn.textContent = 'Cargando…';
+    try{
+      const url = URL.createObjectURL(await fetchDocFile(f));
+      if(dl){
+        const a = document.createElement('a'); a.href = url; a.download = f.name; document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(()=>URL.revokeObjectURL(url), 30000);
+      } else {
+        const slot = document.getElementById('docSlot' + btn.dataset.fv);
+        const link = '<p style="margin-top:8px"><a class="att-item" style="display:inline-block" href="' + url + '" target="_blank" rel="noopener">Abrir en pestaña nueva</a></p>';
+        slot.innerHTML = (f.mime || '').startsWith('image/') ? '<img class="att-prev" alt="' + escapeAttr(f.name) + '" src="' + url + '">' + link
+          : '<iframe src="' + url + '" style="width:100%;height:60vh;margin-top:8px;border:1px solid var(--border);border-radius:8px;background:#fff"></iframe>' + link;
+      }
+    }catch(err){ toast('No se pudo abrir: ' + err.message, 'danger'); }
+    btn.disabled = false; btn.textContent = old;
+  };
   document.getElementById('docViewOverlay').classList.add('open');
-  try{
-    const url = URL.createObjectURL(await docBlob(d));
-    const link = '<p style="margin-top:10px"><a class="att-item" style="display:inline-block" href="' + url + '" target="_blank" rel="noopener">Abrir en pestaña nueva</a></p>';
-    body.innerHTML = (d.mime || '').startsWith('image/') ? '<img class="att-prev" alt="' + escapeAttr(d.name) + '" src="' + url + '">' + link
-      : '<iframe src="' + url + '" style="width:100%;height:60vh;border:1px solid var(--border);border-radius:8px;background:#fff"></iframe>' + link;
-  }catch(err){ body.innerHTML = ''; document.getElementById('docViewOverlay').classList.remove('open'); toast('No se pudo abrir: ' + err.message, 'danger'); }
-}
-async function downloadDoc(d){
-  try{
-    const url = URL.createObjectURL(await docBlob(d));
-    const a = document.createElement('a'); a.href = url; a.download = d.fname || d.name; document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(()=>URL.revokeObjectURL(url), 30000);
-  }catch(err){ toast('No se pudo descargar: ' + err.message, 'danger'); }
-}
-function editDoc(d){
-  editingDocId = d.id;
-  document.getElementById('d_name').value = d.name; document.getElementById('d_cat').value = docCat(d);
-  document.getElementById('d_note').value = d.note || ''; document.getElementById('d_exp').value = d.expires || '';
-  document.getElementById('d_file_wrap').style.display = 'none';
-  document.getElementById('docFormTitle').textContent = 'Editar documento';
-  document.getElementById('docSubmitBtn').textContent = 'Guardar cambios';
-  document.getElementById('docCancelEdit').style.display = '';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if(d.files.length === 1) body.querySelector('[data-fv]').click();
 }
 // Eliminar pide confirmación dos veces.
 let delDocId = null, delStep = 0;
 function askDeleteDoc(d){
   delDocId = d.id; delStep = 1;
   document.getElementById('docDelTitle').textContent = '¿Eliminar documento?';
-  document.getElementById('docDelText').textContent = '"' + d.name + '" se borrará de tu Drive.';
+  document.getElementById('docDelText').textContent = '"' + (d.name || d.sub || d.category) + '"' + ((d.files || []).length ? ' y sus archivos se borrarán de tu Drive.' : ' se eliminará de la lista.');
   document.getElementById('docDelYes').textContent = 'Eliminar';
   document.getElementById('docDelOverlay').classList.add('open');
 }
@@ -2273,79 +2284,30 @@ async function confirmDeleteDoc(){
   const d = state.docs.find(x=>x.id === delDocId);
   document.getElementById('docDelOverlay').classList.remove('open'); delStep = 0;
   if(!d) return;
-  try{ await driveEnsureToken(); await driveDeleteFile(d.driveId); }catch(err){ toast('No se pudo borrar el archivo de Drive; se quita de la lista', 'warning'); }
+  if((d.files || []).length){
+    try{ await driveEnsureToken(); for(const f of d.files) await driveDeleteFile(f.id); }catch(err){ toast('No se pudieron borrar los archivos de Drive; se quita de la lista', 'warning'); }
+  }
   state.docs = state.docs.filter(x=>x.id !== d.id);
-  saveState(); renderDocs(); renderAlerts(); toast('Documento eliminado', 'success');
+  saveState(); renderDocs(); renderAlerts(); renderDashboard(); toast('Documento eliminado', 'success');
 }
 function setupDocs(){
   document.getElementById('docForm').addEventListener('submit', submitDoc);
-  document.getElementById('docCancelEdit').addEventListener('click', resetDocForm);
+  document.getElementById('docCancelEdit').addEventListener('click', closeDocForm);
+  document.getElementById('docAddBtn').addEventListener('click', ()=>openDocForm(null));
+  document.getElementById('d_cat').addEventListener('change', e=>fillDocSubs(e.target.value));
+  document.getElementById('d_existing').addEventListener('click', e=>{ const b = e.target.closest('[data-att]'); if(!b) return; const a = editingDocFiles[Number(b.dataset.att)]; if(a){ a.removed = !a.removed; renderDocExisting(); } });
   document.getElementById('docSearch').addEventListener('input', renderDocs);
-  document.getElementById('docCatBar').addEventListener('click', e=>{ const b = e.target.closest('[data-cat]'); if(!b) return; docFilterCat = b.dataset.cat; renderDocs(); });
+  document.getElementById('docTabs').addEventListener('click', e=>{ const b = e.target.closest('[data-tab]'); if(b) setDocTab(b.dataset.tab); });
+  document.getElementById('docCatBar').addEventListener('click', e=>{ const b = e.target.closest('[data-cat]'); if(!b) return; docFilterCat = b.dataset.cat; docFilterSub = ''; renderDocs(); });
+  document.getElementById('docSubBar').addEventListener('click', e=>{ const b = e.target.closest('[data-sub]'); if(!b) return; docFilterSub = b.dataset.sub; renderDocs(); });
   document.getElementById('docsList').addEventListener('click', e=>{
     const b = e.target.closest('[data-act]'); if(!b) return;
-    const d = state.docs.find(x=>x.id === Number(b.closest('.doc-card').dataset.id)); if(!d) return;
-    ({ view: viewDoc, dl: downloadDoc, edit: editDoc, del: askDeleteDoc })[b.dataset.act](d);
+    const d = state.docs.find(x=>String(x.id) === b.closest('.doc-row').dataset.id); if(!d) return;
+    ({ view: openDocFiles, edit: openDocForm, del: askDeleteDoc })[b.dataset.act](d);
   });
   document.getElementById('docViewClose').addEventListener('click', ()=>{ document.getElementById('docViewOverlay').classList.remove('open'); document.getElementById('docViewBody').innerHTML = ''; });
   document.getElementById('docDelNo').addEventListener('click', ()=>{ delStep = 0; document.getElementById('docDelOverlay').classList.remove('open'); });
   document.getElementById('docDelYes').addEventListener('click', confirmDeleteDoc);
-}
-
-function renderMaintenance(){
-  const tbody = document.getElementById('maintTable');
-  const sorted = [...state.maintenance].sort((a,b)=> new Date(b.date)-new Date(a.date));
-  tbody.innerHTML = sorted.map(m=>`
-    <tr>
-      <td>${fmtDate(m.date)}</td><td>${MAINT_LABELS[m.type]||m.type}</td><td>${m.location||'—'}</td><td>${fmtEUR(m.cost)}</td>
-      <td>${m.km ? fmtNum(m.km) : '—'}</td>
-      <td>
-        ${(m.attachments&&m.attachments.length) ? `<button class="icon-action" onclick="openAttachments(${m.id})" title="Adjuntos">${ICONS.clip}<small>${m.attachments.length}</small></button>` : ''}
-        <button class="icon-action" onclick="editMaint(${m.id})">${ICONS.edit}</button>
-        <button class="icon-action danger" onclick="deleteMaint(${m.id})">${ICONS.trash}</button>
-      </td>
-    </tr>`).join('');
-  document.getElementById('maintEmpty').style.display = state.maintenance.length ? 'none' : 'block';
-
-  const totalCost = state.maintenance.reduce((s,x)=>s+Number(x.cost||0),0);
-  document.getElementById('mntTotal').textContent = state.maintenance.length;
-  document.getElementById('mntCost').textContent = fmtEUR(totalCost);
-  const last = sorted[0];
-  document.getElementById('mntLast').textContent = last ? (MAINT_LABELS[last.type]||last.type)+' · '+fmtDate(last.date) : '—';
-}
-function deleteMaint(id){
-  if(editingMaintId===id) cancelMaintEdit();
-  const gone = state.maintenance.find(m=>m.id===id);
-  if(gone && gone.attachments && gone.attachments.length && driveHasToken()) gone.attachments.forEach(a=>driveDeleteFile(a.id));
-  state.maintenance = state.maintenance.filter(m=>m.id!==id);
-  saveState(); renderMaintenance(); renderDashboard(); toast('Registro eliminado', 'info');
-}
-let editingMaintId = null;
-function editMaint(id){
-  const m = state.maintenance.find(x=>x.id===id);
-  if(!m) return;
-  editingMaintId = id;
-  document.getElementById('m_type').value = m.type || '';
-  document.getElementById('m_date').value = m.date || '';
-  document.getElementById('m_cost').value = m.cost ?? '';
-  document.getElementById('m_km').value = m.km ?? '';
-  document.getElementById('m_location').value = m.location || '';
-  document.getElementById('m_notes').value = m.notes || '';
-  editingAtt = (m.attachments || []).map(a=>({ ...a }));
-  renderMaintAttachments();
-  document.getElementById('maintSubmitBtn').textContent = 'Guardar cambios';
-  document.getElementById('maintCancelEdit').style.display = '';
-  document.getElementById('maintContent').style.display = 'block';
-  document.getElementById('maintForm').scrollIntoView({behavior:'smooth', block:'start'});
-}
-function cancelMaintEdit(){
-  editingMaintId = null;
-  editingAtt = [];
-  renderMaintAttachments();
-  document.getElementById('maintForm').reset();
-  document.getElementById('m_date').valueAsDate = new Date();
-  document.getElementById('maintSubmitBtn').textContent = 'Registrar';
-  document.getElementById('maintCancelEdit').style.display = 'none';
 }
 
 /* ---------------- revisions ---------------- */
@@ -2678,7 +2640,7 @@ function renderStatsExtra(){
 function renderStats(){
   const km = getCurrentKm();
   const purchaseKm = state.charges.length ? Math.min(...state.charges.map(c=>Number(c.km)||km)) : 0;
-  const totalCost = state.charges.reduce((s,x)=>s+chargeCostOf(x),0) + state.maintenance.reduce((s,x)=>s+Number(x.cost||0),0);
+  const totalCost = state.charges.reduce((s,x)=>s+chargeCostOf(x),0) + maintList().reduce((s,x)=>s+Number(x.cost||0),0);
   document.getElementById('st_costPerKm').textContent = km > 0 ? (totalCost/km).toFixed(3) + ' €' : '—';
   const totalKwh = state.charges.reduce((s,x)=>s+kwhOf(x),0);
   const chargeCost = state.charges.reduce((s,x)=>s+chargeCostOf(x),0);
@@ -2689,7 +2651,7 @@ function renderStats(){
   document.getElementById('st_yearProj').textContent = state.config.purchaseDate ? fmtEUR(monthlyAvg*12) : '—';
 
   const monthly = {};
-  [...state.charges.map(c=>({date:c.date, cost:c.cost})), ...state.maintenance.map(m=>({date:m.date,cost:m.cost}))]
+  [...state.charges.map(c=>({date:c.date, cost:c.cost})), ...maintList().map(m=>({date:m.date,cost:m.cost}))]
     .filter(x=>x.date).sort((a,b)=>String(a.date).localeCompare(String(b.date))).forEach(x=>{
     const key = new Date(x.date).toLocaleDateString('es-ES',{month:'short',year:'2-digit'});
     monthly[key] = (monthly[key]||0) + Number(x.cost||0);
@@ -2708,8 +2670,8 @@ function renderStats(){
     ['Total cargas registradas', state.charges.length],
     ['Total kWh cargados', totalKwh.toFixed(2)+' kWh'],
     ['Gasto total en cargas', fmtEUR(chargeCost)],
-    ['Registros de mantenimiento', state.maintenance.length],
-    ['Gasto total en mantenimiento', fmtEUR(state.maintenance.reduce((s,x)=>s+Number(x.cost||0),0))],
+    ['Registros de mantenimiento', maintList().length],
+    ['Gasto total en mantenimiento', fmtEUR(maintList().reduce((s,x)=>s+Number(x.cost||0),0))],
     ['Gasto total combinado', fmtEUR(totalCost)],
     ['Notas guardadas', state.notes.length],
     ['Revisiones completadas', state.completedRevisions.length + ' / ' + (REVISIONS_SCHEDULE[state.lang]||REVISIONS_SCHEDULE.es).length],
@@ -2744,7 +2706,7 @@ function handleImportFile(file){
 }
 function confirmImport(){
   if(pendingImport){
-    state = deepMerge(state, pendingImport);
+    state = deepMerge(state, pendingImport); normalizeState();
     saveState();
     applyStateToForms();
     navigate(document.querySelector('.nav-item.active')?.dataset.page || 'dashboard');
@@ -2793,24 +2755,6 @@ function setupEventListeners(){
     tryAdd('themeMenuBtn', ()=>{ buildThemePicker(); document.getElementById('themeOverlay').classList.add('open'); const dd = document.getElementById('moreMenuDropdown'); if(dd) dd.classList.remove('open'); });
     tryAdd('themeClose', ()=>document.getElementById('themeOverlay').classList.remove('open'));
 
-    tryAdd('maintSection', e=>{
-      e.preventDefault();
-      const content = document.getElementById('maintContent');
-      const toggle = e.target.closest('.expandable-header').querySelector('.expand-toggle');
-      const isOpen = content.style.display !== 'none';
-      content.style.display = isOpen ? 'none' : 'block';
-      toggle.style.transform = isOpen ? '' : 'rotate(180deg)';
-    });
-
-    tryAdd('revisSection', e=>{
-      e.preventDefault();
-      const content = document.getElementById('revisContent');
-      const toggle = e.target.closest('.expandable-header').querySelector('.expand-toggle');
-      const isOpen = content.style.display !== 'none';
-      content.style.display = isOpen ? 'none' : 'block';
-      toggle.style.transform = isOpen ? '' : 'rotate(180deg)';
-    });
-
     tryAdd('addLinkBtn', ()=>{ cancelQuickLinkEdit(); document.getElementById('addLinkOverlay').classList.add('open'); document.getElementById('moreMenuDropdown').classList.remove('open'); });
     tryAdd('addLinkCancel', ()=>{ cancelQuickLinkEdit(); document.getElementById('addLinkOverlay').classList.remove('open'); });
 
@@ -2835,8 +2779,8 @@ function setupEventListeners(){
   document.getElementById('notifPermBtn').addEventListener('click', requestNotifPermission);
 
 
-  document.getElementById('langEs').addEventListener('click', ()=>{ state.lang='es'; saveState(); applyStateToForms(); renderAlerts(); if(document.getElementById('page-maintenance').classList.contains('active')) renderRevisions(); renderDashboard(); });
-  document.getElementById('langEn').addEventListener('click', ()=>{ state.lang='en'; saveState(); applyStateToForms(); renderAlerts(); if(document.getElementById('page-maintenance').classList.contains('active')) renderRevisions(); renderDashboard(); });
+  document.getElementById('langEs').addEventListener('click', ()=>{ state.lang='es'; saveState(); applyStateToForms(); renderAlerts(); if(document.getElementById('page-docs').classList.contains('active')) renderRevisions(); renderDashboard(); });
+  document.getElementById('langEn').addEventListener('click', ()=>{ state.lang='en'; saveState(); applyStateToForms(); renderAlerts(); if(document.getElementById('page-docs').classList.contains('active')) renderRevisions(); renderDashboard(); });
 
   document.getElementById('setupForm').addEventListener('submit', e=>{
     e.preventDefault();
@@ -2938,55 +2882,6 @@ function setupEventListeners(){
     renderCharges(); renderDashboard(); renderAlerts(); toast(wasEditing ? 'Carga actualizada' : 'Carga registrada', 'success');
   });
   document.getElementById('chargeCancelEdit').addEventListener('click', cancelChargeEdit);
-
-  document.getElementById('maintForm').addEventListener('submit', async e=>{
-    e.preventDefault();
-    const type = document.getElementById('m_type').value;
-    const cost = Number(document.getElementById('m_cost').value);
-    if(!type){ toast('Selecciona un tipo de servicio', 'warning'); return; }
-    const data = { type, date:document.getElementById('m_date').value, cost,
-      km:Number(document.getElementById('m_km').value)||null, location:document.getElementById('m_location').value.trim(), notes:document.getElementById('m_notes').value.trim() };
-    const wasEditing = editingMaintId!=null;
-    // adjuntos: se suben a Drive; los marcados como quitados se borran después de guardar
-    const files = Array.from(document.getElementById('m_files').files || []);
-    const keep = editingAtt.filter(a=>!a.removed).map(({removed, ...a})=>a);
-    const drop = editingAtt.filter(a=>a.removed);
-    const uploaded = [];
-    if(files.length){
-      const btn = document.getElementById('maintSubmitBtn'); const label = btn.textContent;
-      btn.disabled = true; btn.textContent = 'Subiendo adjuntos…';
-      try{
-        await driveEnsureToken();
-        for(const f of files){
-          const p = await prepareAttachment(f);
-          const id = await driveUploadFile(p.blob, p.name, p.mime);
-          uploaded.push({ id, name: p.name, mime: p.mime, size: p.size });
-        }
-      }catch(err){
-        uploaded.forEach(u=>driveDeleteFile(u.id));
-        btn.disabled = false; btn.textContent = label;
-        toast('No se pudieron subir los adjuntos: ' + err.message, 'danger');
-        return;
-      }
-      btn.disabled = false; btn.textContent = label;
-    }
-    data.attachments = [...keep, ...uploaded];
-    if(wasEditing){
-      const idx = state.maintenance.findIndex(m=>m.id===editingMaintId);
-      if(idx>-1) state.maintenance[idx] = { ...state.maintenance[idx], ...data };
-    } else {
-      state.maintenance.push({ id:uid(), ...data });
-    }
-    if(drop.length && driveHasToken()) drop.forEach(a=>driveDeleteFile(a.id));
-    cancelMaintEdit(); saveState();
-    renderMaintenance(); renderDashboard(); toast(wasEditing ? 'Mantenimiento actualizado' : 'Mantenimiento registrado', 'success');
-  });
-  document.getElementById('m_existing').addEventListener('click', e=>{
-    const b = e.target.closest('[data-att]'); if(!b) return;
-    const a = editingAtt[Number(b.dataset.att)]; if(a){ a.removed = !a.removed; renderMaintAttachments(); }
-  });
-  document.getElementById('attachClose').addEventListener('click', ()=>document.getElementById('attachOverlay').classList.remove('open'));
-  document.getElementById('maintCancelEdit').addEventListener('click', cancelMaintEdit);
 
   document.getElementById('noteForm').addEventListener('submit', e=>{
     e.preventDefault();
@@ -3119,9 +3014,9 @@ async function driveUpload(){
   }
   drive.dirty = false;
 }
-function stateHasData(){ return state.charges.length || state.maintenance.length || state.notes.length; }
+function stateHasData(){ return state.charges.length || (state.docs||[]).length || state.notes.length; }
 function applyRemoteState(remote){
-  state = deepMerge(state, remote);
+  state = deepMerge(state, remote); normalizeState();
   saveState({ keepStamp:true, noSync:true });
   applyStateToForms();
   renderDashboard(); renderAlerts();
@@ -3132,7 +3027,7 @@ function driveContentKey(st){
   return JSON.stringify(c);
 }
 function driveSummary(st){
-  const km = Math.max(Number(st.config && st.config.currentKm)||0, ...(st.charges||[]).map(x=>Number(x.km)||0), ...(st.maintenance||[]).map(x=>Number(x.km)||0));
+  const km = Math.max(Number(st.config && st.config.currentKm)||0, ...(st.charges||[]).map(x=>Number(x.km)||0), ...(st.maintenance||[]).map(x=>Number(x.km)||0), ...(st.docs||[]).map(x=>Number(x.km)||0));
   const at = Number(st.meta && st.meta.updatedAt) || 0;
   return (st.charges||[]).length + ' cargas · ' + (st.maintenance||[]).length + ' mantenimientos · ' + (st.notes||[]).length + ' notas · ' + fmtNum(km) + ' km'
     + (at ? '<br><span style="color:var(--text-faint)">Modificado: ' + new Date(at).toLocaleString('es-ES',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}) + '</span>' : '');
@@ -3326,7 +3221,6 @@ function init(){
   applyStateToForms();
   updateNotifStatus();
   document.getElementById('c_date').valueAsDate = new Date();
-  document.getElementById('m_date').valueAsDate = new Date();
   navigate(pageFromHash() || 'dashboard', { fromHash: true });
   window.addEventListener('hashchange', ()=>{ const p = pageFromHash(); if(p) navigate(p, { fromHash: true }); });
   window.addEventListener('popstate', ()=>{ navigate(pageFromHash() || 'dashboard', { fromHash: true }); });
