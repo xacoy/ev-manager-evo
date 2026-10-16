@@ -1398,7 +1398,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-16.6';
+const APP_VERSION = '2026-10-16.7';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2266,9 +2266,9 @@ function openDocFiles(d){
   if(d.files.length === 1) body.querySelector('[data-fv]').click();
 }
 // Eliminar pide confirmación dos veces.
-let delDocId = null, delStep = 0;
+let delDocId = null, delStep = 0, delKind = 'doc';
 function askDeleteDoc(d){
-  delDocId = d.id; delStep = 1;
+  delDocId = d.id; delStep = 1; delKind = 'doc';
   document.getElementById('docDelTitle').textContent = '¿Eliminar documento?';
   document.getElementById('docDelText').textContent = '"' + (d.name || d.sub || d.category) + '"' + ((d.files || []).length ? ' y sus archivos se borrarán de tu Drive.' : ' se eliminará de la lista.');
   document.getElementById('docDelYes').textContent = 'Eliminar';
@@ -2282,8 +2282,13 @@ async function confirmDeleteDoc(){
     document.getElementById('docDelYes').textContent = 'Sí, eliminar definitivamente';
     return;
   }
-  const d = state.docs.find(x=>x.id === delDocId);
   document.getElementById('docDelOverlay').classList.remove('open'); delStep = 0;
+  if(delKind === 'note'){
+    if(editingNoteId === delDocId) cancelNoteEdit();
+    state.notes = state.notes.filter(n=>n.id !== delDocId); saveState(); renderNotes(); toast('Nota eliminada', 'success');
+    return;
+  }
+  const d = state.docs.find(x=>x.id === delDocId);
   if(!d) return;
   if((d.files || []).length){
     try{ await driveEnsureToken(); for(const f of d.files) await driveDeleteFile(f.id); }catch(err){ toast('No se pudieron borrar los archivos de Drive; se quita de la lista', 'warning'); }
@@ -2374,8 +2379,12 @@ function renderNotes(){
 }
 function toggleNoteTag(t){ activeNoteTags.has(t) ? activeNoteTags.delete(t) : activeNoteTags.add(t); renderNotes(); }
 function deleteNote(id){
-  if(editingNoteId===id) cancelNoteEdit();
-  state.notes = state.notes.filter(n=>n.id!==id); saveState(); renderNotes(); toast('Nota eliminada','info');
+  const n = state.notes.find(x=>x.id===id); if(!n) return;
+  delDocId = id; delStep = 1; delKind = 'note';
+  document.getElementById('docDelTitle').textContent = '¿Eliminar nota?';
+  document.getElementById('docDelText').textContent = '"' + n.title + '" se eliminará de la lista.';
+  document.getElementById('docDelYes').textContent = 'Eliminar';
+  document.getElementById('docDelOverlay').classList.add('open');
 }
 let editingNoteId = null;
 function editNote(id){
