@@ -1250,6 +1250,7 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
         <div class="field"><label>Fecha</label><input id="d_date" type="date" required></div>
         <div class="field"><label>Precio <span class="opt-hint">(vacío = N/A)</span></label><input id="d_price" type="number" step="0.01" min="0" placeholder="N/A"></div>
       </div>
+      <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-dim);margin:-4px 0 14px;cursor:pointer"><input id="d_nocount" type="checkbox" style="width:auto"> No contar este importe en los cálculos</label>
       <div class="field-row" id="d_taller_row">
         <div class="field"><label>Km</label><input id="d_km" type="number" min="0" placeholder="opcional"></div>
         <div class="field"><label>Lugar</label><input id="d_loc" type="text" placeholder="Ej: Taller BYD"></div>
@@ -1411,7 +1412,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-16.8';
+const APP_VERSION = '2026-10-16.9';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -1969,8 +1970,9 @@ function buildRecentActivity(){
     const label = ev.type==='charge'
       ? (kwhOf(ev.data) ? (kwhIsEst(ev.data) ? '≈ ' : '') + kwhOf(ev.data).toFixed(2)+' kWh cargados' : 'Carga registrada') + (ev.data.location ? ' · '+ev.data.location : '')
       : (ev.data.label);
-    const hasCost = ev.data.cost != null && ev.data.cost !== '';
-    const cost = Number(ev.data.cost||0);
+    const rawCost = ev.type==='maintenance' ? ev.data.price : ev.data.cost;
+    const hasCost = rawCost != null && rawCost !== '';
+    const cost = Number(rawCost||0);
     return `<div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)">
       <div class="activity-icon" style="width:34px;height:34px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--accent-soft);color:var(--accent)">${icon}</div>
       <div style="flex:1;min-width:0">
@@ -2123,7 +2125,7 @@ function maintTypeOf(sub){ return Object.keys(MAINT_LABELS).find(k=>MAINT_LABELS
 // Las intervenciones de taller son documentos de categoría "Taller"; esta vista alimenta estadísticas, km y actividad reciente.
 function maintList(){
   return (state.docs || []).filter(d=>d.category === 'Taller').map(d=>({ id:d.id, date:d.date, type:maintTypeOf(d.sub), label:d.sub || d.name || 'Servicio',
-    cost:(d.price == null ? null : d.price), km:d.km || null, location:d.location || '', notes:d.note || '' }));
+    cost:(d.price == null || d.noCount ? null : d.price), price:(d.price == null ? null : d.price), noCount:!!d.noCount, km:d.km || null, location:d.location || '', notes:d.note || '' }));
 }
 // Migra datos antiguos: mantenimiento -> documentos de Taller, categorías sueltas -> Vehículo + subcategoría, un archivo -> lista de archivos.
 function normalizeState(){
@@ -2173,14 +2175,14 @@ function renderDocs(){
   const q = (document.getElementById('docSearch').value || '').toLowerCase();
   const list = inCat.filter(d=>(!docFilterSub || d.sub === docFilterSub) && (!q || ((d.name || '') + ' ' + (d.note || '') + ' ' + (d.sub || '') + ' ' + (d.location || '')).toLowerCase().includes(q)))
     .sort((a,b)=>(b.date || '').localeCompare(a.date || '') || (b.id - a.id));
-  const priced = list.filter(d=>d.price != null && d.price !== '');
+  const priced = list.filter(d=>d.price != null && d.price !== '' && !d.noCount);
   document.getElementById('docSummary').innerHTML = '<b>' + list.length + '</b> ' + (list.length === 1 ? 'documento' : 'documentos') + (priced.length ? ' · Total <b>' + fmtEUR(priced.reduce((t,d)=>t + Number(d.price), 0)) + '</b>' : '');
   document.getElementById('docsEmpty').style.display = list.length ? 'none' : 'block';
   document.getElementById('docsList').innerHTML = list.map(d=>{
     const title = d.name || d.sub || docCat(d);
     const left = docDaysLeft(d);
     const exp = left === null ? '' : left < 0 ? '<div class="dr-exp bad">Caducado hace ' + (-left) + ' días</div>' : left <= 30 ? '<div class="dr-exp soon">Caduca en ' + left + ' días</div>' : '';
-    const parts = [docCat(d) + (d.sub && d.sub !== title ? ' › ' + d.sub : ''), d.date ? fmtDate(d.date) : '', d.km ? fmtNum(d.km) + ' km' : '', d.location || '', left !== null && left > 30 ? 'Caduca ' + fmtDate(d.expires) : ''].filter(Boolean);
+    const parts = [docCat(d) + (d.sub && d.sub !== title ? ' › ' + d.sub : ''), d.date ? fmtDate(d.date) : '', d.km ? fmtNum(d.km) + ' km' : '', d.location || '', left !== null && left > 30 ? 'Caduca ' + fmtDate(d.expires) : '', d.noCount && d.price != null ? 'No cuenta en cálculos' : ''].filter(Boolean);
     const nf = (d.files || []).length;
     return '<div class="doc-row" data-id="' + d.id + '"><div class="dr-main"><div class="dr-title">' + escapeHtml(title) + '</div><div class="dr-sub">' + escapeHtml(parts.join(' · ')) + '</div>' +
       (d.note ? '<div class="dr-note">' + escapeHtml(d.note) + '</div>' : '') + exp + '</div>' +
@@ -2210,6 +2212,7 @@ function openDocForm(d){
   document.getElementById('d_name').value = d ? (d.name || '') : '';
   document.getElementById('d_date').value = d ? (d.date || '') : new Date().toISOString().slice(0,10);
   document.getElementById('d_price').value = d && d.price != null ? d.price : '';
+  document.getElementById('d_nocount').checked = !!(d && d.noCount);
   document.getElementById('d_km').value = d && d.km ? d.km : '';
   document.getElementById('d_loc').value = d ? (d.location || '') : '';
   document.getElementById('d_note').value = d ? (d.note || '') : '';
@@ -2226,7 +2229,7 @@ async function submitDoc(e){
   const priceRaw = document.getElementById('d_price').value;
   const taller = category === 'Taller';
   const data = { category, sub, name: document.getElementById('d_name').value.trim() || sub || category, date: document.getElementById('d_date').value,
-    price: priceRaw === '' ? null : Number(priceRaw), km: taller ? (Number(document.getElementById('d_km').value) || null) : null,
+    price: priceRaw === '' ? null : Number(priceRaw), noCount: document.getElementById('d_nocount').checked, km: taller ? (Number(document.getElementById('d_km').value) || null) : null,
     location: taller ? document.getElementById('d_loc').value.trim() : '', note: document.getElementById('d_note').value.trim(), expires: document.getElementById('d_exp').value || '' };
   const files = Array.from(document.getElementById('d_files').files || []);
   const keep = editingDocFiles.filter(a=>!a.removed).map(({removed, ...a})=>a), drop = editingDocFiles.filter(a=>a.removed), uploaded = [];
