@@ -484,6 +484,7 @@ button{cursor:pointer}
 .dr-title{font-size:14.5px;font-weight:700;color:var(--text);overflow-wrap:anywhere}
 .dr-sub{font-size:12px;color:var(--text-faint);margin-top:2px;overflow-wrap:anywhere}
 .dr-note{font-size:12.5px;color:var(--text-dim);margin-top:4px;white-space:pre-wrap;overflow-wrap:anywhere}
+.dr-note.clamp{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .dr-exp{font-size:12px;font-weight:700;margin-top:3px}
 .dr-exp.bad{color:var(--danger)} .dr-exp.soon{color:var(--warning)}
 .dr-side{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0}
@@ -836,7 +837,6 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
     <button class="nav-item" data-page="charges"><span class="ni-indicator"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span><span class="ni-label">Cargas</span></button>
     <button class="nav-item" data-page="docs"><span class="ni-indicator"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg></span><span class="ni-label">Documentos</span></button>
     <button class="nav-item" data-page="manual"><span class="ni-indicator"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span><span class="ni-label">Manual</span></button>
-    <button class="nav-item" data-page="notes"><span class="ni-indicator"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg></span><span class="ni-label">Notas</span></button>
     <button class="nav-item" data-page="stats"><span class="ni-indicator"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18M18 17V9M13 17V5M8 17v-4"/></svg></span><span class="ni-label">Datos</span></button>
   </nav>
 
@@ -1100,34 +1100,9 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
         <div id="manualContent"></div>
       </section>
 
-      <!-- NOTES -->
-      <section class="page" id="page-notes">
-        <div class="grid grid-2">
-          <div class="card">
-            <div class="card-head"><h2>Nueva nota</h2></div>
-            <form id="noteForm">
-              <div class="field"><label>Título</label><input id="n_title" type="text" required placeholder="Título de la nota"></div>
-              <div class="field"><label>Contenido</label><textarea id="n_content" required placeholder="Escribe aquí..."></textarea></div>
-              <div class="field"><label>Etiquetas (separadas por comas)</label><input id="n_tags" type="text" placeholder="batería, garantía, ruido..."></div>
-              <div style="display:flex;gap:8px">
-                <button type="submit" class="btn btn-primary btn-block" id="noteSubmitBtn">Guardar nota</button>
-                <button type="button" class="btn btn-ghost" id="noteCancelEdit" style="display:none">Cancelar</button>
-              </div>
-            </form>
-          </div>
-          <div class="card">
-            <div class="card-head"><h2>Filtrar por etiqueta</h2></div>
-            <div class="tags-bar" id="tagsBar"><span style="font-size:12px;color:var(--text-faint)">Sin etiquetas todavía</span></div>
-            <input id="noteSearch" type="text" placeholder="Buscar en notas..." style="width:100%;background:var(--bg-2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:13px">
-          </div>
-        </div>
-        <div class="grid grid-3" id="notesList" style="margin-top:16px"></div>
-        <div id="notesEmpty" class="empty-state" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg><p>No hay notas que coincidan</p></div>
-      </section>
-
       <!-- DOCUMENTS -->
       <section class="page" id="page-docs">
-        <div class="doc-tabs" id="docTabs"><button type="button" class="active" data-tab="docs">Documentos</button><button type="button" data-tab="revs">Revisiones</button></div>
+        <div class="doc-tabs" id="docTabs"><button type="button" class="active" data-tab="docs">Documentos</button><button type="button" data-tab="notes">Notas</button><button type="button" data-tab="revs">Revisiones</button></div>
         <div id="docsTab">
           <div class="card" style="padding:16px">
             <div class="doc-head">
@@ -1139,6 +1114,18 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
             <input id="docSearch" type="text" placeholder="Buscar por nombre o nota..." style="width:100%;background:var(--bg-2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:13px;margin-bottom:6px">
             <div class="doc-list" id="docsList"></div>
             <div id="docsEmpty" class="empty-state" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg><p>No hay documentos</p></div>
+          </div>
+        </div>
+        <div id="notesTab" style="display:none">
+          <div class="card" style="padding:16px">
+            <div class="doc-head">
+              <div class="doc-sum" id="noteSummary"></div>
+              <button type="button" class="btn btn-primary btn-sm" id="noteAddBtn">+ Añadir</button>
+            </div>
+            <div class="tags-bar" id="tagsBar" style="margin-bottom:10px"></div>
+            <input id="noteSearch" type="text" placeholder="Buscar en notas..." style="width:100%;background:var(--bg-2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:13px;margin-bottom:6px">
+            <div class="doc-list" id="notesList"></div>
+            <div id="notesEmpty" class="empty-state" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg><p>No hay notas</p></div>
           </div>
         </div>
         <div id="revsTab" style="display:none">
@@ -1204,7 +1191,6 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
     <div class="more-sheet">
       <div class="sheet-handle"></div>
       <button class="sheet-item nav-item" data-page="manual"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>Manual</button>
-      <button class="sheet-item nav-item" data-page="notes"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg>Notas</button>
       <button class="sheet-item nav-item" data-page="stats"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18M18 17V9M13 17V5M8 17v-4"/></svg>Estadísticas</button>
       <button class="sheet-item nav-item" data-page="setup"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Configuración</button>
     </div>
@@ -1218,6 +1204,20 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
     <p>El tema se guarda en este dispositivo.</p>
     <div class="theme-grid" id="themeGrid"></div>
     <div class="modal-actions"><button type="button" class="btn btn-primary" id="themeClose">Listo</button></div>
+  </div>
+</div>
+<div class="overlay" id="noteFormOverlay">
+  <div class="modal" style="max-height:92vh;overflow:auto">
+    <h3 id="noteFormTitle">Nueva nota</h3>
+    <form id="noteForm">
+      <div class="field"><label>Título</label><input id="n_title" type="text" required placeholder="Título de la nota"></div>
+      <div class="field"><label>Contenido</label><textarea id="n_content" required placeholder="Escribe aquí..."></textarea></div>
+      <div class="field"><label>Etiquetas (separadas por comas)</label><input id="n_tags" type="text" placeholder="batería, garantía, ruido..."></div>
+      <div style="display:flex;gap:8px">
+        <button type="submit" class="btn btn-primary btn-block" id="noteSubmitBtn">Guardar nota</button>
+        <button type="button" class="btn btn-ghost" id="noteCancelEdit">Cancelar</button>
+      </div>
+    </form>
   </div>
 </div>
 <div class="overlay" id="docFormOverlay">
@@ -1398,7 +1398,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-16.5';
+const APP_VERSION = '2026-10-16.6';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -1537,6 +1537,7 @@ function pageFromHash(){
   return ROUTES[r] || null;
 }
 function navigate(page, opts){
+  if(page==='notes'){ page = 'docs'; docTab = 'notes'; }
   if(page==='maintenance'){ page = 'docs'; docFilterCat = 'Taller'; docFilterSub = ''; docTab = 'docs'; }
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+page).classList.add('active');
@@ -1550,7 +1551,6 @@ function navigate(page, opts){
   }
   if(page==='charges') renderCharges();
   if(page==='revisions') renderRevisions();
-  if(page==='notes') renderNotes();
   if(page==='docs') setDocTab(docTab);
   if(page==='manual') renderManual();
   if(page==='stats') renderStats();
@@ -2139,8 +2139,9 @@ function setDocTab(t){
   docTab = t;
   document.querySelectorAll('#docTabs button').forEach(b=>b.classList.toggle('active', b.dataset.tab === t));
   document.getElementById('docsTab').style.display = t === 'docs' ? '' : 'none';
+  document.getElementById('notesTab').style.display = t === 'notes' ? '' : 'none';
   document.getElementById('revsTab').style.display = t === 'revs' ? '' : 'none';
-  if(t === 'revs') renderRevisions(); else renderDocs();
+  if(t === 'revs') renderRevisions(); else if(t === 'notes') renderNotes(); else renderDocs();
 }
 function renderDocs(){
   const docs = state.docs || [];
@@ -2359,17 +2360,16 @@ function renderNotes(){
     return matchesTag && matchesSearch;
   }).sort((a,b)=> new Date(b.date)-new Date(a.date));
 
-  const list = document.getElementById('notesList');
-  list.innerHTML = filtered.map(n=>`
-    <div class="note-card">
-      <h4>${escapeHtml(n.title)}</h4>
-      <p>${escapeHtml(n.content)}</p>
-      <div class="note-tags">${(n.tags||[]).filter(Boolean).map(t=>`<span class="tag-pill">#${t}</span>`).join('')}</div>
-      <div class="note-foot"><span class="date">${fmtDate(n.date)}</span><span>
-        <button class="icon-action" onclick="editNote(${n.id})">${ICONS.edit}</button>
-        <button class="icon-action danger" onclick="deleteNote(${n.id})">${ICONS.trash}</button>
-      </span></div>
-    </div>`).join('');
+  document.getElementById('noteSummary').innerHTML = '<b>' + filtered.length + '</b> ' + (filtered.length === 1 ? 'nota' : 'notas');
+  document.getElementById('notesList').innerHTML = filtered.map(n=>`
+    <div class="doc-row"><div class="dr-main">
+      <div class="dr-title">${escapeHtml(n.title)}</div>
+      <div class="dr-sub">${escapeHtml([fmtDate(n.date)].concat((n.tags||[]).filter(Boolean).map(t=>'#'+t)).join(' · '))}</div>
+      <div class="dr-note clamp">${escapeHtml(n.content)}</div>
+    </div><div class="dr-side"><div class="dr-act">
+      <button class="icon-action" onclick="editNote(${n.id})" title="Editar">${ICONS.edit}</button>
+      <button class="icon-action danger" onclick="deleteNote(${n.id})" title="Eliminar">${ICONS.trash}</button>
+    </div></div></div>`).join('');
   document.getElementById('notesEmpty').style.display = filtered.length ? 'none' : 'block';
 }
 function toggleNoteTag(t){ activeNoteTags.has(t) ? activeNoteTags.delete(t) : activeNoteTags.add(t); renderNotes(); }
@@ -2385,15 +2385,16 @@ function editNote(id){
   document.getElementById('n_title').value = n.title || '';
   document.getElementById('n_content').value = n.content || '';
   document.getElementById('n_tags').value = (n.tags||[]).join(', ');
+  document.getElementById('noteFormTitle').textContent = 'Editar nota';
   document.getElementById('noteSubmitBtn').textContent = 'Guardar cambios';
-  document.getElementById('noteCancelEdit').style.display = '';
-  document.getElementById('noteForm').scrollIntoView({behavior:'smooth', block:'start'});
+  document.getElementById('noteFormOverlay').classList.add('open');
 }
 function cancelNoteEdit(){
   editingNoteId = null;
   document.getElementById('noteForm').reset();
+  document.getElementById('noteFormTitle').textContent = 'Nueva nota';
   document.getElementById('noteSubmitBtn').textContent = 'Guardar nota';
-  document.getElementById('noteCancelEdit').style.display = 'none';
+  document.getElementById('noteFormOverlay').classList.remove('open');
 }
 function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
 function escapeAttr(s){ return (s||'').replace(/"/g,'&quot;'); }
@@ -2899,6 +2900,7 @@ function setupEventListeners(){
     cancelNoteEdit(); saveState(); renderNotes(); toast(wasEditing ? 'Nota actualizada' : 'Nota guardada', 'success');
   });
   document.getElementById('noteCancelEdit').addEventListener('click', cancelNoteEdit);
+  document.getElementById('noteAddBtn').addEventListener('click', ()=>{ cancelNoteEdit(); document.getElementById('noteFormOverlay').classList.add('open'); });
   document.getElementById('noteSearch').addEventListener('input', renderNotes);
 
   document.getElementById('ql_target_modal').addEventListener('change', syncQuickLinkTarget);
@@ -3029,7 +3031,7 @@ function driveContentKey(st){
 function driveSummary(st){
   const km = Math.max(Number(st.config && st.config.currentKm)||0, ...(st.charges||[]).map(x=>Number(x.km)||0), ...(st.maintenance||[]).map(x=>Number(x.km)||0), ...(st.docs||[]).map(x=>Number(x.km)||0));
   const at = Number(st.meta && st.meta.updatedAt) || 0;
-  return (st.charges||[]).length + ' cargas · ' + (st.maintenance||[]).length + ' mantenimientos · ' + (st.notes||[]).length + ' notas · ' + fmtNum(km) + ' km'
+  return (st.charges||[]).length + ' cargas · ' + ((st.docs||[]).length + (st.maintenance||[]).length) + ' documentos · ' + (st.notes||[]).length + ' notas · ' + fmtNum(km) + ' km'
     + (at ? '<br><span style="color:var(--text-faint)">Modificado: ' + new Date(at).toLocaleString('es-ES',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}) + '</span>' : '');
 }
 function driveAskConflict(remote){
