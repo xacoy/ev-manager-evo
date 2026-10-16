@@ -666,6 +666,19 @@ tr:hover td{background:var(--bg-2)}
 .rev-tasks{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .tag-pill{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;background:var(--bg-2);color:var(--text-muted)}
 .rev-meta{font-size:11px;color:var(--text-faint);font-weight:700;flex-shrink:0;text-align:right;min-width:90px}
+.rev-side{display:flex;align-items:center;gap:14px;flex-shrink:0}
+@media (max-width:640px){
+  #revsTab .card{padding:14px}
+  #revsTab .card-head{flex-wrap:wrap;gap:4px}
+  .rev-item{flex-wrap:wrap;align-items:flex-start;gap:10px 12px;padding:14px}
+  .rev-status{width:34px;height:34px}
+  .rev-body{flex:1 1 calc(100% - 50px)}
+  .rev-body h4{font-size:14px;line-height:1.3}
+  .rev-body p{font-size:12.5px}
+  .rev-side{flex:1 1 100%;justify-content:space-between;border-top:1px solid var(--border);padding-top:10px}
+  .rev-meta{text-align:left;min-width:0;font-size:12px}
+  .rev-side .btn{flex-shrink:0}
+}
 
 /* ---------- notes ---------- */
 .tags-bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
@@ -1398,7 +1411,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-16.7';
+const APP_VERSION = '2026-10-16.8';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2339,8 +2352,10 @@ function renderRevisions(){
         <p>${rev.description}</p>
         <div class="rev-tasks">${(rev.tasks||[]).map(t=>`<span class="tag-pill">${t}</span>`).join('')}</div>
       </div>
-      <div class="rev-meta">${done ? 'Completada' : st.overdue ? 'Vencida' : st.kmRemaining+' km'}</div>
-      <button class="btn ${done?'btn-ghost':'btn-primary'} btn-sm" onclick="toggleRevision(${rev.km})">${done ? 'Deshacer' : 'Marcar hecha'}</button>
+      <div class="rev-side">
+        <div class="rev-meta">${done ? 'Completada' : st.overdue ? 'Vencida' : st.kmRemaining+' km'}</div>
+        <button class="btn ${done?'btn-ghost':'btn-primary'} btn-sm" onclick="toggleRevision(${rev.km})">${done ? 'Deshacer' : 'Marcar hecha'}</button>
+      </div>
     </div>`;
   }).join('');
 }
