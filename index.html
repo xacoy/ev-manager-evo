@@ -1390,7 +1390,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-16.1';
+const APP_VERSION = '2026-10-16.2';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -1689,7 +1689,7 @@ function getChargeWindow(){
 function kwhIsEst(c){ return !(Number(c.kwh) > 0) && c.socStart != null && c.socEnd != null && Number(c.socEnd) > Number(c.socStart); }
 function kwhPerPercentWall(){
   const cap = estimateBatteryCapacity();
-  return ((cap && cap.n >= 2) ? cap.kwh : VEHICLE_BATTERY_KWH) / CHARGE_EFF / 100;
+  return ((cap && cap.n >= 1) ? cap.kwh : VEHICLE_BATTERY_KWH) / CHARGE_EFF / 100;
 }
 function kwhOf(c){
   const k = Number(c.kwh);
