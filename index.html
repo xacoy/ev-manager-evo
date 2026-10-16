@@ -472,6 +472,17 @@ button{cursor:pointer}
 .att-item .sz{color:var(--text-faint);font-size:12px;white-space:nowrap}
 .att-item.removed .nm{text-decoration:line-through;opacity:.5}
 .att-item button,.att-item a{background:none;border:1px solid var(--border);border-radius:8px;color:var(--accent);padding:5px 10px;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none}
+.doc-card{display:flex;flex-direction:column;gap:8px}
+.doc-card .doc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.doc-card h3{font-size:15px;margin:0;overflow-wrap:anywhere}
+.doc-cat{font-size:11px;font-weight:700;color:var(--accent);background:var(--accent-soft,var(--bg-2));border-radius:99px;padding:3px 9px;white-space:nowrap}
+.doc-meta{font-size:12px;color:var(--text-faint)}
+.doc-note{font-size:13px;color:var(--text-dim);white-space:pre-wrap;overflow-wrap:anywhere}
+.doc-exp{font-size:12px;font-weight:700}
+.doc-exp.bad{color:var(--danger)} .doc-exp.soon{color:var(--warning)}
+.doc-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto}
+.doc-actions button{background:none;border:1px solid var(--border);border-radius:8px;color:var(--accent);padding:6px 11px;font-size:12px;font-weight:700;cursor:pointer}
+.doc-actions button.del{color:var(--danger)}
 .att-prev{width:100%;max-height:60vh;object-fit:contain;border-radius:8px;margin-top:8px;background:var(--bg-2)}
 .icon-action small{font-size:11px;font-weight:800;margin-left:2px}
 
@@ -864,6 +875,7 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
             <button class="dropdown-item" id="homeTopBtn" data-page="dashboard"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Inicio</button>
             <button class="dropdown-item" id="setupTopBtn" data-page="setup"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Configuración</button>
             <hr style="border:none;border-top:1px solid var(--border);margin:4px 0">
+            <button class="dropdown-item" id="docsTopBtn" data-page="docs"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M12 18v-6M9 15l3-3 3 3"/></svg>Documentos</button>
             <button class="dropdown-item" id="addLinkBtn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Añadir enlace</button>
             <a href="https://github.com/xacoy/ev-manager-evo/raw/master/public/manuals/manual-es.pdf" target="_blank" class="dropdown-item" style="text-decoration:none;color:inherit"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>Manual PDF</a>
             <button class="dropdown-item" id="themeMenuBtn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.9 0 1.7-.8 1.7-1.7 0-.4-.2-.8-.4-1.1-.3-.3-.4-.7-.4-1.1 0-.9.8-1.7 1.7-1.7H16c3.3 0 6-2.7 6-6 0-4.9-4.5-8.4-10-8.4z"/></svg><span>Tema: Oscuro</span></button>
@@ -1179,6 +1191,34 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
         <div id="notesEmpty" class="empty-state" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg><p>No hay notas que coincidan</p></div>
       </section>
 
+      <!-- DOCUMENTS -->
+      <section class="page" id="page-docs">
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="card-head"><h2 id="docFormTitle">Subir documento</h2></div>
+            <form id="docForm">
+              <div class="field" id="d_file_wrap"><label>Archivo (PDF o imagen, máx. 10 MB)</label><input id="d_file" type="file" accept="application/pdf,image/*"></div>
+              <div class="field"><label>Nombre</label><input id="d_name" type="text" required placeholder="Ej.: Seguro 2026"></div>
+              <div class="field"><label>Categoría</label><select id="d_cat"></select></div>
+              <div class="field"><label>Nota (qué documento es)</label><textarea id="d_note" placeholder="Ej.: Póliza a todo riesgo, vence en octubre"></textarea></div>
+              <div class="field"><label>Caducidad (opcional)</label><input id="d_exp" type="date"></div>
+              <div style="display:flex;gap:8px">
+                <button type="submit" class="btn btn-primary btn-block" id="docSubmitBtn">Subir documento</button>
+                <button type="button" class="btn btn-ghost" id="docCancelEdit" style="display:none">Cancelar</button>
+              </div>
+              <p style="font-size:12px;color:var(--text-faint);margin-top:10px">Se guardan en la carpeta privada de tu Google Drive. Hace falta tener Sync conectado.</p>
+            </form>
+          </div>
+          <div class="card">
+            <div class="card-head"><h2>Filtrar</h2></div>
+            <div class="tags-bar" id="docCatBar"></div>
+            <input id="docSearch" type="text" placeholder="Buscar por nombre o nota..." style="width:100%;background:var(--bg-2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:13px">
+          </div>
+        </div>
+        <div class="grid grid-3" id="docsList" style="margin-top:16px"></div>
+        <div id="docsEmpty" class="empty-state" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg><p>No hay documentos</p></div>
+      </section>
+
 <!-- STATS -->
       <section class="page" id="page-stats">
         <div class="grid grid-3" style="margin-bottom:16px">
@@ -1254,6 +1294,20 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
     <h3>Adjuntos</h3>
     <div class="att-list" id="attachList"></div>
     <div class="modal-actions"><button type="button" class="btn btn-ghost" id="attachClose">Cerrar</button></div>
+  </div>
+</div>
+<div class="overlay" id="docViewOverlay">
+  <div class="modal" style="max-width:720px">
+    <h3 id="docViewTitle">Documento</h3>
+    <div id="docViewBody"></div>
+    <div class="modal-actions"><button type="button" class="btn btn-ghost" id="docViewClose">Cerrar</button></div>
+  </div>
+</div>
+<div class="overlay" id="docDelOverlay">
+  <div class="modal">
+    <h3 id="docDelTitle">¿Eliminar documento?</h3>
+    <p id="docDelText" style="font-size:14px;color:var(--text-dim);margin-bottom:6px"></p>
+    <div class="modal-actions"><button type="button" class="btn btn-ghost" id="docDelNo">Cancelar</button><button type="button" class="btn btn-primary" id="docDelYes" style="background:var(--danger);border-color:var(--danger)">Eliminar</button></div>
   </div>
 </div>
 <div class="overlay" id="addLinkOverlay">
@@ -1390,7 +1444,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-16.2';
+const APP_VERSION = '2026-10-16.3';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -1447,6 +1501,7 @@ let state = {
   charges: [],
   maintenance: [],
   notes: [],
+  docs: [],
   completedRevisions: [],
   quickLinks: DEFAULT_QUICK_LINKS.slice(),
   lang: 'es',
@@ -1519,9 +1574,9 @@ function toast(msg, type='info'){
 }
 
 /* ---------------- navigation ---------------- */
-const ROUTES = { inicio:'dashboard', cargas:'charges', taller:'maintenance', manual:'manual', notas:'notes', datos:'stats', configuracion:'setup' };
+const ROUTES = { inicio:'dashboard', cargas:'charges', taller:'maintenance', manual:'manual', notas:'notes', documentos:'docs', datos:'stats', configuracion:'setup' };
 const PAGE_ROUTE = Object.fromEntries(Object.entries(ROUTES).map(([r,p])=>[p,r]));
-const ROUTE_LABELS = { inicio:'Inicio', cargas:'Cargas', taller:'Taller', manual:'Manual', notas:'Notas', datos:'Datos', configuracion:'Configuración' };
+const ROUTE_LABELS = { inicio:'Inicio', cargas:'Cargas', taller:'Taller', manual:'Manual', notas:'Notas', documentos:'Documentos', datos:'Datos', configuracion:'Configuración' };
 const ROUTE_ICONS = { cargas:'bolt', taller:'wrench', manual:'book', notas:'edit' };
 function pageFromHash(){
   const r = decodeURIComponent((location.hash||'').replace(/^#\/?/,'')).toLowerCase();
@@ -1531,7 +1586,7 @@ function navigate(page, opts){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+page).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active', b.dataset.page===page));
-  const titles = {dashboard:'BYD Atto 3 <em class="title-accent">EVO</em>', setup:'Configuración', charges:'Cargas', maintenance:'Mantenimiento', revisions:'Revisiones', notes:'Notas', manual:'Manual', stats:'Estadísticas'};
+  const titles = {dashboard:'BYD Atto 3 <em class="title-accent">EVO</em>', setup:'Configuración', charges:'Cargas', maintenance:'Mantenimiento', revisions:'Revisiones', notes:'Notas', docs:'Documentos', manual:'Manual', stats:'Estadísticas'};
   document.getElementById('pageTitle').innerHTML = titles[page] || page;
   document.getElementById('moreSheetOverlay').classList.remove('open');
   if(!(opts && opts.fromHash) && PAGE_ROUTE[page]){
@@ -1542,6 +1597,7 @@ function navigate(page, opts){
   if(page==='maintenance') { renderMaintenance(); renderRevisions(); }
   if(page==='revisions') renderRevisions();
   if(page==='notes') renderNotes();
+  if(page==='docs') renderDocs();
   if(page==='manual') renderManual();
   if(page==='stats') renderStats();
   if(page==='dashboard') {
@@ -1617,6 +1673,10 @@ function computeAlerts(){
     if(st.overdue) alerts.push({rev, level:'overdue', text: (state.lang==='es' ? 'Vencida' : 'Overdue')});
     else if(st.upcoming) alerts.push({rev, level:'upcoming', text: (state.lang==='es' ? `Faltan ${st.kmRemaining} km` : `${st.kmRemaining} km left`)});
   });
+  (state.docs || []).forEach(d=>{
+    const left = docDaysLeft(d); if(left === null || left > 30) return;
+    alerts.push({rev:{name:d.name}, level: left < 0 ? 'docexpired' : 'docsoon', text: left < 0 ? 'Documento caducado' : 'Caduca en ' + left + ' días'});
+  });
   return alerts;
 }
 function renderAlerts(){
@@ -1628,7 +1688,7 @@ function renderAlerts(){
   } else { badge.style.display='none'; }
   list.innerHTML = alerts.length ? alerts.map(a=>`
     <div class="alert-row">
-      <div class="alert-dot" style="background:${a.level==='overdue'?'var(--danger)':'var(--warning)'}"></div>
+      <div class="alert-dot" style="background:${(a.level==='overdue'||a.level==='docexpired')?'var(--danger)':'var(--warning)'}"></div>
       <div><div class="t1">${a.rev.name}</div><div class="t2">${a.text}</div></div>
     </div>`).join('') : `<div class="empty-mini">Todo al día. Sin revisiones pendientes.</div>`;
   maybeNotify(alerts);
@@ -2105,6 +2165,129 @@ function openAttachments(id){
     }catch(err){ btn.disabled = false; btn.textContent = 'Ver'; toast('No se pudo abrir el adjunto: ' + err.message, 'danger'); }
   };
   document.getElementById('attachOverlay').classList.add('open');
+}
+
+/* ---------------- documentos (archivos en la carpeta privada de tu Drive) ---------------- */
+const DOC_CATS = ['ITV','Seguro','Permiso de circulación','Ficha técnica','Facturas','Garantía','Manual','Multas','Otros'];
+let editingDocId = null, docFilterCat = '';
+function docDaysLeft(d){ if(!d.expires) return null; return Math.ceil((new Date(d.expires + 'T00:00:00') - new Date(new Date().toDateString())) / 86400000); }
+function renderDocs(){
+  const sel = document.getElementById('d_cat');
+  if(!sel.options.length) sel.innerHTML = DOC_CATS.map(c=>'<option>' + c + '</option>').join('');
+  const docs = state.docs || [];
+  const cats = DOC_CATS.filter(c=>docs.some(d=>d.category === c));
+  document.getElementById('docCatBar').innerHTML = cats.length
+    ? ['', ...cats].map(c=>'<button type="button" class="tag-toggle ' + (docFilterCat === c ? 'active' : '') + '" data-cat="' + escapeAttr(c) + '">' + (c || 'Todos') + '</button>').join('')
+    : '<span style="font-size:12px;color:var(--text-faint)">Sin documentos todavía</span>';
+  const q = (document.getElementById('docSearch').value || '').toLowerCase();
+  const list = docs.filter(d=>(!docFilterCat || d.category === docFilterCat) && (!q || (d.name + ' ' + (d.note || '')).toLowerCase().includes(q)))
+    .sort((a,b)=>(b.date || '').localeCompare(a.date || ''));
+  document.getElementById('docsEmpty').style.display = list.length ? 'none' : 'block';
+  document.getElementById('docsList').innerHTML = list.map(d=>{
+    const left = docDaysLeft(d);
+    const exp = left === null ? '' : left < 0 ? '<div class="doc-exp bad">Caducado hace ' + (-left) + ' días</div>' : left <= 30 ? '<div class="doc-exp soon">Caduca en ' + left + ' días (' + d.expires + ')</div>' : '<div class="doc-meta">Caduca: ' + d.expires + '</div>';
+    return '<div class="card doc-card" data-id="' + d.id + '"><div class="doc-top"><h3>' + escapeHtml(d.name) + '</h3><span class="doc-cat">' + escapeHtml(d.category || 'Otros') + '</span></div>' +
+      (d.note ? '<div class="doc-note">' + escapeHtml(d.note) + '</div>' : '') + exp +
+      '<div class="doc-meta">' + escapeHtml(d.fname || '') + ' · ' + formatSize(d.size || 0) + ' · ' + (d.date || '') + '</div>' +
+      '<div class="doc-actions"><button data-act="view">Ver</button><button data-act="dl">Descargar</button><button data-act="edit">Editar</button><button class="del" data-act="del">Eliminar</button></div></div>';
+  }).join('');
+}
+function resetDocForm(){
+  editingDocId = null;
+  document.getElementById('docForm').reset();
+  document.getElementById('d_file_wrap').style.display = '';
+  document.getElementById('docFormTitle').textContent = 'Subir documento';
+  document.getElementById('docSubmitBtn').textContent = 'Subir documento';
+  document.getElementById('docCancelEdit').style.display = 'none';
+}
+async function submitDoc(e){
+  e.preventDefault();
+  const name = document.getElementById('d_name').value.trim();
+  const category = document.getElementById('d_cat').value, note = document.getElementById('d_note').value.trim(), expires = document.getElementById('d_exp').value || '';
+  if(editingDocId){
+    const d = state.docs.find(x=>x.id === editingDocId);
+    if(d){ Object.assign(d, { name, category, note, expires }); saveState(); }
+    resetDocForm(); renderDocs(); renderAlerts(); toast('Documento actualizado', 'success'); return;
+  }
+  const file = document.getElementById('d_file').files[0];
+  if(!file){ toast('Elige un archivo', 'warning'); return; }
+  const btn = document.getElementById('docSubmitBtn'); btn.disabled = true; btn.textContent = 'Subiendo…';
+  try{
+    const prep = await prepareAttachment(file);
+    await driveEnsureToken();
+    const driveId = await driveUploadFile(prep.blob, prep.name, prep.mime);
+    state.docs.push({ id: Date.now(), name, category, note, expires, driveId, fname: prep.name, mime: prep.mime, size: prep.size, date: new Date().toISOString().slice(0,10) });
+    saveState(); resetDocForm(); renderDocs(); renderAlerts(); toast('Documento subido a tu Drive', 'success');
+  }catch(err){ toast('No se pudo subir: ' + err.message, 'danger'); }
+  btn.disabled = false; btn.textContent = editingDocId ? 'Guardar cambios' : 'Subir documento';
+}
+async function docBlob(d){ await driveEnsureToken(); return await driveFetchBlob(d.driveId); }
+async function viewDoc(d){
+  const body = document.getElementById('docViewBody');
+  document.getElementById('docViewTitle').textContent = d.name;
+  body.innerHTML = '<p style="font-size:13px;color:var(--text-dim)">Cargando…</p>';
+  document.getElementById('docViewOverlay').classList.add('open');
+  try{
+    const url = URL.createObjectURL(await docBlob(d));
+    const link = '<p style="margin-top:10px"><a class="att-item" style="display:inline-block" href="' + url + '" target="_blank" rel="noopener">Abrir en pestaña nueva</a></p>';
+    body.innerHTML = (d.mime || '').startsWith('image/') ? '<img class="att-prev" alt="' + escapeAttr(d.name) + '" src="' + url + '">' + link
+      : '<iframe src="' + url + '" style="width:100%;height:60vh;border:1px solid var(--border);border-radius:8px;background:#fff"></iframe>' + link;
+  }catch(err){ body.innerHTML = ''; document.getElementById('docViewOverlay').classList.remove('open'); toast('No se pudo abrir: ' + err.message, 'danger'); }
+}
+async function downloadDoc(d){
+  try{
+    const url = URL.createObjectURL(await docBlob(d));
+    const a = document.createElement('a'); a.href = url; a.download = d.fname || d.name; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 30000);
+  }catch(err){ toast('No se pudo descargar: ' + err.message, 'danger'); }
+}
+function editDoc(d){
+  editingDocId = d.id;
+  document.getElementById('d_name').value = d.name; document.getElementById('d_cat').value = d.category || 'Otros';
+  document.getElementById('d_note').value = d.note || ''; document.getElementById('d_exp').value = d.expires || '';
+  document.getElementById('d_file_wrap').style.display = 'none';
+  document.getElementById('docFormTitle').textContent = 'Editar documento';
+  document.getElementById('docSubmitBtn').textContent = 'Guardar cambios';
+  document.getElementById('docCancelEdit').style.display = '';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+// Eliminar pide confirmación dos veces.
+let delDocId = null, delStep = 0;
+function askDeleteDoc(d){
+  delDocId = d.id; delStep = 1;
+  document.getElementById('docDelTitle').textContent = '¿Eliminar documento?';
+  document.getElementById('docDelText').textContent = '"' + d.name + '" se borrará de tu Drive.';
+  document.getElementById('docDelYes').textContent = 'Eliminar';
+  document.getElementById('docDelOverlay').classList.add('open');
+}
+async function confirmDeleteDoc(){
+  if(delStep === 1){
+    delStep = 2;
+    document.getElementById('docDelTitle').textContent = 'Última confirmación';
+    document.getElementById('docDelText').textContent = 'Esta acción no se puede deshacer. ¿Seguro que quieres eliminarlo definitivamente?';
+    document.getElementById('docDelYes').textContent = 'Sí, eliminar definitivamente';
+    return;
+  }
+  const d = state.docs.find(x=>x.id === delDocId);
+  document.getElementById('docDelOverlay').classList.remove('open'); delStep = 0;
+  if(!d) return;
+  try{ await driveEnsureToken(); await driveDeleteFile(d.driveId); }catch(err){ toast('No se pudo borrar el archivo de Drive; se quita de la lista', 'warning'); }
+  state.docs = state.docs.filter(x=>x.id !== d.id);
+  saveState(); renderDocs(); renderAlerts(); toast('Documento eliminado', 'success');
+}
+function setupDocs(){
+  document.getElementById('docForm').addEventListener('submit', submitDoc);
+  document.getElementById('docCancelEdit').addEventListener('click', resetDocForm);
+  document.getElementById('docSearch').addEventListener('input', renderDocs);
+  document.getElementById('docCatBar').addEventListener('click', e=>{ const b = e.target.closest('[data-cat]'); if(!b) return; docFilterCat = b.dataset.cat; renderDocs(); });
+  document.getElementById('docsList').addEventListener('click', e=>{
+    const b = e.target.closest('[data-act]'); if(!b) return;
+    const d = state.docs.find(x=>x.id === Number(b.closest('.doc-card').dataset.id)); if(!d) return;
+    ({ view: viewDoc, dl: downloadDoc, edit: editDoc, del: askDeleteDoc })[b.dataset.act](d);
+  });
+  document.getElementById('docViewClose').addEventListener('click', ()=>{ document.getElementById('docViewOverlay').classList.remove('open'); document.getElementById('docViewBody').innerHTML = ''; });
+  document.getElementById('docDelNo').addEventListener('click', ()=>{ delStep = 0; document.getElementById('docDelOverlay').classList.remove('open'); });
+  document.getElementById('docDelYes').addEventListener('click', confirmDeleteDoc);
 }
 
 function renderMaintenance(){
@@ -2602,6 +2785,7 @@ function setupEventListeners(){
 
     tryAdd('homeBtn', ()=>navigate('dashboard'));
     tryAdd('homeTopBtn', ()=>{ navigate('dashboard'); const dd = document.getElementById('moreMenuDropdown'); if(dd) dd.classList.remove('open'); });
+    tryAdd('docsTopBtn', ()=>{ navigate('docs'); const dd = document.getElementById('moreMenuDropdown'); if(dd) dd.classList.remove('open'); });
     tryAdd('setupTopBtn', ()=>{ navigate('setup'); const dd = document.getElementById('moreMenuDropdown'); if(dd) dd.classList.remove('open'); });
     tryAdd('themeToggle', toggleTheme);
     tryAdd('themeMenuBtn', ()=>{ buildThemePicker(); document.getElementById('themeOverlay').classList.add('open'); const dd = document.getElementById('moreMenuDropdown'); if(dd) dd.classList.remove('open'); });
@@ -3130,7 +3314,7 @@ function setupCarMode(){
 }
 function init(){
   loadState();
-  setupEventListeners();
+  setupEventListeners(); setupDocs();
   setupDrive();
   setupFullscreen();
   setupCarMode();
