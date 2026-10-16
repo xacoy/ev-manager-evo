@@ -1412,7 +1412,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-16.9';
+const APP_VERSION = '2026-10-16.10';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -1723,6 +1723,12 @@ function kwhOf(c){
   const k = Number(c.kwh);
   if(k > 0) return k;
   return kwhIsEst(c) ? (Number(c.socEnd) - Number(c.socStart)) * kwhPerPercentWall() : 0;
+}
+const HOME_RATE = 0.114;
+// Coste de una carga en casa sin kWh anotados: se estima los kWh con el % de batería inicial/final.
+function homeEstCost(socStart, socEnd){
+  const kwh = kwhOf({ kwh:null, socStart, socEnd });
+  return kwh > 0 ? Math.round(kwh * HOME_RATE * 100) / 100 : null;
 }
 // Coste de una carga: el anotado (0 = gratis) o, si no consta, los kWh por la tarifa configurada.
 function chargeCostOf(c){
@@ -2136,6 +2142,12 @@ function normalizeState(){
     if(d.driveId && !d.files){ d.files = [{ id:d.driveId, name:d.fname || d.name, mime:d.mime, size:d.size }]; delete d.driveId; delete d.fname; delete d.mime; delete d.size; changed = true; }
     if(!Array.isArray(d.files)){ d.files = []; changed = true; }
     if(d.price === undefined){ d.price = null; changed = true; }
+  });
+  // Cargas en casa guardadas con coste 0 solo porque no había kWh (solo % de batería): se estima el coste real.
+  (state.charges || []).forEach(c=>{
+    if(c.location === 'Casa' && c.kwh == null && c.cost === 0 && c.socStart != null && c.socEnd != null){
+      const est = homeEstCost(c.socStart, c.socEnd); if(est != null){ c.cost = est; changed = true; }
+    }
   });
   const old = Array.isArray(state.maintenance) ? state.maintenance : [];
   old.forEach(m=>{
@@ -2841,7 +2853,10 @@ function setupEventListeners(){
     if(locationType === 'Casa'){
       pricePerKwh = 0.114;
       placeholder = '0.114 €/kWh (tarifa Casa)';
-      costInput.value = kwh > 0 ? (kwh * pricePerKwh).toFixed(2) : '0.00';
+      const s0 = document.getElementById('c_soc0').value, s1 = document.getElementById('c_soc1').value;
+      const est = kwh > 0 ? null : (s0 !== '' && s1 !== '' ? homeEstCost(Number(s0), Number(s1)) : null);
+      costInput.value = kwh > 0 ? (kwh * pricePerKwh).toFixed(2) : (est != null ? est.toFixed(2) : '');
+      if(kwh <= 0) placeholder = est != null ? '≈ estimado con el % de batería' : 'Indica kWh o % de batería';
     } else if(locationType === 'Trabajo'){
       pricePerKwh = 0;
       placeholder = '0.00 €/kWh (GRATIS)';
@@ -2861,6 +2876,7 @@ function setupEventListeners(){
     updateChargePriceDefault();
   });
 
+  ['c_soc0','c_soc1'].forEach(id=>{ const el = document.getElementById(id); el.addEventListener('input', updateChargePriceDefault); el.addEventListener('change', updateChargePriceDefault); });
   document.getElementById('c_kwh').addEventListener('input', updateChargePriceDefault);
   document.getElementById('c_kwh').addEventListener('change', updateChargePriceDefault);
 
