@@ -1444,7 +1444,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-16.3';
+const APP_VERSION = '2026-10-16.4';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2168,25 +2168,27 @@ function openAttachments(id){
 }
 
 /* ---------------- documentos (archivos en la carpeta privada de tu Drive) ---------------- */
-const DOC_CATS = ['ITV','Seguro','Permiso de circulación','Ficha técnica','Facturas','Garantía','Manual','Multas','Otros'];
+const DOC_CATS = ['Seguro','ITV','Facturas','Multas','Vehículo','Otros'];
+const DOC_CAT_ALIAS = { 'Permiso de circulación':'Vehículo', 'Ficha técnica':'Vehículo', 'Garantía':'Vehículo', 'Manual':'Vehículo' };
+function docCat(d){ return DOC_CAT_ALIAS[d.category] || d.category || 'Otros'; }
 let editingDocId = null, docFilterCat = '';
 function docDaysLeft(d){ if(!d.expires) return null; return Math.ceil((new Date(d.expires + 'T00:00:00') - new Date(new Date().toDateString())) / 86400000); }
 function renderDocs(){
   const sel = document.getElementById('d_cat');
   if(!sel.options.length) sel.innerHTML = DOC_CATS.map(c=>'<option>' + c + '</option>').join('');
   const docs = state.docs || [];
-  const cats = DOC_CATS.filter(c=>docs.some(d=>d.category === c));
+  const cats = DOC_CATS.filter(c=>docs.some(d=>docCat(d) === c));
   document.getElementById('docCatBar').innerHTML = cats.length
     ? ['', ...cats].map(c=>'<button type="button" class="tag-toggle ' + (docFilterCat === c ? 'active' : '') + '" data-cat="' + escapeAttr(c) + '">' + (c || 'Todos') + '</button>').join('')
     : '<span style="font-size:12px;color:var(--text-faint)">Sin documentos todavía</span>';
   const q = (document.getElementById('docSearch').value || '').toLowerCase();
-  const list = docs.filter(d=>(!docFilterCat || d.category === docFilterCat) && (!q || (d.name + ' ' + (d.note || '')).toLowerCase().includes(q)))
+  const list = docs.filter(d=>(!docFilterCat || docCat(d) === docFilterCat) && (!q || (d.name + ' ' + (d.note || '')).toLowerCase().includes(q)))
     .sort((a,b)=>(b.date || '').localeCompare(a.date || ''));
   document.getElementById('docsEmpty').style.display = list.length ? 'none' : 'block';
   document.getElementById('docsList').innerHTML = list.map(d=>{
     const left = docDaysLeft(d);
     const exp = left === null ? '' : left < 0 ? '<div class="doc-exp bad">Caducado hace ' + (-left) + ' días</div>' : left <= 30 ? '<div class="doc-exp soon">Caduca en ' + left + ' días (' + d.expires + ')</div>' : '<div class="doc-meta">Caduca: ' + d.expires + '</div>';
-    return '<div class="card doc-card" data-id="' + d.id + '"><div class="doc-top"><h3>' + escapeHtml(d.name) + '</h3><span class="doc-cat">' + escapeHtml(d.category || 'Otros') + '</span></div>' +
+    return '<div class="card doc-card" data-id="' + d.id + '"><div class="doc-top"><h3>' + escapeHtml(d.name) + '</h3><span class="doc-cat">' + escapeHtml(docCat(d)) + '</span></div>' +
       (d.note ? '<div class="doc-note">' + escapeHtml(d.note) + '</div>' : '') + exp +
       '<div class="doc-meta">' + escapeHtml(d.fname || '') + ' · ' + formatSize(d.size || 0) + ' · ' + (d.date || '') + '</div>' +
       '<div class="doc-actions"><button data-act="view">Ver</button><button data-act="dl">Descargar</button><button data-act="edit">Editar</button><button class="del" data-act="del">Eliminar</button></div></div>';
@@ -2243,7 +2245,7 @@ async function downloadDoc(d){
 }
 function editDoc(d){
   editingDocId = d.id;
-  document.getElementById('d_name').value = d.name; document.getElementById('d_cat').value = d.category || 'Otros';
+  document.getElementById('d_name').value = d.name; document.getElementById('d_cat').value = docCat(d);
   document.getElementById('d_note').value = d.note || ''; document.getElementById('d_exp').value = d.expires || '';
   document.getElementById('d_file_wrap').style.display = 'none';
   document.getElementById('docFormTitle').textContent = 'Editar documento';
