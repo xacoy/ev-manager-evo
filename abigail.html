@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ABIGAIL 1984</title>
+<style>
+  :root {
+    --pink: #ff2e97;
+    --cyan: #00f0ff;
+    --yellow: #ffe600;
+    --purple: #2a0a4a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    background: #0a0014;
+    color: var(--cyan);
+    font-family: "Courier New", Courier, monospace;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px 16px 40px;
+    position: relative;
+  }
+
+  /* Sol retro */
+  .sun {
+    position: fixed;
+    left: 50%;
+    bottom: 32vh;
+    width: min(70vw, 420px);
+    aspect-ratio: 1;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    background: linear-gradient(to bottom, var(--yellow) 0%, #ff8a00 40%, var(--pink) 75%, #8a00c2 100%);
+    box-shadow: 0 0 80px rgba(255, 46, 151, .6);
+    -webkit-mask-image: repeating-linear-gradient(to bottom, #000 0 14px, transparent 14px 18px);
+            mask-image: repeating-linear-gradient(to bottom, #000 0 14px, transparent 14px 18px);
+    -webkit-mask-size: 100% 100%;
+    z-index: 0;
+  }
+  .sun::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, transparent 55%, #0a0014 56%);
+    border-radius: 50%;
+  }
+
+  /* Suelo de rejilla */
+  .grid {
+    position: fixed;
+    left: -50%; right: -50%;
+    bottom: 0;
+    height: 34vh;
+    background:
+      linear-gradient(to bottom, #0a0014 0%, transparent 40%),
+      repeating-linear-gradient(to right, var(--pink) 0 2px, transparent 2px 60px),
+      repeating-linear-gradient(to bottom, var(--pink) 0 2px, transparent 2px 40px);
+    transform: perspective(300px) rotateX(60deg);
+    transform-origin: bottom;
+    animation: scroll 1.2s linear infinite;
+    z-index: 0;
+    opacity: .75;
+  }
+  @keyframes scroll {
+    from { background-position: 0 0, 0 0, 0 0; }
+    to   { background-position: 0 0, 0 0, 0 40px; }
+  }
+
+  /* Líneas de monitor CRT */
+  body::after {
+    content: "";
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(to bottom, rgba(0,0,0,.28) 0 1px, transparent 1px 3px);
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  main {
+    position: relative;
+    z-index: 2;
+    width: min(92vw, 640px);
+    text-align: center;
+  }
+
+  h1 {
+    font-family: Impact, "Arial Black", sans-serif;
+    font-style: italic;
+    font-size: clamp(2rem, 9vw, 4.2rem);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #fff;
+    text-shadow:
+      3px 3px 0 var(--pink),
+      6px 6px 0 var(--purple),
+      0 0 24px var(--cyan);
+    margin-bottom: 6px;
+  }
+  .sub {
+    color: var(--yellow);
+    letter-spacing: .35em;
+    font-size: .8rem;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    text-shadow: 0 0 8px var(--yellow);
+  }
+
+  /* Botón principal */
+  #btn {
+    font-family: Impact, "Arial Black", sans-serif;
+    font-size: clamp(1.8rem, 8vw, 3rem);
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    padding: 18px 56px;
+    color: #fff;
+    cursor: pointer;
+    border: 4px solid #fff;
+    border-radius: 6px;
+    background: linear-gradient(to bottom, #ff6ac1 0%, var(--pink) 48%, #b0005f 50%, #ff2e97 100%);
+    box-shadow: 0 8px 0 #6b0039, 0 0 30px var(--pink), inset 0 0 12px rgba(255,255,255,.5);
+    text-shadow: 2px 2px 0 #6b0039;
+    transition: transform .08s, box-shadow .08s;
+  }
+  #btn:hover { filter: brightness(1.15); }
+  #btn:active {
+    transform: translateY(6px);
+    box-shadow: 0 2px 0 #6b0039, 0 0 40px var(--pink), inset 0 0 12px rgba(255,255,255,.5);
+  }
+  #btn:focus-visible { outline: 3px dashed var(--yellow); outline-offset: 6px; }
+
+  /* Pantalla de resultado */
+  .screen {
+    margin: 36px auto 0;
+    padding: 20px 18px;
+    min-height: 130px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(0, 20, 10, .85);
+    border: 3px solid var(--cyan);
+    border-radius: 10px;
+    box-shadow: 0 0 22px var(--cyan), inset 0 0 22px rgba(0,240,255,.25);
+    color: #39ff14;
+    font-size: clamp(1.05rem, 4.2vw, 1.5rem);
+    line-height: 1.5;
+    text-shadow: 0 0 8px #39ff14;
+  }
+  .screen.empty { color: var(--cyan); text-shadow: 0 0 8px var(--cyan); }
+  .cursor::after {
+    content: "█";
+    margin-left: 4px;
+    animation: blink 1s steps(1) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* Zona de correo */
+  .mail {
+    margin-top: 22px;
+    display: none;
+    gap: 10px;
+    flex-direction: column;
+    align-items: center;
+  }
+  .mail.show { display: flex; }
+  .mail input {
+    width: min(100%, 380px);
+    padding: 10px 12px;
+    font-family: inherit;
+    font-size: 1rem;
+    color: var(--yellow);
+    background: #000;
+    border: 2px solid var(--yellow);
+    box-shadow: 0 0 10px rgba(255,230,0,.5);
+  }
+  .mail input::placeholder { color: rgba(255,230,0,.5); }
+  .mail a {
+    display: inline-block;
+    padding: 12px 26px;
+    font-family: Impact, "Arial Black", sans-serif;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #000;
+    background: linear-gradient(to bottom, #fff58a, var(--yellow) 50%, #d8a800 52%, var(--yellow));
+    border: 3px solid #fff;
+    border-radius: 4px;
+    box-shadow: 0 5px 0 #7a5f00, 0 0 20px var(--yellow);
+  }
+  .mail a:active { transform: translateY(4px); box-shadow: 0 1px 0 #7a5f00, 0 0 20px var(--yellow); }
+  .mail a:focus-visible { outline: 3px dashed var(--cyan); outline-offset: 4px; }
+
+  footer {
+    margin-top: 30px;
+    font-size: .7rem;
+    letter-spacing: .25em;
+    color: rgba(0,240,255,.7);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .grid, .cursor::after { animation: none; }
+  }
+</style>
+</head>
+<body>
+  <div class="sun" aria-hidden="true"></div>
+  <div class="grid" aria-hidden="true"></div>
+
+  <main>
+    <h1>Insultómatic</h1>
+    <p class="sub">★ Modelo 1984 ★</p>
+
+    <button id="btn" type="button">Abigail</button>
+
+    <div id="screen" class="screen empty" aria-live="polite">PULSA EL BOTÓN PARA EMPEZAR...</div>
+
+    <div id="mail" class="mail">
+      <input id="to" type="email" placeholder="correo@destino.com (opcional)" aria-label="Correo de destino">
+      <a id="send" href="#">✉ Enviar por correo</a>
+    </div>
+
+    <footer>© 1984 ABIGAIL SYSTEMS · 64K RAM OK</footer>
+  </main>
+
+<script>
+  const insultos = [
+    "Abigail, eres más lenta que un módem de 1984.",
+    "Abigail, tienes menos gracia que una calculadora sin pilas.",
+    "Abigail, eres como el Wi-Fi del vecino: nadie te quiere cerca y siempre te caes.",
+    "Abigail, tu sentido de la orientación pierde contra una cinta de casete enrollada.",
+    "Abigail, eres tan despistada que buscas las gafas con las gafas puestas.",
+    "Abigail, tienes más cara que un cartel de Hollywood.",
+    "Abigail, eres un disquete corrupto: nadie sabe qué hay dentro y mejor no mirar.",
+    "Abigail, cocinando eres un peligro nacional.",
+    "Abigail, tu puntualidad es como el cometa Halley: aparece cada 76 años.",
+    "Abigail, eres más pesada que un walkman con las pilas de plomo.",
+    "Abigail, tu baile da más miedo que el vídeo de Thriller.",
+    "Abigail, tus excusas son más largas que una peli en Betamax.",
+    "Abigail, tienes el carisma de un mando de televisor sin teclas.",
+    "Abigail, eres más cabezota que una mula con gomina.",
+    "Abigail, cantas como un fax conectándose.",
+    "Abigail, tu orden es el de un cajón de cables enredados.",
+    "Abigail, tienes menos memoria que un ZX Spectrum de 16K.",
+    "Abigail, eres tan lista como un Tamagotchi... olvidado en un cajón.",
+    "Abigail, tus chistes necesitan subtítulos y aun así no se entienden.",
+    "Abigail, tienes la paciencia de un cubo de Rubik resuelto a pegatinas.",
+    "Abigail, conduces como si el coche fuera un Pac-Man.",
+    "Abigail, eres la persona más tardona desde que inventaron el reloj.",
+    "Abigail, tus peinados parecen un cable USB mal enrollado.",
+    "Abigail, eres tan dramática que hasta el telediario te pide que bajes el volumen.",
+    "Abigail, tu sentido del humor se quedó sin batería en 1987.",
+    "Abigail, eres un bug sin solución... pero con mucho encanto (poco, pero algo).",
+    "Abigail, más ruido haces tú que una impresora matricial.",
+    "Abigail, tu cuarto es un agujero negro con calcetines."
+  ];
+
+  const btn = document.getElementById("btn");
+  const screen = document.getElementById("screen");
+  const mail = document.getElementById("mail");
+  const to = document.getElementById("to");
+  const send = document.getElementById("send");
+
+  let ultimo = -1;
+  let timer = null;
+
+  function actualizarCorreo(texto) {
+    const asunto = "Un mensajito de Abigail ★";
+    const cuerpo = texto + "\n\n— Enviado desde el Insultómatic 1984";
+    send.href = "mailto:" + encodeURIComponent(to.value.trim()).replace(/%40/g, "@") +
+      "?subject=" + encodeURIComponent(asunto) +
+      "&body=" + encodeURIComponent(cuerpo);
+  }
+
+  function escribir(texto) {
+    clearInterval(timer);
+    screen.classList.remove("empty");
+    screen.classList.add("cursor");
+    screen.textContent = "";
+    let i = 0;
+    timer = setInterval(() => {
+      screen.textContent = texto.slice(0, ++i);
+      if (i >= texto.length) {
+        clearInterval(timer);
+        screen.classList.remove("cursor");
+      }
+    }, 22);
+  }
+
+  btn.addEventListener("click", () => {
+    let n;
+    do { n = Math.floor(Math.random() * insultos.length); } while (n === ultimo);
+    ultimo = n;
+    const texto = insultos[n];
+    escribir(texto);
+    actualizarCorreo(texto);
+    mail.classList.add("show");
+  });
+
+  to.addEventListener("input", () => {
+    if (ultimo >= 0) actualizarCorreo(insultos[ultimo]);
+  });
+</script>
+</body>
+</html>
