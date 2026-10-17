@@ -132,6 +132,37 @@
   }
   #btn:focus-visible { outline: 3px dashed var(--yellow); outline-offset: 6px; }
 
+  /* Botones de categoría */
+  .cats {
+    margin-top: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+  .cat {
+    font-family: Impact, "Arial Black", sans-serif;
+    font-size: 1.05rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 10px 18px;
+    color: #fff;
+    cursor: pointer;
+    border: 3px solid #fff;
+    border-radius: 4px;
+    text-shadow: 2px 2px 0 rgba(0,0,0,.6);
+    transition: transform .08s, box-shadow .08s;
+  }
+  .cat:hover { filter: brightness(1.15); }
+  .cat:active { transform: translateY(4px); }
+  .cat:focus-visible { outline: 3px dashed var(--yellow); outline-offset: 4px; }
+  .c-hot   { background: linear-gradient(#ff8a3d, #e01e00 50%, #a10f00 52%, #e01e00); box-shadow: 0 5px 0 #5c0900, 0 0 18px #ff4a1c; }
+  .c-brain { background: linear-gradient(#7fe9ff, #0090c8 50%, #00608c 52%, #0090c8); box-shadow: 0 5px 0 #002f47, 0 0 18px var(--cyan); }
+  .c-sweet { background: linear-gradient(#c9a0ff, #8a3fe0 50%, #5d22a8 52%, #8a3fe0); box-shadow: 0 5px 0 #2d0f58, 0 0 18px #b36bff; }
+  .c-hot:active   { box-shadow: 0 1px 0 #5c0900, 0 0 18px #ff4a1c; }
+  .c-brain:active { box-shadow: 0 1px 0 #002f47, 0 0 18px var(--cyan); }
+  .c-sweet:active { box-shadow: 0 1px 0 #2d0f58, 0 0 18px #b36bff; }
+
   /* Pantalla de resultado */
   .screen {
     margin: 36px auto 0;
@@ -213,6 +244,12 @@
 
     <button id="btn" type="button">Abigail</button>
 
+    <div class="cats">
+      <button type="button" class="cat c-hot" data-cat="picantes">🌶 Picantes</button>
+      <button type="button" class="cat c-brain" data-cat="listas">🧠 Su inteligencia</button>
+      <button type="button" class="cat c-sweet" data-cat="dulces">🍬 Con almíbar</button>
+    </div>
+
     <div id="screen" class="screen empty" aria-live="polite">PULSA EL BOTÓN PARA EMPEZAR...</div>
 
     <div id="mail" class="mail">
@@ -261,7 +298,110 @@
   const to = document.getElementById("to");
   const send = document.getElementById("send");
 
-  let ultimo = -1;
+  insultos.push(
+    "Abigail, tienes más morro que un camión de bomberos.",
+    "Abigail, eres como un lunes: nadie te pidió y aquí estás.",
+    "Abigail, tu paraguas tiene más sentido de la oportunidad que tú.",
+    "Abigail, discutes tanto que hasta tu sombra pide el divorcio.",
+    "Abigail, eres la reina del 'ahora voy' y llegar dentro de una hora.",
+    "Abigail, tu sentido de la moda lo diseñó un caleidoscopio con resaca.",
+    "Abigail, tienes la elegancia de un pingüino en patines.",
+    "Abigail, eres tan sutil como un camión de basura en una biblioteca.",
+    "Abigail, tu risa asusta a las palomas y a los vecinos.",
+    "Abigail, tienes menos filtro que un café de máquina.",
+    "Abigail, eres más enrevesada que el manual de un vídeo VHS.",
+    "Abigail, tu coche te teme más que tú a él.",
+    "Abigail, tienes el timing de una tostadora en el desierto.",
+    "Abigail, tus selfies necesitan un aviso de la OMS.",
+    "Abigail, eres la única que pierde una discusión consigo misma.",
+    "Abigail, tu playlist es un crimen contra la humanidad.",
+    "Abigail, tienes más manías que un anuncio de detergente.",
+    "Abigail, hablas más que un loro con altavoz.",
+    "Abigail, eres tan tranquila como una olla a presión sin válvula.",
+    "Abigail, tu mal humor tiene su propio código postal."
+  );
+
+  const categorias = {
+    picantes: [
+      "Abigail, te pones ropa de gala para ir a por pan y aun así sales de peor humor.",
+      "Abigail, eres un incendio con patas y encima te haces la víctima.",
+      "Abigail, tienes una lengua que ni el bisturí de un cirujano.",
+      "Abigail, cuando entras en una sala, hasta el aire acondicionado se pone tenso.",
+      "Abigail, tu paciencia es tan corta como tu lista de excusas es larga.",
+      "Abigail, eres una bomba de relojería con tacones y mala leche.",
+      "Abigail, tienes más veneno que una serpiente con tarjeta de crédito.",
+      "Abigail, eres tan intensa que hasta tu café pide hielo.",
+      "Abigail, haces temblar al más valiente y encima sonríes.",
+      "Abigail, tu mirada de desprecio tiene más fuerza que un láser.",
+      "Abigail, eres picante, sí... como un chile que nadie pidió.",
+      "Abigail, la última vez que te quedaste callada fue por un apagón.",
+      "Abigail, tu orgullo ocupa más sitio que tu armario.",
+      "Abigail, eres la prueba de que el drama sí se puede vestir de gala.",
+      "Abigail, si el sarcasmo fuera deporte, ya te habrían descalificado por dopaje.",
+      "Abigail, tienes más carácter que un volcán con insomnio.",
+      "Abigail, tus indirectas no son indirectas: son misiles teledirigidos.",
+      "Abigail, vas de dura, pero lloras con los anuncios de Navidad.",
+      "Abigail, eres tan ardiente que los extintores se esconden al verte.",
+      "Abigail, tu 'no pasa nada' tiene más amenazas que una película de mafiosos."
+    ],
+    listas: [
+      "Abigail, tienes la agudeza mental de un cojín.",
+      "Abigail, si la inteligencia fuera luz, tú serías un apagón en un sótano.",
+      "Abigail, a ti te explican el chiste y todavía lo buscas.",
+      "Abigail, tu cerebro va en modo ahorro de batería desde 1991.",
+      "Abigail, tienes un coeficiente intelectual que se confunde con la temperatura de una nevera.",
+      "Abigail, necesitas GPS para encontrar el sentido común.",
+      "Abigail, tus ideas brillantes tienen la potencia de una vela mojada.",
+      "Abigail, piensas tan despacio que los semáforos se ponen verdes solos.",
+      "Abigail, eres tan lista como una piedra... y la piedra al menos hace bulto.",
+      "Abigail, tu cabeza es un hotel con todas las habitaciones libres.",
+      "Abigail, contigo una bombilla pierde su idea antes de encenderse.",
+      "Abigail, tu lógica sigue un mapa sin carreteras.",
+      "Abigail, cuando piensas, se oye un ventilador pidiendo auxilio.",
+      "Abigail, tienes la cabeza tan hueca que se oyen ecos.",
+      "Abigail, tu neurona solitaria pide vacaciones.",
+      "Abigail, si el sentido común se vendiera, tú estarías en lista de espera.",
+      "Abigail, eres un rompecabezas al que le faltan todas las piezas.",
+      "Abigail, tus razonamientos tienen más agujeros que un queso suizo.",
+      "Abigail, ni con instrucciones, ni con dibujitos, ni con tutorial.",
+      "Abigail, tu cociente intelectual se mide con un termómetro de nevera.",
+      "Abigail, eres tan despierta como una almohada de plumas.",
+      "Abigail, a tu lado un tostador parece un premio Nobel.",
+      "Abigail, tu pensamiento profundo cabe en un dedal.",
+      "Abigail, tienes ideas, pero se pierden en el camino de la oreja a la boca.",
+      "Abigail, eres como una enciclopedia: de decoración y sin abrir."
+    ],
+    dulces: [
+      "Abigail, qué valiente eres: haces todo a tu manera, y eso que nunca sale como estaba previsto.",
+      "Abigail, tienes un don: logras que lo difícil parezca imposible.",
+      "Abigail, eres muy especial; no hay otra persona tan... única.",
+      "Abigail, me encanta cómo no te importa lo que piensen los demás sobre tu estilo.",
+      "Abigail, eres muy constante: siempre llegas tarde, pero siempre llegas.",
+      "Abigail, tu entusiasmo es admirable, sobre todo cuando no hay motivos.",
+      "Abigail, tienes mucho carácter; un poco más y te tendríamos que dar permiso de armas.",
+      "Abigail, eres tan sincera que a veces no hace falta ni preguntarte nada.",
+      "Abigail, tu forma de cocinar es muy arriesgada: eso se agradece... en el seguro médico.",
+      "Abigail, siempre dices lo que piensas, y se nota que piensas... a ratos.",
+      "Abigail, no hay nadie con tanta imaginación para inventar excusas.",
+      "Abigail, eres un amor, de esos que se disfrutan mejor de lejos.",
+      "Abigail, tu forma de cantar tiene mucha personalidad; la personalidad de una tormenta.",
+      "Abigail, eres tan original que ni tu propio reflejo te copia.",
+      "Abigail, cuánta energía tienes: y qué bien que la gastes lejos de mí.",
+      "Abigail, tu peinado es una declaración de intenciones; no sé cuáles, pero muy valientes.",
+      "Abigail, tienes un talento natural para convertir cualquier plan en una aventura inesperada.",
+      "Abigail, eres inolvidable; lo intento y no lo consigo.",
+      "Abigail, qué bonito es verte tan segura de ti misma con tan pocos datos.",
+      "Abigail, tienes un corazón enorme, casi tan grande como el sitio que ocupas en el sofá.",
+      "Abigail, eres tan servicial que siempre te ofreces para lo que no te piden.",
+      "Abigail, aprecio mucho tu opinión; es la única que me hace reír cuando no toca.",
+      "Abigail, tu puntualidad es una forma de arte contemporáneo: nadie la entiende.",
+      "Abigail, tienes cara de buena persona y casi nunca se te nota lo contrario.",
+      "Abigail, eres como un buen vino: contigo hay que tener cuidado con cuánto se toma."
+    ]
+  };
+
+  const ultimos = {};
+  let actual = "";
   let timer = null;
 
   function actualizarCorreo(texto) {
@@ -287,18 +427,25 @@
     }, 22);
   }
 
-  btn.addEventListener("click", () => {
+  function pedir(cat) {
+    const lista = cat === "todos"
+      ? insultos.concat(categorias.picantes, categorias.listas, categorias.dulces)
+      : categorias[cat];
     let n;
-    do { n = Math.floor(Math.random() * insultos.length); } while (n === ultimo);
-    ultimo = n;
-    const texto = insultos[n];
-    escribir(texto);
-    actualizarCorreo(texto);
+    do { n = Math.floor(Math.random() * lista.length); } while (n === ultimos[cat] && lista.length > 1);
+    ultimos[cat] = n;
+    actual = lista[n];
+    escribir(actual);
+    actualizarCorreo(actual);
     mail.classList.add("show");
-  });
+  }
+
+  btn.addEventListener("click", () => pedir("todos"));
+  document.querySelectorAll(".cat").forEach(b =>
+    b.addEventListener("click", () => pedir(b.dataset.cat)));
 
   to.addEventListener("input", () => {
-    if (ultimo >= 0) actualizarCorreo(insultos[ultimo]);
+    if (actual) actualizarCorreo(actual);
   });
 </script>
 </body>
