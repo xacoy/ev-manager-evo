@@ -479,8 +479,6 @@ button{cursor:pointer}
 .kv-row .k{color:var(--text-muted);font-weight:600}
 .kv-row .v{font-weight:800;color:var(--text);text-align:right;font-variant-numeric:tabular-nums}
 .kv-row .v small{display:block;font-size:11px;color:var(--text-faint);font-weight:600}
-.meter{height:8px;border-radius:99px;background:var(--bg-2);overflow:hidden;margin-top:6px;min-width:110px}
-.meter i{display:block;height:100%;border-radius:99px;background:var(--accent-2)}
 .split-row{display:grid;grid-template-columns:64px 1fr;gap:12px;align-items:center;margin-bottom:10px;font-size:12px;color:var(--text-muted);font-weight:700}
 .split-bar{display:flex;gap:2px;height:16px;border-radius:99px;overflow:hidden;background:var(--bg-2)}
 .split-bar i{display:block;height:100%;min-width:3px}
@@ -2933,11 +2931,10 @@ function renderStats(){
     kvRow('Mantenimiento', fmtEUR(m.mCost), m.mt.length + (m.mt.length === 1 ? ' registro' : ' registros')) +
     kvRow('Total', fmtEUR(m.total)) +
     kvRow('Coste por km', cpk != null ? ((r.all ? m.eCost / m.km : m.eKm) || 0).toFixed(3) + ' + ' + ((r.all ? m.mCost / m.km : m.mKm) || 0).toFixed(3) + ' €' : '—', 'energía + mantenimiento');
-  const cap = estimateBatteryCapacity(), pct = cap ? Math.max(0, Math.min(100, cap.pct)) : 0;
+  const cap = estimateBatteryCapacity();
   document.getElementById('blkCar').innerHTML =
     kvRow('Km recorridos', m.km > 0 ? fmtNum(m.km) + ' km' : '—') +
-    kvRow('Salud de la batería', cap ? Math.round(cap.pct) + ' %' : '—', cap ? cap.kwh.toFixed(1) + ' de ' + VEHICLE_BATTERY_KWH + ' kWh · ' + cap.n + (cap.n === 1 ? ' carga' : ' cargas') : 'Anota el % al empezar y terminar (tramos de 20 % o más)') +
-    (cap ? '<div class="meter" aria-hidden="true"><i style="width:' + pct + '%"></i></div>' : '') +
+    kvRow('Capacidad estimada', cap ? cap.kwh.toFixed(1) + ' kWh' : '—', cap ? 'orientativa, con ' + cap.n + (cap.n === 1 ? ' carga' : ' cargas') + ' · no es el estado real de la batería' : 'Anota el % al empezar y terminar (tramos de 20 % o más)', 'Se calcula con los kWh y el % de batería de tus cargas, suponiendo un 90 % de rendimiento de carga. Un solo dato mal anotado la desvía mucho. No es la salud (SOH) de la batería.') +
     kvRow('CO₂ evitado', m.co2 != null ? fmtKg(m.co2) : '—', null, 'Estimación: gasolina ' + CO2_PETROL + ' kg/l frente a ' + CO2_GRID + ' kg/kWh de la red eléctrica') +
     kvRow('Antigüedad', state.config.purchaseDate ? months + (months === 1 ? ' mes' : ' meses') : '—');
 
