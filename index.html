@@ -15,7 +15,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Exo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <style>
 :root{
@@ -389,9 +388,6 @@ button{cursor:pointer}
 .card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
 .card-head h2{font-size:17px;font-weight:700;font-family:var(--font-display);color:var(--text);letter-spacing:-.2px}
 .card-head .hint{font-size:11px;color:var(--text-faint);font-weight:600; text-transform:uppercase}
-.chart-box{position:relative;height:220px;width:100%}
-.chart-box-wide{height:260px}
-.chart-box canvas{position:absolute;inset:0;width:100%!important;height:100%!important}
 
 /* ---------- dashboard redesign ---------- */
 .dash-header{margin-bottom:24px}
@@ -456,13 +452,56 @@ button{cursor:pointer}
 .svg-chart .empty{padding:36px 8px;text-align:center;color:var(--text-faint);font-size:13px}
 .svg-chart text{font-family:var(--font);font-size:13.5px;fill:var(--text-muted)}
 .svg-chart .val{fill:var(--text);font-weight:700}
-.place-row{display:grid;grid-template-columns:110px 1fr auto;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}
-.place-row:last-child{border-bottom:0}
-.place-row .name{font-weight:700;color:var(--text)}
 .place-bar{height:10px;border-radius:99px;background:var(--bg-2);overflow:hidden}
 .place-bar i{display:block;height:100%;border-radius:99px;background:var(--accent)}
-.place-row .info{color:var(--text-muted);text-align:right;white-space:nowrap}
-@media(max-width:560px){.place-row{grid-template-columns:80px 1fr;}.place-row .info{grid-column:1/-1;text-align:left;white-space:normal}}
+.stats-top{display:flex;align-items:center;justify-content:space-between;gap:10px 16px;flex-wrap:wrap;margin-bottom:16px}
+.stats-top .range{font-size:12.5px;color:var(--text-faint);font-weight:600}
+.seg{display:inline-flex;gap:4px;padding:4px;background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-full);max-width:100%;overflow-x:auto}
+.seg button{border:0;background:transparent;color:var(--text-muted);font:700 12.5px var(--font);padding:7px 14px;border-radius:var(--radius-full);cursor:pointer;white-space:nowrap}
+.seg button:hover{color:var(--text)}
+.seg button.on{background:var(--accent);color:var(--on-accent)}
+#page-stats .stat-card .label-row{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:22px}
+#page-stats .stat-card .value{font-size:30px;margin-top:10px}
+.delta{display:inline-flex;align-items:center;gap:3px;font-size:11.5px;font-weight:800;padding:3px 8px;border-radius:var(--radius-full);white-space:nowrap}
+.delta.good{color:var(--success);background:var(--success-soft)}
+.delta.bad{color:var(--danger);background:var(--danger-soft)}
+.delta.flat{color:var(--text-muted);background:var(--bg-2)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12px;color:var(--text-muted);font-weight:600;margin:-6px 0 8px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px}
+.legend i.dash{width:14px;height:0;border-top:2px dashed var(--warning);border-radius:0}
+.sumline{display:flex;flex-wrap:wrap;gap:8px 28px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
+.sumline div{font-size:12px;color:var(--text-faint);font-weight:600}
+.sumline b{display:block;font-size:16px;color:var(--text);font-family:var(--font-display);font-variant-numeric:tabular-nums;margin-top:2px}
+.kv-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}
+.kv-row:last-child{border-bottom:0;padding-bottom:0}
+.kv-row:first-child{padding-top:0}
+.kv-row .k{color:var(--text-muted);font-weight:600}
+.kv-row .v{font-weight:800;color:var(--text);text-align:right;font-variant-numeric:tabular-nums}
+.kv-row .v small{display:block;font-size:11px;color:var(--text-faint);font-weight:600}
+.meter{height:8px;border-radius:99px;background:var(--bg-2);overflow:hidden;margin-top:6px;min-width:110px}
+.meter i{display:block;height:100%;border-radius:99px;background:var(--accent-2)}
+.split-row{display:grid;grid-template-columns:64px 1fr;gap:12px;align-items:center;margin-bottom:10px;font-size:12px;color:var(--text-muted);font-weight:700}
+.split-bar{display:flex;gap:2px;height:16px;border-radius:99px;overflow:hidden;background:var(--bg-2)}
+.split-bar i{display:block;height:100%;min-width:3px}
+.split-legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:14px 0 18px}
+.split-legend div{font-size:12px;color:var(--text-muted);font-weight:600;padding:10px 12px;background:var(--bg-2);border-radius:var(--radius-sm);border-left:3px solid var(--accent)}
+.split-legend b{display:block;color:var(--text);font-size:13px;margin-bottom:2px}
+.places-table{width:100%}
+.places-table th{white-space:nowrap}
+.places-table th button{all:unset;cursor:pointer;font-weight:inherit;color:inherit;text-transform:inherit;letter-spacing:inherit}
+.places-table th button:hover{color:var(--text)}
+.places-table td.num,.places-table th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.places-table td .place-bar{margin-top:6px;height:6px;max-width:160px}
+.places-table td .cnt{color:var(--text-faint);font-weight:500}
+@media(max-width:560px){.places-table th,.places-table td{padding:10px 5px;font-size:12.5px}.places-table th{font-size:10.5px;letter-spacing:.2px}.places-table .hide-sm{display:none}.places-table td:first-child{white-space:normal;word-break:break-word}.split-row{grid-template-columns:1fr}}
+.records{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.rec{padding:14px;background:var(--bg-2);border-radius:var(--radius-sm);border:1px solid var(--border)}
+.rec .rl{font-size:11px;color:var(--text-faint);font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.rec .rv{font-size:20px;font-weight:800;font-family:var(--font-display);color:var(--text);margin-top:6px;font-variant-numeric:tabular-nums}
+.rec .rs{font-size:12px;color:var(--text-muted);margin-top:3px;font-weight:500}
+.places-table .show-sm{display:none}
+@media(max-width:560px){.places-table .show-sm{display:inline}}
 
 /* Adjuntos */
 .att-list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
@@ -785,9 +824,7 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
   html.car .grid-4{grid-template-columns:repeat(4,1fr)}
   html.car .btn,html.car button.btn{min-height:48px}
   html.car input,html.car select,html.car textarea{min-height:46px}
-  html.car .chart-box{height:170px}
-  html.car .chart-box-wide{height:200px}
-  html.car .dropdown{max-height:calc(100vh - 80px)}
+  html.car   html.car   html.car .dropdown{max-height:calc(100vh - 80px)}
   /* Inicio: sin scroll, 2 columnas → estado a la izquierda, accesos + actividad a la derecha */
   html.car #page-dashboard.active{
     display:grid;grid-template-columns:1.9fr 1fr;grid-template-rows:minmax(0,1fr) auto;
@@ -1152,16 +1189,46 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
 
 <!-- STATS -->
       <section class="page" id="page-stats">
-        <div class="grid grid-3" style="margin-bottom:16px">
-          <div class="card stat-card tone-cyan"><div class="label">Coste / km</div><div class="value" id="st_costPerKm" style="font-size:22px">—</div><div class="sub">€ por km (cargas + mantenimiento)</div></div>
-          <div class="card stat-card tone-violet"><div class="label">Precio medio energía</div><div class="value" id="st_avgPrice" style="font-size:22px">—</div><div class="sub">€ / kWh</div></div>
-          <div class="card stat-card tone-green"><div class="label">Proyección anual</div><div class="value" id="st_yearProj" style="font-size:22px">—</div><div class="sub">gasto estimado / año</div></div>
+        <div class="stats-top">
+          <div class="seg" id="statsPeriodSeg" role="tablist" aria-label="Periodo">
+            <button type="button" data-p="all" onclick="setStatsPeriod('all')">Todo</button>
+            <button type="button" data-p="y1" onclick="setStatsPeriod('y1')">12 meses</button>
+            <button type="button" data-p="ytd" onclick="setStatsPeriod('ytd')">Este año</button>
+            <button type="button" data-p="m" onclick="setStatsPeriod('m')">Este mes</button>
+          </div>
+          <div class="range" id="statsRangeLabel"></div>
         </div>
+
         <div class="grid grid-3" style="margin-bottom:16px">
-          <div class="card stat-card tone-amber"><div class="label">Consumo (de la red)</div><div class="value" id="st_cons" style="font-size:22px">—</div><div class="sub" id="st_consSub">kWh / 100 km</div></div>
-          <div class="card stat-card tone-cyan"><div class="label">Capacidad estimada</div><div class="value" id="st_cap" style="font-size:22px">—</div><div class="sub" id="st_capSub">Anota el % de batería al cargar</div></div>
-          <div class="card stat-card tone-green"><div class="label">Ahorro vs gasolina</div><div class="value" id="st_saved" style="font-size:22px">—</div><div class="sub">acumulado</div></div>
+          <div class="card stat-card tone-green"><div class="label-row"><div class="label">Ahorro vs gasolina</div><span id="dl_saved"></span></div><div class="value" id="st_saved">—</div><div class="sub" id="st_savedSub">acumulado</div></div>
+          <div class="card stat-card tone-cyan"><div class="label-row"><div class="label">Coste / km</div><span id="dl_costKm"></span></div><div class="value" id="st_costPerKm">—</div><div class="sub" id="st_costPerKmSub">cargas + mantenimiento</div></div>
+          <div class="card stat-card tone-amber"><div class="label-row"><div class="label">Consumo (de la red)</div><span id="dl_cons"></span></div><div class="value" id="st_cons">—</div><div class="sub" id="st_consSub">kWh / 100 km</div></div>
         </div>
+
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-head"><h2>Gasto mensual</h2><span class="hint">energía + mantenimiento</span></div>
+          <div class="legend"><span><i style="background:var(--accent)"></i>Energía</span><span><i style="background:var(--orange)"></i>Mantenimiento</span><span><i class="dash"></i>Media mensual</span></div>
+          <div class="svg-chart" id="chGasto"></div>
+          <div class="sumline" id="gastoSummary"></div>
+        </div>
+
+        <div class="grid grid-3" style="margin-bottom:16px">
+          <div class="card"><div class="card-head"><h2>Energía</h2></div><div id="blkEnergy"></div></div>
+          <div class="card"><div class="card-head"><h2>Dinero</h2></div><div id="blkMoney"></div></div>
+          <div class="card"><div class="card-head"><h2>Vehículo</h2></div><div id="blkCar"></div></div>
+        </div>
+
+        <div class="grid grid-2eq" style="margin-bottom:16px">
+          <div class="card">
+            <div class="card-head"><h2>kWh por mes</h2><span class="hint">energía cargada</span></div>
+            <div class="svg-chart" id="chKwhMes"></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h2>Km por mes</h2><span class="hint">según el odómetro anotado</span></div>
+            <div class="svg-chart" id="chKmMes"></div>
+          </div>
+        </div>
+
         <div class="grid grid-2eq" style="margin-bottom:16px">
           <div class="card">
             <div class="card-head"><h2>Consumo por tramo</h2><span class="hint">kWh / 100 km</span></div>
@@ -1172,19 +1239,16 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
             <div class="svg-chart" id="chAhorro"></div>
           </div>
         </div>
+
         <div class="card" style="margin-bottom:16px">
-          <div class="card-head"><h2>Dónde cargas</h2><span class="hint">kWh, gasto y precio por lugar</span></div>
-          <div id="chLugares"></div>
+          <div class="card-head"><h2>Dónde y cómo cargas</h2><span class="hint">reparto y detalle por lugar</span></div>
+          <div id="chSplit"></div>
+          <div class="table-wrap"><table class="places-table" id="chLugares"></table></div>
         </div>
+
         <div class="card">
-          <div class="card-head"><h2>Gasto mensual</h2><span class="hint">cargas + mantenimiento</span></div>
-          <div class="chart-box chart-box-wide"><canvas id="chartMonthly"></canvas></div>
-        </div>
-        <div class="card" style="margin-top:16px">
-          <div class="card-head"><h2>Resumen general</h2></div>
-          <div class="table-wrap"><table>
-            <tbody id="statsSummaryTable"></tbody>
-          </table></div>
+          <div class="card-head"><h2>Récords</h2><span class="hint">del periodo</span></div>
+          <div class="records" id="statsRecords"></div>
         </div>
       </section>
 
@@ -1476,7 +1540,6 @@ let state = {
   meta: { notifiedRevisions: [], lastAlertCheck: '' }
 };
 let activeNoteTags = new Set();
-let charts = {};
 
 function loadState(){
   try{
@@ -1990,13 +2053,6 @@ function buildRecentActivity(){
   }).join('');
   const rows = container.children;
   if(rows.length) rows[rows.length-1].style.borderBottom = 'none';
-}
-function cssVar(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
-function baseChartOpts(){
-  return { responsive:true, maintainAspectRatio:false,
-    plugins:{ legend:{ display:false } },
-    scales:{ x:{ grid:{ color:'rgba(128,128,128,.1)' }, ticks:{ color: cssVar('--text-muted'), font:{size:10} } },
-              y:{ beginAtZero:true, grid:{ color:'rgba(128,128,128,.1)' }, ticks:{ color: cssVar('--text-muted'), font:{size:10} } } } };
 }
 function refreshCharts(){ renderDashboard(); if(document.getElementById('page-stats').classList.contains('active')) renderStats(); }
 
@@ -2579,7 +2635,7 @@ function svgBarChart(el, items, o){
   const every = items.length > 14 ? Math.ceil(items.length / 14) : 1;
   items.forEach((it, i)=>{
     const x = L + step * i + (step - bw) / 2, yy = y(it.value);
-    g += '<rect x="' + x + '" y="' + yy + '" width="' + bw + '" height="' + Math.max(1, T + ih - yy) + '" rx="4" style="fill:var(--accent)"/>';
+    g += '<rect x="' + x + '" y="' + yy + '" width="' + bw + '" height="' + Math.max(1, T + ih - yy) + '" rx="4" style="fill:' + (o.color || 'var(--accent)') + '"/>';
     if(items.length <= 12) g += '<text class="val" x="' + (x + bw / 2) + '" y="' + (yy - 5) + '" text-anchor="middle">' + (o.fmt ? o.fmt(it.value) : it.value.toFixed(1)) + '</text>';
     if(i % every === 0) g += '<text x="' + (x + bw / 2) + '" y="' + (H - 13) + '" text-anchor="middle">' + it.label + '</text>';
   });
@@ -2615,110 +2671,288 @@ function svgLineChart(el, items, o){
   g += '<text class="val" x="' + Math.min(x(items.length - 1), W - R - 4) + '" y="' + (y(last.value) - 11) + '" text-anchor="' + (items.length > 1 ? 'end' : 'middle') + '">' + (o.fmt ? o.fmt(last.value) : Math.round(last.value)) + '</text>';
   el.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + (o.aria || 'Gráfica') + '">' + g + '</svg>';
 }
+function svgStackedBarChart(el, items, o){
+  o = o || {};
+  const W = 640, H = 250, L = 46, R = 14, T = 24, B = 38, iw = W - L - R, ih = H - T - B;
+  const max = niceMax(Math.max(...items.map(i=>i.a + i.b), o.avg || 0) * 1.08);
+  const y = v => T + ih - v / max * ih;
+  const step = iw / items.length, bw = Math.min(46, step * 0.62);
+  let g = '';
+  for(let i = 0; i <= 4; i++){
+    const v = max / 4 * i, yy = y(v);
+    g += '<line x1="' + L + '" y1="' + yy + '" x2="' + (W - R) + '" y2="' + yy + '" style="stroke:var(--border)"/>';
+    g += '<text x="' + (L - 6) + '" y="' + (yy + 4) + '" text-anchor="end">' + (o.axis ? o.axis(v) : Math.round(v)) + '</text>';
+  }
+  const every = items.length > 14 ? Math.ceil(items.length / 14) : 1;
+  items.forEach((it, i)=>{
+    const x = L + step * i + (step - bw) / 2, ya = y(it.a), yb = y(it.a + it.b);
+    if(it.a > 0) g += '<rect x="' + x + '" y="' + ya + '" width="' + bw + '" height="' + Math.max(1, T + ih - ya) + '" rx="3" style="fill:var(--accent)"/>';
+    if(it.b > 0) g += '<rect x="' + x + '" y="' + yb + '" width="' + bw + '" height="' + Math.max(1, ya - yb) + '" rx="3" style="fill:var(--orange)"/>';
+    if(items.length <= 12 && it.a + it.b > 0) g += '<text class="val" x="' + (x + bw / 2) + '" y="' + (yb - 5) + '" text-anchor="middle">' + (o.fmt ? o.fmt(it.a + it.b) : (it.a + it.b).toFixed(0)) + '</text>';
+    if(i % every === 0) g += '<text x="' + (x + bw / 2) + '" y="' + (H - 13) + '" text-anchor="middle">' + it.label + '</text>';
+  });
+  if(o.avg){
+    const ya = y(o.avg);
+    g += '<line x1="' + L + '" y1="' + ya + '" x2="' + (W - R) + '" y2="' + ya + '" stroke-dasharray="5 4" style="stroke:var(--warning)" stroke-width="1.6"/>';
+  }
+  el.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + (o.aria || 'Gráfica') + '">' + g + '</svg>';
+}
+
+/* ---- periodo ---- */
+const CO2_PETROL = 2.31, CO2_GRID = 0.5;   // kg CO₂ por litro de gasolina y por kWh de la red (estimación para Canarias)
+let statsPeriod = 'all', placeSort = { key: 'kwh', dir: -1 };
+try{ statsPeriod = localStorage.getItem('statsPeriod') || 'all'; }catch(e){}
+if(!['all','y1','ytd','m'].includes(statsPeriod)) statsPeriod = 'all';
+const isoLocal = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+function shiftMonths(d, k){
+  const x = new Date(d), day = x.getDate();
+  x.setDate(1); x.setMonth(x.getMonth() - k);
+  x.setDate(Math.min(day, new Date(x.getFullYear(), x.getMonth() + 1, 0).getDate()));
+  return x;
+}
+// Periodo elegido y el anterior equivalente (mes hasta hoy frente al mes pasado hasta ese día, etc.).
+function statsRange(){
+  const now = new Date(), to = isoLocal(now);
+  if(statsPeriod === 'all') return { all: true };
+  let s, k = 12;
+  if(statsPeriod === 'm'){ s = new Date(now.getFullYear(), now.getMonth(), 1); k = 1; }
+  else if(statsPeriod === 'ytd') s = new Date(now.getFullYear(), 0, 1);
+  else { s = shiftMonths(now, 12); s.setDate(s.getDate() + 1); }
+  return { all: false, from: isoLocal(s), to, pfrom: isoLocal(shiftMonths(s, k)), pto: isoLocal(shiftMonths(now, k)) };
+}
+const inRange = (date, from, to) => !!date && (!from || (date >= from && date <= to));
+function setStatsPeriod(p){
+  statsPeriod = p;
+  try{ localStorage.setItem('statsPeriod', p); }catch(e){}
+  renderStats();
+}
+function setPlaceSort(key){
+  placeSort = { key, dir: placeSort.key === key ? -placeSort.dir : (key === 'name' ? 1 : -1) };
+  renderStats();
+}
+
+// Puntos del odómetro (cargas y mantenimiento con km), de antiguo a reciente.
+function odoPoints(){
+  const p = [];
+  state.charges.forEach(c=>{ if(Number(c.km) > 0 && c.date) p.push({ ts: chargeTs(c), date: c.date, km: Number(c.km) }); });
+  maintList().forEach(m=>{ if(Number(m.km) > 0 && m.date) p.push({ ts: new Date(m.date + 'T12:00:00').getTime(), date: m.date, km: Number(m.km) }); });
+  return p.filter(x=>!isNaN(x.ts)).sort((a,b)=> a.ts - b.ts);
+}
+function kmDriven(from, to){
+  if(!from) return getCurrentKm();
+  const pts = odoPoints(), upTo = pts.filter(p=>p.date <= to);
+  if(!upTo.length) return 0;
+  const end = upTo[upTo.length - 1].km, before = pts.filter(p=>p.date < from);
+  const start = before.length ? before[before.length - 1].km : (pts.find(p=>p.date >= from) || { km: end }).km;
+  return Math.max(0, end - start);
+}
+
 // Consumo de cada tramo entre dos cargas: con el % de batería si lo hay; si no, kWh de la carga entre los km recorridos.
 function consumptionByTrip(){
   const soc = socSegments();
-  if(soc.length) return { source: 'soc', items: soc.map(s=>({ label: shortDate(s.date), value: s.consBattery / CHARGE_EFF })) };
+  if(soc.length) return { source: 'soc', items: soc.map(s=>({ date: s.date, label: shortDate(s.date), value: s.consBattery / CHARGE_EFF })) };
   const list = state.charges.filter(c=>Number(c.km) > 0).sort((a,b)=> chargeTs(a) - chargeTs(b));
   const items = [];
   for(let i = 1; i < list.length; i++){
     const km = Number(list[i].km) - Number(list[i-1].km), kwh = kwhOf(list[i]);
     if(km < 20 || kwh <= 0) continue;
     const v = kwh / km * 100;
-    if(v >= 5 && v <= 60) items.push({ label: shortDate(list[i].date), value: v });
+    if(v >= 5 && v <= 60) items.push({ date: list[i].date, label: shortDate(list[i].date), value: v });
   }
   return { source: 'kwh', items };
 }
-function monthlySavingsSeries(){
+function monthlySavingsSeries(from, to){
   const cons = savingsConsumption(), refL = Number(state.config.refConsumption) || 6.5, rate = Number(state.config.electricRate) || 0.15;
   const per = {};
   [...state.charges].sort((a,b)=> chargeTs(a) - chargeTs(b)).forEach(ch=>{
+    if(!inRange(ch.date, from, to)) return;
     const r = chargeSavingParts(ch, cons, refL, rate);
-    if(!r || !ch.date) return;
+    if(!r) return;
     const k = String(ch.date).slice(0, 7);
     per[k] = (per[k] || 0) + (r.gas - r.cost);
   });
   let acc = 0;
-  return Object.keys(per).sort().map(k=>{ acc += per[k]; const d = new Date(k + '-01T12:00:00'); return { label: d.toLocaleDateString('es-ES', { month: 'short', year: '2-digit' }), value: acc }; });
+  return Object.keys(per).sort().map(k=>{ acc += per[k]; return { label: monthLabel(k), value: acc }; });
 }
-function renderPlaces(){
-  const el = document.getElementById('chLugares'); if(!el) return;
+function monthLabel(k){ return new Date(k + '-01T12:00:00').toLocaleDateString('es-ES', { month: 'short', year: '2-digit' }); }
+
+// Series por mes (gasto en energía y en mantenimiento, kWh y km), con los meses vacíos incluidos; máximo 24.
+function monthSeries(from, to){
+  const E = {}, M = {}, K = {}, Q = {}, add = (o,k,v)=>{ o[k] = (o[k] || 0) + v; };
+  state.charges.forEach(c=>{ if(inRange(c.date, from, to)){ const k = c.date.slice(0, 7); add(E, k, chargeCostOf(c)); add(K, k, kwhOf(c)); } });
+  maintList().forEach(m=>{ if(inRange(m.date, from, to)) add(M, m.date.slice(0, 7), Number(m.cost || 0)); });
+  const pts = odoPoints();
+  for(let i = 1; i < pts.length; i++){ const d = pts[i].km - pts[i-1].km; if(d > 0 && inRange(pts[i].date, from, to)) add(Q, pts[i].date.slice(0, 7), d); }
+  const keys = [...Object.keys(E), ...Object.keys(M), ...Object.keys(K), ...Object.keys(Q)].sort();
+  if(!keys.length) return [];
+  const nowKey = isoLocal(new Date()).slice(0, 7);
+  let a = from ? from.slice(0, 7) : keys[0], b = from ? to.slice(0, 7) : (keys[keys.length - 1] > nowKey ? keys[keys.length - 1] : nowKey);
+  const out = [];
+  for(let y = +a.slice(0, 4), m = +a.slice(5, 7); ; ){
+    const k = y + '-' + String(m).padStart(2, '0');
+    if(k > b) break;
+    out.push({ key: k, label: monthLabel(k), energy: E[k] || 0, maint: M[k] || 0, kwh: K[k] || 0, km: Q[k] || 0 });
+    if(++m > 12){ m = 1; y++; }
+  }
+  return out.slice(-24);
+}
+
+// Todas las cifras de un periodo (from = null: todo el historial).
+function periodMetrics(from, to){
+  const ch = state.charges.filter(c=>inRange(c.date, from, to)), mt = maintList().filter(m=>inRange(m.date, from, to));
+  const kwh = ch.reduce((s,c)=>s + kwhOf(c), 0), eCost = ch.reduce((s,c)=>s + chargeCostOf(c), 0), mCost = mt.reduce((s,m)=>s + Number(m.cost || 0), 0);
+  const cons = savingsConsumption(), refL = Number(state.config.refConsumption) || 6.5, rate = Number(state.config.electricRate) || 0.15;
+  let gas = 0, elec = 0, kmEq = 0, kwhS = 0;
+  ch.forEach(c=>{ const r = chargeSavingParts(c, cons, refL, rate); if(r){ gas += r.gas; elec += r.cost; kmEq += r.km; kwhS += r.kwh; } });
+  let pk = 0, pc = 0;
+  ch.forEach(c=>{ const k = kwhOf(c); if(k > 0 && c.cost != null && c.cost !== ''){ pk += k; pc += Number(c.cost) || 0; } });
+  const trips = consumptionByTrip().items.filter(t=>inRange(t.date, from, to));
+  const km = kmDriven(from, to), total = eCost + mCost;
+  return {
+    ch, mt, kwh, eCost, mCost, total, km, trips, kwhS, kmEq,
+    saved: kwhS > 0 ? gas - elec : null, gas, elec,
+    price: pk > 0 ? pc / pk : null,
+    costKm: km > 0 ? total / km : null, eKm: km > 0 ? eCost / km : null, mKm: km > 0 ? mCost / km : null,
+    cons: trips.length ? trips.reduce((s,t)=>s + t.value, 0) / trips.length : null,
+    co2: kmEq > 0 ? kmEq * refL / 100 * CO2_PETROL - kwhS * CO2_GRID : null,
+    free: ch.filter(c=>c.cost != null && c.cost !== '' && Number(c.cost) === 0 && kwhOf(c) > 0)
+  };
+}
+function deltaHtml(cur, prev, goodUp){
+  if(statsPeriod === 'all' || cur == null || prev == null || !isFinite(cur) || !isFinite(prev) || prev === 0) return '';
+  const p = (cur - prev) / Math.abs(prev) * 100;
+  if(Math.abs(p) < 0.5) return '<span class="delta flat" title="vs periodo anterior">= igual</span>';
+  const up = p > 0;
+  return '<span class="delta ' + (up === goodUp ? 'good' : 'bad') + '" title="vs periodo anterior">' + (up ? '▲' : '▼') + ' ' + Math.abs(p).toFixed(0) + ' %</span>';
+}
+const kvRow = (k, v, sub, title) => '<div class="kv-row"' + (title ? ' title="' + escapeHtml(title) + '"' : '') + '><span class="k">' + k + '</span><span class="v">' + v + (sub ? '<small>' + sub + '</small>' : '') + '</span></div>';
+const fmtKg = kg => Math.abs(kg) >= 1000 ? (kg / 1000).toFixed(2).replace('.', ',') + ' t' : Math.round(kg) + ' kg';
+
+function renderPlaces(m){
+  const split = document.getElementById('chSplit'), tbl = document.getElementById('chLugares');
+  if(!split || !tbl) return;
+  if(!m.ch.length){ split.innerHTML = ''; tbl.innerHTML = '<tbody><tr><td><div class="svg-chart"><div class="empty">Sin cargas en este periodo</div></div></td></tr></tbody>'; return; }
+  const kindOf = loc => loc === 'Casa' ? 'Casa' : loc === 'Trabajo' ? 'Trabajo' : 'Públicas y otras';
+  const kinds = { 'Casa': { c: 'var(--accent)' }, 'Trabajo': { c: 'var(--purple)' }, 'Públicas y otras': { c: 'var(--orange)' } };
   const places = {};
-  state.charges.forEach(c=>{
-    const k = c.location || 'Otro', p = places[k] || (places[k] = { n: 0, kwh: 0, cost: 0 });
-    p.n++; p.kwh += kwhOf(c); p.cost += chargeCostOf(c);
+  Object.values(kinds).forEach(k=>{ k.n = 0; k.kwh = 0; k.cost = 0; });
+  m.ch.forEach(c=>{
+    const name = c.location || 'Otro', k = kinds[kindOf(name)], kw = kwhOf(c), co = chargeCostOf(c);
+    const p = places[name] || (places[name] = { name, n: 0, kwh: 0, cost: 0 });
+    p.n++; p.kwh += kw; p.cost += co; k.n++; k.kwh += kw; k.cost += co;
   });
-  const rows = Object.entries(places).sort((a,b)=> b[1].kwh - a[1].kwh);
-  if(!rows.length){ el.innerHTML = '<div class="svg-chart"><div class="empty">Sin cargas todavía</div></div>'; return; }
-  const max = Math.max(...rows.map(r=>r[1].kwh), 0.01);
-  el.innerHTML = rows.map(([name, p])=>
-    '<div class="place-row"><span class="name">' + escapeHtml(name) + ' <span style="color:var(--text-faint);font-weight:500">· ' + p.n + '</span></span>' +
-    '<div class="place-bar"><i style="width:' + (p.kwh / max * 100) + '%"></i></div>' +
-    '<span class="info">' + p.kwh.toFixed(1) + ' kWh · ' + fmtEUR(p.cost) + ' · ' + (p.kwh > 0 ? (p.cost / p.kwh).toFixed(3) : '0.000') + ' €/kWh</span></div>').join('');
+  const totKwh = Math.max(m.kwh, 0.01), totCost = Math.max(m.eCost, 0.01);
+  const barOf = (f, tot) => '<div class="split-bar">' + Object.entries(kinds).filter(([,k])=>f(k) > 0).map(([n,k])=>'<i style="width:' + (f(k) / tot * 100) + '%;background:' + k.c + '" title="' + n + ' · ' + (f(k) / tot * 100).toFixed(0) + ' %"></i>').join('') + '</div>';
+  split.innerHTML =
+    '<div class="split-row"><span>Energía</span>' + barOf(k=>k.kwh, totKwh) + '</div>' +
+    '<div class="split-row"><span>Gasto</span>' + barOf(k=>k.cost, totCost) + '</div>' +
+    '<div class="split-legend">' + Object.entries(kinds).filter(([,k])=>k.n).map(([n,k])=>
+      '<div style="border-left-color:' + k.c + '"><b>' + n + '</b>' + (k.kwh / totKwh * 100).toFixed(0) + ' % de la energía · ' + (k.cost / totCost * 100).toFixed(0) + ' % del gasto<br>' +
+      k.kwh.toFixed(1) + ' kWh · ' + fmtEUR(k.cost) + ' · ' + (k.kwh > 0 ? (k.cost / k.kwh).toFixed(3) : '0.000') + ' €/kWh</div>').join('') + '</div>';
+  const rows = Object.values(places).map(p=>({ ...p, price: p.kwh > 0 ? p.cost / p.kwh : 0 }));
+  const sk = placeSort.key;
+  rows.sort((a,b)=> sk === 'name' ? a.name.localeCompare(b.name, 'es') * placeSort.dir : ((a[sk] - b[sk]) * placeSort.dir) || (b.kwh - a.kwh));
+  const max = Math.max(...rows.map(r=>r.kwh), 0.01);
+  const th = (key, label, cls) => '<th class="' + (cls === undefined ? 'num' : cls) + '"><button type="button" onclick="setPlaceSort(\'' + key + '\')">' + label + (sk === key ? (placeSort.dir < 0 ? ' ▼' : ' ▲') : '') + '</button></th>';
+  tbl.innerHTML = '<thead><tr>' + th('name', 'Lugar', '') + th('n', 'Cargas', 'num hide-sm') + th('kwh', 'kWh') + th('cost', 'Gasto') + th('price', '€/kWh') + '</tr></thead><tbody>' +
+    rows.map(r=>'<tr><td style="font-weight:700">' + escapeHtml(r.name) + '<span class="cnt show-sm"> · ' + r.n + '</span><div class="place-bar"><i style="width:' + (r.kwh / max * 100) + '%"></i></div></td>' +
+      '<td class="num hide-sm">' + r.n + '</td><td class="num">' + r.kwh.toFixed(1) + '</td><td class="num">' + fmtEUR(r.cost) + '</td><td class="num">' + r.price.toFixed(3) + '</td></tr>').join('') + '</tbody>';
 }
-function renderStatsExtra(){
-  if(!document.getElementById('chConsumo')) return;
-  const cons = computeAvgConsumption(state.config), src = consumptionSource();
-  document.getElementById('st_cons').textContent = cons > 0 ? cons.toFixed(1) : '—';
-  document.getElementById('st_consSub').textContent = 'kWh / 100 km · ' + ({soc:'por % de batería',aec:'AEC del coche',window:'por kWh y km',config:'configurado'}[src]);
-  const cap = estimateBatteryCapacity();
-  document.getElementById('st_cap').textContent = cap ? cap.kwh.toFixed(1) + ' kWh' : '—';
-  document.getElementById('st_capSub').textContent = cap ? '≈ ' + Math.round(cap.pct) + ' % de ' + VEHICLE_BATTERY_KWH + ' kWh · ' + cap.n + (cap.n === 1 ? ' carga' : ' cargas') : 'Anota el % de batería al empezar y terminar (tramos de 20 % o más)';
-  const sv = computeSavings();
-  document.getElementById('st_saved').textContent = sv.kwhTotal > 0 ? fmtEUR(sv.saved) : '—';
-  const trips = consumptionByTrip(), cEl = document.getElementById('chConsumo');
-  if(trips.items.length){
-    const avg = trips.items.reduce((s,x)=>s+x.value,0) / trips.items.length;
-    svgBarChart(cEl, trips.items, { avg, fmt: v=>v.toFixed(1), aria: 'Consumo por tramo' });
-  } else emptyChart(cEl, 'Anota los km en al menos dos cargas (y el % de batería para más precisión).');
-  const ms = monthlySavingsSeries(), aEl = document.getElementById('chAhorro');
-  if(ms.length) svgLineChart(aEl, ms, { fmt: v=>fmtEUR(v), axis: v=>Math.round(v) + '€', aria: 'Ahorro acumulado' });
-  else emptyChart(aEl, 'Registra cargas con kWh para ver el ahorro.');
-  renderPlaces();
+
+function renderRecords(m){
+  const el = document.getElementById('statsRecords');
+  const withPrice = m.ch.filter(c=>kwhOf(c) > 0 && c.cost != null && c.cost !== '' && Number(c.cost) > 0).map(c=>({ c, p: Number(c.cost) / kwhOf(c) }));
+  const where = c => fmtDate(c.date) + (c.location ? ' · ' + escapeHtml(c.location) : '');
+  const rec = (l, v, s) => '<div class="rec"><div class="rl">' + l + '</div><div class="rv">' + v + '</div><div class="rs">' + (s || '') + '</div></div>';
+  const t = [];
+  if(withPrice.length){
+    const lo = withPrice.reduce((a,b)=> b.p < a.p ? b : a), hi = withPrice.reduce((a,b)=> b.p > a.p ? b : a);
+    t.push(rec('Carga más barata', lo.p.toFixed(3) + ' €/kWh', where(lo.c)));
+    t.push(rec('Carga más cara', hi.p.toFixed(3) + ' €/kWh', where(hi.c)));
+  }
+  const big = m.ch.filter(c=>kwhOf(c) > 0).sort((a,b)=> kwhOf(b) - kwhOf(a))[0];
+  if(big) t.push(rec('Mayor carga', kwhOf(big).toFixed(1) + ' kWh', where(big)));
+  if(m.trips.length > 1){
+    const best = m.trips.reduce((a,b)=> b.value < a.value ? b : a), worst = m.trips.reduce((a,b)=> b.value > a.value ? b : a);
+    t.push(rec('Mejor tramo', best.value.toFixed(1) + ' kWh/100', fmtDate(best.date)));
+    t.push(rec('Peor tramo', worst.value.toFixed(1) + ' kWh/100', fmtDate(worst.date)));
+  }
+  const ms = monthSeries(statsRange().from || null, statsRange().to).filter(x=>x.energy + x.maint > 0);
+  if(ms.length > 1){
+    const top = ms.reduce((a,b)=> (b.energy + b.maint) > (a.energy + a.maint) ? b : a);
+    t.push(rec('Mes de más gasto', fmtEUR(top.energy + top.maint), top.label));
+  }
+  el.innerHTML = t.length ? t.join('') : '<div class="empty-mini" style="grid-column:1/-1">Aún no hay suficientes datos para los récords.</div>';
 }
 
 function renderStats(){
-  const km = getCurrentKm();
-  const purchaseKm = state.charges.length ? Math.min(...state.charges.map(c=>Number(c.km)||km)) : 0;
-  const totalCost = state.charges.reduce((s,x)=>s+chargeCostOf(x),0) + maintList().reduce((s,x)=>s+Number(x.cost||0),0);
-  document.getElementById('st_costPerKm').textContent = km > 0 ? (totalCost/km).toFixed(3) + ' €' : '—';
-  const totalKwh = state.charges.reduce((s,x)=>s+kwhOf(x),0);
-  const chargeCost = state.charges.reduce((s,x)=>s+chargeCostOf(x),0);
-  { const ap = avgPricePerKwh(); document.getElementById('st_avgPrice').textContent = ap!=null ? ap.toFixed(3) + ' €' : '—'; }
+  if(!document.getElementById('chConsumo')) return;
+  const r = statsRange(), from = r.all ? null : r.from, to = r.all ? null : r.to;
+  const m = periodMetrics(from, to), pm = r.all ? null : periodMetrics(r.pfrom, r.pto);
+  document.querySelectorAll('#statsPeriodSeg button').forEach(b=> b.classList.toggle('on', b.dataset.p === statsPeriod));
+  document.getElementById('statsRangeLabel').textContent = r.all ? 'Todo el historial' : fmtDate(r.from) + ' – ' + fmtDate(r.to) + ' · comparado con ' + fmtDate(r.pfrom) + ' – ' + fmtDate(r.pto);
+  const set = (id, v) => { document.getElementById(id).textContent = v; };
 
+  // destacadas
+  set('st_saved', m.saved != null ? fmtEUR(m.saved) : '—');
+  set('st_savedSub', m.saved != null ? 'Gasolina ' + fmtEUR(m.gas) + ' · Electricidad ' + fmtEUR(m.elec) : 'Registra cargas con kWh');
+  document.getElementById('dl_saved').innerHTML = deltaHtml(m.saved, pm && pm.saved, true);
+  const cpk = r.all ? (m.total > 0 && m.km > 0 ? m.total / m.km : null) : m.costKm;
+  set('st_costPerKm', cpk != null ? cpk.toFixed(3) + ' €' : '—');
+  set('st_costPerKmSub', cpk != null ? (cpk * 100).toFixed(2) + ' €/100 km · ' + fmtNum(m.km) + ' km' : 'Anota los km en tus registros');
+  document.getElementById('dl_costKm').innerHTML = deltaHtml(cpk, pm && pm.costKm, false);
+  const allCons = computeAvgConsumption(state.config), cons = r.all ? (allCons > 0 ? allCons : null) : m.cons;
+  set('st_cons', cons != null ? cons.toFixed(1) : '—');
+  set('st_consSub', r.all ? 'kWh / 100 km · ' + ({soc:'por % de batería',aec:'AEC del coche',window:'por kWh y km',config:'configurado'}[consumptionSource()]) : (m.trips.length ? 'kWh / 100 km · ' + m.trips.length + (m.trips.length === 1 ? ' tramo' : ' tramos') : 'Sin tramos en este periodo'));
+  document.getElementById('dl_cons').innerHTML = deltaHtml(r.all ? null : m.cons, pm && pm.cons, false);
+
+  // gasto mensual
+  const series = monthSeries(from, to), gEl = document.getElementById('chGasto');
+  const hasSpend = series.some(s=>s.energy + s.maint > 0);
   const months = Math.max(1, monthsBetween(state.config.purchaseDate));
-  const monthlyAvg = totalCost / months;
-  document.getElementById('st_yearProj').textContent = state.config.purchaseDate ? fmtEUR(monthlyAvg*12) : '—';
+  const days = r.all ? 0 : Math.max(1, Math.round((new Date(r.to) - new Date(r.from)) / 864e5) + 1);
+  const monthlyAvg = r.all ? (state.config.purchaseDate ? m.total / months : (series.length ? m.total / series.length : 0)) : (statsPeriod === 'm' ? null : m.total / (days / 30.44));
+  const yearProj = r.all ? (state.config.purchaseDate ? m.total / months * 12 : null) : m.total / days * 365;
+  if(hasSpend){
+    const avg = series.reduce((s,x)=>s + x.energy + x.maint, 0) / series.length;
+    svgStackedBarChart(gEl, series.map(s=>({ label: s.label, a: s.energy, b: s.maint })), { avg, fmt: v=>Math.round(v) + '€', axis: v=>Math.round(v) + '€', aria: 'Gasto mensual' });
+  } else emptyChart(gEl, 'Sin gastos en este periodo.');
+  document.getElementById('gastoSummary').innerHTML =
+    '<div>Total del periodo<b>' + fmtEUR(m.total) + '</b></div>' +
+    '<div>Media mensual<b>' + (monthlyAvg != null ? fmtEUR(monthlyAvg) : '—') + '</b></div>' +
+    '<div>Proyección anual<b>' + (yearProj != null ? fmtEUR(yearProj) : '—') + '</b></div>';
 
-  const monthly = {};
-  [...state.charges.map(c=>({date:c.date, cost:c.cost})), ...maintList().map(m=>({date:m.date,cost:m.cost}))]
-    .filter(x=>x.date).sort((a,b)=>String(a.date).localeCompare(String(b.date))).forEach(x=>{
-    const key = new Date(x.date).toLocaleDateString('es-ES',{month:'short',year:'2-digit'});
-    monthly[key] = (monthly[key]||0) + Number(x.cost||0);
-  });
-  const ctx = document.getElementById('chartMonthly');
-  if(charts.monthly) charts.monthly.destroy();
-  if(ctx && typeof Chart !== 'undefined'){
-    charts.monthly = new Chart(ctx, {
-      type:'bar',
-      data:{ labels:Object.keys(monthly), datasets:[{ label:'Gasto', data:Object.values(monthly), backgroundColor: cssVar('--accent-2'), borderRadius:6 }] },
-      options: baseChartOpts()
-    });
-  }
+  // bloques
+  document.getElementById('blkEnergy').innerHTML =
+    kvRow('kWh cargados', m.kwh.toFixed(1) + ' kWh') +
+    kvRow('Cargas', m.ch.length, m.ch.length ? 'de media ' + (m.kwh / m.ch.length).toFixed(1) + ' kWh' : '') +
+    kvRow('Precio medio', m.price != null ? m.price.toFixed(3) + ' €/kWh' : '—') +
+    kvRow('Cargas gratis', m.free.length, m.free.length ? m.free.reduce((s,c)=>s + kwhOf(c), 0).toFixed(1) + ' kWh sin pagar' : '');
+  document.getElementById('blkMoney').innerHTML =
+    kvRow('Cargas', fmtEUR(m.eCost)) +
+    kvRow('Mantenimiento', fmtEUR(m.mCost), m.mt.length + (m.mt.length === 1 ? ' registro' : ' registros')) +
+    kvRow('Total', fmtEUR(m.total)) +
+    kvRow('Coste por km', cpk != null ? ((r.all ? m.eCost / m.km : m.eKm) || 0).toFixed(3) + ' + ' + ((r.all ? m.mCost / m.km : m.mKm) || 0).toFixed(3) + ' €' : '—', 'energía + mantenimiento');
+  const cap = estimateBatteryCapacity(), pct = cap ? Math.max(0, Math.min(100, cap.pct)) : 0;
+  document.getElementById('blkCar').innerHTML =
+    kvRow('Km recorridos', m.km > 0 ? fmtNum(m.km) + ' km' : '—') +
+    kvRow('Salud de la batería', cap ? Math.round(cap.pct) + ' %' : '—', cap ? cap.kwh.toFixed(1) + ' de ' + VEHICLE_BATTERY_KWH + ' kWh · ' + cap.n + (cap.n === 1 ? ' carga' : ' cargas') : 'Anota el % al empezar y terminar (tramos de 20 % o más)') +
+    (cap ? '<div class="meter" aria-hidden="true"><i style="width:' + pct + '%"></i></div>' : '') +
+    kvRow('CO₂ evitado', m.co2 != null ? fmtKg(m.co2) : '—', null, 'Estimación: gasolina ' + CO2_PETROL + ' kg/l frente a ' + CO2_GRID + ' kg/kWh de la red eléctrica') +
+    kvRow('Antigüedad', state.config.purchaseDate ? months + (months === 1 ? ' mes' : ' meses') : '—');
 
-  const rows = [
-    ['Total cargas registradas', state.charges.length],
-    ['Total kWh cargados', totalKwh.toFixed(2)+' kWh'],
-    ['Gasto total en cargas', fmtEUR(chargeCost)],
-    ['Registros de mantenimiento', maintList().length],
-    ['Gasto total en mantenimiento', fmtEUR(maintList().reduce((s,x)=>s+Number(x.cost||0),0))],
-    ['Gasto total combinado', fmtEUR(totalCost)],
-    ['Notas guardadas', state.notes.length],
-    ['Revisiones completadas', state.completedRevisions.length + ' / ' + (REVISIONS_SCHEDULE[state.lang]||REVISIONS_SCHEDULE.es).length],
-    ['Antigüedad del vehículo', months + ' meses'],
-  ];
-  renderStatsExtra();
-  document.getElementById('statsSummaryTable').innerHTML = rows.map(r=>`<tr><td style="color:var(--text-muted);font-weight:600">${r[0]}</td><td style="text-align:right;font-weight:800">${r[1]}</td></tr>`).join('');
+  // gráficas
+  const kEl = document.getElementById('chKwhMes'), qEl = document.getElementById('chKmMes');
+  if(series.some(s=>s.kwh > 0)) svgBarChart(kEl, series.map(s=>({ label: s.label, value: s.kwh })), { fmt: v=>Math.round(v), aria: 'kWh por mes' }); else emptyChart(kEl, 'Sin energía cargada en este periodo.');
+  if(series.some(s=>s.km > 0)) svgBarChart(qEl, series.map(s=>({ label: s.label, value: s.km })), { fmt: v=>fmtNum(v), axis: v=>fmtNum(v), color: 'var(--cyan)', aria: 'Km por mes' }); else emptyChart(qEl, 'Anota los km en tus cargas para verlos aquí.');
+  const cEl = document.getElementById('chConsumo');
+  if(m.trips.length) svgBarChart(cEl, m.trips, { avg: m.cons, fmt: v=>v.toFixed(1), aria: 'Consumo por tramo' });
+  else emptyChart(cEl, r.all ? 'Anota los km en al menos dos cargas (y el % de batería para más precisión).' : 'Sin tramos de consumo en este periodo.');
+  const ms = monthlySavingsSeries(from, to), aEl = document.getElementById('chAhorro');
+  if(ms.length) svgLineChart(aEl, ms, { fmt: v=>fmtEUR(v), axis: v=>Math.round(v) + '€', aria: 'Ahorro acumulado' });
+  else emptyChart(aEl, 'Registra cargas con kWh para ver el ahorro.');
+  renderPlaces(m);
+  renderRecords(m);
 }
 
 /* ---------------- export / import ---------------- */

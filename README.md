@@ -46,11 +46,13 @@ Gestor integral web de tu **BYD Atto 3 EVO**: cargas, mantenimiento, revisiones,
 - Temas: especificaciones, carga, batería, garantía, frenos, seguridad, etc.
 
 ### 📊 Estadísticas
-- Coste por km recorrido
-- Precio medio de energía
-- Proyección de gasto anual
-- Gasto mensual en gráfico
-- Resumen general completo
+- Selector de periodo (Todo, 12 meses, Este año, Este mes) con variación frente al periodo anterior
+- Destacadas: ahorro vs gasolina, coste por km y consumo
+- Gasto mensual apilado (energía + mantenimiento) con media y proyección anual
+- Bloques de Energía, Dinero y Vehículo (salud de la batería, CO₂ evitado, km)
+- kWh y km por mes, consumo por tramo y ahorro acumulado
+- Reparto por lugar/tipo de carga y tabla ordenable
+- Récords del periodo
 
 ### 🎨 Interfaz Moderna
 - Diseño **multicolor con gradientes** modernos (cyan, verde neón, rosa)
