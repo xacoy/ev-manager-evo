@@ -2930,6 +2930,9 @@ function renderStats(){
     kvRow('Cargas', fmtEUR(m.eCost)) +
     kvRow('Mantenimiento', fmtEUR(m.mCost), m.mt.length + (m.mt.length === 1 ? ' registro' : ' registros')) +
     kvRow('Total', fmtEUR(m.total)) +
+    (m.kwhS > 0 ? kvRow('Mismos km con el León', fmtEUR(m.gas), 'gasolina · ' + (Number(state.config.refConsumption) || 6.5) + ' l/100 km', 'SEAT León FR 2018 125 CV, solo combustible al precio de gasolina de cada día de carga. No incluye su mantenimiento.') +
+      kvRow('Por 100 km', 'León ' + fmtEUR(m.gas / m.kmEq * 100) + ' · EVO ' + fmtEUR(m.elec / m.kmEq * 100), 'solo energía / combustible') +
+      kvRow('Ahorro frente al León', '<span style="color:' + (m.saved < 0 ? 'var(--danger)' : 'var(--success)') + '">' + fmtEUR(m.saved) + '</span>', m.gas > 0 ? Math.round(m.saved / m.gas * 100) + ' % menos que gasolina' : '') : '') +
     kvRow('Coste por km', cpk != null ? ((r.all ? m.eCost / m.km : m.eKm) || 0).toFixed(3) + ' + ' + ((r.all ? m.mCost / m.km : m.mKm) || 0).toFixed(3) + ' €' : '—', 'energía + mantenimiento');
   const cap = estimateBatteryCapacity();
   document.getElementById('blkCar').innerHTML =
