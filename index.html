@@ -498,6 +498,24 @@ button{cursor:pointer}
 .rec .rl{font-size:11px;color:var(--text-faint);font-weight:700;text-transform:uppercase;letter-spacing:.3px}
 .rec .rv{font-size:20px;font-weight:800;font-family:var(--font-display);color:var(--text);margin-top:6px;font-variant-numeric:tabular-nums}
 .rec .rs{font-size:12px;color:var(--text-muted);margin-top:3px;font-weight:500}
+#page-stats .stat-card.tone-green{background:linear-gradient(135deg,var(--green-soft),transparent 65%),var(--bg-card)}
+#page-stats .stat-card.tone-cyan{background:linear-gradient(135deg,var(--cyan-soft),transparent 65%),var(--bg-card)}
+#page-stats .stat-card.tone-amber{background:linear-gradient(135deg,var(--orange-soft),transparent 65%),var(--bg-card)}
+#page-stats .stat-card{padding:22px 24px}
+#page-stats .stat-card .spark{position:absolute;right:16px;bottom:14px;width:34%;max-width:130px;opacity:.95}
+#page-stats .stat-card .spark svg{display:block;width:100%;height:auto;overflow:visible}
+#page-stats .stat-card .sub{max-width:62%}
+@media(max-width:560px){#page-stats .stat-card .sub{max-width:100%;margin-bottom:34px}#page-stats .stat-card .spark{width:45%;bottom:12px}}
+#page-stats .card-head h2{display:flex;align-items:center}
+#page-stats .ico{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:10px;margin-right:10px;background:var(--ts);color:var(--t);flex-shrink:0}
+#page-stats .ico svg{width:16px;height:16px;stroke:currentColor}
+.insights{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.ins{padding:14px 16px;border-radius:var(--radius-sm);background:var(--bg-2);border:1px solid var(--border);border-left:3px solid var(--t,var(--accent))}
+.ins b{display:block;font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;margin-bottom:4px}
+.ins span{font-size:12.5px;color:var(--text-muted);font-weight:500;line-height:1.45}
+.rec{border-top:3px solid var(--t,var(--border-strong))}
+.svg-chart rect,.svg-chart circle{transition:opacity .15s var(--ease)}
+.svg-chart rect:hover{opacity:.8}
 .places-table .show-sm{display:none}
 @media(max-width:560px){.places-table .show-sm{display:inline}}
 
@@ -1198,9 +1216,14 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
         </div>
 
         <div class="grid grid-3" style="margin-bottom:16px">
-          <div class="card stat-card tone-green"><div class="label-row"><div class="label">Ahorro vs gasolina</div><span id="dl_saved"></span></div><div class="value" id="st_saved">—</div><div class="sub" id="st_savedSub">acumulado</div></div>
-          <div class="card stat-card tone-cyan"><div class="label-row"><div class="label">Coste / km</div><span id="dl_costKm"></span></div><div class="value" id="st_costPerKm">—</div><div class="sub" id="st_costPerKmSub">cargas + mantenimiento</div></div>
-          <div class="card stat-card tone-amber"><div class="label-row"><div class="label">Consumo (de la red)</div><span id="dl_cons"></span></div><div class="value" id="st_cons">—</div><div class="sub" id="st_consSub">kWh / 100 km</div></div>
+          <div class="card stat-card tone-green"><div class="label-row"><div class="label">Ahorro vs gasolina</div><span id="dl_saved"></span></div><div class="value" id="st_saved">—</div><div class="sub" id="st_savedSub">acumulado</div><div class="spark" id="sp_saved"></div></div>
+          <div class="card stat-card tone-cyan"><div class="label-row"><div class="label">Coste / km</div><span id="dl_costKm"></span></div><div class="value" id="st_costPerKm">—</div><div class="sub" id="st_costPerKmSub">cargas + mantenimiento</div><div class="spark" id="sp_costKm"></div></div>
+          <div class="card stat-card tone-amber"><div class="label-row"><div class="label">Consumo (de la red)</div><span id="dl_cons"></span></div><div class="value" id="st_cons">—</div><div class="sub" id="st_consSub">kWh / 100 km</div><div class="spark" id="sp_cons"></div></div>
+        </div>
+
+        <div class="card" style="margin-bottom:16px" id="insightsCard">
+          <div class="card-head"><h2>Lo que dicen tus datos</h2><span class="hint">conclusiones automáticas</span></div>
+          <div class="insights" id="statsInsights"></div>
         </div>
 
         <div class="card" style="margin-bottom:16px">
@@ -1211,9 +1234,9 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
         </div>
 
         <div class="grid grid-3" style="margin-bottom:16px">
-          <div class="card"><div class="card-head"><h2>Energía</h2></div><div id="blkEnergy"></div></div>
-          <div class="card"><div class="card-head"><h2>Dinero</h2></div><div id="blkMoney"></div></div>
-          <div class="card"><div class="card-head"><h2>Vehículo</h2></div><div id="blkCar"></div></div>
+          <div class="card"><div class="card-head"><h2><span class="ico" style="--t:var(--cyan);--ts:var(--cyan-soft)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>Energía</h2></div><div id="blkEnergy"></div></div>
+          <div class="card"><div class="card-head"><h2><span class="ico" style="--t:var(--green);--ts:var(--green-soft)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15 9.5a3.5 3 0 0 0-3-1.5c-2 0-3 1-3 2.2 0 3 6 1.6 6 4.6 0 1.2-1.2 2.200-3 2.200a3.500 3 0 0 1-3.200-1.600M7.500 12h6"/></svg></span>Dinero</h2></div><div id="blkMoney"></div></div>
+          <div class="card"><div class="card-head"><h2><span class="ico" style="--t:var(--purple);--ts:var(--purple-soft)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h14M3 13l2-6a2 2 0 0 1 2-1.400h10a2 2 0 0 1 2 1.400l2 6v4H3z"/><circle cx="7.500" cy="15" r=".6"/><circle cx="16.500" cy="15" r=".6"/></svg></span>Vehículo</h2></div><div id="blkCar"></div></div>
         </div>
 
         <div class="grid grid-2eq" style="margin-bottom:16px">
@@ -1233,7 +1256,8 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
             <div class="svg-chart" id="chConsumo"></div>
           </div>
           <div class="card">
-            <div class="card-head"><h2>Ahorro acumulado</h2><span class="hint">€ por mes</span></div>
+            <div class="card-head"><h2>León vs EVO</h2><span class="hint">gasto acumulado</span></div>
+            <div class="legend"><span><i style="background:var(--orange)"></i>SEAT León</span><span><i style="background:var(--accent)"></i>BYD EVO</span><span><i style="background:var(--success)"></i>Ahorro</span></div>
             <div class="svg-chart" id="chAhorro"></div>
           </div>
         </div>
@@ -2633,7 +2657,7 @@ function svgBarChart(el, items, o){
   const every = items.length > 14 ? Math.ceil(items.length / 14) : 1;
   items.forEach((it, i)=>{
     const x = L + step * i + (step - bw) / 2, yy = y(it.value);
-    g += '<rect x="' + x + '" y="' + yy + '" width="' + bw + '" height="' + Math.max(1, T + ih - yy) + '" rx="4" style="fill:' + (o.color || 'var(--accent)') + '"/>';
+    g += '<rect x="' + x + '" y="' + yy + '" width="' + bw + '" height="' + Math.max(1, T + ih - yy) + '" rx="4" style="fill:' + (o.color || 'var(--accent)') + '"><title>' + it.label + ': ' + (o.fmt ? o.fmt(it.value) : it.value.toFixed(1)) + '</title></rect>';
     if(items.length <= 12) g += '<text class="val" x="' + (x + bw / 2) + '" y="' + (yy - 5) + '" text-anchor="middle">' + (o.fmt ? o.fmt(it.value) : it.value.toFixed(1)) + '</text>';
     if(i % every === 0) g += '<text x="' + (x + bw / 2) + '" y="' + (H - 13) + '" text-anchor="middle">' + it.label + '</text>';
   });
@@ -2684,8 +2708,8 @@ function svgStackedBarChart(el, items, o){
   const every = items.length > 14 ? Math.ceil(items.length / 14) : 1;
   items.forEach((it, i)=>{
     const x = L + step * i + (step - bw) / 2, ya = y(it.a), yb = y(it.a + it.b);
-    if(it.a > 0) g += '<rect x="' + x + '" y="' + ya + '" width="' + bw + '" height="' + Math.max(1, T + ih - ya) + '" rx="3" style="fill:var(--accent)"/>';
-    if(it.b > 0) g += '<rect x="' + x + '" y="' + yb + '" width="' + bw + '" height="' + Math.max(1, ya - yb) + '" rx="3" style="fill:var(--orange)"/>';
+    if(it.a > 0) g += '<rect x="' + x + '" y="' + ya + '" width="' + bw + '" height="' + Math.max(1, T + ih - ya) + '" rx="3" style="fill:var(--accent)"><title>' + it.label + ' · Energía ' + fmtEUR(it.a) + '</title></rect>';
+    if(it.b > 0) g += '<rect x="' + x + '" y="' + yb + '" width="' + bw + '" height="' + Math.max(1, ya - yb) + '" rx="3" style="fill:var(--orange)"><title>' + it.label + ' · Mantenimiento ' + fmtEUR(it.b) + '</title></rect>';
     if(items.length <= 12 && it.a + it.b > 0) g += '<text class="val" x="' + (x + bw / 2) + '" y="' + (yb - 5) + '" text-anchor="middle">' + (o.fmt ? o.fmt(it.a + it.b) : (it.a + it.b).toFixed(0)) + '</text>';
     if(i % every === 0) g += '<text x="' + (x + bw / 2) + '" y="' + (H - 13) + '" text-anchor="middle">' + it.label + '</text>';
   });
@@ -2694,6 +2718,44 @@ function svgStackedBarChart(el, items, o){
     g += '<line x1="' + L + '" y1="' + ya + '" x2="' + (W - R) + '" y2="' + ya + '" stroke-dasharray="5 4" style="stroke:var(--warning)" stroke-width="1.6"/>';
   }
   el.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + (o.aria || 'Gráfica') + '">' + g + '</svg>';
+}
+
+// Dos acumulados (a = León, b = EVO) con el hueco entre ambos sombreado: es el ahorro.
+function svgGapChart(el, items, o){
+  o = o || {};
+  const W = 640, H = 250, L = 52, R = 22, T = 28, B = 38, iw = W - L - R, ih = H - T - B;
+  const max = niceMax(Math.max(...items.map(i=>Math.max(i.a, i.b)), 1) * 1.12);
+  const y = v => T + ih - v / max * ih;
+  const x = i => items.length === 1 ? L + iw / 2 : L + iw * i / (items.length - 1);
+  let g = '';
+  for(let i = 0; i <= 4; i++){
+    const v = max / 4 * i, yy = y(v);
+    g += '<line x1="' + L + '" y1="' + yy + '" x2="' + (W - R) + '" y2="' + yy + '" style="stroke:var(--border)"/>';
+    g += '<text x="' + (L - 6) + '" y="' + (yy + 4) + '" text-anchor="end">' + Math.round(v) + '€</text>';
+  }
+  const pa = items.map((it, i)=> x(i) + ',' + y(it.a)), pb = items.map((it, i)=> x(i) + ',' + y(it.b));
+  if(items.length > 1) g += '<polygon points="' + pa.join(' ') + ' ' + pb.slice().reverse().join(' ') + '" style="fill:var(--success);opacity:.16"/>';
+  else g += '<line x1="' + x(0) + '" y1="' + y(items[0].a) + '" x2="' + x(0) + '" y2="' + y(items[0].b) + '" stroke-width="6" stroke-linecap="round" style="stroke:var(--success);opacity:.3"/>';
+  g += '<polyline points="' + pa.join(' ') + '" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="stroke:var(--orange)"/>';
+  g += '<polyline points="' + pb.join(' ') + '" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="stroke:var(--accent)"/>';
+  const every = items.length > 10 ? Math.ceil(items.length / 10) : 1;
+  items.forEach((it, i)=>{
+    g += '<circle cx="' + x(i) + '" cy="' + y(it.a) + '" r="3.2" style="fill:var(--orange)"><title>' + it.label + ' · León ' + fmtEUR(it.a) + '</title></circle>';
+    g += '<circle cx="' + x(i) + '" cy="' + y(it.b) + '" r="3.2" style="fill:var(--accent)"><title>' + it.label + ' · EVO ' + fmtEUR(it.b) + '</title></circle>';
+    if(i % every === 0 || i === items.length - 1) g += '<text x="' + x(i) + '" y="' + (H - 13) + '" text-anchor="middle">' + it.label + '</text>';
+  });
+  const last = items[items.length - 1], lx = Math.min(x(items.length - 1), W - R - 4);
+  g += '<text class="val" x="' + lx + '" y="' + (y(last.a) - 11) + '" text-anchor="end" style="fill:var(--orange)">' + fmtEUR(last.a) + '</text>';
+  g += '<text class="val" x="' + lx + '" y="' + (y(last.b) + 20) + '" text-anchor="end" style="fill:var(--accent)">' + fmtEUR(last.b) + '</text>';
+  el.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + (o.aria || 'Gráfica') + '">' + g + '</svg>';
+}
+function sparkSvg(vals, tone){
+  vals = vals.filter(v=>isFinite(v));
+  if(vals.length < 2) return '';
+  const W = 120, H = 36, p = 4, lo = Math.min(...vals), hi = Math.max(...vals), rg = hi - lo || 1;
+  const pts = vals.map((v, i)=> [p + (W - 2 * p) * i / (vals.length - 1), H - p - (v - lo) / rg * (H - 2 * p)]);
+  const line = pts.map(q=>q[0].toFixed(1) + ',' + q[1].toFixed(1)).join(' '), end = pts[pts.length - 1];
+  return '<svg viewBox="0 0 ' + W + ' ' + H + '" aria-hidden="true"><polygon points="' + p + ',' + H + ' ' + line + ' ' + (W - p) + ',' + H + '" style="fill:var(--' + tone + ');opacity:.14"/><polyline points="' + line + '" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="stroke:var(--' + tone + ')"/><circle cx="' + end[0] + '" cy="' + end[1] + '" r="3" style="fill:var(--' + tone + ')"/></svg>';
 }
 
 /* ---- periodo ---- */
@@ -2766,11 +2828,11 @@ function monthlySavingsSeries(from, to){
     if(!inRange(ch.date, from, to)) return;
     const r = chargeSavingParts(ch, cons, refL, rate);
     if(!r) return;
-    const k = String(ch.date).slice(0, 7);
-    per[k] = (per[k] || 0) + (r.gas - r.cost);
+    const k = String(ch.date).slice(0, 7), p = per[k] || (per[k] = { gas: 0, elec: 0 });
+    p.gas += r.gas; p.elec += r.cost;
   });
-  let acc = 0;
-  return Object.keys(per).sort().map(k=>{ acc += per[k]; return { label: monthLabel(k), value: acc }; });
+  let gas = 0, elec = 0;
+  return Object.keys(per).sort().map(k=>{ gas += per[k].gas; elec += per[k].elec; return { label: monthLabel(k), a: gas, b: elec }; });
 }
 function monthLabel(k){ return new Date(k + '-01T12:00:00').toLocaleDateString('es-ES', { month: 'short', year: '2-digit' }); }
 
@@ -2857,28 +2919,65 @@ function renderPlaces(m){
       '<td class="num hide-sm">' + r.n + '</td><td class="num">' + r.kwh.toFixed(1) + '</td><td class="num">' + fmtEUR(r.cost) + '</td><td class="num">' + r.price.toFixed(3) + '</td></tr>').join('') + '</tbody>';
 }
 
+// Conclusiones en lenguaje llano a partir de los datos del periodo.
+function renderInsights(m){
+  const el = document.getElementById('statsInsights'); if(!el) return;
+  const out = [], card = (tone, big, txt) => out.push('<div class="ins" style="--t:var(--' + tone + ')"><b>' + big + '</b><span>' + txt + '</span></div>');
+  const isHome = c => c.location === 'Casa', isWork = c => c.location === 'Trabajo';
+  const homeKwh = state.charges.filter(c=>isHome(c) && kwhOf(c) > 0 && c.cost != null && c.cost !== '' && Number(c.cost) > 0);
+  const homePrice = homeKwh.length ? homeKwh.reduce((s,c)=>s + Number(c.cost), 0) / homeKwh.reduce((s,c)=>s + kwhOf(c), 0) : HOME_RATE;
+  // 1. ahorro anual a este ritmo (con todo el historial: un periodo corto engaña)
+  const all = computeSavings(), dated = state.charges.filter(c=>c.date).map(c=>c.date).sort();
+  if(all.saved > 0 && dated.length){
+    const days = Math.max(1, (Date.now() - new Date(dated[0] + 'T12:00:00')) / 864e5);
+    if(days >= 30) card('green', '≈ ' + fmtEUR(all.saved / days * 365), 'es lo que ahorrarías al año frente al León si sigues a este ritmo.');
+  }
+  // 2. depósitos
+  if(m.saved != null && m.saved > 0){
+    const tanks = m.saved / (50 * currentFuelPrice());
+    if(tanks >= 0.3) card('cyan', tanks.toFixed(1).replace('.', ',') + ' depósitos', 'de 50 l de gasolina es lo que llevas ahorrado en este periodo.');
+  }
+  // 3. cargar en casa
+  const pub = m.ch.filter(c=>!isHome(c) && !isWork(c) && kwhOf(c) > 0 && c.cost != null && c.cost !== '' && Number(c.cost) > 0);
+  if(pub.length){
+    const kw = pub.reduce((s,c)=>s + kwhOf(c), 0), paid = pub.reduce((s,c)=>s + Number(c.cost), 0), diff = paid - kw * homePrice;
+    if(diff >= 1) card('orange', fmtEUR(diff), 'habrías ahorrado cargando en casa los ' + kw.toFixed(0) + ' kWh que pagaste fuera (' + (paid / kw).toFixed(2) + ' frente a ' + homePrice.toFixed(3) + ' €/kWh).');
+  }
+  // 4. cargas gratis
+  if(m.free.length){
+    const kw = m.free.reduce((s,c)=>s + kwhOf(c), 0);
+    card('purple', fmtEUR(kw * homePrice), m.free.length + (m.free.length === 1 ? ' carga gratis' : ' cargas gratis') + ' (' + kw.toFixed(0) + ' kWh): lo que costarían a tarifa de casa.');
+  }
+  // 5. tendencia del consumo
+  if(m.trips.length >= 6){
+    const h = Math.floor(m.trips.length / 2), avg = a=>a.reduce((s,t)=>s + t.value, 0) / a.length;
+    const first = avg(m.trips.slice(0, h)), last = avg(m.trips.slice(-h)), d = (last - first) / first * 100;
+    if(Math.abs(d) >= 3) card(d < 0 ? 'green' : 'orange', (d < 0 ? '▼ ' : '▲ ') + Math.abs(d).toFixed(0) + ' %', 'ha ' + (d < 0 ? 'bajado' : 'subido') + ' tu consumo en la segunda mitad del periodo (' + first.toFixed(1) + ' → ' + last.toFixed(1) + ' kWh/100 km).');
+  }
+  el.innerHTML = out.length ? out.join('') : '<div class="empty-mini" style="grid-column:1/-1">Registra cargas con kWh, coste y km para ver conclusiones.</div>';
+}
 function renderRecords(m){
   const el = document.getElementById('statsRecords');
   const withPrice = m.ch.filter(c=>kwhOf(c) > 0 && c.cost != null && c.cost !== '' && Number(c.cost) > 0).map(c=>({ c, p: Number(c.cost) / kwhOf(c) }));
   const where = c => fmtDate(c.date) + (c.location ? ' · ' + escapeHtml(c.location) : '');
-  const rec = (l, v, s) => '<div class="rec"><div class="rl">' + l + '</div><div class="rv">' + v + '</div><div class="rs">' + (s || '') + '</div></div>';
+  const rec = (l, v, s, tone) => '<div class="rec" style="--t:var(--' + (tone || 'border-strong') + ')"><div class="rl">' + l + '</div><div class="rv">' + v + '</div><div class="rs">' + (s || '') + '</div></div>';
   const t = [];
   if(withPrice.length){
     const lo = withPrice.reduce((a,b)=> b.p < a.p ? b : a), hi = withPrice.reduce((a,b)=> b.p > a.p ? b : a);
-    t.push(rec('Carga más barata', lo.p.toFixed(3) + ' €/kWh', where(lo.c)));
-    t.push(rec('Carga más cara', hi.p.toFixed(3) + ' €/kWh', where(hi.c)));
+    t.push(rec('Carga más barata', lo.p.toFixed(3) + ' €/kWh', where(lo.c), 'green'));
+    t.push(rec('Carga más cara', hi.p.toFixed(3) + ' €/kWh', where(hi.c), 'orange'));
   }
   const big = m.ch.filter(c=>kwhOf(c) > 0).sort((a,b)=> kwhOf(b) - kwhOf(a))[0];
-  if(big) t.push(rec('Mayor carga', kwhOf(big).toFixed(1) + ' kWh', where(big)));
+  if(big) t.push(rec('Mayor carga', kwhOf(big).toFixed(1) + ' kWh', where(big), 'cyan'));
   if(m.trips.length > 1){
     const best = m.trips.reduce((a,b)=> b.value < a.value ? b : a), worst = m.trips.reduce((a,b)=> b.value > a.value ? b : a);
-    t.push(rec('Mejor tramo', best.value.toFixed(1) + ' kWh/100', fmtDate(best.date)));
-    t.push(rec('Peor tramo', worst.value.toFixed(1) + ' kWh/100', fmtDate(worst.date)));
+    t.push(rec('Mejor tramo', best.value.toFixed(1) + ' kWh/100', fmtDate(best.date), 'green'));
+    t.push(rec('Peor tramo', worst.value.toFixed(1) + ' kWh/100', fmtDate(worst.date), 'danger'));
   }
   const ms = monthSeries(statsRange().from || null, statsRange().to).filter(x=>x.energy + x.maint > 0);
   if(ms.length > 1){
     const top = ms.reduce((a,b)=> (b.energy + b.maint) > (a.energy + a.maint) ? b : a);
-    t.push(rec('Mes de más gasto', fmtEUR(top.energy + top.maint), top.label));
+    t.push(rec('Mes de más gasto', fmtEUR(top.energy + top.maint), top.label, 'purple'));
   }
   el.innerHTML = t.length ? t.join('') : '<div class="empty-mini" style="grid-column:1/-1">Aún no hay suficientes datos para los récords.</div>';
 }
@@ -2949,8 +3048,14 @@ function renderStats(){
   if(m.trips.length) svgBarChart(cEl, m.trips, { avg: m.cons, fmt: v=>v.toFixed(1), aria: 'Consumo por tramo' });
   else emptyChart(cEl, r.all ? 'Anota los km en al menos dos cargas (y el % de batería para más precisión).' : 'Sin tramos de consumo en este periodo.');
   const ms = monthlySavingsSeries(from, to), aEl = document.getElementById('chAhorro');
-  if(ms.length) svgLineChart(aEl, ms, { fmt: v=>fmtEUR(v), axis: v=>Math.round(v) + '€', aria: 'Ahorro acumulado' });
-  else emptyChart(aEl, 'Registra cargas con kWh para ver el ahorro.');
+  if(ms.length) svgGapChart(aEl, ms, { aria: 'Gasto acumulado del León frente al EVO' });
+  else emptyChart(aEl, 'Registra cargas con kWh para ver la comparación.');
+  // curvas de tendencia de las tarjetas destacadas
+  const sp = (id, vals, tone) => { document.getElementById(id).innerHTML = sparkSvg(vals, tone); };
+  sp('sp_saved', ms.map(s=>s.a - s.b), 'green');
+  sp('sp_costKm', series.filter(s=>s.km > 0).map(s=>(s.energy + s.maint) / s.km), 'cyan');
+  sp('sp_cons', m.trips.map(t=>t.value), 'orange');
+  renderInsights(m);
   renderPlaces(m);
   renderRecords(m);
 }
