@@ -513,6 +513,7 @@ button{cursor:pointer}
 .ins{padding:14px 16px;border-radius:var(--radius-sm);background:var(--bg-2);border:1px solid var(--border);border-left:3px solid var(--t,var(--accent))}
 .ins b{display:block;font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;margin-bottom:4px}
 .ins span{font-size:12.5px;color:var(--text-muted);font-weight:500;line-height:1.45}
+.sub-title{margin:22px 0 12px;padding-top:18px;border-top:1px solid var(--border);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--text-faint)}
 .rec{border-top:3px solid var(--t,var(--border-strong))}
 .vs{position:relative;display:grid;grid-template-columns:1fr 1fr;column-gap:0}
 .vs-h{display:flex;align-items:center;gap:7px;font-family:var(--font-display);font-weight:800;font-size:13.5px;padding:0 0 10px;border-bottom:2px solid var(--c)}
@@ -1232,8 +1233,10 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
         </div>
 
         <div class="card" style="margin-bottom:16px" id="insightsCard">
-          <div class="card-head"><h2>Lo que dicen tus datos</h2><span class="hint">conclusiones automáticas</span></div>
+          <div class="card-head"><h2>Lo que dicen tus datos</h2><span class="hint">conclusiones y récords</span></div>
           <div class="insights" id="statsInsights"></div>
+          <div class="sub-title">Récords del periodo</div>
+          <div class="records" id="statsRecords"></div>
         </div>
 
         <div class="card" style="margin-bottom:16px">
@@ -1276,11 +1279,6 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
           <div class="card-head"><h2>Dónde y cómo cargas</h2><span class="hint">reparto y detalle por lugar</span></div>
           <div id="chSplit"></div>
           <div class="table-wrap"><table class="places-table" id="chLugares"></table></div>
-        </div>
-
-        <div class="card">
-          <div class="card-head"><h2>Récords</h2><span class="hint">del periodo</span></div>
-          <div class="records" id="statsRecords"></div>
         </div>
       </section>
 
@@ -2979,7 +2977,8 @@ function renderRecords(m){
     const top = ms.reduce((a,b)=> (b.energy + b.maint) > (a.energy + a.maint) ? b : a);
     t.push(rec('Mes de más gasto', fmtEUR(top.energy + top.maint), top.label, 'purple'));
   }
-  el.innerHTML = t.length ? t.join('') : '<div class="empty-mini" style="grid-column:1/-1">Aún no hay suficientes datos para los récords.</div>';
+  el.innerHTML = t.join('');
+  el.previousElementSibling.style.display = el.style.display = t.length ? '' : 'none';   // sin datos, solo queda el mensaje de arriba
 }
 
 function renderStats(){
