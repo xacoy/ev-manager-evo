@@ -723,6 +723,14 @@ tr:hover td{background:var(--bg-2)}
 .rev-tasks{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .tag-pill{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;background:var(--bg-2);color:var(--text-muted)}
 .rev-meta{font-size:11px;color:var(--text-faint);font-weight:700;flex-shrink:0;text-align:right;min-width:90px}
+.rec-head{display:flex;gap:12px;align-items:flex-start;margin:26px 0 12px;padding-top:20px;border-top:1px solid var(--border)}
+.rec-head h3{font-size:15px;font-weight:800;font-family:var(--font-display)}
+.rec-head p{font-size:12px;color:var(--text-faint);margin-top:3px;line-height:1.45}
+.rec-dot{width:10px;height:10px;border-radius:50%;background:var(--accent-2);margin-top:6px;flex-shrink:0}
+.rev-item.rec .rev-status{background:color-mix(in srgb,var(--accent-2) 16%,transparent);color:var(--accent-2)}
+.rev-item.rec.due .rev-status{background:var(--warning-soft);color:var(--warning)}
+.tag-pill.rec-cat{background:color-mix(in srgb,var(--accent-2) 16%,transparent);color:var(--accent-2)}
+.rev-item.rec .rev-side{gap:8px}
 .rev-meta .rev-sub{display:block;font-size:10.5px;font-weight:600;margin-top:2px;color:var(--text-faint)}
 .rev-side{display:flex;align-items:center;gap:14px;flex-shrink:0}
 @media (max-width:640px){
@@ -1202,6 +1210,8 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
             <div class="card-head"><h2>Calendario BYD</h2><span class="hint" id="revLangHint">cada 20k km / 24 meses</span></div>
             <p style="font-size:12px;color:var(--text-faint)">Orientativo. Verifica los intervalos exactos en el manual oficial de tu mercado.</p>
             <div id="revisionsList"></div>
+            <div class="rec-head"><span class="rec-dot"></span><div><h3>Recomendadas</h3><p>Mantenimiento habitual que no está en el calendario oficial. Márcalo al hacerlo y la app calcula cuándo toca el siguiente.</p></div></div>
+            <div id="recList"></div>
           </div>
         </div>
       </section>
@@ -1557,6 +1567,7 @@ let state = {
   notes: [],
   docs: [],
   completedRevisions: [],
+  recommendedDone: {},
   quickLinks: DEFAULT_QUICK_LINKS.slice(),
   lang: 'es',
   meta: { notifiedRevisions: [], lastAlertCheck: '' }
@@ -2424,6 +2435,7 @@ function renderRevisions(){
   const km = getCurrentKm();
   const container = document.getElementById('revisionsList');
   if(!container) { console.error('revisionsList container not found'); return; }
+  renderRecommended();
   container.innerHTML = sched.map(rev=>{
     const done = state.completedRevisions.includes(rev.km);
     const st = getScheduleForRevision(rev, km);
@@ -2445,6 +2457,73 @@ function renderRevisions(){
       </div>
     </div>`;
   }).join('');
+}
+/* ---------------- mantenimiento recomendado (no oficial) ---------------- */
+const RECOMMENDED = [
+  { id:'tyre-press', cat:'Ruedas',    name:'Presión de neumáticos', desc:'Compruébala en frío con la presión de la pegatina del coche. Un eléctrico pesa más y gasta antes las ruedas.', months:1 },
+  { id:'tyre-wear',  cat:'Ruedas',    name:'Desgaste y estado de neumáticos', desc:'Mira el dibujo (mínimo legal 1,6 mm), grietas, bultos y pinchazos lentos.', months:6 },
+  { id:'tyre-rot',   cat:'Ruedas',    name:'Rotación y equilibrado', desc:'Reparte el desgaste: el par instantáneo del motor eléctrico gasta más unas ruedas que otras.', km:10000, months:12 },
+  { id:'brake-fluid',cat:'Fluidos',   name:'Líquido de frenos', desc:'Absorbe humedad con el tiempo; conviene cambiarlo aunque hagas pocos km.', months:24 },
+  { id:'coolant',    cat:'Fluidos',   name:'Nivel de refrigerante y lavaparabrisas', desc:'Revisión visual del nivel. El cambio de refrigerante sigue el calendario oficial.', months:6 },
+  { id:'brakes',     cat:'Frenos',    name:'Inspección de frenos', desc:'La regeneración desgasta poco las pastillas, pero discos y guías se oxidan si se usan poco: revisa y limpia.', km:20000, months:12 },
+  { id:'cabin',      cat:'Confort',   name:'Filtro de habitáculo (A/C)', desc:'Mantiene el aire limpio y la eficiencia del climatizador.', km:15000, months:12 },
+  { id:'wipers',     cat:'Confort',   name:'Escobillas limpiaparabrisas', desc:'Cámbialas si dejan rayas o vibran.', months:12 },
+  { id:'12v',        cat:'Eléctrico', name:'Batería de 12 V', desc:'Pide un test de carga: un fallo de la 12 V puede dejarte parado aunque la batería de tracción esté bien.', months:12 },
+  { id:'chargeport', cat:'Eléctrico', name:'Puerto y cable de carga', desc:'Inspección visual de pines, sellos y cable: sin suciedad, humedad ni daños.', months:6 },
+  { id:'software',   cat:'Software',  name:'Actualizaciones de software', desc:'Consulta si hay actualizaciones del coche o campañas de revisión.', months:6 }
+];
+const isoToday = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+// Cuándo toca: desde la última vez que la marcaste o, si nunca, desde la compra (0 km).
+function recStatus(r, km){
+  const last = (state.recommendedDone || {})[r.id];
+  const baseDate = last ? last.date : state.config.purchaseDate, baseKm = last ? Number(last.km) || 0 : 0;
+  let due = null, daysLeft = null;
+  if(baseDate && r.months){ due = new Date(baseDate + 'T12:00:00'); if(!isNaN(due)){ due.setMonth(due.getMonth() + r.months); daysLeft = Math.ceil((due - new Date()) / 864e5); } else due = null; }
+  const kmRemaining = r.km ? baseKm + r.km - km : null;
+  const overdue = (daysLeft !== null && daysLeft <= 0) || (kmRemaining !== null && kmRemaining <= 0);
+  const upcoming = !overdue && ((daysLeft !== null && daysLeft <= Math.max(7, r.months * 30.4375 * 0.15)) || (kmRemaining !== null && kmRemaining <= r.km * 0.1));
+  const tp = daysLeft !== null ? 1 - daysLeft / (r.months * 30.4375) : 0, kp = kmRemaining !== null ? 1 - kmRemaining / r.km : 0;
+  return { last, due, daysLeft, kmRemaining, overdue, upcoming, progress: Math.max(tp, kp), byTime: daysLeft !== null && tp >= kp };
+}
+function renderRecommended(){
+  const el = document.getElementById('recList'); if(!el) return;
+  const km = getCurrentKm();
+  const rows = RECOMMENDED.map(r=>({ r, st: recStatus(r, km) })).sort((a,b)=> b.st.progress - a.st.progress);
+  el.innerHTML = rows.map(({ r, st })=>{
+    const every = [r.km ? 'cada ' + fmtNum(r.km) + ' km' : '', r.months ? (r.months === 1 ? 'cada mes' : r.months % 12 === 0 ? 'cada ' + (r.months === 12 ? 'año' : r.months / 12 + ' años') : 'cada ' + r.months + ' meses') : ''].filter(Boolean).join(' o ');
+    const lastTxt = st.last ? 'Última vez: ' + fmtDate(st.last.date) + (st.last.km ? ' · ' + fmtNum(st.last.km) + ' km' : '') : 'Aún sin registrar';
+    const kmTxt = st.kmRemaining !== null ? fmtNum(Math.max(0, st.kmRemaining)) + ' km' : '', timeTxt = st.daysLeft !== null ? fmtTimeLeft(st.daysLeft) : '';
+    let meta;
+    if(st.overdue){
+      const late = st.daysLeft !== null && st.daysLeft <= 0 ? 'hace ' + timeTxt : 'pasado en km';
+      meta = 'Toca ya<span class="rev-sub">' + late + '</span>';
+    } else if(kmTxt && timeTxt) meta = (st.byTime ? timeTxt : kmTxt) + '<span class="rev-sub">o ' + (st.byTime ? kmTxt : timeTxt) + '</span>';
+    else meta = (timeTxt || kmTxt || '—');
+    const cls = st.overdue || st.upcoming ? 'due' : '';
+    return `
+    <div class="rev-item rec ${cls}">
+      <div class="rev-status">${st.overdue ? ICONS.alert : ICONS.clock}</div>
+      <div class="rev-body">
+        <h4>${r.name}</h4>
+        <p>${r.desc}</p>
+        <div class="rev-tasks"><span class="tag-pill rec-cat">${r.cat}</span><span class="tag-pill">${every}</span><span class="tag-pill">${lastTxt}</span></div>
+      </div>
+      <div class="rev-side">
+        <div class="rev-meta">${meta}</div>
+        <button class="btn btn-primary btn-sm" onclick="markRecommended('${r.id}')">Hecha hoy</button>
+        ${st.last ? `<button class="btn btn-ghost btn-sm" onclick="clearRecommended('${r.id}')" title="Quitar el último registro">Quitar</button>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+function markRecommended(id){
+  state.recommendedDone = state.recommendedDone || {};
+  state.recommendedDone[id] = { date: isoToday(), km: getCurrentKm() };
+  saveState(); renderRevisions();
+}
+function clearRecommended(id){
+  if(state.recommendedDone) delete state.recommendedDone[id];
+  saveState(); renderRevisions();
 }
 function revMetaHtml(st){
   if(st.overdue){
