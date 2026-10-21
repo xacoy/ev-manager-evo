@@ -469,7 +469,7 @@ button{cursor:pointer}
 .legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12px;color:var(--text-muted);font-weight:600;margin:-6px 0 8px}
 .legend span{display:inline-flex;align-items:center;gap:6px}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:3px}
-.legend i.dash{width:14px;height:0;border-top:2px dashed var(--warning);border-radius:0}
+.legend i.dash{width:14px;height:0;border-top:2px dashed var(--text-muted);border-radius:0}
 .sumline{display:flex;flex-wrap:wrap;gap:8px 28px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
 .sumline div{font-size:12px;color:var(--text-faint);font-weight:600}
 .sumline b{display:block;font-size:16px;color:var(--text);font-family:var(--font-display);font-variant-numeric:tabular-nums;margin-top:2px}
@@ -498,9 +498,7 @@ button{cursor:pointer}
 .rec .rl{font-size:11px;color:var(--text-faint);font-weight:700;text-transform:uppercase;letter-spacing:.3px}
 .rec .rv{font-size:20px;font-weight:800;font-family:var(--font-display);color:var(--text);margin-top:6px;font-variant-numeric:tabular-nums}
 .rec .rs{font-size:12px;color:var(--text-muted);margin-top:3px;font-weight:500}
-#page-stats .stat-card.tone-green{background:linear-gradient(135deg,var(--green-soft),transparent 65%),var(--bg-card)}
-#page-stats .stat-card.tone-cyan{background:linear-gradient(135deg,var(--cyan-soft),transparent 65%),var(--bg-card)}
-#page-stats .stat-card.tone-amber{background:linear-gradient(135deg,var(--orange-soft),transparent 65%),var(--bg-card)}
+#page-stats .stat-card{background:linear-gradient(135deg,var(--accent-soft),transparent 65%),var(--bg-card)}
 #page-stats .stat-card{padding:22px 24px}
 #page-stats .stat-card .spark{position:absolute;right:16px;bottom:14px;width:34%;max-width:130px;opacity:.95}
 #page-stats .stat-card .spark svg{display:block;width:100%;height:auto;overflow:visible}
@@ -510,16 +508,15 @@ button{cursor:pointer}
 #page-stats .ico{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:10px;margin-right:10px;background:var(--ts);color:var(--t);flex-shrink:0}
 #page-stats .ico svg{width:16px;height:16px;stroke:currentColor}
 .insights{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
-.ins{padding:14px 16px;border-radius:var(--radius-sm);background:var(--bg-2);border:1px solid var(--border);border-left:3px solid var(--t,var(--accent))}
+.ins{padding:14px 16px;border-radius:var(--radius-sm);background:var(--bg-2);border:1px solid var(--border)}
 .ins b{display:block;font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;margin-bottom:4px}
 .ins span{font-size:12.5px;color:var(--text-muted);font-weight:500;line-height:1.45}
 .sub-title{margin:22px 0 12px;padding-top:18px;border-top:1px solid var(--border);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--text-faint)}
-.rec{border-top:3px solid var(--t,var(--border-strong))}
 .vs{position:relative;display:grid;grid-template-columns:1fr 1fr;column-gap:0}
 .vs-h{display:flex;align-items:center;gap:7px;font-family:var(--font-display);font-weight:800;font-size:13.5px;padding:0 0 10px;border-bottom:2px solid var(--c)}
 .vs-h i{width:9px;height:9px;border-radius:50%;background:var(--c)}
 .vs-h.evo{--c:var(--accent);padding-right:14px}
-.vs-h.leon{--c:var(--orange);padding-left:14px}
+.vs-h.leon{--c:var(--text-faint);padding-left:14px}
 .vs-cell{padding:11px 14px 11px 0;border-bottom:1px solid var(--border);min-width:0}
 .vs-cell.r{padding:11px 0 11px 14px;border-left:1px solid var(--border)}
 .vs-cell span{display:block;font-size:10.5px;color:var(--text-faint);font-weight:700;text-transform:uppercase;letter-spacing:.1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -626,12 +623,6 @@ button{cursor:pointer}
 .stat-card .label{font-size:13px;color:var(--text-faint);font-weight:600}
 .stat-card .value{font-size:42px;font-weight:800;margin-top:12px;letter-spacing:-.5px;color:var(--text);font-variant-numeric:tabular-nums}
 .stat-card .sub{font-size:13px;color:var(--text-muted);margin-top:10px;font-weight:500}
-.stat-card.tone-cyan,.info-card-small.tone-cyan{border-left:3px solid var(--cyan)}
-.stat-card.tone-violet,.info-card-small.tone-violet{border-left:3px solid var(--purple)}
-.stat-card.tone-green,.info-card-small.tone-green{border-left:3px solid var(--green)}
-.stat-card.tone-amber,.info-card-small.tone-amber{border-left:3px solid var(--orange)}
-.info-card-small.tone-blue{border-left:3px solid var(--blue)}
-.info-card-small.tone-pink{border-left:3px solid var(--pink)}
 .info-card-small.tone-warning{border-left:3px solid var(--warning)}
 .info-card-small.tone-danger{border-left:3px solid var(--danger)}
 
@@ -938,8 +929,8 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
         <button class="icon-btn" id="fullscreenBtn" type="button" title="Pantalla completa" style="display:none">
           <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="fullscreenIcon"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
         </button>
-        <button class="icon-btn" id="themeToggle">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="themeIcon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <button class="icon-btn" id="reloadBtn" type="button" title="Recargar la página" aria-label="Recargar la página">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.13-9.36L23 10"/></svg>
         </button>
         <div class="bell-wrap">
           <button class="icon-btn" id="bellBtn">
@@ -1227,9 +1218,9 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
         </div>
 
         <div class="grid grid-3" style="margin-bottom:16px">
-          <div class="card stat-card tone-green"><div class="label-row"><div class="label">Ahorro vs gasolina</div><span id="dl_saved"></span></div><div class="value" id="st_saved">—</div><div class="sub" id="st_savedSub">acumulado</div><div class="spark" id="sp_saved"></div></div>
-          <div class="card stat-card tone-cyan"><div class="label-row"><div class="label">Coste / km</div><span id="dl_costKm"></span></div><div class="value" id="st_costPerKm">—</div><div class="sub" id="st_costPerKmSub">cargas + mantenimiento</div><div class="spark" id="sp_costKm"></div></div>
-          <div class="card stat-card tone-amber"><div class="label-row"><div class="label">Consumo (de la red)</div><span id="dl_cons"></span></div><div class="value" id="st_cons">—</div><div class="sub" id="st_consSub">kWh / 100 km</div><div class="spark" id="sp_cons"></div></div>
+          <div class="card stat-card tone-accent"><div class="label-row"><div class="label">Ahorro vs gasolina</div><span id="dl_saved"></span></div><div class="value" id="st_saved">—</div><div class="sub" id="st_savedSub">acumulado</div><div class="spark" id="sp_saved"></div></div>
+          <div class="card stat-card tone-accent"><div class="label-row"><div class="label">Coste / km</div><span id="dl_costKm"></span></div><div class="value" id="st_costPerKm">—</div><div class="sub" id="st_costPerKmSub">cargas + mantenimiento</div><div class="spark" id="sp_costKm"></div></div>
+          <div class="card stat-card tone-accent"><div class="label-row"><div class="label">Consumo (de la red)</div><span id="dl_cons"></span></div><div class="value" id="st_cons">—</div><div class="sub" id="st_consSub">kWh / 100 km</div><div class="spark" id="sp_cons"></div></div>
         </div>
 
         <div class="card" style="margin-bottom:16px" id="insightsCard">
@@ -1241,15 +1232,15 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
 
         <div class="card" style="margin-bottom:16px">
           <div class="card-head"><h2>Gasto mensual</h2><span class="hint">energía + mantenimiento</span></div>
-          <div class="legend"><span><i style="background:var(--accent)"></i>Energía</span><span><i style="background:var(--orange)"></i>Mantenimiento</span><span><i class="dash"></i>Media mensual</span></div>
+          <div class="legend"><span><i style="background:var(--accent)"></i>Energía</span><span><i style="background:color-mix(in srgb,var(--accent) 45%,var(--bg-card))"></i>Mantenimiento</span><span><i class="dash"></i>Media mensual</span></div>
           <div class="svg-chart" id="chGasto"></div>
           <div class="sumline" id="gastoSummary"></div>
         </div>
 
         <div class="grid grid-3" style="margin-bottom:16px">
-          <div class="card"><div class="card-head"><h2><span class="ico" style="--t:var(--cyan);--ts:var(--cyan-soft)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>Energía</h2></div><div id="blkEnergy"></div></div>
-          <div class="card"><div class="card-head"><h2><span class="ico" style="--t:var(--green);--ts:var(--green-soft)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15 9.5a3.5 3 0 0 0-3-1.5c-2 0-3 1-3 2.2 0 3 6 1.6 6 4.6 0 1.2-1.2 2.200-3 2.200a3.500 3 0 0 1-3.200-1.600M7.500 12h6"/></svg></span>Dinero</h2></div><div id="blkMoney"></div></div>
-          <div class="card"><div class="card-head"><h2><span class="ico" style="--t:var(--purple);--ts:var(--purple-soft)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h14M3 13l2-6a2 2 0 0 1 2-1.400h10a2 2 0 0 1 2 1.400l2 6v4H3z"/><circle cx="7.500" cy="15" r=".6"/><circle cx="16.500" cy="15" r=".6"/></svg></span>Vehículo</h2></div><div id="blkCar"></div></div>
+          <div class="card"><div class="card-head"><h2><span class="ico" style="--t:var(--accent);--ts:var(--accent-soft)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>Energía</h2></div><div id="blkEnergy"></div></div>
+          <div class="card"><div class="card-head"><h2><span class="ico" style="--t:var(--accent);--ts:var(--accent-soft)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15 9.5a3.5 3 0 0 0-3-1.5c-2 0-3 1-3 2.2 0 3 6 1.6 6 4.6 0 1.2-1.2 2.200-3 2.200a3.500 3 0 0 1-3.200-1.600M7.500 12h6"/></svg></span>Dinero</h2></div><div id="blkMoney"></div></div>
+          <div class="card"><div class="card-head"><h2><span class="ico" style="--t:var(--accent);--ts:var(--accent-soft)"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h14M3 13l2-6a2 2 0 0 1 2-1.400h10a2 2 0 0 1 2 1.400l2 6v4H3z"/><circle cx="7.500" cy="15" r=".6"/><circle cx="16.500" cy="15" r=".6"/></svg></span>Vehículo</h2></div><div id="blkCar"></div></div>
         </div>
 
         <div class="grid grid-2eq" style="margin-bottom:16px">
@@ -1270,7 +1261,7 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
           </div>
           <div class="card">
             <div class="card-head"><h2>León vs EVO</h2><span class="hint">gasto acumulado</span></div>
-            <div class="legend"><span><i style="background:var(--orange)"></i>SEAT León</span><span><i style="background:var(--accent)"></i>BYD EVO</span><span><i style="background:var(--success)"></i>Ahorro</span></div>
+            <div class="legend"><span><i style="background:var(--text-faint)"></i>SEAT León</span><span><i style="background:var(--accent)"></i>BYD EVO</span><span><i style="background:var(--accent-soft);border:1px solid var(--accent)"></i>Ahorro</span></div>
             <div class="svg-chart" id="chAhorro"></div>
           </div>
         </div>
@@ -1679,32 +1670,18 @@ const THEMES = [
   { id:'contrast', name:'Alto contraste',light:false, sw:['#000000','#0f0f0f','#ffd60a','#00e5ff','#ffffff'] }
 ];
 const themeInfo = id => THEMES.find(t=>t.id===id) || THEMES[0];
-const SUN_ICON = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
-const MOON_ICON = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
 function applyTheme(theme){
   const t = themeInfo(theme);
   document.documentElement.setAttribute('data-theme', t.id);
-  const tog = document.getElementById('themeToggle');
-  if(tog){
-    // el botón rápido alterna entre el último tema oscuro y el claro
-    tog.title = t.light ? 'Volver al tema oscuro' : 'Cambiar al tema claro';
-    document.getElementById('themeIcon').innerHTML = t.light ? MOON_ICON : SUN_ICON;
-  }
   const mb = document.getElementById('themeMenuBtn');
   if(mb) mb.querySelector('span').textContent = 'Tema: ' + t.name;
   try{
     localStorage.setItem(THEME_KEY, t.id);
-    if(!t.light) localStorage.setItem(THEME_KEY + ':lastDark', t.id);
   }catch(e){}
   const meta = document.querySelector('meta[name="theme-color"]');
   if(meta) meta.setAttribute('content', t.sw[0]);
   document.querySelectorAll('#themeGrid .theme-card').forEach(c=>c.classList.toggle('sel', c.dataset.theme === t.id));
   refreshCharts();
-}
-function toggleTheme(){
-  const cur = themeInfo(document.documentElement.getAttribute('data-theme'));
-  let last = 'dark'; try{ last = localStorage.getItem(THEME_KEY + ':lastDark') || 'dark'; }catch(e){}
-  applyTheme(cur.light ? last : 'light');
 }
 function buildThemePicker(){
   const grid = document.getElementById('themeGrid'); if(!grid || grid.children.length) return;
@@ -2661,8 +2638,8 @@ function svgBarChart(el, items, o){
   });
   if(o.avg){
     const ya = y(o.avg);
-    g += '<line x1="' + L + '" y1="' + ya + '" x2="' + (W - R) + '" y2="' + ya + '" stroke-dasharray="5 4" style="stroke:var(--warning)" stroke-width="1.6"/>';
-    g += '<text x="' + (L + 6) + '" y="' + (ya - 6) + '" text-anchor="start" style="fill:var(--warning);font-weight:700">media ' + (o.fmt ? o.fmt(o.avg) : o.avg.toFixed(1)) + '</text>';
+    g += '<line x1="' + L + '" y1="' + ya + '" x2="' + (W - R) + '" y2="' + ya + '" stroke-dasharray="5 4" style="stroke:var(--text-muted)" stroke-width="1.6"/>';
+    g += '<text x="' + (L + 6) + '" y="' + (ya - 6) + '" text-anchor="start" style="fill:var(--text-muted);font-weight:700">media ' + (o.fmt ? o.fmt(o.avg) : o.avg.toFixed(1)) + '</text>';
   }
   el.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + (o.aria || 'Gráfica') + '">' + g + '</svg>';
 }
@@ -2707,13 +2684,13 @@ function svgStackedBarChart(el, items, o){
   items.forEach((it, i)=>{
     const x = L + step * i + (step - bw) / 2, ya = y(it.a), yb = y(it.a + it.b);
     if(it.a > 0) g += '<rect x="' + x + '" y="' + ya + '" width="' + bw + '" height="' + Math.max(1, T + ih - ya) + '" rx="3" style="fill:var(--accent)"><title>' + it.label + ' · Energía ' + fmtEUR(it.a) + '</title></rect>';
-    if(it.b > 0) g += '<rect x="' + x + '" y="' + yb + '" width="' + bw + '" height="' + Math.max(1, ya - yb) + '" rx="3" style="fill:var(--orange)"><title>' + it.label + ' · Mantenimiento ' + fmtEUR(it.b) + '</title></rect>';
+    if(it.b > 0) g += '<rect x="' + x + '" y="' + yb + '" width="' + bw + '" height="' + Math.max(1, ya - yb) + '" rx="3" style="fill:color-mix(in srgb,var(--accent) 45%,var(--bg-card))"><title>' + it.label + ' · Mantenimiento ' + fmtEUR(it.b) + '</title></rect>';
     if(items.length <= 12 && it.a + it.b > 0) g += '<text class="val" x="' + (x + bw / 2) + '" y="' + (yb - 5) + '" text-anchor="middle">' + (o.fmt ? o.fmt(it.a + it.b) : (it.a + it.b).toFixed(0)) + '</text>';
     if(i % every === 0) g += '<text x="' + (x + bw / 2) + '" y="' + (H - 13) + '" text-anchor="middle">' + it.label + '</text>';
   });
   if(o.avg){
     const ya = y(o.avg);
-    g += '<line x1="' + L + '" y1="' + ya + '" x2="' + (W - R) + '" y2="' + ya + '" stroke-dasharray="5 4" style="stroke:var(--warning)" stroke-width="1.6"/>';
+    g += '<line x1="' + L + '" y1="' + ya + '" x2="' + (W - R) + '" y2="' + ya + '" stroke-dasharray="5 4" style="stroke:var(--text-muted)" stroke-width="1.6"/>';
   }
   el.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + (o.aria || 'Gráfica') + '">' + g + '</svg>';
 }
@@ -2732,18 +2709,18 @@ function svgGapChart(el, items, o){
     g += '<text x="' + (L - 6) + '" y="' + (yy + 4) + '" text-anchor="end">' + Math.round(v) + '€</text>';
   }
   const pa = items.map((it, i)=> x(i) + ',' + y(it.a)), pb = items.map((it, i)=> x(i) + ',' + y(it.b));
-  if(items.length > 1) g += '<polygon points="' + pa.join(' ') + ' ' + pb.slice().reverse().join(' ') + '" style="fill:var(--success);opacity:.16"/>';
-  else g += '<line x1="' + x(0) + '" y1="' + y(items[0].a) + '" x2="' + x(0) + '" y2="' + y(items[0].b) + '" stroke-width="6" stroke-linecap="round" style="stroke:var(--success);opacity:.3"/>';
-  g += '<polyline points="' + pa.join(' ') + '" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="stroke:var(--orange)"/>';
+  if(items.length > 1) g += '<polygon points="' + pa.join(' ') + ' ' + pb.slice().reverse().join(' ') + '" style="fill:var(--accent);opacity:.14"/>';
+  else g += '<line x1="' + x(0) + '" y1="' + y(items[0].a) + '" x2="' + x(0) + '" y2="' + y(items[0].b) + '" stroke-width="6" stroke-linecap="round" style="stroke:var(--accent);opacity:.3"/>';
+  g += '<polyline points="' + pa.join(' ') + '" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="stroke:var(--text-faint)"/>';
   g += '<polyline points="' + pb.join(' ') + '" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="stroke:var(--accent)"/>';
   const every = items.length > 10 ? Math.ceil(items.length / 10) : 1;
   items.forEach((it, i)=>{
-    g += '<circle cx="' + x(i) + '" cy="' + y(it.a) + '" r="3.2" style="fill:var(--orange)"><title>' + it.label + ' · León ' + fmtEUR(it.a) + '</title></circle>';
+    g += '<circle cx="' + x(i) + '" cy="' + y(it.a) + '" r="3.2" style="fill:var(--text-faint)"><title>' + it.label + ' · León ' + fmtEUR(it.a) + '</title></circle>';
     g += '<circle cx="' + x(i) + '" cy="' + y(it.b) + '" r="3.2" style="fill:var(--accent)"><title>' + it.label + ' · EVO ' + fmtEUR(it.b) + '</title></circle>';
     if(i % every === 0 || i === items.length - 1) g += '<text x="' + x(i) + '" y="' + (H - 13) + '" text-anchor="middle">' + it.label + '</text>';
   });
   const last = items[items.length - 1], lx = Math.min(x(items.length - 1), W - R - 4);
-  g += '<text class="val" x="' + lx + '" y="' + (y(last.a) - 11) + '" text-anchor="end" style="fill:var(--orange)">' + fmtEUR(last.a) + '</text>';
+  g += '<text class="val" x="' + lx + '" y="' + (y(last.a) - 11) + '" text-anchor="end" style="fill:var(--text-muted)">' + fmtEUR(last.a) + '</text>';
   g += '<text class="val" x="' + lx + '" y="' + (y(last.b) + 20) + '" text-anchor="end" style="fill:var(--accent)">' + fmtEUR(last.b) + '</text>';
   el.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + (o.aria || 'Gráfica') + '">' + g + '</svg>';
 }
@@ -2891,7 +2868,7 @@ function renderPlaces(m){
   if(!split || !tbl) return;
   if(!m.ch.length){ split.innerHTML = ''; tbl.innerHTML = '<tbody><tr><td><div class="svg-chart"><div class="empty">Sin cargas en este periodo</div></div></td></tr></tbody>'; return; }
   const kindOf = loc => loc === 'Casa' ? 'Casa' : loc === 'Trabajo' ? 'Trabajo' : 'Públicas y otras';
-  const kinds = { 'Casa': { c: 'var(--accent)' }, 'Trabajo': { c: 'var(--purple)' }, 'Públicas y otras': { c: 'var(--orange)' } };
+  const kinds = { 'Casa': { c: 'var(--accent)' }, 'Trabajo': { c: 'color-mix(in srgb,var(--accent) 60%,var(--bg-card))' }, 'Públicas y otras': { c: 'color-mix(in srgb,var(--accent) 30%,var(--bg-card))' } };
   const places = {};
   Object.values(kinds).forEach(k=>{ k.n = 0; k.kwh = 0; k.cost = 0; });
   m.ch.forEach(c=>{
@@ -2920,7 +2897,7 @@ function renderPlaces(m){
 // Conclusiones en lenguaje llano a partir de los datos del periodo.
 function renderInsights(m){
   const el = document.getElementById('statsInsights'); if(!el) return;
-  const out = [], card = (tone, big, txt) => out.push('<div class="ins" style="--t:var(--' + tone + ')"><b>' + big + '</b><span>' + txt + '</span></div>');
+  const out = [], card = (big, txt) => out.push('<div class="ins"><b>' + big + '</b><span>' + txt + '</span></div>');
   const isHome = c => c.location === 'Casa', isWork = c => c.location === 'Trabajo';
   const homeKwh = state.charges.filter(c=>isHome(c) && kwhOf(c) > 0 && c.cost != null && c.cost !== '' && Number(c.cost) > 0);
   const homePrice = homeKwh.length ? homeKwh.reduce((s,c)=>s + Number(c.cost), 0) / homeKwh.reduce((s,c)=>s + kwhOf(c), 0) : HOME_RATE;
@@ -2928,29 +2905,29 @@ function renderInsights(m){
   const all = computeSavings(), dated = state.charges.filter(c=>c.date).map(c=>c.date).sort();
   if(all.saved > 0 && dated.length){
     const days = Math.max(1, (Date.now() - new Date(dated[0] + 'T12:00:00')) / 864e5);
-    if(days >= 30) card('green', '≈ ' + fmtEUR(all.saved / days * 365), 'es lo que ahorrarías al año frente al León si sigues a este ritmo.');
+    if(days >= 30) card('≈ ' + fmtEUR(all.saved / days * 365), 'es lo que ahorrarías al año frente al León si sigues a este ritmo.');
   }
   // 2. depósitos
   if(m.saved != null && m.saved > 0){
     const tanks = m.saved / (50 * currentFuelPrice());
-    if(tanks >= 0.3) card('cyan', tanks.toFixed(1).replace('.', ',') + ' depósitos', 'de 50 l de gasolina es lo que llevas ahorrado en este periodo.');
+    if(tanks >= 0.3) card(tanks.toFixed(1).replace('.', ',') + ' depósitos', 'de 50 l de gasolina es lo que llevas ahorrado en este periodo.');
   }
   // 3. cargar en casa
   const pub = m.ch.filter(c=>!isHome(c) && !isWork(c) && kwhOf(c) > 0 && c.cost != null && c.cost !== '' && Number(c.cost) > 0);
   if(pub.length){
     const kw = pub.reduce((s,c)=>s + kwhOf(c), 0), paid = pub.reduce((s,c)=>s + Number(c.cost), 0), diff = paid - kw * homePrice;
-    if(diff >= 1) card('orange', fmtEUR(diff), 'habrías ahorrado cargando en casa los ' + kw.toFixed(0) + ' kWh que pagaste fuera (' + (paid / kw).toFixed(2) + ' frente a ' + homePrice.toFixed(3) + ' €/kWh).');
+    if(diff >= 1) card(fmtEUR(diff), 'habrías ahorrado cargando en casa los ' + kw.toFixed(0) + ' kWh que pagaste fuera (' + (paid / kw).toFixed(2) + ' frente a ' + homePrice.toFixed(3) + ' €/kWh).');
   }
   // 4. cargas gratis
   if(m.free.length){
     const kw = m.free.reduce((s,c)=>s + kwhOf(c), 0);
-    card('purple', fmtEUR(kw * homePrice), m.free.length + (m.free.length === 1 ? ' carga gratis' : ' cargas gratis') + ' (' + kw.toFixed(0) + ' kWh): lo que costarían a tarifa de casa.');
+    card(fmtEUR(kw * homePrice), m.free.length + (m.free.length === 1 ? ' carga gratis' : ' cargas gratis') + ' (' + kw.toFixed(0) + ' kWh): lo que costarían a tarifa de casa.');
   }
   // 5. tendencia del consumo
   if(m.trips.length >= 6){
     const h = Math.floor(m.trips.length / 2), avg = a=>a.reduce((s,t)=>s + t.value, 0) / a.length;
     const first = avg(m.trips.slice(0, h)), last = avg(m.trips.slice(-h)), d = (last - first) / first * 100;
-    if(Math.abs(d) >= 3) card(d < 0 ? 'green' : 'orange', (d < 0 ? '▼ ' : '▲ ') + Math.abs(d).toFixed(0) + ' %', 'ha ' + (d < 0 ? 'bajado' : 'subido') + ' tu consumo en la segunda mitad del periodo (' + first.toFixed(1) + ' → ' + last.toFixed(1) + ' kWh/100 km).');
+    if(Math.abs(d) >= 3) card((d < 0 ? '▼ ' : '▲ ') + Math.abs(d).toFixed(0) + ' %', 'ha ' + (d < 0 ? 'bajado' : 'subido') + ' tu consumo en la segunda mitad del periodo (' + first.toFixed(1) + ' → ' + last.toFixed(1) + ' kWh/100 km).');
   }
   el.innerHTML = out.length ? out.join('') : '<div class="empty-mini" style="grid-column:1/-1">Registra cargas con kWh, coste y km para ver conclusiones.</div>';
 }
@@ -2958,24 +2935,24 @@ function renderRecords(m){
   const el = document.getElementById('statsRecords');
   const withPrice = m.ch.filter(c=>kwhOf(c) > 0 && c.cost != null && c.cost !== '' && Number(c.cost) > 0).map(c=>({ c, p: Number(c.cost) / kwhOf(c) }));
   const where = c => fmtDate(c.date) + (c.location ? ' · ' + escapeHtml(c.location) : '');
-  const rec = (l, v, s, tone) => '<div class="rec" style="--t:var(--' + (tone || 'border-strong') + ')"><div class="rl">' + l + '</div><div class="rv">' + v + '</div><div class="rs">' + (s || '') + '</div></div>';
+  const rec = (l, v, s) => '<div class="rec"><div class="rl">' + l + '</div><div class="rv">' + v + '</div><div class="rs">' + (s || '') + '</div></div>';
   const t = [];
   if(withPrice.length){
     const lo = withPrice.reduce((a,b)=> b.p < a.p ? b : a), hi = withPrice.reduce((a,b)=> b.p > a.p ? b : a);
-    t.push(rec('Carga más barata', lo.p.toFixed(3) + ' €/kWh', where(lo.c), 'green'));
-    t.push(rec('Carga más cara', hi.p.toFixed(3) + ' €/kWh', where(hi.c), 'orange'));
+    t.push(rec('Carga más barata', lo.p.toFixed(3) + ' €/kWh', where(lo.c)));
+    t.push(rec('Carga más cara', hi.p.toFixed(3) + ' €/kWh', where(hi.c)));
   }
   const big = m.ch.filter(c=>kwhOf(c) > 0).sort((a,b)=> kwhOf(b) - kwhOf(a))[0];
-  if(big) t.push(rec('Mayor carga', kwhOf(big).toFixed(1) + ' kWh', where(big), 'cyan'));
+  if(big) t.push(rec('Mayor carga', kwhOf(big).toFixed(1) + ' kWh', where(big)));
   if(m.trips.length > 1){
     const best = m.trips.reduce((a,b)=> b.value < a.value ? b : a), worst = m.trips.reduce((a,b)=> b.value > a.value ? b : a);
-    t.push(rec('Mejor tramo', best.value.toFixed(1) + ' kWh/100', fmtDate(best.date), 'green'));
-    t.push(rec('Peor tramo', worst.value.toFixed(1) + ' kWh/100', fmtDate(worst.date), 'danger'));
+    t.push(rec('Mejor tramo', best.value.toFixed(1) + ' kWh/100', fmtDate(best.date)));
+    t.push(rec('Peor tramo', worst.value.toFixed(1) + ' kWh/100', fmtDate(worst.date)));
   }
   const ms = monthSeries(statsRange().from || null, statsRange().to).filter(x=>x.energy + x.maint > 0);
   if(ms.length > 1){
     const top = ms.reduce((a,b)=> (b.energy + b.maint) > (a.energy + a.maint) ? b : a);
-    t.push(rec('Mes de más gasto', fmtEUR(top.energy + top.maint), top.label, 'purple'));
+    t.push(rec('Mes de más gasto', fmtEUR(top.energy + top.maint), top.label));
   }
   el.innerHTML = t.join('');
   el.previousElementSibling.style.display = el.style.display = t.length ? '' : 'none';   // sin datos, solo queda el mensaje de arriba
@@ -3048,7 +3025,7 @@ function renderStats(){
   // gráficas
   const kEl = document.getElementById('chKwhMes'), qEl = document.getElementById('chKmMes');
   if(series.some(s=>s.kwh > 0)) svgBarChart(kEl, series.map(s=>({ label: s.label, value: s.kwh })), { fmt: v=>Math.round(v), aria: 'kWh por mes' }); else emptyChart(kEl, 'Sin energía cargada en este periodo.');
-  if(series.some(s=>s.km > 0)) svgBarChart(qEl, series.map(s=>({ label: s.label, value: s.km })), { fmt: v=>fmtNum(v), axis: v=>fmtNum(v), color: 'var(--cyan)', aria: 'Km por mes' }); else emptyChart(qEl, 'Anota los km en tus cargas para verlos aquí.');
+  if(series.some(s=>s.km > 0)) svgBarChart(qEl, series.map(s=>({ label: s.label, value: s.km })), { fmt: v=>fmtNum(v), axis: v=>fmtNum(v), color: 'var(--accent)', aria: 'Km por mes' }); else emptyChart(qEl, 'Anota los km en tus cargas para verlos aquí.');
   const cEl = document.getElementById('chConsumo');
   if(m.trips.length) svgBarChart(cEl, m.trips, { avg: m.cons, fmt: v=>v.toFixed(1), aria: 'Consumo por tramo' });
   else emptyChart(cEl, r.all ? 'Anota los km en al menos dos cargas (y el % de batería para más precisión).' : 'Sin tramos de consumo en este periodo.');
@@ -3057,9 +3034,9 @@ function renderStats(){
   else emptyChart(aEl, 'Registra cargas con kWh para ver la comparación.');
   // curvas de tendencia de las tarjetas destacadas
   const sp = (id, vals, tone) => { document.getElementById(id).innerHTML = sparkSvg(vals, tone); };
-  sp('sp_saved', ms.map(s=>s.a - s.b), 'green');
-  sp('sp_costKm', series.filter(s=>s.km > 0).map(s=>(s.energy + s.maint) / s.km), 'cyan');
-  sp('sp_cons', m.trips.map(t=>t.value), 'orange');
+  sp('sp_saved', ms.map(s=>s.a - s.b), 'accent');
+  sp('sp_costKm', series.filter(s=>s.km > 0).map(s=>(s.energy + s.maint) / s.km), 'accent');
+  sp('sp_cons', m.trips.map(t=>t.value), 'accent');
   renderInsights(m);
   renderPlaces(m);
   renderRecords(m);
@@ -3135,7 +3112,7 @@ function setupEventListeners(){
     tryAdd('homeTopBtn', ()=>{ navigate('dashboard'); const dd = document.getElementById('moreMenuDropdown'); if(dd) dd.classList.remove('open'); });
     tryAdd('docsTopBtn', ()=>{ navigate('docs'); const dd = document.getElementById('moreMenuDropdown'); if(dd) dd.classList.remove('open'); });
     tryAdd('setupTopBtn', ()=>{ navigate('setup'); const dd = document.getElementById('moreMenuDropdown'); if(dd) dd.classList.remove('open'); });
-    tryAdd('themeToggle', toggleTheme);
+    tryAdd('reloadBtn', ()=>location.reload());
     tryAdd('themeMenuBtn', ()=>{ buildThemePicker(); document.getElementById('themeOverlay').classList.add('open'); const dd = document.getElementById('moreMenuDropdown'); if(dd) dd.classList.remove('open'); });
     tryAdd('themeClose', ()=>document.getElementById('themeOverlay').classList.remove('open'));
 
