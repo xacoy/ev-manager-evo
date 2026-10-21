@@ -517,8 +517,8 @@ button{cursor:pointer}
 .vs{position:relative;display:grid;grid-template-columns:1fr 1fr;column-gap:0}
 .vs-h{display:flex;align-items:center;gap:7px;font-family:var(--font-display);font-weight:800;font-size:13.5px;padding:0 0 10px;border-bottom:2px solid var(--c)}
 .vs-h i{width:9px;height:9px;border-radius:50%;background:var(--c)}
-.vs-h.leon{--c:var(--orange);padding-right:14px}
-.vs-h.evo{--c:var(--accent);padding-left:14px}
+.vs-h.evo{--c:var(--accent);padding-right:14px}
+.vs-h.leon{--c:var(--orange);padding-left:14px}
 .vs-cell{padding:11px 14px 11px 0;border-bottom:1px solid var(--border);min-width:0}
 .vs-cell.r{padding:11px 0 11px 14px;border-left:1px solid var(--border)}
 .vs-cell span{display:block;font-size:10.5px;color:var(--text-faint);font-weight:700;text-transform:uppercase;letter-spacing:.1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -3047,11 +3047,11 @@ function renderStats(){
     const ahorro = m.saved, pctLess = m.gas > 0 ? Math.round(ahorro / m.gas * 100) : 0;
     document.getElementById('blkMoney').innerHTML =
       '<div class="vs" title="SEAT León FR 2018 125 CV: solo combustible, al precio de la gasolina de cada día de carga. No incluye su mantenimiento.">' +
-        '<div class="vs-h leon"><i></i>SEAT León</div><div class="vs-h evo"><i></i>BYD EVO</div>' +
-        vsCell('Combustible', fmtEUR(m.gas), refL + ' l/100 km', 'l') + vsCell('Energía', fmtEUR(m.elec), savingsConsumption().toFixed(1) + ' kWh/100 km', 'r') +
-        vsCell('Mantenimiento', '—', 'sin datos', 'l') + vsCell('Mantenimiento', fmtEUR(m.mCost), m.mt.length + (m.mt.length === 1 ? ' registro' : ' registros'), 'r') +
-        vsCell('Por 100 km', fmtEUR(m.gas / m.kmEq * 100), '', 'l') + vsCell('Por 100 km', fmtEUR(m.elec / m.kmEq * 100), '', 'r') +
-        vsCell('Total', fmtEUR(m.gas), 'solo combustible', 'l') + vsCell('Total', fmtEUR(m.total), '', 'r') +
+        '<div class="vs-h evo"><i></i>BYD EVO</div><div class="vs-h leon"><i></i>SEAT León</div>' +
+        vsCell('Energía', fmtEUR(m.elec), savingsConsumption().toFixed(1) + ' kWh/100 km', 'l') + vsCell('Combustible', fmtEUR(m.gas), refL + ' l/100 km', 'r') +
+        vsCell('Mantenimiento', fmtEUR(m.mCost), m.mt.length + (m.mt.length === 1 ? ' registro' : ' registros'), 'l') + vsCell('Mantenimiento', '—', 'sin datos', 'r') +
+        vsCell('Por 100 km', fmtEUR(m.elec / m.kmEq * 100), '', 'l') + vsCell('Por 100 km', fmtEUR(m.gas / m.kmEq * 100), '', 'r') +
+        vsCell('Total', fmtEUR(m.total), '', 'l') + vsCell('Total', fmtEUR(m.gas), 'solo combustible', 'r') +
       '</div>' +
       '<div class="vs-save ' + (ahorro < 0 ? 'neg' : '') + '"><span>Ahorro frente al León</span><b>' + fmtEUR(ahorro) + '</b><small>' + (ahorro < 0 ? Math.abs(pctLess) + ' % más caro' : pctLess + ' % menos') + ' en energía</small></div>';
   } else {
