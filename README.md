@@ -1,6 +1,6 @@
 # 🚗⚡ EV Manager Evo — BYD Atto 3 EVO
 
-Gestor integral web de tu **BYD Atto 3 EVO**: cargas, mantenimiento, revisiones, notas y manual técnico. Todo en **un único archivo HTML** sin necesidad de servidor.
+Gestor integral web de tu **BYD Atto 3 EVO**: cargas, mantenimiento, revisiones y notas. Todo en **un único archivo HTML** sin necesidad de servidor.
 
 ## ✨ Características
 
@@ -39,11 +39,6 @@ Gestor integral web de tu **BYD Atto 3 EVO**: cargas, mantenimiento, revisiones,
 - Notas libres con etiquetas
 - Filtrado por etiqueta y búsqueda
 - Almacenamiento local persistente
-
-### 📖 Manual Técnico
-- Índice completo en ES/EN
-- Búsqueda sin distinción de tildes
-- Temas: especificaciones, carga, batería, garantía, frenos, seguridad, etc.
 
 ### 📊 Estadísticas
 - Selector de periodo (Todo, 12 meses, Este año, Este mes) con variación frente al periodo anterior
@@ -143,7 +138,6 @@ Móvil        → Full stack, Quicklinks 1 col
 ├── manifest.json       # Metadatos PWA
 ├── README.md           # Este archivo
 ├── data/
-│   ├── manual-index.json        # Referencia del manual
 │   └── revisions-schedule.json  # Calendario de revisiones
 ```
 
