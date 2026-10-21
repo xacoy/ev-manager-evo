@@ -1210,7 +1210,7 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
             <div class="card-head"><h2>Calendario BYD</h2><span class="hint" id="revLangHint">cada 20k km / 24 meses</span></div>
             <p style="font-size:12px;color:var(--text-faint)">Orientativo. Verifica los intervalos exactos en el manual oficial de tu mercado.</p>
             <div id="revisionsList"></div>
-            <div class="rec-head"><span class="rec-dot"></span><div><h3>Recomendadas</h3><p>Mantenimiento habitual que no está en el calendario oficial. Márcalo al hacerlo y la app calcula cuándo toca el siguiente.</p></div></div>
+            <div class="rec-head"><span class="rec-dot"></span><div><h3>Recomendadas</h3><p>Operaciones que recomiendan BYD, sus concesionarios y las guías de eléctricos, y que no siempre salen en el calendario. Los intervalos varían según mercado: confírmalos en tu manual. Márcalas al hacerlas y la app calcula la siguiente.</p></div></div>
             <div id="recList"></div>
           </div>
         </div>
@@ -2460,17 +2460,12 @@ function renderRevisions(){
 }
 /* ---------------- mantenimiento recomendado (no oficial) ---------------- */
 const RECOMMENDED = [
-  { id:'tyre-press', cat:'Ruedas',    name:'Presión de neumáticos', desc:'Compruébala en frío con la presión de la pegatina del coche. Un eléctrico pesa más y gasta antes las ruedas.', months:1 },
-  { id:'tyre-wear',  cat:'Ruedas',    name:'Desgaste y estado de neumáticos', desc:'Mira el dibujo (mínimo legal 1,6 mm), grietas, bultos y pinchazos lentos.', months:6 },
-  { id:'tyre-rot',   cat:'Ruedas',    name:'Rotación y equilibrado', desc:'Reparte el desgaste: el par instantáneo del motor eléctrico gasta más unas ruedas que otras.', km:10000, months:12 },
-  { id:'brake-fluid',cat:'Fluidos',   name:'Líquido de frenos', desc:'Absorbe humedad con el tiempo; conviene cambiarlo aunque hagas pocos km.', months:24 },
-  { id:'coolant',    cat:'Fluidos',   name:'Nivel de refrigerante y lavaparabrisas', desc:'Revisión visual del nivel. El cambio de refrigerante sigue el calendario oficial.', months:6 },
-  { id:'brakes',     cat:'Frenos',    name:'Inspección de frenos', desc:'La regeneración desgasta poco las pastillas, pero discos y guías se oxidan si se usan poco: revisa y limpia.', km:20000, months:12 },
-  { id:'cabin',      cat:'Confort',   name:'Filtro de habitáculo (A/C)', desc:'Mantiene el aire limpio y la eficiencia del climatizador.', km:15000, months:12 },
-  { id:'wipers',     cat:'Confort',   name:'Escobillas limpiaparabrisas', desc:'Cámbialas si dejan rayas o vibran.', months:12 },
-  { id:'12v',        cat:'Eléctrico', name:'Batería de 12 V', desc:'Pide un test de carga: un fallo de la 12 V puede dejarte parado aunque la batería de tracción esté bien.', months:12 },
-  { id:'chargeport', cat:'Eléctrico', name:'Puerto y cable de carga', desc:'Inspección visual de pines, sellos y cable: sin suciedad, humedad ni daños.', months:6 },
-  { id:'software',   cat:'Software',  name:'Actualizaciones de software', desc:'Consulta si hay actualizaciones del coche o campañas de revisión.', months:6 }
+  { id:'tyre-rot',    cat:'Ruedas',  name:'Rotación de neumáticos', desc:'BYD y los concesionarios la recomiendan cada ~10.000 km. El par instantáneo y el peso de la batería gastan unas ruedas antes que otras. Si son direccionales, solo se cambian de delante a detrás.', km:10000 },
+  { id:'align',       cat:'Ruedas',  name:'Alineación y equilibrado', desc:'Más peso que un coche de combustión: conviene revisarla cada ~20.000 km o ante desgaste irregular, vibraciones o si el coche se va a un lado.', km:20000 },
+  { id:'brake-fluid', cat:'Fluidos', name:'Líquido de frenos', desc:'Aunque la regeneración frene casi todo, el líquido sigue absorbiendo humedad. Lo habitual en las guías de BYD es cambiarlo cada 2 años, hagas los km que hagas.', months:24 },
+  { id:'gear-oil',    cat:'Fluidos', name:'Aceite del reductor', desc:'La tabla de intervalos EV de BYD lo marca cada 24 meses o 48.000 km, lo que ocurra antes (algunas guías lo adelantan a 30.000-40.000 km).', km:48000, months:24 },
+  { id:'cabin',       cat:'Confort', name:'Filtro de habitáculo (HEPA)', desc:'BYD lo sustituye en cada revisión de 24 meses. Si circulas mucho por zonas polvorientas o húmedas, mejor cada año.', months:24 },
+  { id:'brakes',      cat:'Frenos',  name:'Limpieza e inspección de frenos', desc:'Con la regeneración las pastillas duran mucho, pero discos y guías se corroen y se agarrotan por falta de uso: que los revisen y limpien una vez al año.', months:12 }
 ];
 const isoToday = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
 // Cuándo toca: desde la última vez que la marcaste o, si nunca, desde la compra (0 km).
