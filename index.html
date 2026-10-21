@@ -514,6 +514,22 @@ button{cursor:pointer}
 .ins b{display:block;font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;margin-bottom:4px}
 .ins span{font-size:12.5px;color:var(--text-muted);font-weight:500;line-height:1.45}
 .rec{border-top:3px solid var(--t,var(--border-strong))}
+.vs{position:relative;display:grid;grid-template-columns:1fr 1fr;column-gap:0}
+.vs-h{display:flex;align-items:center;gap:7px;font-family:var(--font-display);font-weight:800;font-size:13.5px;padding:0 0 10px;border-bottom:2px solid var(--c)}
+.vs-h i{width:9px;height:9px;border-radius:50%;background:var(--c)}
+.vs-h.leon{--c:var(--orange);padding-right:14px}
+.vs-h.evo{--c:var(--accent);padding-left:14px}
+.vs-cell{padding:11px 14px 11px 0;border-bottom:1px solid var(--border);min-width:0}
+.vs-cell.r{padding:11px 0 11px 14px;border-left:1px solid var(--border)}
+.vs-cell span{display:block;font-size:10.5px;color:var(--text-faint);font-weight:700;text-transform:uppercase;letter-spacing:.1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vs-cell b{display:block;font-size:17px;font-family:var(--font-display);font-weight:800;color:var(--text);margin-top:3px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.vs-cell small{display:block;font-size:11px;color:var(--text-muted);font-weight:500;margin-top:2px}
+.vs-save{margin-top:14px;padding:12px 14px;border-radius:var(--radius-sm);background:var(--success-soft);border:1px solid var(--success);display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px}
+.vs-save span{font-size:12px;font-weight:700;color:var(--text-muted);flex:1 1 100%}
+.vs-save b{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--success);font-variant-numeric:tabular-nums}
+.vs-save small{font-size:12px;color:var(--text-muted);font-weight:600}
+.vs-save.neg{background:var(--danger-soft);border-color:var(--danger)}
+.vs-save.neg b{color:var(--danger)}
 .svg-chart rect,.svg-chart circle{transition:opacity .15s var(--ease)}
 .svg-chart rect:hover{opacity:.8}
 .places-table .show-sm{display:none}
@@ -3025,14 +3041,26 @@ function renderStats(){
     kvRow('Cargas', m.ch.length, m.ch.length ? 'de media ' + (m.kwh / m.ch.length).toFixed(1) + ' kWh' : '') +
     kvRow('Precio medio', m.price != null ? m.price.toFixed(3) + ' €/kWh' : '—') +
     kvRow('Cargas gratis', m.free.length, m.free.length ? m.free.reduce((s,c)=>s + kwhOf(c), 0).toFixed(1) + ' kWh sin pagar' : '');
-  document.getElementById('blkMoney').innerHTML =
-    kvRow('Cargas', fmtEUR(m.eCost)) +
-    kvRow('Mantenimiento', fmtEUR(m.mCost), m.mt.length + (m.mt.length === 1 ? ' registro' : ' registros')) +
-    kvRow('Total', fmtEUR(m.total)) +
-    (m.kwhS > 0 ? kvRow('Mismos km con el León', fmtEUR(m.gas), 'gasolina · ' + (Number(state.config.refConsumption) || 6.5) + ' l/100 km', 'SEAT León FR 2018 125 CV, solo combustible al precio de gasolina de cada día de carga. No incluye su mantenimiento.') +
-      kvRow('Por 100 km', 'León ' + fmtEUR(m.gas / m.kmEq * 100) + ' · EVO ' + fmtEUR(m.elec / m.kmEq * 100), 'solo energía / combustible') +
-      kvRow('Ahorro frente al León', '<span style="color:' + (m.saved < 0 ? 'var(--danger)' : 'var(--success)') + '">' + fmtEUR(m.saved) + '</span>', m.gas > 0 ? Math.round(m.saved / m.gas * 100) + ' % menos que gasolina' : '') : '') +
-    kvRow('Coste por km', cpk != null ? ((r.all ? m.eCost / m.km : m.eKm) || 0).toFixed(3) + ' + ' + ((r.all ? m.mCost / m.km : m.mKm) || 0).toFixed(3) + ' €' : '—', 'energía + mantenimiento');
+  const refL = Number(state.config.refConsumption) || 6.5;
+  const vsCell = (k, v, s, side) => '<div class="vs-cell ' + side + '"><span>' + k + '</span><b>' + v + '</b>' + (s ? '<small>' + s + '</small>' : '') + '</div>';
+  if(m.kwhS > 0){
+    const ahorro = m.saved, pctLess = m.gas > 0 ? Math.round(ahorro / m.gas * 100) : 0;
+    document.getElementById('blkMoney').innerHTML =
+      '<div class="vs" title="SEAT León FR 2018 125 CV: solo combustible, al precio de la gasolina de cada día de carga. No incluye su mantenimiento.">' +
+        '<div class="vs-h leon"><i></i>SEAT León</div><div class="vs-h evo"><i></i>BYD EVO</div>' +
+        vsCell('Combustible', fmtEUR(m.gas), refL + ' l/100 km', 'l') + vsCell('Energía', fmtEUR(m.elec), savingsConsumption().toFixed(1) + ' kWh/100 km', 'r') +
+        vsCell('Mantenimiento', '—', 'sin datos', 'l') + vsCell('Mantenimiento', fmtEUR(m.mCost), m.mt.length + (m.mt.length === 1 ? ' registro' : ' registros'), 'r') +
+        vsCell('Por 100 km', fmtEUR(m.gas / m.kmEq * 100), '', 'l') + vsCell('Por 100 km', fmtEUR(m.elec / m.kmEq * 100), '', 'r') +
+        vsCell('Total', fmtEUR(m.gas), 'solo combustible', 'l') + vsCell('Total', fmtEUR(m.total), '', 'r') +
+      '</div>' +
+      '<div class="vs-save ' + (ahorro < 0 ? 'neg' : '') + '"><span>Ahorro frente al León</span><b>' + fmtEUR(ahorro) + '</b><small>' + (ahorro < 0 ? Math.abs(pctLess) + ' % más caro' : pctLess + ' % menos') + ' en energía</small></div>';
+  } else {
+    document.getElementById('blkMoney').innerHTML =
+      kvRow('Cargas', fmtEUR(m.eCost)) +
+      kvRow('Mantenimiento', fmtEUR(m.mCost), m.mt.length + (m.mt.length === 1 ? ' registro' : ' registros')) +
+      kvRow('Total', fmtEUR(m.total)) +
+      kvRow('Coste por km', cpk != null ? ((r.all ? m.eCost / m.km : m.eKm) || 0).toFixed(3) + ' + ' + ((r.all ? m.mCost / m.km : m.mKm) || 0).toFixed(3) + ' €' : '—', 'energía + mantenimiento');
+  }
   const cap = estimateBatteryCapacity();
   document.getElementById('blkCar').innerHTML =
     kvRow('Km recorridos', m.km > 0 ? fmtNum(m.km) + ' km' : '—') +
