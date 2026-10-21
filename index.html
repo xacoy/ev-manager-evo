@@ -3039,12 +3039,10 @@ function renderStats(){
   const vsCell = (k, v, s, side) => '<div class="vs-cell ' + side + '"><span>' + k + '</span><b>' + v + '</b>' + (s ? '<small>' + s + '</small>' : '') + '</div>';
   if(m.kwhS > 0){
     document.getElementById('blkMoney').innerHTML =
-      '<div class="vs" title="SEAT León FR 2018 125 CV: solo combustible, al precio de la gasolina de cada día de carga. No incluye su mantenimiento.">' +
+      '<div class="vs" title="SEAT León FR 2018 125 CV: solo combustible, al precio de la gasolina de cada día de carga.">' +
         '<div class="vs-h evo"><i></i>BYD EVO</div><div class="vs-h leon"><i></i>SEAT León</div>' +
         vsCell('Energía', fmtEUR(m.elec), savingsConsumption().toFixed(1) + ' kWh/100 km', 'l') + vsCell('Combustible', fmtEUR(m.gas), refL + ' l/100 km', 'r') +
-        vsCell('Mantenimiento', fmtEUR(m.mCost), m.mt.length + (m.mt.length === 1 ? ' registro' : ' registros'), 'l') + vsCell('Mantenimiento', '—', 'sin datos', 'r') +
         vsCell('Por 100 km', fmtEUR(m.elec / m.kmEq * 100), '', 'l') + vsCell('Por 100 km', fmtEUR(m.gas / m.kmEq * 100), '', 'r') +
-        vsCell('Total', fmtEUR(m.total), '', 'l') + vsCell('Total', fmtEUR(m.gas), 'solo combustible', 'r') +
       '</div>';
   } else {
     document.getElementById('blkMoney').innerHTML =
