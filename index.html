@@ -3043,6 +3043,7 @@ function renderStats(){
         '<div class="vs-h evo"><i></i>BYD EVO</div><div class="vs-h leon"><i></i>SEAT León</div>' +
         vsCell('Energía', fmtEUR(m.elec), savingsConsumption().toFixed(1) + ' kWh/100 km', 'l') + vsCell('Combustible', fmtEUR(m.gas), refL + ' l/100 km', 'r') +
         vsCell('Por 100 km', fmtEUR(m.elec / m.kmEq * 100), '', 'l') + vsCell('Por 100 km', fmtEUR(m.gas / m.kmEq * 100), '', 'r') +
+        vsCell('Total', fmtEUR(m.total), m.mCost > 0 ? 'energía + mantenimiento' : 'solo energía', 'l') + vsCell('Total', fmtEUR(m.gas), 'solo combustible', 'r') +
       '</div>';
   } else {
     document.getElementById('blkMoney').innerHTML =
