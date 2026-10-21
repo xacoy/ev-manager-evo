@@ -3051,10 +3051,8 @@ function renderStats(){
       kvRow('Total', fmtEUR(m.total)) +
       kvRow('Coste por km', cpk != null ? ((r.all ? m.eCost / m.km : m.eKm) || 0).toFixed(3) + ' + ' + ((r.all ? m.mCost / m.km : m.mKm) || 0).toFixed(3) + ' €' : '—', 'energía + mantenimiento');
   }
-  const cap = estimateBatteryCapacity();
   document.getElementById('blkCar').innerHTML =
     kvRow('Km recorridos', m.km > 0 ? fmtNum(m.km) + ' km' : '—') +
-    kvRow('Capacidad estimada', cap ? cap.kwh.toFixed(1) + ' kWh' : '—', cap ? 'orientativa, con ' + cap.n + (cap.n === 1 ? ' carga' : ' cargas') + ' · no es el estado real de la batería' : 'Anota el % al empezar y terminar (tramos de 20 % o más)', 'Se calcula con los kWh y el % de batería de tus cargas, suponiendo un 90 % de rendimiento de carga. Un solo dato mal anotado la desvía mucho. No es la salud (SOH) de la batería.') +
     kvRow('CO₂ evitado', m.co2 != null ? fmtKg(m.co2) : '—', null, 'Estimación: gasolina ' + CO2_PETROL + ' kg/l frente a ' + CO2_GRID + ' kg/kWh de la red eléctrica') +
     kvRow('Antigüedad', state.config.purchaseDate ? months + (months === 1 ? ' mes' : ' meses') : '—');
 
