@@ -1810,10 +1810,8 @@ function getChargeWindow(){
 // kWh de una carga: el anotado o, si no hay y sí el % de batería al empezar y terminar, una estimación
 // (puntos de % × capacidad ÷ pérdidas de carga). Útil cuando el coche no dice cuánto ha cargado.
 function kwhIsEst(c){ return !(Number(c.kwh) > 0) && c.socStart != null && c.socEnd != null && Number(c.socEnd) > Number(c.socStart); }
-function kwhPerPercentWall(){
-  const cap = estimateBatteryCapacity();
-  return ((cap && cap.n >= 1) ? cap.kwh : VEHICLE_BATTERY_KWH) / CHARGE_EFF / 100;
-}
+// Siempre con la capacidad de fábrica: estimarla con pocas cargas daba cifras imposibles para un coche nuevo.
+function kwhPerPercentWall(){ return VEHICLE_BATTERY_KWH / CHARGE_EFF / 100; }
 function kwhOf(c){
   const k = Number(c.kwh);
   if(k > 0) return k;
@@ -1862,14 +1860,6 @@ function getSocConsumption(){
   if(km < 100) return null;
   const battery = kwh / km * 100;
   return { battery, wall: battery / CHARGE_EFF, km, n: segs.length };
-}
-// Estimación de la capacidad de la batería con las cargas que indican % de inicio y fin (descontando pérdidas de carga).
-function estimateBatteryCapacity(){
-  const vals = state.charges.filter(c=>c.socStart!=null && c.socEnd!=null && Number(c.kwh) > 0 && (c.socEnd - c.socStart) >= 20)
-    .map(c=> Number(c.kwh) * CHARGE_EFF / ((c.socEnd - c.socStart) / 100)).sort((a,b)=>a-b);
-  if(!vals.length) return null;
-  const mid = vals.length % 2 ? vals[(vals.length-1)/2] : (vals[vals.length/2-1] + vals[vals.length/2]) / 2;
-  return { kwh: mid, pct: mid / VEHICLE_BATTERY_KWH * 100, n: vals.length };
 }
 // Origen del consumo que se usa: por % de batería, por kWh y km de las cargas, o el configurado.
 function consumptionSource(){
