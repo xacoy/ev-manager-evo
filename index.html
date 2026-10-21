@@ -723,6 +723,7 @@ tr:hover td{background:var(--bg-2)}
 .rev-tasks{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .tag-pill{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;background:var(--bg-2);color:var(--text-muted)}
 .rev-meta{font-size:11px;color:var(--text-faint);font-weight:700;flex-shrink:0;text-align:right;min-width:90px}
+.rev-meta .rev-sub{display:block;font-size:10.5px;font-weight:600;margin-top:2px;color:var(--text-faint)}
 .rev-side{display:flex;align-items:center;gap:14px;flex-shrink:0}
 @media (max-width:640px){
   #revsTab .card{padding:14px}
@@ -1694,22 +1695,45 @@ function buildThemePicker(){
 }
 
 /* ---------------- revisions logic ---------------- */
-function getScheduleForRevision(rev, currentKm, months){
-  const overdue = currentKm >= rev.km || months >= rev.months;
+// Cada revisión vence por km o por tiempo (desde la fecha de compra), lo que ocurra primero.
+function revisionDueDate(rev){
+  const p = state.config.purchaseDate; if(!p || !(rev.months > 0)) return null;
+  const d = new Date(p + 'T12:00:00'); if(isNaN(d)) return null;
+  d.setMonth(d.getMonth() + rev.months);
+  return d;
+}
+function getScheduleForRevision(rev, currentKm){
   const kmRemaining = rev.km - currentKm;
-  const upcoming = !overdue && kmRemaining <= 100;
-  return { overdue, upcoming, kmRemaining };
+  const due = revisionDueDate(rev);
+  const daysLeft = due ? Math.ceil((due - new Date()) / 864e5) : null;
+  const overdueKm = kmRemaining <= 0, overdueTime = daysLeft !== null && daysLeft <= 0;
+  const overdue = overdueKm || overdueTime;
+  const upcomingKm = !overdueKm && kmRemaining <= 100, upcomingTime = daysLeft !== null && !overdueTime && daysLeft <= 30;
+  // avance hacia el vencimiento (1 = toca ya) por km y por tiempo; manda el mayor
+  const ageDays = state.config.purchaseDate ? (new Date() - new Date(state.config.purchaseDate + 'T12:00:00')) / 864e5 : 0;
+  const progress = Math.max(currentKm / rev.km, rev.months > 0 ? ageDays / (rev.months * 30.4375) : 0);
+  return { overdue, overdueKm, overdueTime, upcoming: !overdue && (upcomingKm || upcomingTime), upcomingKm, upcomingTime, kmRemaining, daysLeft, due, progress, byTime: daysLeft !== null && (currentKm / rev.km) < (ageDays / (rev.months * 30.4375)) };
+}
+// Revisión pendiente más cercana a vencer, contando km y tiempo.
+function pickNextRevision(sched, km){
+  const pending = sched.filter(r=>!state.completedRevisions.includes(r.km));
+  if(!pending.length) return sched[sched.length - 1];
+  return pending.reduce((best, r)=> getScheduleForRevision(r, km).progress > getScheduleForRevision(best, km).progress ? r : best);
+}
+function fmtTimeLeft(days){
+  if(days === null) return '';
+  const d = Math.abs(days), t = d >= 60 ? Math.round(d / 30.4375) + (Math.round(d / 30.4375) === 1 ? ' mes' : ' meses') : d + (d === 1 ? ' día' : ' días');
+  return t;
 }
 function computeAlerts(){
   const sched = REVISIONS_SCHEDULE[state.lang] || REVISIONS_SCHEDULE.es;
   const km = getCurrentKm();
-  const months = monthsBetween(state.config.purchaseDate);
   const alerts = [];
   sched.forEach(rev=>{
     if(state.completedRevisions.includes(rev.km)) return;
-    const st = getScheduleForRevision(rev, km, months);
-    if(st.overdue) alerts.push({rev, level:'overdue', text: (state.lang==='es' ? 'Vencida' : 'Overdue')});
-    else if(st.upcoming) alerts.push({rev, level:'upcoming', text: (state.lang==='es' ? `Faltan ${st.kmRemaining} km` : `${st.kmRemaining} km left`)});
+    const st = getScheduleForRevision(rev, km);
+    if(st.overdue) alerts.push({rev, level:'overdue', text: 'Vencida por ' + (st.overdueKm && st.overdueTime ? 'km y tiempo' : st.overdueKm ? 'km' : 'tiempo')});
+    else if(st.upcoming) alerts.push({rev, level:'upcoming', text: 'Faltan ' + (st.upcomingTime && !(st.upcomingKm && !st.byTime) ? fmtTimeLeft(st.daysLeft) : fmtNum(st.kmRemaining) + ' km')});
   });
   (state.docs || []).forEach(d=>{
     const left = docDaysLeft(d); if(left === null || left > 30) return;
@@ -1857,10 +1881,8 @@ function renderDashboard(){
   const totalCost = state.charges.reduce((s,x)=>s+Number(x.cost||0),0) + maintList().reduce((s,x)=>s+Number(x.cost||0),0);
 
   const sched = REVISIONS_SCHEDULE[state.lang] || REVISIONS_SCHEDULE.es;
-  const months = monthsBetween(c.purchaseDate);
-  let next = sched.find(r=>!state.completedRevisions.includes(r.km) && (r.km>=km));
-  if(!next) next = sched.find(r=>!state.completedRevisions.includes(r.km)) || sched[sched.length-1];
-  const st = next ? getScheduleForRevision(next, km, months) : {overdue:false,upcoming:false,kmRemaining:0};
+  const next = pickNextRevision(sched, km);
+  const st = next ? getScheduleForRevision(next, km) : {overdue:false,upcoming:false,kmRemaining:0,daysLeft:null};
   const alerts = computeAlerts();
   const overdueCount = alerts.filter(a=>a.level==='overdue').length;
 
@@ -1900,12 +1922,11 @@ function renderDashboard(){
   } else if(st.overdue || overdueCount){
     nextRevEl.textContent = overdueCount>1 ? overdueCount+' vencidas' : 'Vencida';
     nextRevSubEl.textContent = shortName;
-  } else if(st.upcoming){
-    nextRevEl.textContent = fmtNum(st.kmRemaining)+' km';
-    nextRevSubEl.textContent = shortName;
   } else {
-    nextRevEl.textContent = fmtNum(st.kmRemaining)+' km';
-    nextRevSubEl.textContent = shortName;
+    // se muestra primero lo que llegue antes (km o tiempo) y, debajo, el otro criterio
+    const kmTxt = fmtNum(st.kmRemaining) + ' km', timeTxt = fmtTimeLeft(st.daysLeft);
+    nextRevEl.textContent = st.byTime ? timeTxt : kmTxt;
+    nextRevSubEl.textContent = shortName + (timeTxt ? ' · ' + (st.byTime ? kmTxt : timeTxt) : '');
   }
   document.getElementById('sideChargeCount').textContent = state.charges.length;
 
@@ -2401,13 +2422,11 @@ function setupDocs(){
 function renderRevisions(){
   const sched = REVISIONS_SCHEDULE[state.lang] || REVISIONS_SCHEDULE.es;
   const km = getCurrentKm();
-  const months = monthsBetween(state.config.purchaseDate);
   const container = document.getElementById('revisionsList');
-  console.log('renderRevisions() called:', {sched: sched.length, km, months, container: !!container});
   if(!container) { console.error('revisionsList container not found'); return; }
   container.innerHTML = sched.map(rev=>{
     const done = state.completedRevisions.includes(rev.km);
-    const st = getScheduleForRevision(rev, km, months);
+    const st = getScheduleForRevision(rev, km);
     const cls = done ? 'done' : st.overdue ? 'overdue' : st.upcoming ? 'due' : '';
     const statusIcon = done ? ICONS.check : st.overdue ? ICONS.alert : ICONS.clock;
     const statusColor = done ? 'var(--success)' : st.overdue ? 'var(--danger)' : st.upcoming ? 'var(--warning)' : 'var(--text-faint)';
@@ -2421,11 +2440,20 @@ function renderRevisions(){
         <div class="rev-tasks">${(rev.tasks||[]).map(t=>`<span class="tag-pill">${t}</span>`).join('')}</div>
       </div>
       <div class="rev-side">
-        <div class="rev-meta">${done ? 'Completada' : st.overdue ? 'Vencida' : st.kmRemaining+' km'}</div>
+        <div class="rev-meta">${done ? 'Completada' : revMetaHtml(st)}</div>
         <button class="btn ${done?'btn-ghost':'btn-primary'} btn-sm" onclick="toggleRevision(${rev.km})">${done ? 'Deshacer' : 'Marcar hecha'}</button>
       </div>
     </div>`;
   }).join('');
+}
+function revMetaHtml(st){
+  if(st.overdue){
+    const why = st.overdueKm && st.overdueTime ? 'por km y tiempo' : st.overdueKm ? 'por km' : 'por tiempo';
+    return 'Vencida<span class="rev-sub">' + why + '</span>';
+  }
+  const kmTxt = fmtNum(st.kmRemaining) + ' km', timeTxt = fmtTimeLeft(st.daysLeft);
+  if(!timeTxt) return kmTxt;
+  return (st.byTime ? timeTxt : kmTxt) + '<span class="rev-sub">o ' + (st.byTime ? kmTxt : timeTxt) + (st.due ? ' · ' + fmtDate(st.due) : '') + '</span>';
 }
 function toggleRevision(km){
   if(state.completedRevisions.includes(km)) state.completedRevisions = state.completedRevisions.filter(k=>k!==km);
