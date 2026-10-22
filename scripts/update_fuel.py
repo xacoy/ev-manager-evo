@@ -6,10 +6,12 @@ Fuente: Geoportal de gasolineras del Ministerio para la Transición Ecológica
 histórico diario que la web usa para calcular el ahorro frente a la gasolina.
 """
 import json, os, sys, time, urllib.request
-from datetime import datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 
 BASE = "https://sedeaplicaciones.minetur.gob.es/ServiciosRESTCarburantes/PreciosCarburantes/EstacionesTerrestres/FiltroProvincia/"
 PROVINCES = {"laspalmas": "35", "tenerife": "38"}
+# Histórico oficial por fecha (dd-mm-aaaa): sirve para rellenar días sin dato.
+HIST = "https://sedeaplicaciones.minetur.gob.es/ServiciosRESTCarburantes/PreciosCarburantes/EstacionesTerrestresHist/FiltroProvincia/{fecha}/{pid}"
 FIELDS = ["Precio Gasolina 95 E5", "Precio Gasolina 95 E10"]
 OUT = os.path.join(os.path.dirname(__file__), "..", "data", "fuel-canarias.json")
 
@@ -43,6 +45,39 @@ def prices(data):
     return out
 
 
+def day_average(day):
+    """Media de la gasolina 95 en las dos provincias un día pasado; None si el servicio no tiene datos."""
+    allp = []
+    for pid in PROVINCES.values():
+        allp += prices(fetch(HIST.format(fecha=day.strftime("%d-%m-%Y"), pid=pid), tries=2))
+    return round(sum(allp) / len(allp), 3) if allp else None
+
+
+def backfill(hist, start, end, limit=70):
+    """Añade al histórico los días sin dato entre start y end con el precio oficial de ese día.
+    Nunca inventa: si el servicio no responde o no hay precios, el día se deja vacío."""
+    have = {h["date"] for h in hist}
+    added, fails, day = 0, 0, start
+    while day <= end and added < limit and fails < 3:
+        key = day.strftime("%Y-%m-%d")
+        if key not in have:
+            try:
+                avg = day_average(day)
+            except Exception as e:  # noqa: BLE001
+                print(f"  {key}: sin datos históricos ({e})", file=sys.stderr)
+                fails += 1
+                day += timedelta(days=1)
+                continue
+            fails = 0
+            if avg:
+                hist.append({"date": key, "price": avg})
+                added += 1
+                print(f"  {key}: {avg} €/l (histórico oficial)")
+            time.sleep(1)
+        day += timedelta(days=1)
+    return hist
+
+
 def main():
     per, allp = {}, []
     for name, pid in PROVINCES.items():
@@ -63,6 +98,15 @@ def main():
         old = {}
     hist = [h for h in old.get("history", []) if h.get("date") != today]
     hist.append({"date": today, "price": avg})
+    # Huecos: los últimos 14 días siempre; y desde BACKFILL_FROM (AAAA-MM-DD) si se indica al lanzar la acción a mano.
+    hoy = now.date()
+    desde = hoy - timedelta(days=14)
+    if os.environ.get("BACKFILL_FROM"):
+        try:
+            desde = min(desde, date.fromisoformat(os.environ["BACKFILL_FROM"].strip()))
+        except ValueError:
+            print("BACKFILL_FROM no válido; se ignora", file=sys.stderr)
+    hist = backfill(hist, desde, hoy - timedelta(days=1))
     hist = sorted(hist, key=lambda h: h["date"])[-730:]
     doc = {
         "fuel": "Gasolina 95",
