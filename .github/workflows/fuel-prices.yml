@@ -31,5 +31,6 @@ jobs:
             echo "Sin cambios"
           else
             git commit -m "chore: actualizar precio medio gasolina 95 Canarias"
+            git pull --rebase origin master   # por si alguien ha subido cambios mientras tanto
             git push
           fi
