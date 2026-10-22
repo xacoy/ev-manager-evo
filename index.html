@@ -1956,7 +1956,7 @@ function chargeSavingParts(ch, cons, refL, rate){
   const cost = chargeCostOf(ch);   // sin coste anotado: tarifa configurada
   if(kwh <= 0 && cost > 0) kwh = cost / rate;                 // sin kWh pero con coste: se estima
   if(kwh <= 0) return null;
-  const km = kwh / cons * 100;
+  const km = kwh / (Number(ch.cons) > 0 ? Number(ch.cons) : cons) * 100;   // consumo congelado al cambiar los ajustes de consumo; si no, el actual
   const p = Number(ch.fuelPrice) > 0 ? Number(ch.fuelPrice) : fuelPriceForDate(ch.date);  // precio guardado el día de la carga
   return { kwh, km, cost, gas: km * refL / 100 * p };
 }
@@ -3140,6 +3140,7 @@ function setupEventListeners(){
 
   document.getElementById('setupForm').addEventListener('submit', e=>{
     e.preventDefault();
+    const prevCons = savingsConsumption(), oldCfg = state.config;
     state.config = {
       version: document.getElementById('f_version').value,
       vin: document.getElementById('f_vin').value.trim(),
@@ -3151,6 +3152,9 @@ function setupEventListeners(){
       refConsumption: Number(document.getElementById('f_refcons').value)||6.5,
       fuelPrice: Number(document.getElementById('f_fuel').value)||1.35
     };
+    // Si cambia el consumo (AEC o consumo medio), las cargas ya registradas se quedan con el que tenían: el cambio solo vale desde ahora.
+    if(Number(oldCfg.carAec || 0) !== Number(state.config.carAec || 0) || Number(oldCfg.avgConsumption) !== Number(state.config.avgConsumption))
+      state.charges.forEach(c=>{ if(!(Number(c.cons) > 0)) c.cons = prevCons; });
     saveState(); renderDashboard(); renderAlerts(); toast('Configuración guardada', 'success');
   });
 
