@@ -1484,7 +1484,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-16.10';
+const APP_VERSION = '2026-10-22.1';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -1975,13 +1975,14 @@ function computeSavings(){
   const auto = !!(fuelAuto && Number(fuelAuto.price) > 0);
   const price = currentFuelPrice();
   const rate = Number(c.electricRate) || 0.15;
-  let gas = 0, elec = 0, kmEq = 0, kwhTotal = 0;
+  let gas = 0, elec = 0, kmEq = 0, kwhTotal = 0, refKm = 0;
   state.charges.forEach(ch=>{
     const r = chargeSavingParts(ch, cons, refL, rate);
     if(!r) return;
-    kmEq += r.km; kwhTotal += r.kwh; gas += r.gas; elec += r.cost;
+    kmEq += r.km; kwhTotal += r.kwh; gas += r.gas; elec += r.cost; refKm += r.refL * r.km;
   });
-  return { gas, elec, saved: gas - elec, kmEq, kwhTotal, cons, refL, price, auto, measured: consumptionSource() !== 'config', source: consumptionSource() };
+  // consumos medios reales de las cargas (cada una conserva los suyos), no los ajustes de ahora
+  return { gas, elec, saved: gas - elec, kmEq, kwhTotal, cons: kmEq > 0 ? kwhTotal / kmEq * 100 : cons, refL: kmEq > 0 ? refKm / kmEq : refL, price, auto, measured: consumptionSource() !== 'config', source: consumptionSource() };
 }
 function renderSavings(){
   const vals = document.querySelectorAll('[data-save="value"]');
@@ -1989,8 +1990,8 @@ function renderSavings(){
   const r = computeSavings();
   const has = r.kwhTotal > 0;
   const priceText = 'Precio medio de hoy: ' + r.price.toFixed(3) + '€/l' + (r.auto ? '' : ' (manual)');
-  const title = 'SEAT León FR 2018 125 CV (' + r.refL + ' l/100 km) · gasolina 95 a ' + r.price.toFixed(3) + ' €/l' + (r.auto ? ' (media Canarias' + (fuelAuto.updated ? ', ' + fuelAuto.updated.slice(0,10) : '') + ')' : ' (precio manual)')
-    + ' · cada carga usa el precio del día en que se hizo · ' + Math.round(r.kmEq) + ' km equivalentes a ' + r.kwhTotal.toFixed(1) + ' kWh con ' + r.cons.toFixed(1) + ' kWh/100 km (' + ({soc:'calculado con el % de batería',aec:'AEC del coche ÷ 0,9',window:'medido con kWh y km',config:'configurado'}[r.source]) + ')';
+  const title = 'SEAT León FR 2018 125 CV (' + r.refL.toFixed(1) + ' l/100 km) · gasolina 95 a ' + r.price.toFixed(3) + ' €/l' + (r.auto ? ' (media Canarias' + (fuelAuto.updated ? ', ' + fuelAuto.updated.slice(0,10) : '') + ')' : ' (precio manual)')
+    + ' · cada carga usa el precio del día en que se hizo · ' + Math.round(r.kmEq) + ' km equivalentes a ' + r.kwhTotal.toFixed(1) + ' kWh (media de ' + r.cons.toFixed(1) + ' kWh/100 km; cada carga conserva el consumo que tenía al registrarse)';
   vals.forEach(el=>{ el.textContent = has ? fmtEUR(r.saved) : '—'; el.style.color = r.saved < 0 ? 'var(--danger)' : 'var(--accent)'; });
   document.querySelectorAll('[data-save="sub"]').forEach(el=>{ el.textContent = has ? 'Gasolina: ' + fmtEUR(r.gas) + ' - Electricidad: ' + fmtEUR(r.elec) : 'Gasolina: — - Electricidad: —'; el.title = title; });
   document.querySelectorAll('[data-save="price"]').forEach(el=>{ el.textContent = priceText; el.title = title; });
@@ -2793,17 +2794,28 @@ function kmDriven(from, to){
 
 // Consumo de cada tramo entre dos cargas: con el % de batería si lo hay; si no, kWh de la carga entre los km recorridos.
 function consumptionByTrip(){
-  const soc = socSegments();
-  if(soc.length) return { source: 'soc', items: soc.map(s=>({ date: s.date, label: shortDate(s.date), value: s.consBattery / CHARGE_EFF })) };
-  const list = state.charges.filter(c=>Number(c.km) > 0).sort((a,b)=> chargeTs(a) - chargeTs(b));
-  const items = [];
+  // Cada tramo se mide con sus propios datos (por % de batería si ambos extremos lo tienen; si no, por los kWh y km de la carga),
+  // así que añadir cargas con % de batería no cambia el valor de los tramos anteriores.
+  const all = [...state.charges].sort((a,b)=> chargeTs(a) - chargeTs(b));
+  const items = [], socIds = new Set();
+  for(let i = 1; i < all.length; i++){
+    const p = all[i-1], c = all[i];
+    if(p.socEnd == null || c.socStart == null || !(Number(p.km) > 0) || !(Number(c.km) > 0)) continue;
+    socIds.add(c.id);
+    const km = Number(c.km) - Number(p.km), drop = Number(p.socEnd) - Number(c.socStart);
+    if(km < 20 || drop < 5) continue;                       // tramos muy cortos dan ruido
+    items.push({ ts: chargeTs(c), date: c.date, label: shortDate(c.date), value: drop / 100 * VEHICLE_BATTERY_KWH / km * 100 / CHARGE_EFF });
+  }
+  const list = all.filter(c=>Number(c.km) > 0);
   for(let i = 1; i < list.length; i++){
+    if(socIds.has(list[i].id)) continue;
     const km = Number(list[i].km) - Number(list[i-1].km), kwh = kwhOf(list[i]);
     if(km < 20 || kwh <= 0) continue;
     const v = kwh / km * 100;
-    if(v >= 5 && v <= 60) items.push({ date: list[i].date, label: shortDate(list[i].date), value: v });
+    if(v >= 5 && v <= 60) items.push({ ts: chargeTs(list[i]), date: list[i].date, label: shortDate(list[i].date), value: v });
   }
-  return { source: 'kwh', items };
+  items.sort((a,b)=> a.ts - b.ts);
+  return { items };
 }
 function monthlySavingsSeries(from, to){
   const cons = savingsConsumption(), refL = Number(state.config.refConsumption) || 6.5, rate = Number(state.config.electricRate) || 0.15;
