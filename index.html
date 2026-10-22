@@ -1484,7 +1484,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-22.1';
+const APP_VERSION = '2026-10-22.2';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -1918,6 +1918,7 @@ function loadFuelPrice(){
     if(d && Number(d.price) > 0.8 && Number(d.price) < 3.5){
       fuelAuto = { price: Number(d.price), updated: d.updated, history: (d.history || []).slice(-800) };
       try{ localStorage.setItem('fuelCache', JSON.stringify(fuelAuto)); }catch(e){}
+      freezeFuelPrices();
       renderSavings();
     }
   }).catch(()=>{});
@@ -1938,9 +1939,22 @@ function fuelPriceForDate(date){
   // hoy (o una fecha futura): el último precio conocido, sin esperar a la actualización diaria
   if(date && date >= today && fuelAuto && Number(fuelAuto.price) > 0) return Number(fuelAuto.price);
   if(!h.length || !date) return currentFuelPrice();
-  let best = null;
-  for(const e of h){ if(e.date <= date) best = e; else break; }
-  return Number((best || h[0]).price) || currentFuelPrice();
+  const exact = h.find(e=>e.date === date);
+  if(exact && Number(exact.price) > 0) return Number(exact.price);
+  // Sin precio real de ese día: media de los últimos 7 días con dato (si es anterior al histórico, de los 7 primeros).
+  const upTo = h.filter(e=>e.date <= date);
+  const pool = (upTo.length ? upTo.slice(-7) : h.slice(0, 7)).filter(e=>Number(e.price) > 0);
+  return pool.length ? pool.reduce((s,e)=>s + Number(e.price), 0) / pool.length : currentFuelPrice();
+}
+// Las cargas de días anteriores sin precio guardado se fijan ya (el pasado no cambia): con el del día o, si no lo hubo, la media de 7 días.
+function freezeFuelPrices(){
+  if(!(fuelAuto && (fuelAuto.history || []).length)) return;
+  const today = new Date().toISOString().slice(0, 10);
+  let changed = false;
+  state.charges.forEach(c=>{
+    if(!(Number(c.fuelPrice) > 0) && c.date && c.date < today){ c.fuelPrice = fuelPriceForDate(c.date); changed = true; }
+  });
+  if(changed) saveState();
 }
 // Precio que se guarda junto a la carga: solo si hay dato real del día; si no, se deja vacío y se resuelve después con el histórico
 // (así no se queda guardado el precio de respaldo).
@@ -3594,6 +3608,7 @@ function init(){
   setupDrive();
   setupFullscreen();
   setupCarMode();
+  freezeFuelPrices();   // con el precio guardado en caché, por si ya hay cargas sin precio fijado
   loadFuelPrice();
   applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
   buildThemePicker();
