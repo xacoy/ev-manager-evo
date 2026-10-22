@@ -4,6 +4,11 @@ on:
   schedule:
     - cron: "17 6 * * *"
   workflow_dispatch:
+    inputs:
+      desde:
+        description: "Rellenar días sin dato desde (AAAA-MM-DD, opcional)"
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -14,6 +19,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Descargar precios y calcular la media
+        env:
+          BACKFILL_FROM: ${{ github.event.inputs.desde }}
         run: python3 scripts/update_fuel.py
       - name: Guardar cambios
         run: |
