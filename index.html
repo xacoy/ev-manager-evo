@@ -1784,7 +1784,7 @@ function homeEstCost(socStart, socEnd){
 // Coste de una carga: el anotado (0 = gratis) o, si no consta, los kWh por la tarifa configurada.
 function chargeCostOf(c){
   if(c.cost != null && c.cost !== '') return Number(c.cost) || 0;
-  return kwhOf(c) * (Number(state.config.electricRate) || 0.15);
+  return kwhOf(c) * (Number(c.rate) > 0 ? Number(c.rate) : (Number(state.config.electricRate) || 0.15));   // tarifa guardada con la carga
 }
 // Precio medio por kWh: solo con cargas que tienen kWh y coste anotado (0 = gratis cuenta); así no se falsea con datos a medias.
 function avgPricePerKwh(){
@@ -1951,14 +1951,22 @@ function fuelPriceToStore(date){
 // Cada carga se valora por sí misma: los kWh que entran equivalen a unos km, y esos km en gasolina habrían costado X.
 // Lo pagado es el coste real de la carga (0 si fue gratis, p. ej. en el trabajo).
 // Ahorro de una sola carga: kWh -> km equivalentes -> gasolina que habrían gastado, frente a lo que costó la carga.
+// Valores de los ajustes que se guardan con cada carga al registrarla.
+function chargeFrozenValues(){
+  return { cons: savingsConsumption(), refL: Number(state.config.refConsumption) || 6.5, rate: Number(state.config.electricRate) || 0.15 };
+}
 function chargeSavingParts(ch, cons, refL, rate){
+  // Cada carga conserva el consumo, el consumo del León y la tarifa de cuando se registró: cambiar los ajustes o añadir cargas no reescribe el pasado.
+  cons = Number(ch.cons) > 0 ? Number(ch.cons) : cons;
+  refL = Number(ch.refL) > 0 ? Number(ch.refL) : refL;
+  rate = Number(ch.rate) > 0 ? Number(ch.rate) : rate;
   let kwh = kwhOf(ch);
-  const cost = chargeCostOf(ch);   // sin coste anotado: tarifa configurada
+  const cost = chargeCostOf(ch);   // sin coste anotado: tarifa guardada
   if(kwh <= 0 && cost > 0) kwh = cost / rate;                 // sin kWh pero con coste: se estima
   if(kwh <= 0) return null;
-  const km = kwh / (Number(ch.cons) > 0 ? Number(ch.cons) : cons) * 100;   // consumo congelado al cambiar los ajustes de consumo; si no, el actual
+  const km = kwh / cons * 100;
   const p = Number(ch.fuelPrice) > 0 ? Number(ch.fuelPrice) : fuelPriceForDate(ch.date);  // precio guardado el día de la carga
-  return { kwh, km, cost, gas: km * refL / 100 * p };
+  return { kwh, km, cost, gas: km * refL / 100 * p, refL, cons };
 }
 function computeSavings(){
   const c = state.config;
@@ -2169,6 +2177,11 @@ function maintList(){
 // Migra datos antiguos: mantenimiento -> documentos de Taller, categorías sueltas -> Vehículo + subcategoría, un archivo -> lista de archivos.
 function normalizeState(){
   let changed = false;
+  if(Array.isArray(state.charges) && state.charges.some(c=>!(Number(c.cons) > 0) || !(Number(c.refL) > 0) || !(Number(c.rate) > 0))){
+    const fz = chargeFrozenValues();   // cargas sin valores propios: se fijan con los de ahora, para que a partir de aquí el pasado no cambie
+    state.charges.forEach(c=>{ for(const k of ['cons','refL','rate']) if(!(Number(c[k]) > 0)) c[k] = fz[k]; });
+    changed = true;
+  }
   if(Array.isArray(state.quickLinks) && state.quickLinks.some(l=>/^#\/?manual$/.test(l.url || ''))){ state.quickLinks = state.quickLinks.filter(l=>!/^#\/?manual$/.test(l.url || '')); changed = true; }   // la sección Manual ya no existe
   if(!Array.isArray(state.docs)){ state.docs = []; changed = true; }
   state.docs.forEach(d=>{
@@ -2833,19 +2846,19 @@ function periodMetrics(from, to){
   const ch = state.charges.filter(c=>inRange(c.date, from, to)), mt = maintList().filter(m=>inRange(m.date, from, to));
   const kwh = ch.reduce((s,c)=>s + kwhOf(c), 0), eCost = ch.reduce((s,c)=>s + chargeCostOf(c), 0), mCost = mt.reduce((s,m)=>s + Number(m.cost || 0), 0);
   const cons = savingsConsumption(), refL = Number(state.config.refConsumption) || 6.5, rate = Number(state.config.electricRate) || 0.15;
-  let gas = 0, elec = 0, kmEq = 0, kwhS = 0;
-  ch.forEach(c=>{ const r = chargeSavingParts(c, cons, refL, rate); if(r){ gas += r.gas; elec += r.cost; kmEq += r.km; kwhS += r.kwh; } });
+  let gas = 0, elec = 0, kmEq = 0, kwhS = 0, refKm = 0;
+  ch.forEach(c=>{ const r = chargeSavingParts(c, cons, refL, rate); if(r){ gas += r.gas; elec += r.cost; kmEq += r.km; kwhS += r.kwh; refKm += r.refL * r.km; } });
   let pk = 0, pc = 0;
   ch.forEach(c=>{ const k = kwhOf(c); if(k > 0 && c.cost != null && c.cost !== ''){ pk += k; pc += Number(c.cost) || 0; } });
   const trips = consumptionByTrip().items.filter(t=>inRange(t.date, from, to));
   const km = kmDriven(from, to), total = eCost + mCost;
   return {
     ch, mt, kwh, eCost, mCost, total, km, trips, kwhS, kmEq,
-    saved: kwhS > 0 ? gas - elec : null, gas, elec,
+    saved: kwhS > 0 ? gas - elec : null, gas, elec, consAvg: kmEq > 0 ? kwhS / kmEq * 100 : null, refAvg: kmEq > 0 ? refKm / kmEq : null,
     price: pk > 0 ? pc / pk : null,
     costKm: km > 0 ? total / km : null, eKm: km > 0 ? eCost / km : null, mKm: km > 0 ? mCost / km : null,
     cons: trips.length ? trips.reduce((s,t)=>s + t.value, 0) / trips.length : null,
-    co2: kmEq > 0 ? kmEq * refL / 100 * CO2_PETROL - kwhS * CO2_GRID : null,
+    co2: kmEq > 0 ? refKm / 100 * CO2_PETROL - kwhS * CO2_GRID : null,   // litros de cada carga, con el consumo del León que tenía al registrarse
     free: ch.filter(c=>c.cost != null && c.cost !== '' && Number(c.cost) === 0 && kwhOf(c) > 0)
   };
 }
@@ -2997,13 +3010,12 @@ function renderStats(){
     kvRow('Cargas', m.ch.length, m.ch.length ? 'de media ' + (m.kwh / m.ch.length).toFixed(1) + ' kWh' : '') +
     kvRow('Precio medio', m.price != null ? m.price.toFixed(3) + ' €/kWh' : '—') +
     kvRow('Cargas gratis', m.free.length, m.free.length ? m.free.reduce((s,c)=>s + kwhOf(c), 0).toFixed(1) + ' kWh sin pagar' : '');
-  const refL = Number(state.config.refConsumption) || 6.5;
   const vsCell = (k, v, s, side) => '<div class="vs-cell ' + side + '"><span>' + k + '</span><b>' + v + '</b>' + (s ? '<small>' + s + '</small>' : '') + '</div>';
   if(m.kwhS > 0){
     document.getElementById('blkMoney').innerHTML =
       '<div class="vs" title="SEAT León FR 2018 125 CV: solo combustible, al precio de la gasolina de cada día de carga.">' +
         '<div class="vs-h evo"><i></i>BYD EVO</div><div class="vs-h leon"><i></i>SEAT León</div>' +
-        vsCell('Energía', fmtEUR(m.elec), savingsConsumption().toFixed(1) + ' kWh/100 km', 'l') + vsCell('Combustible', fmtEUR(m.gas), refL + ' l/100 km', 'r') +
+        vsCell('Energía', fmtEUR(m.elec), m.consAvg.toFixed(1) + ' kWh/100 km', 'l') + vsCell('Combustible', fmtEUR(m.gas), m.refAvg.toFixed(1) + ' l/100 km', 'r') +
         vsCell('Por 100 km', fmtEUR(m.elec / m.kmEq * 100), '', 'l') + vsCell('Por 100 km', fmtEUR(m.gas / m.kmEq * 100), '', 'r') +
       '</div>';
   } else {
@@ -3140,7 +3152,6 @@ function setupEventListeners(){
 
   document.getElementById('setupForm').addEventListener('submit', e=>{
     e.preventDefault();
-    const prevCons = savingsConsumption(), oldCfg = state.config;
     state.config = {
       version: document.getElementById('f_version').value,
       vin: document.getElementById('f_vin').value.trim(),
@@ -3152,9 +3163,6 @@ function setupEventListeners(){
       refConsumption: Number(document.getElementById('f_refcons').value)||6.5,
       fuelPrice: Number(document.getElementById('f_fuel').value)||1.35
     };
-    // Si cambia el consumo (AEC o consumo medio), las cargas ya registradas se quedan con el que tenían: el cambio solo vale desde ahora.
-    if(Number(oldCfg.carAec || 0) !== Number(state.config.carAec || 0) || Number(oldCfg.avgConsumption) !== Number(state.config.avgConsumption))
-      state.charges.forEach(c=>{ if(!(Number(c.cons) > 0)) c.cons = prevCons; });
     saveState(); renderDashboard(); renderAlerts(); toast('Configuración guardada', 'success');
   });
 
@@ -3238,7 +3246,7 @@ function setupEventListeners(){
         if(fuelPrice) state.charges[idx].fuelPrice = fuelPrice; else delete state.charges[idx].fuelPrice;
       }
     } else {
-      const nc = { id:uid(), ...data }, fp = fuelPriceToStore(data.date);
+      const nc = { id:uid(), ...data, ...chargeFrozenValues() }, fp = fuelPriceToStore(data.date);
       if(fp) nc.fuelPrice = fp;
       state.charges.push(nc);
     }
