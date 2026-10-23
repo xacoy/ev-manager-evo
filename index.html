@@ -834,6 +834,7 @@ html[data-page="charges"] .topbar h1{visibility:hidden}
 .chg-mid{display:grid;grid-template-columns:1fr 1fr;align-items:center}
 .chg-card.no-soc .chg-mid{grid-template-columns:1fr}
 .chg-soc{padding-right:14px;border-right:1px solid var(--border)}
+.chg-soc-val .arr{margin:0 .3em}
 .chg-soc-val,.chg-kwh-val{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--text);line-height:1.15;font-variant-numeric:tabular-nums;white-space:nowrap}
 .chg-bar{position:relative;height:6px;border-radius:99px;background:var(--border-strong);margin-top:8px}
 .chg-bar i{position:absolute;top:0;bottom:0;border-radius:99px;background:var(--accent)}
@@ -851,16 +852,38 @@ html[data-page="charges"] .topbar h1{visibility:hidden}
 #estTip[hidden]{display:none}
 .chg-all{margin-top:14px}
 .modal-wide{max-width:560px;max-height:92vh;overflow:auto}
+.chg-tablecard{display:none;padding:6px 16px}
+.chg-tablecard.empty{display:none!important}
+.chg-table{width:100%;border-collapse:collapse}
+.chg-table th{white-space:nowrap}
+.chg-table th.num,.chg-table td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.chg-table td{padding:12px 14px;font-size:14px;border-top:1px solid var(--border);vertical-align:middle}
+.chg-table td.when{white-space:nowrap}
+.chg-table td.when b{color:var(--text)}
+.chg-table .chg-soc{border:0;padding:0;min-width:128px}
+.chg-table .chg-soc-val{font-size:15px}
+.chg-table .chg-bar{height:5px;margin-top:6px;max-width:150px}
+.chg-table .chg-chip{padding:1px 9px;font-size:11px;margin-left:4px}
+.chg-table .chg-act{justify-content:flex-end}
+@media(min-width:900px){
+  html:not(.car) .chg-list{display:none}
+  html:not(.car) .chg-tablecard{display:block}
+  html:not(.car) .chg-sum{grid-template-columns:1.7fr 1fr 1fr 1fr;align-items:stretch}
+  html:not(.car) .chg-minis{display:contents}
+  html:not(.car) .chg-mini{display:flex;flex-direction:column;justify-content:center}
+  html:not(.car) .chg-mini-val{font-size:26px}
+}
+html.car .chg-tablecard{display:none!important}
 @media(min-width:760px){.chg-list{grid-template-columns:1fr 1fr}.chg-sum{grid-template-columns:1fr}}
 @media(max-width:400px){.chg-save-val{font-size:26px}.chg-soc-val,.chg-kwh-val{font-size:20px}}
 
 /* ---------- modo pantalla del coche (clase html.car: automática en pantallas apaisadas o activable a mano) ---------- */
-  html.car{--rail-w:96px}
+  html.car{--rail-w:128px}
   html.car .nav-rail{display:flex;padding:10px 4px;gap:4px}
   html.car .bottom-nav{display:none}
   html.car .rail-brand{margin-bottom:2px}
   html.car .brand-mark{width:44px;height:44px}
-  html.car .nav-item{padding:6px 4px;gap:4px;flex:1;justify-content:center;max-height:92px}
+  html.car .nav-item{padding:6px 4px;gap:4px;flex:0 0 96px;height:96px;max-height:96px;justify-content:center}
   html.car .nav-item .ni-indicator{width:64px;height:48px}
   html.car .nav-item .ni-label{font-size:12px}
   html.car .topbar{height:60px;padding:0 20px}
@@ -906,9 +929,9 @@ html[data-page="charges"] .topbar h1{visibility:hidden}
   html.car .car-badge{font-size:12px}
   /* Legibilidad en el coche: textos más grandes, más contraste y botones más cómodos */
   html.car:not([data-theme="light"]):not([data-theme="mint"]):not([data-theme="contrast"]){--text-muted:#c0cada;--text-faint:#98a4b8}
-  html.car .nav-item .ni-label{font-size:14px}
-  html.car .nav-item .ni-indicator{width:68px;height:52px}
-  html.car .nav-item .ni-indicator svg{width:30px;height:30px}
+  html.car .nav-item .ni-label{font-size:16px}
+  html.car .nav-item .ni-indicator{width:88px;height:56px}
+  html.car .nav-item .ni-indicator svg{width:34px;height:34px}
   html.car .topbar h1{font-size:28px}
   html.car .chip .l1{font-size:15px}
   html.car .chip .l2{font-size:12px}
@@ -928,7 +951,51 @@ html[data-page="charges"] .topbar h1{visibility:hidden}
   html.car #dashRecentActivity > div > div:nth-child(2) > div:first-child{font-size:16px!important}
   html.car #dashRecentActivity > div > div:nth-child(2) > div:last-child{font-size:13px!important}
   html.car #dashRecentActivity > div > div:last-child{font-size:16px!important}
-  html.car .toasts{bottom:20px}</style>
+  html.car .toasts{bottom:20px}
+/* ---- Cargas en modo coche: dos columnas, 4 filas a toda la altura, sin entrada de datos ---- */
+  html.car[data-page="charges"] .content{padding:32px}
+  html.car #page-charges.active{width:100%;display:grid;grid-template-columns:380px minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);column-gap:32px;row-gap:20px;min-height:0;overflow:hidden}
+  html.car .chg-head{grid-column:1;grid-row:1;margin:0;align-items:center}
+  html.car .chg-eyebrow,html.car .chg-add,html.car .chg-minis .chg-mini:first-child{display:none}
+  html.car .chg-title{font-size:44px;letter-spacing:-1px}
+  html.car .chg-sum{grid-column:1;grid-row:2;align-self:start;gap:16px;margin:0}
+  html.car .chg-save{grid-template-columns:1fr;border-radius:20px;padding:24px;gap:10px}
+  html.car .chg-lbl{font-size:16px;letter-spacing:.5px}
+  html.car .chg-save-val{font-size:72px;letter-spacing:-2px;margin-top:6px}
+  html.car .chg-save-r{text-align:left;font-size:18px;gap:6px}
+  html.car .chg-base{font-size:16px;line-height:1.45;padding-top:12px}
+  html.car .chg-minis{grid-template-columns:1fr;gap:16px}
+  html.car .chg-mini{border-radius:20px;padding:16px 24px}
+  html.car .chg-mini-val{font-size:40px}
+  html.car .chg-side{grid-column:2;grid-row:1 / 3;display:flex;flex-direction:column;min-height:0}
+  html.car .chg-list-head h3{font-size:28px}
+  html.car .chg-count{font-size:18px}
+  html.car .chg-legend{font-size:16px;line-height:1.5;margin-bottom:12px}
+  html.car .chg-list{flex:1;min-height:0;overflow:hidden;grid-template-columns:1fr;grid-auto-rows:minmax(min-content,1fr);gap:12px}
+  html.car .chg-list.all{overflow-y:auto;grid-auto-rows:minmax(112px,auto);align-content:start;padding-right:4px}
+  html.car .chg-card{border-radius:20px;padding:0 28px;display:grid;grid-template-columns:minmax(0,1.05fr) auto auto;justify-content:space-between;grid-template-rows:auto auto;align-content:center;column-gap:14px;row-gap:6px}
+  html.car .chg-top{grid-area:1/1;flex-direction:column;align-items:flex-start;gap:2px;font-size:16px}
+  html.car .chg-when{font-size:24px;white-space:normal;line-height:1.2}
+  html.car .chg-loc svg{width:18px;height:18px}
+  html.car .chg-bot{grid-area:2/1}
+  html.car .chg-chip{font-size:16px;padding:3px 14px}
+  html.car .chg-mid{display:contents}
+  html.car .chg-soc{grid-area:1/2/3/3;align-self:center;border:0;padding:0}
+  html.car .chg-soc-val,html.car .chg-kwh-val{font-size:40px}
+  html.car .chg-soc-val .u,html.car .chg-kwh-val .u{font-size:22px;font-weight:700;color:var(--text-muted)}
+  html.car .chg-soc-val .arr{font-size:30px;margin:0 6px}
+  html.car .chg-kwh-sub{max-width:230px;margin-left:auto}
+  html.car .chg-bar{height:10px;margin-top:10px}
+  html.car .chg-kwh{grid-area:1/3/3/4;align-self:center;padding:0}
+  html.car .chg-kwh-sub{font-size:18px;margin-top:4px;line-height:1.25}
+  html.car button.chg-all{min-height:64px;font-size:18px;margin-top:12px}
+  html.car .chg-card .est,html.car #page-charges .empty-state p{font-size:inherit}
+  html.car #page-charges .empty-state{font-size:18px}
+  html.car #page-charges .empty-state p{font-size:20px}
+  html.car .est{position:relative}
+  html.car .est::before{content:"";position:absolute;inset:-24px -10px}
+  html.car #estTip{font-size:16px;max-width:min(420px,calc(100vw - 16px))}
+</style>
 </head>
 <body>
 
@@ -1135,6 +1202,10 @@ html[data-page="charges"] .topbar h1{visibility:hidden}
           <div class="chg-list-head"><h3>Historial de cargas</h3><span class="chg-count" id="chgCount"></span></div>
           <div class="chg-legend" id="chgLegend"></div>
           <div class="chg-list" id="chgList"></div>
+          <div class="card chg-tablecard"><div class="table-wrap"><table class="chg-table">
+            <thead><tr><th>Fecha</th><th>Ubicación</th><th>Batería</th><th class="num">kWh</th><th class="num">Coste</th><th class="num">€/kWh</th><th class="num">Km</th><th></th></tr></thead>
+            <tbody id="chgTableBody"></tbody>
+          </table></div></div>
           <div id="chargesEmpty" class="empty-state" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><p>Aún no hay cargas registradas</p></div>
           <button type="button" class="btn btn-ghost chg-all" id="chgAllBtn" style="display:none">Ver todas</button>
         </div>
@@ -1509,7 +1580,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-23.1';
+const APP_VERSION = '2026-10-23.2';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2127,8 +2198,8 @@ function chargeDateLabel(c){
   return (p.weekday + ' ' + p.day + ' ' + p.month).replace(/\./g, '');
 }
 // Valor estimado: "≈" siempre delante, subrayado punteado y explicación al tocar, pasar el ratón o enfocar.
-function estSpan(text, tip){
-  return '<span class="est" role="note" tabindex="0" data-tip="' + escapeAttr(tip) + '" aria-label="' + escapeAttr('estimado: ' + text + '. ' + tip) + '">≈ ' + text + '</span>';
+function estSpan(text, tip, html){
+  return '<span class="est" role="note" tabindex="0" data-tip="' + escapeAttr(tip) + '" aria-label="' + escapeAttr('estimado: ' + text + '. ' + tip) + '">≈ ' + (html || text) + '</span>';
 }
 // Todo lo que se muestra de una carga y cuáles de esos valores son estimados (se calcula al pintar, no se guarda nada).
 function chargeView(c){
@@ -2157,23 +2228,50 @@ function chargeLocationLabel(c){
   return !l ? '—' : (l === 'Casa' || l === 'Trabajo' || l === 'Otro') ? l : 'Otro · ' + l;
 }
 const PIN_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>';
-function chargeCardHtml(v, withActions){
+// Textos de una carga (con ≈ y explicación cuando son estimados), compartidos por la tarjeta y la fila de la tabla.
+function chargeParts(v, kwhDec){
   const c = v.c;
-  const timeHtml = v.time ? (v.timeEst ? estSpan(v.time, v.tips.time) : v.time) : '—';
-  const kwhTxt = v.kwh > 0 ? '+' + nf(v.kwh, 1) + ' kWh' : '—';
-  const kwhHtml = v.kwh > 0 && v.kwhEst ? estSpan(kwhTxt, v.tips.kwh) : kwhTxt;
+  const kwhTxt = v.kwh > 0 ? '+' + nf(v.kwh, kwhDec) + ' kWh' : '—';
+  const kwhRich = v.kwh > 0 ? '+' + nf(v.kwh, kwhDec) + '<small class="u"> kWh</small>' : '—';
   const costTxt = v.cost != null ? fmtEUR(v.cost) : '—';
-  const costHtml = v.cost != null && v.costEst ? estSpan(costTxt, v.tips.cost) : costTxt;
   const priceTxt = v.price != null ? nf(v.price, 3) + ' €/kWh' : '—';
-  const priceHtml = v.price != null && v.priceEst ? estSpan(priceTxt, v.tips.price) : priceTxt;
-  const soc = v.soc ? '<div class="chg-soc"><div class="chg-soc-val">' + nf(v.soc.a, 0) + ' → ' + nf(v.soc.b, 0) + ' %</div>' +
-    '<div class="chg-bar" aria-hidden="true"><i style="left:' + Math.max(0, Math.min(100, v.soc.a)) + '%;width:' + Math.max(0, Math.min(100 - Math.max(0, v.soc.a), v.soc.b - v.soc.a)) + '%"></i></div></div>' : '';
+  return {
+    time: v.time ? (v.timeEst ? estSpan(v.time, v.tips.time) : v.time) : '—',
+    kwh: v.kwh > 0 && v.kwhEst ? estSpan(kwhTxt, v.tips.kwh, kwhRich) : kwhRich,
+    cost: v.cost != null && v.costEst ? estSpan(costTxt, v.tips.cost) : costTxt,
+    price: v.price != null && v.priceEst ? estSpan(priceTxt, v.tips.price) : priceTxt,
+    loc: escapeHtml(chargeLocationLabel(c)), date: escapeHtml(chargeDateLabel(c)),
+    km: c.km ? fmtNum(c.km) + ' km' : '— km'
+  };
+}
+function chargeSocHtml(v){
+  if(!v.soc) return '';
+  const a = Math.max(0, Math.min(100, v.soc.a));
+  return '<div class="chg-soc"><div class="chg-soc-val" aria-label="' + nf(v.soc.a, 0) + ' a ' + nf(v.soc.b, 0) + ' por ciento">' + nf(v.soc.a, 0) + '<span class="arr">→</span>' + nf(v.soc.b, 0) + '<small class="u"> %</small></div>' +
+    '<div class="chg-bar" aria-hidden="true"><i style="left:' + a + '%;width:' + Math.max(0, Math.min(100 - a, v.soc.b - v.soc.a)) + '%"></i></div></div>';
+}
+function chargeActionsHtml(c){
+  return '<span class="chg-act"><button type="button" class="icon-action" onclick="editCharge(' + c.id + ')" aria-label="Editar carga">' + ICONS.edit + '</button><button type="button" class="icon-action danger" onclick="deleteCharge(' + c.id + ')" aria-label="Eliminar carga">' + ICONS.trash + '</button></span>';
+}
+function chargeCardHtml(v, withActions){
+  const c = v.c, t = chargeParts(v, 1);
   return '<article class="chg-card' + (v.soc ? '' : ' no-soc') + '">' +
-    '<div class="chg-top"><span class="chg-loc">' + PIN_ICON + escapeHtml(chargeLocationLabel(c)) + '</span><b class="chg-when">' + escapeHtml(chargeDateLabel(c)) + ' · ' + timeHtml + '</b></div>' +
-    '<div class="chg-mid">' + soc + '<div class="chg-kwh"><div class="chg-kwh-val">' + kwhHtml + '</div><div class="chg-kwh-sub">' + costHtml + ' · ' + priceHtml + '</div></div></div>' +
-    '<div class="chg-bot"><span class="chg-chip">' + (c.km ? fmtNum(c.km) + ' km' : '— km') + '</span>' + (v.free ? '<span class="chg-chip free">Gratis</span>' : '') +
-    (withActions ? '<span class="chg-act"><button type="button" class="icon-action" onclick="editCharge(' + c.id + ')" aria-label="Editar carga">' + ICONS.edit + '</button><button type="button" class="icon-action danger" onclick="deleteCharge(' + c.id + ')" aria-label="Eliminar carga">' + ICONS.trash + '</button></span>' : '') +
-    '</div></article>';
+    '<div class="chg-top"><span class="chg-loc">' + PIN_ICON + t.loc + '</span><b class="chg-when">' + t.date + ' · ' + t.time + '</b></div>' +
+    '<div class="chg-mid">' + chargeSocHtml(v) + '<div class="chg-kwh"><div class="chg-kwh-val">' + t.kwh + '</div><div class="chg-kwh-sub">' + t.cost + ' · ' + t.price + '</div></div></div>' +
+    '<div class="chg-bot"><span class="chg-chip">' + t.km + '</span>' + (v.free ? '<span class="chg-chip free">Gratis</span>' : '') + (withActions ? chargeActionsHtml(c) : '') + '</div></article>';
+}
+// Fila de la tabla (tablet horizontal y escritorio): columnas rotuladas, más fáciles de comparar.
+function chargeRowHtml(v){
+  const c = v.c, t = chargeParts(v, 2);
+  const kwh = v.kwh > 0 ? (v.kwhEst ? estSpan(nf(v.kwh, 2), v.tips.kwh) : nf(v.kwh, 2)) : '—';
+  return '<tr><td class="when"><b>' + t.date + '</b> · ' + t.time + '</td>' +
+    '<td><span class="chg-loc">' + PIN_ICON + t.loc + '</span></td>' +
+    '<td>' + (v.soc ? chargeSocHtml(v) : '—') + '</td>' +
+    '<td class="num">' + kwh + '</td>' +
+    '<td class="num">' + t.cost + (v.free ? ' <span class="chg-chip free">Gratis</span>' : '') + '</td>' +
+    '<td class="num">' + (v.price != null ? (v.priceEst ? estSpan(nf(v.price, 3) + ' €', v.tips.price) : nf(v.price, 3) + ' €') : '—') + '</td>' +
+    '<td class="num">' + (c.km ? fmtNum(c.km) : '—') + '</td>' +
+    '<td class="num">' + chargeActionsHtml(c) + '</td></tr>';
 }
 // Explicación de un valor estimado: al pasar el ratón, enfocar con teclado o tocar. Esc o tocar fuera la cierra.
 (function(){
@@ -2229,7 +2327,10 @@ function renderCharges(){
   const sorted = [...state.charges].sort(chargeCmpDesc);
   const views = sorted.map(chargeView);
   const shown = (car && !chgShowAll) ? views.slice(0, 4) : views;
+  list.classList.toggle('all', car && chgShowAll);
   list.innerHTML = shown.map(v=>chargeCardHtml(v, !car)).join('');
+  document.getElementById('chgTableBody').innerHTML = views.map(chargeRowHtml).join('');
+  document.querySelector('.chg-tablecard').classList.toggle('empty', !state.charges.length);
   document.getElementById('chargesEmpty').style.display = state.charges.length ? 'none' : 'block';
   const kwhAll = views.reduce((s,v)=>s + v.kwh, 0), nEst = views.filter(v=>v.estimated).length;
   document.getElementById('chgCount').textContent = state.charges.length + (state.charges.length === 1 ? ' carga' : ' cargas') + ' · ' + nf(kwhAll, 1) + ' kWh';
@@ -3729,7 +3830,9 @@ function applyCarMode(){
   const pref = carModePref();
   const landscape = window.innerWidth >= 900 && window.innerWidth > window.innerHeight;
   const auto = landscape && (window.innerHeight <= 860 || /Android/i.test(navigator.userAgent));
+  const wasCar = document.documentElement.classList.contains('car');
   document.documentElement.classList.toggle('car', pref === 'on' || (pref === 'auto' && auto));
+  if(wasCar !== document.documentElement.classList.contains('car')){ chgShowAll = false; const pc = document.getElementById('page-charges'); if(pc && pc.classList.contains('active') && typeof renderCharges === 'function') renderCharges(); }
   const b = document.getElementById('carModeBtn');
   if(b) b.querySelector('span').textContent = 'Modo coche: ' + ({auto:'Auto', on:'Sí', off:'No'}[pref]);
 }
