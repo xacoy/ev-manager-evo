@@ -20,8 +20,11 @@ Gestor integral web de tu **BYD Atto 3 EVO**: cargas, mantenimiento, revisiones 
   - Trabajo: GRATIS (0 €)
   - Otros: editable
 - Ubicación (Casa, Trabajo, Electrolinera personalizada)
-- Historial editable con búsqueda
-- Estadísticas: total kWh, gasto, precio medio
+- Historial en tarjetas (móvil), tabla con columnas (tablet y escritorio) y filas grandes en Modo coche
+- Registrar y editar cargas en una ventana
+- Resumen: ahorro vs gasolina con su base, cargas, kWh y €/kWh
+- Datos estimados siempre marcados con «≈» y subrayado punteado; al tocar, pasar el ratón o enfocar
+  se explica la base del cálculo con tus cifras. Sin marca = introducido por ti
 
 ### 🔧 Mantenimiento
 - Registro por tipo (frenos, neumáticos, batería, filtros, etc.)
