@@ -41,6 +41,7 @@
   --font:"Plus Jakarta Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
   --font-display:"Exo 2","Plus Jakarta Sans",sans-serif;
   --rail-w:140px; --bottomnav-h:64px;
+  --est:var(--warning);
 }
 :root[data-theme="light"]{
   color-scheme:light;
@@ -63,6 +64,7 @@
   --shadow-1:0 2px 8px rgba(0,0,0,.06);
 }
 /* ---------- temas ---------- */
+:root[data-theme="light"],:root[data-theme="mint"]{--est:#7a4700}
 :root[data-theme="midnight"]{
   color-scheme:dark;
   --bg:#000000; --bg-1:#06070a; --bg-2:#0c0e12; --bg-card:#0e1116;
@@ -272,7 +274,7 @@ button{cursor:pointer}
 .topbar h1{font-size:26px;font-weight:700;letter-spacing:-.3px;font-family:var(--font-display);color:var(--text)}
 
 .title-accent{font-style:normal;color:var(--accent)}
-.info-value,.sum-stat,.save-value,.stat-card .value,.chip .l1,.sync-btn,.ql-tile-label{font-family:var(--font-display)}
+.info-value,.save-value,.stat-card .value,.chip .l1,.sync-btn,.ql-tile-label{font-family:var(--font-display)}
 .top-left{display:flex;align-items:center;gap:8px;flex:0 0 auto}
 .top-right{display:flex;align-items:center;gap:8px}
 .expandable-section{margin-top:20px}
@@ -429,22 +431,6 @@ button{cursor:pointer}
 .battery-hero{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
 
 /* Resumen de cargas */
-.sum-hero{border:1px solid var(--border);border-top:2px solid var(--accent);border-radius:var(--radius);padding:22px 22px 16px;text-align:center;background:linear-gradient(180deg,var(--accent-soft),transparent 70%)}
-.sum-amount{font-family:var(--font-display);font-size:42px;font-weight:800;color:var(--accent);line-height:1.1;margin:6px 0 16px;letter-spacing:-1px}
-.sum-chips{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
-.sum-chip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--border);background:var(--bg-card);border-radius:99px;padding:6px 13px;font-size:12.5px;color:var(--text-muted)}
-.sum-chip i{width:8px;height:8px;border-radius:50%}
-.sum-chip b{color:var(--text);font-weight:700}
-.sum-foot{font-size:12px;color:var(--text-faint);margin-top:14px}
-.sum-stats{display:grid;grid-template-columns:repeat(3,1fr);margin-top:16px;text-align:center}
-.sum-stats > div{padding:4px 8px}
-.sum-stats > div + div{border-left:1px solid var(--border)}
-.sum-card{display:flex;flex-direction:column}
-.sum-card .sum-hero{flex:1;display:flex;flex-direction:column;justify-content:center;gap:2px}
-.sum-card .sum-amount{margin:10px 0 22px}
-.sum-card .sum-foot{margin-top:22px}
-.sum-card .sum-stats{margin-top:20px}
-.sum-stat{font-size:20px;font-weight:800;color:var(--text);margin-top:2px;white-space:nowrap}
 /* Gráficas propias (SVG) */
 .grid-2eq{grid-template-columns:1fr 1fr}
 @media(max-width:1000px){.grid-2eq{grid-template-columns:1fr}}
@@ -818,6 +804,56 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
   .panel-grid .status-tiles-grid{grid-template-columns:1fr}
 }
 
+
+/* ---------- cargas: resumen, tarjetas y datos estimados ---------- */
+.chg-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:6px 0 16px}
+.chg-eyebrow{font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text-faint)}
+.chg-title{font-family:var(--font-display);font-size:30px;font-weight:800;letter-spacing:-.5px;line-height:1.1;color:var(--text)}
+html[data-page="charges"] .topbar h1{visibility:hidden}
+.chg-sum{display:grid;gap:12px;margin-bottom:22px}
+.chg-save{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;display:grid;grid-template-columns:1fr auto;gap:8px 16px;align-items:center}
+.chg-lbl{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--text-faint)}
+.chg-save-val{font-family:var(--font-display);font-size:30px;font-weight:800;color:var(--accent);line-height:1.15;margin-top:4px;font-variant-numeric:tabular-nums}
+.chg-save-r{display:grid;gap:4px;text-align:right;font-size:13px;color:var(--text-muted);font-weight:600}
+.chg-save-r b{color:var(--text);font-weight:800;font-variant-numeric:tabular-nums}
+.chg-base{grid-column:1/-1;font-size:12px;color:var(--text-muted);line-height:1.5;border-top:1px solid var(--border);padding-top:8px}
+.chg-minis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.chg-mini{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:12px 14px}
+.chg-mini-val{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--text);margin-top:4px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.chg-list-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:6px}
+.chg-list-head h3{font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--text)}
+.chg-count{font-size:13px;color:var(--text-muted);font-weight:600;white-space:nowrap}
+.chg-legend{font-size:12px;color:var(--text-muted);line-height:1.6;margin-bottom:12px}
+.chg-legend-src{color:var(--text-faint)}
+.chg-list{display:grid;gap:12px;grid-template-columns:1fr}
+.chg-card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:12px}
+.chg-top{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px}
+.chg-loc{display:inline-flex;align-items:center;gap:6px;color:var(--text-muted);font-weight:600;min-width:0}
+.chg-loc svg{width:15px;height:15px;stroke:var(--accent);flex-shrink:0}
+.chg-when{color:var(--text);font-weight:800;white-space:nowrap}
+.chg-mid{display:grid;grid-template-columns:1fr 1fr;align-items:center}
+.chg-card.no-soc .chg-mid{grid-template-columns:1fr}
+.chg-soc{padding-right:14px;border-right:1px solid var(--border)}
+.chg-soc-val,.chg-kwh-val{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--text);line-height:1.15;font-variant-numeric:tabular-nums;white-space:nowrap}
+.chg-bar{position:relative;height:6px;border-radius:99px;background:var(--border-strong);margin-top:8px}
+.chg-bar i{position:absolute;top:0;bottom:0;border-radius:99px;background:var(--accent)}
+.chg-kwh{padding-left:14px;text-align:right}
+.chg-card.no-soc .chg-kwh{padding-left:0}
+.chg-kwh-sub{font-size:12px;color:var(--text-muted);margin-top:3px;font-variant-numeric:tabular-nums}
+.chg-bot{display:flex;align-items:center;gap:8px}
+.chg-chip{display:inline-block;background:var(--bg-2);border:1px solid var(--border-strong);color:var(--text-muted);border-radius:99px;padding:2px 11px;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
+.chg-chip.free{background:var(--accent-soft);color:var(--accent)}
+.chg-act{margin-left:auto;display:flex;gap:4px}
+.est{color:var(--est);text-decoration:underline dotted;text-decoration-thickness:1.5px;text-underline-offset:3px;cursor:help;border-radius:3px}
+.est:focus-visible{outline:2px solid var(--est);outline-offset:2px}
+.est-key{color:var(--est);font-weight:800;text-decoration:underline dotted;text-underline-offset:3px}
+#estTip{position:fixed;z-index:400;max-width:min(320px,calc(100vw - 16px));background:var(--bg-1);color:var(--text);border:1px solid var(--border-strong);border-radius:10px;padding:9px 12px;font-size:13px;line-height:1.45;font-weight:500;box-shadow:var(--shadow-1);pointer-events:none}
+#estTip[hidden]{display:none}
+.chg-all{margin-top:14px}
+.modal-wide{max-width:560px;max-height:92vh;overflow:auto}
+@media(min-width:760px){.chg-list{grid-template-columns:1fr 1fr}.chg-sum{grid-template-columns:1fr}}
+@media(max-width:400px){.chg-save-val{font-size:26px}.chg-soc-val,.chg-kwh-val{font-size:20px}}
+
 /* ---------- modo pantalla del coche (clase html.car: automática en pantallas apaisadas o activable a mano) ---------- */
   html.car{--rail-w:96px}
   html.car .nav-rail{display:flex;padding:10px 4px;gap:4px}
@@ -1090,68 +1126,17 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
 
       <!-- CHARGES -->
       <section class="page" id="page-charges">
-        <div class="grid grid-2">
-          <div class="card">
-            <div class="card-head"><h2>Registrar carga</h2></div>
-            <form id="chargeForm">
-              <div class="field-row">
-                <div class="field"><label>Fecha</label><input id="c_date" type="date"></div>
-                <div class="field"><label>Hora</label><input id="c_time" type="time"></div>
-              </div>
-              <div class="field-row">
-                <div class="field"><label>kWh cargados <span class="opt-hint">(opcional · si no lo sabes, se estima con el % de batería)</span></label><input id="c_kwh" type="number" step="0.01" min="0" placeholder="0.00"></div>
-                <div class="field"><label>Coste (€) <span class="opt-hint">(opcional, 0 = gratis)</span></label><input id="c_cost" type="number" step="0.01" min="0" placeholder="0.00"></div>
-              </div>
-              <div class="field-row">
-                <div class="field"><label>Km en el momento</label><input id="c_km" type="number" min="0" placeholder="opcional"></div>
-                <div class="field">
-                  <label>Ubicación</label>
-                  <select id="c_location_type">
-                    <option value="Casa">Casa</option>
-                    <option value="Trabajo">Trabajo</option>
-                    <option value="Otro">Otro (especificar)</option>
-                  </select>
-                </div>
-              </div>
-              <div class="field-row">
-                <div class="field"><label>Batería al empezar (%) <span class="opt-hint">(opcional)</span></label><input id="c_soc0" type="number" min="0" max="100" step="1" placeholder="Ej. 35"></div>
-                <div class="field"><label>Batería al terminar (%) <span class="opt-hint">(opcional)</span></label><input id="c_soc1" type="number" min="0" max="100" step="1" placeholder="Ej. 80"></div>
-              </div>
-              <div class="field" id="c_location_other_wrap" style="display:none">
-                <label>Especifica el lugar</label>
-                <input id="c_location_other" type="text" placeholder="Ej. Electrolinera Iberdrola">
-              </div>
-              <div style="display:flex;gap:8px">
-                <button type="submit" class="btn btn-primary btn-block" id="chargeSubmitBtn">Registrar carga</button>
-                <button type="button" class="btn btn-ghost" id="chargeCancelEdit" style="display:none">Cancelar</button>
-              </div>
-            </form>
-          </div>
-          <div class="card sum-card">
-            <div class="card-head"><h2>Resumen</h2></div>
-            <div class="sum-hero">
-              <div class="save-label">AHORRO VS GASOLINA</div>
-              <div class="sum-amount" data-save="value">—</div>
-              <div class="sum-chips">
-                <span class="sum-chip"><i style="background:var(--warning)"></i>Gasolina <b data-save="gas">—</b></span>
-                <span class="sum-chip"><i style="background:var(--accent)"></i>Electricidad <b data-save="elec">—</b></span>
-              </div>
-              <div class="sum-foot" data-save="price">Precio medio de hoy: —</div>
-            </div>
-            <div class="sum-stats">
-              <div><div class="info-label">Cargas</div><div class="sum-stat" id="chgTotal">0</div></div>
-              <div><div class="info-label">kWh</div><div class="sum-stat" id="chgKwh">0</div></div>
-              <div><div class="info-label">€/kWh</div><div class="sum-stat" id="chgAvg">0</div></div>
-            </div>
-          </div>
-        </div>
-        <div class="card" style="margin-top:16px">
-          <div class="card-head"><h2>Historial de cargas</h2></div>
-          <div class="table-wrap"><table>
-            <thead><tr><th>Fecha</th><th>kWh</th><th>Coste</th><th>€/kWh</th><th>Km</th><th>Batería</th><th>Ubicación</th><th></th></tr></thead>
-            <tbody id="chargesTable"></tbody>
-          </table></div>
+        <header class="chg-head">
+          <div><div class="chg-eyebrow">BYD Atto 3 EVO</div><h2 class="chg-title">Cargas</h2></div>
+          <button type="button" class="btn btn-primary chg-add" id="chargeOpenBtn">Registrar carga</button>
+        </header>
+        <div class="chg-sum" id="chgSummary"></div>
+        <div class="chg-side">
+          <div class="chg-list-head"><h3>Historial de cargas</h3><span class="chg-count" id="chgCount"></span></div>
+          <div class="chg-legend" id="chgLegend"></div>
+          <div class="chg-list" id="chgList"></div>
           <div id="chargesEmpty" class="empty-state" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><p>Aún no hay cargas registradas</p></div>
+          <button type="button" class="btn btn-ghost chg-all" id="chgAllBtn" style="display:none">Ver todas</button>
         </div>
       </section>
 
@@ -1293,6 +1278,45 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
     <div class="modal-actions"><button type="button" class="btn btn-primary" id="themeClose">Listo</button></div>
   </div>
 </div>
+<div class="overlay" id="chargeFormOverlay">
+  <div class="modal modal-wide">
+    <h3 id="chargeFormTitle">Registrar carga</h3>
+    <form id="chargeForm">
+              <div class="field-row">
+                <div class="field"><label>Fecha</label><input id="c_date" type="date"></div>
+                <div class="field"><label>Hora</label><input id="c_time" type="time"></div>
+              </div>
+              <div class="field-row">
+                <div class="field"><label>kWh cargados <span class="opt-hint">(opcional · si no lo sabes, se estima con el % de batería)</span></label><input id="c_kwh" type="number" step="0.01" min="0" placeholder="0.00"></div>
+                <div class="field"><label>Coste (€) <span class="opt-hint">(opcional, 0 = gratis)</span></label><input id="c_cost" type="number" step="0.01" min="0" placeholder="0.00"></div>
+              </div>
+              <div class="field-row">
+                <div class="field"><label>Km en el momento</label><input id="c_km" type="number" min="0" placeholder="opcional"></div>
+                <div class="field">
+                  <label>Ubicación</label>
+                  <select id="c_location_type">
+                    <option value="Casa">Casa</option>
+                    <option value="Trabajo">Trabajo</option>
+                    <option value="Otro">Otro (especificar)</option>
+                  </select>
+                </div>
+              </div>
+              <div class="field-row">
+                <div class="field"><label>Batería al empezar (%) <span class="opt-hint">(opcional)</span></label><input id="c_soc0" type="number" min="0" max="100" step="1" placeholder="Ej. 35"></div>
+                <div class="field"><label>Batería al terminar (%) <span class="opt-hint">(opcional)</span></label><input id="c_soc1" type="number" min="0" max="100" step="1" placeholder="Ej. 80"></div>
+              </div>
+              <div class="field" id="c_location_other_wrap" style="display:none">
+                <label>Especifica el lugar</label>
+                <input id="c_location_other" type="text" placeholder="Ej. Electrolinera Iberdrola">
+              </div>
+              <div style="display:flex;gap:8px">
+                <button type="submit" class="btn btn-primary btn-block" id="chargeSubmitBtn">Registrar carga</button>
+                <button type="button" class="btn btn-ghost" id="chargeCancelEdit">Cancelar</button>
+              </div>
+            </form>
+  </div>
+</div>
+
 <div class="overlay" id="noteFormOverlay">
   <div class="modal" style="max-height:92vh;overflow:auto">
     <h3 id="noteFormTitle">Nueva nota</h3>
@@ -1485,7 +1509,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-22.3';
+const APP_VERSION = '2026-10-23.1';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -1601,6 +1625,7 @@ function navigate(page, opts){
   if(page==='maintenance'){ page = 'docs'; docFilterCat = 'Taller'; docFilterSub = ''; docTab = 'docs'; }
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+page).classList.add('active');
+  document.documentElement.dataset.page = page;
   document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active', b.dataset.page===page));
   const titles = {dashboard:'BYD Atto 3 <em class="title-accent">EVO</em>', setup:'Configuración', charges:'Cargas', maintenance:'Mantenimiento', revisions:'Revisiones', notes:'Notas', docs:'Documentos', stats:'Estadísticas'};
   document.getElementById('pageTitle').innerHTML = titles[page] || page;
@@ -2024,6 +2049,7 @@ function renderSavings(){
   document.querySelectorAll('[data-save="price"]').forEach(el=>{ el.textContent = priceText; el.title = title; });
   document.querySelectorAll('[data-save="gas"]').forEach(el=>{ el.textContent = has ? fmtEUR(r.gas) : '—'; });
   document.querySelectorAll('[data-save="elec"]').forEach(el=>{ el.textContent = has ? fmtEUR(r.elec) : '—'; });
+  if(document.getElementById('chgSummary')) renderChargesSummary();
 }
 
 
@@ -2091,28 +2117,130 @@ function chargeDateTimeHtml(c){
   if(!t.text) return fmtDate(c.date);
   return fmtDate(c.date) + ' · ' + (t.inferred ? '<span style="color:var(--text-faint)" title="Hora a la que se añadió">' + t.text + '</span>' : t.text);
 }
+/* ---------------- cargas: tarjetas, resumen y datos estimados ---------------- */
+const nf = (n, d) => Number(n).toFixed(d).replace('.', ',');
+const CHG_DATE_FMT = new Intl.DateTimeFormat('es-ES', { weekday:'short', day:'numeric', month:'short' });
+function chargeDateLabel(c){
+  const d = new Date((c.date || '') + 'T12:00:00');
+  if(isNaN(d)) return c.date || '—';
+  const p = Object.fromEntries(CHG_DATE_FMT.formatToParts(d).map(x=>[x.type, x.value]));
+  return (p.weekday + ' ' + p.day + ' ' + p.month).replace(/\./g, '');
+}
+// Valor estimado: "≈" siempre delante, subrayado punteado y explicación al tocar, pasar el ratón o enfocar.
+function estSpan(text, tip){
+  return '<span class="est" role="note" tabindex="0" data-tip="' + escapeAttr(tip) + '" aria-label="' + escapeAttr('estimado: ' + text + '. ' + tip) + '">≈ ' + text + '</span>';
+}
+// Todo lo que se muestra de una carga y cuáles de esos valores son estimados (se calcula al pintar, no se guarda nada).
+function chargeView(c){
+  const ti = chargeTimeInfo(c), kwh = kwhOf(c), kwhEst = kwhIsEst(c);
+  const hasCost = c.cost != null && c.cost !== '';
+  const costEst = !hasCost && kwh > 0;
+  const cost = hasCost ? Number(c.cost) || 0 : (kwh > 0 ? chargeCostOf(c) : null);
+  const rate = Number(c.rate) > 0 ? Number(c.rate) : (Number(state.config.electricRate) || 0.15);
+  const price = (cost != null && kwh > 0) ? cost / kwh : null;
+  const priceEst = price != null && (kwhEst || costEst);
+  const pts = (c.socStart != null && c.socEnd != null) ? Number(c.socEnd) - Number(c.socStart) : null;
+  return {
+    c, time: ti.text, timeEst: ti.inferred, kwh, kwhEst, cost, costEst, free: hasCost && cost === 0, price, priceEst,
+    soc: (c.socStart != null && c.socEnd != null) ? { a: Number(c.socStart), b: Number(c.socEnd) } : null,
+    tips: {
+      time: 'Estimada: no indicaste la hora; es la de cuando añadiste la carga',
+      kwh: kwhEst ? 'Estimado: ' + nf(pts, 0) + ' % de batería × ' + nf(VEHICLE_BATTERY_KWH, 1) + ' kWh de batería ÷ ' + nf(CHARGE_EFF, 1) + ' de rendimiento de carga = ' + nf(kwh, 2) + ' kWh' : '',
+      cost: costEst ? 'Estimado: ' + nf(kwh, 2) + ' kWh' + (kwhEst ? ' (estimados)' : '') + ' × ' + nf(rate, 3) + ' €/kWh (tarifa ' + (Number(c.rate) > 0 ? 'guardada en esa carga' : 'configurada') + ')' : '',
+      price: priceEst ? 'Estimado: ' + (costEst ? 'coste estimado' : 'coste anotado de ' + fmtEUR(cost)) + ' ÷ ' + nf(kwh, 2) + ' kWh' + (kwhEst ? ' (estimados con el % de batería)' : ' anotados') : ''
+    },
+    estimated: ti.inferred || kwhEst || costEst || priceEst
+  };
+}
+function chargeLocationLabel(c){
+  const l = (c.location || '').trim();
+  return !l ? '—' : (l === 'Casa' || l === 'Trabajo' || l === 'Otro') ? l : 'Otro · ' + l;
+}
+const PIN_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>';
+function chargeCardHtml(v, withActions){
+  const c = v.c;
+  const timeHtml = v.time ? (v.timeEst ? estSpan(v.time, v.tips.time) : v.time) : '—';
+  const kwhTxt = v.kwh > 0 ? '+' + nf(v.kwh, 1) + ' kWh' : '—';
+  const kwhHtml = v.kwh > 0 && v.kwhEst ? estSpan(kwhTxt, v.tips.kwh) : kwhTxt;
+  const costTxt = v.cost != null ? fmtEUR(v.cost) : '—';
+  const costHtml = v.cost != null && v.costEst ? estSpan(costTxt, v.tips.cost) : costTxt;
+  const priceTxt = v.price != null ? nf(v.price, 3) + ' €/kWh' : '—';
+  const priceHtml = v.price != null && v.priceEst ? estSpan(priceTxt, v.tips.price) : priceTxt;
+  const soc = v.soc ? '<div class="chg-soc"><div class="chg-soc-val">' + nf(v.soc.a, 0) + ' → ' + nf(v.soc.b, 0) + ' %</div>' +
+    '<div class="chg-bar" aria-hidden="true"><i style="left:' + Math.max(0, Math.min(100, v.soc.a)) + '%;width:' + Math.max(0, Math.min(100 - Math.max(0, v.soc.a), v.soc.b - v.soc.a)) + '%"></i></div></div>' : '';
+  return '<article class="chg-card' + (v.soc ? '' : ' no-soc') + '">' +
+    '<div class="chg-top"><span class="chg-loc">' + PIN_ICON + escapeHtml(chargeLocationLabel(c)) + '</span><b class="chg-when">' + escapeHtml(chargeDateLabel(c)) + ' · ' + timeHtml + '</b></div>' +
+    '<div class="chg-mid">' + soc + '<div class="chg-kwh"><div class="chg-kwh-val">' + kwhHtml + '</div><div class="chg-kwh-sub">' + costHtml + ' · ' + priceHtml + '</div></div></div>' +
+    '<div class="chg-bot"><span class="chg-chip">' + (c.km ? fmtNum(c.km) + ' km' : '— km') + '</span>' + (v.free ? '<span class="chg-chip free">Gratis</span>' : '') +
+    (withActions ? '<span class="chg-act"><button type="button" class="icon-action" onclick="editCharge(' + c.id + ')" aria-label="Editar carga">' + ICONS.edit + '</button><button type="button" class="icon-action danger" onclick="deleteCharge(' + c.id + ')" aria-label="Eliminar carga">' + ICONS.trash + '</button></span>' : '') +
+    '</div></article>';
+}
+// Explicación de un valor estimado: al pasar el ratón, enfocar con teclado o tocar. Esc o tocar fuera la cierra.
+(function(){
+  let tip = null, cur = null, shownAt = 0;
+  function el(){ if(!tip){ tip = document.createElement('div'); tip.id = 'estTip'; tip.setAttribute('role', 'tooltip'); tip.hidden = true; document.body.appendChild(tip); } return tip; }
+  function show(t){
+    const d = el(); cur = t; shownAt = Date.now(); d.textContent = t.dataset.tip || ''; d.hidden = false; t.setAttribute('aria-describedby', 'estTip');
+    const r = t.getBoundingClientRect(), w = d.offsetWidth, hh = d.offsetHeight, m = 8;
+    let x = Math.min(Math.max(m, r.left + r.width / 2 - w / 2), window.innerWidth - w - m);
+    let y = r.top - hh - 8; if(y < m) y = r.bottom + 8;
+    d.style.left = x + 'px'; d.style.top = y + 'px';
+  }
+  function hide(){ if(cur) cur.removeAttribute('aria-describedby'); cur = null; if(tip) tip.hidden = true; }
+  document.addEventListener('mouseover', e=>{ const t = e.target.closest && e.target.closest('.est'); if(t) show(t); });
+  document.addEventListener('mouseout', e=>{ if(e.target.closest && e.target.closest('.est')) hide(); });
+  document.addEventListener('focusin', e=>{ const t = e.target.closest && e.target.closest('.est'); if(t) show(t); });
+  document.addEventListener('focusout', e=>{ if(e.target.closest && e.target.closest('.est')) hide(); });
+  // tocar el valor la abre; tocarlo de nuevo (pasado un momento) o tocar fuera la cierra
+  document.addEventListener('click', e=>{ const t = e.target.closest && e.target.closest('.est'); if(!t) hide(); else if(cur !== t || Date.now() - shownAt < 400) show(t); else hide(); });
+  document.addEventListener('keydown', e=>{ if(e.key === 'Escape') hide(); });
+  document.addEventListener('scroll', ()=>{ if(Date.now() - shownAt > 300) hide(); }, true);
+})();
+let chgShowAll = false;
+function renderChargesSummary(){
+  const el = document.getElementById('chgSummary'); if(!el) return;
+  const views = state.charges.map(chargeView);
+  const sv = computeSavings(), has = sv.kwhTotal > 0;
+  const totalKwh = views.reduce((s,v)=>s + v.kwh, 0), nKwhEst = views.filter(v=>v.kwhEst).length;
+  const nCostEst = views.filter(v=>v.costEst).length;
+  const ap = avgPricePerKwh();
+  const apEst = views.some(v=>v.kwhEst && v.c.cost != null && v.c.cost !== '');
+  const kwhTip = 'Incluye ' + nKwhEst + (nKwhEst === 1 ? ' carga con kWh estimados' : ' cargas con kWh estimados') + ' con el % de batería (× ' + nf(VEHICLE_BATTERY_KWH, 1) + ' kWh de batería ÷ ' + nf(CHARGE_EFF, 1) + ' de rendimiento de carga)';
+  const litres = sv.refL * sv.kmEq / 100, effPrice = litres > 0 ? sv.gas / litres : currentFuelPrice();
+  const kwhAll = views.reduce((s,v)=>s + v.kwh, 0) || 1;
+  const effRate = views.reduce((s,v)=>s + v.kwh * (Number(v.c.rate) > 0 ? Number(v.c.rate) : (Number(state.config.electricRate) || 0.15)), 0) / kwhAll;
+  const est = (txt, tip) => estSpan(txt, tip);
+  const base = has ? 'León ' + nf(sv.refL, 1) + ' l/100 km · EVO ' + nf(sv.cons, 1) + ' kWh/100 km · gasolina ' + nf(effPrice, 3) + ' €/l' + (sv.fuelEst ? ' (estimada en ' + sv.fuelEst + (sv.fuelEst === 1 ? ' carga' : ' cargas') + ')' : '') + ' · tarifa ' + nf(effRate, 3) + ' €/kWh' : 'Registra cargas con kWh para calcular el ahorro';
+  el.innerHTML =
+    '<div class="chg-save"><div class="chg-save-l"><div class="chg-lbl">Ahorro vs gasolina</div>' +
+      '<div class="chg-save-val"' + (has && sv.saved < 0 ? ' style="color:var(--danger)"' : '') + '>' + (has ? est(fmtEUR(sv.saved), 'Estimado: gasolina ' + fmtEUR(sv.gas) + ' − electricidad ' + fmtEUR(sv.elec)) : '—') + '</div></div>' +
+      '<div class="chg-save-r"><div>Gasolina <b>' + (has ? est(fmtEUR(sv.gas), 'Estimado: km equivalentes (kWh ÷ consumo del EVO × 100) × consumo del León ÷ 100 × precio de la gasolina de cada día') : '—') + '</b></div>' +
+      '<div>Electricidad <b>' + (has ? (nCostEst ? est(fmtEUR(sv.elec), 'Incluye ' + nCostEst + (nCostEst === 1 ? ' carga sin coste anotado' : ' cargas sin coste anotado') + ', estimado con kWh × tarifa') : fmtEUR(sv.elec)) : '—') + '</b></div></div>' +
+      '<div class="chg-base">' + base + '</div></div>' +
+    '<div class="chg-minis">' +
+      '<div class="chg-mini"><div class="chg-lbl">Cargas</div><div class="chg-mini-val">' + state.charges.length + '</div></div>' +
+      '<div class="chg-mini"><div class="chg-lbl">kWh</div><div class="chg-mini-val">' + (totalKwh > 0 ? (nKwhEst ? est(nf(totalKwh, 1), kwhTip) : nf(totalKwh, 1)) : '—') + '</div></div>' +
+      '<div class="chg-mini"><div class="chg-lbl">€/kWh</div><div class="chg-mini-val">' + (ap != null ? (apEst ? est(nf(ap, 3), 'Coste anotado ÷ kWh. ' + kwhTip) : nf(ap, 3)) : '—') + '</div></div>' +
+    '</div>';
+}
 function renderCharges(){
-  const tbody = document.getElementById('chargesTable');
+  const list = document.getElementById('chgList'); if(!list) return;
+  const car = document.documentElement.classList.contains('car');
   const sorted = [...state.charges].sort(chargeCmpDesc);
-  tbody.innerHTML = sorted.map(c=>`
-    <tr>
-      <td title="Gasolina ese día: ${(Number(c.fuelPrice) > 0 ? Number(c.fuelPrice) : fuelPriceForDate(c.date)).toFixed(3)} €/l${chargeFuelIsEst(c) ? ' (estimado: aún no hay dato de ese día; se sustituirá por el real cuando exista)' : ''}">${chargeDateTimeHtml(c)}${chargeFuelIsEst(c) ? '<span class="est-mark">gasolina est.</span>' : ''}</td><td>${kwhOf(c) > 0 ? (kwhIsEst(c) ? '<span title="Estimado con el % de batería">≈ ' + kwhOf(c).toFixed(2) + '</span>' : Number(c.kwh).toFixed(2)) : '—'}</td><td>${(c.cost!=null && c.cost!=='') ? fmtEUR(c.cost) : '—'}</td>
-      <td>${(kwhOf(c) > 0 && c.cost!=null && c.cost!=='') ? (c.cost/kwhOf(c)).toFixed(3)+' €' : '—'}</td><td>${c.km ? fmtNum(c.km) : '—'}</td>
-      <td>${(c.socStart!=null||c.socEnd!=null) ? ((c.socStart!=null?c.socStart:'?')+' → '+(c.socEnd!=null?c.socEnd:'?')+' %') : '—'}</td>
-      <td>${c.location||'—'}</td>
-      <td>
-        <button class="icon-action" onclick="editCharge(${c.id})">${ICONS.edit}</button>
-        <button class="icon-action danger" onclick="deleteCharge(${c.id})">${ICONS.trash}</button>
-      </td>
-    </tr>`).join('');
+  const views = sorted.map(chargeView);
+  const shown = (car && !chgShowAll) ? views.slice(0, 4) : views;
+  list.innerHTML = shown.map(v=>chargeCardHtml(v, !car)).join('');
   document.getElementById('chargesEmpty').style.display = state.charges.length ? 'none' : 'block';
-
-  const totalKwh = state.charges.reduce((s,x)=>s+kwhOf(x),0);
-  const totalCost = state.charges.reduce((s,x)=>s+Number(x.cost||0),0);
-  document.getElementById('chgTotal').textContent = state.charges.length;
-  document.getElementById('chgKwh').textContent = totalKwh.toFixed(2);
-  { const ap = avgPricePerKwh(); document.getElementById('chgAvg').textContent = ap!=null ? ap.toFixed(3) : '—'; }
-  renderSavings();
+  const kwhAll = views.reduce((s,v)=>s + v.kwh, 0), nEst = views.filter(v=>v.estimated).length;
+  document.getElementById('chgCount').textContent = state.charges.length + (state.charges.length === 1 ? ' carga' : ' cargas') + ' · ' + nf(kwhAll, 1) + ' kWh';
+  const ap = fuelAuto && Number(fuelAuto.price) > 0;
+  document.getElementById('chgLegend').innerHTML = state.charges.length ?
+    '<div class="chg-legend-main"><b>' + nEst + ' de ' + state.charges.length + (state.charges.length === 1 ? ' carga' : ' cargas') + ' con datos estimados</b> · <span class="est-key">≈ estimado</span> · sin marca = introducido por ti</div>' +
+    '<div class="chg-legend-src">' + (ap ? 'Gasolina 95 Canarias hoy: <span class="est" role="note" tabindex="0" data-tip="Dato externo: media de ' + (fuelAuto.stations || '') + ' estaciones de Las Palmas y Santa Cruz de Tenerife" aria-label="estimado: dato externo">≈ ' + nf(fuelAuto.price, 3) + ' €/l</span> · Ministerio para la Transición Ecológica' + (fuelAuto.updated ? ' · ' + fmtDate(fuelAuto.updated.slice(0, 10)) : '') : 'Gasolina: precio manual de Configuración (' + nf(Number(state.config.fuelPrice) || 1.35, 3) + ' €/l)') + '</div>' : '';
+  const all = document.getElementById('chgAllBtn');
+  all.style.display = (car && views.length > 4) ? '' : 'none';
+  all.textContent = chgShowAll ? 'Ver menos' : 'Ver todas';
+  renderSavings();   // también repinta el resumen de Cargas
 }
 function deleteCharge(id){
   if(editingChargeId===id) cancelChargeEdit();
@@ -2137,8 +2265,8 @@ function editCharge(id){
   document.getElementById('c_location_other_wrap').style.display = locType==='Otro' ? 'block' : 'none';
   if(locType==='Otro') document.getElementById('c_location_other').value = c.location || '';
   document.getElementById('chargeSubmitBtn').textContent = 'Guardar cambios';
-  document.getElementById('chargeCancelEdit').style.display = '';
-  document.getElementById('chargeForm').scrollIntoView({behavior:'smooth', block:'start'});
+  document.getElementById('chargeFormTitle').textContent = 'Editar carga';
+  document.getElementById('chargeFormOverlay').classList.add('open');
 }
 function cancelChargeEdit(){
   editingChargeId = null;
@@ -2146,7 +2274,8 @@ function cancelChargeEdit(){
   document.getElementById('c_date').valueAsDate = new Date();
   document.getElementById('c_location_other_wrap').style.display = 'none';
   document.getElementById('chargeSubmitBtn').textContent = 'Registrar carga';
-  document.getElementById('chargeCancelEdit').style.display = 'none';
+  document.getElementById('chargeFormTitle').textContent = 'Registrar carga';
+  document.getElementById('chargeFormOverlay').classList.remove('open');
 }
 
 /* ---------------- maintenance ---------------- */
@@ -3292,6 +3421,8 @@ function setupEventListeners(){
     renderCharges(); renderDashboard(); renderAlerts(); toast(wasEditing ? 'Carga actualizada' : 'Carga registrada', 'success');
   });
   document.getElementById('chargeCancelEdit').addEventListener('click', cancelChargeEdit);
+  document.getElementById('chargeOpenBtn').addEventListener('click', ()=>{ cancelChargeEdit(); document.getElementById('chargeFormOverlay').classList.add('open'); });
+  document.getElementById('chgAllBtn').addEventListener('click', ()=>{ chgShowAll = !chgShowAll; renderCharges(); });
 
   document.getElementById('noteForm').addEventListener('submit', e=>{
     e.preventDefault();
