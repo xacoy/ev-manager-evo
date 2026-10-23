@@ -863,7 +863,7 @@ html[data-page="charges"] .topbar h1{visibility:hidden}
 .chg-table .chg-soc{border:0;padding:0;min-width:128px}
 .chg-table .chg-soc-val{font-size:15px}
 .chg-table .chg-bar{height:5px;margin-top:6px;max-width:150px}
-.chg-table .chg-chip{padding:1px 9px;font-size:11px;margin-left:4px}
+.chg-table .chg-chip{padding:1px 9px;font-size:11px}
 .chg-table .chg-act{justify-content:flex-end}
 @media(min-width:900px){
   html:not(.car) .chg-list{display:none}
@@ -1589,7 +1589,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-23.4';
+const APP_VERSION = '2026-10-23.5';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2267,7 +2267,7 @@ function chargeCardHtml(v, withActions){
   const c = v.c, t = chargeParts(v, 1);
   return '<article class="chg-card' + (v.soc ? '' : ' no-soc') + '">' +
     '<div class="chg-top"><span class="chg-loc">' + PIN_ICON + t.loc + '</span><b class="chg-when">' + t.date + ' · ' + t.time + '</b></div>' +
-    '<div class="chg-mid">' + chargeSocHtml(v) + '<div class="chg-kwh"><div class="chg-kwh-val">' + t.kwh + '</div><div class="chg-kwh-sub">' + t.cost + ' · ' + t.price + '</div></div></div>' +
+    '<div class="chg-mid">' + chargeSocHtml(v) + '<div class="chg-kwh"><div class="chg-kwh-val">' + t.kwh + '</div><div class="chg-kwh-sub">' + (v.free ? '' : t.cost + ' · ') + t.price + '</div></div></div>' +
     '<div class="chg-bot"><span class="chg-chip">' + t.km + '</span>' + (v.free ? '<span class="chg-chip free">Gratis</span>' : '') + (withActions ? chargeActionsHtml(c) : '') + '</div></article>';
 }
 // Fila de la tabla (tablet horizontal y escritorio): columnas rotuladas, más fáciles de comparar.
@@ -2278,7 +2278,7 @@ function chargeRowHtml(v){
     '<td><span class="chg-loc">' + PIN_ICON + t.loc + '</span></td>' +
     '<td>' + (v.soc ? chargeSocHtml(v) : '—') + '</td>' +
     '<td class="num">' + kwh + '</td>' +
-    '<td class="num">' + t.cost + (v.free ? ' <span class="chg-chip free">Gratis</span>' : '') + '</td>' +
+    '<td class="num">' + (v.free ? '<span class="chg-chip free">Gratis</span>' : t.cost) + '</td>' +
     '<td class="num">' + (v.price != null ? (v.priceEst ? estSpan(nf(v.price, 3) + ' €', v.tips.price) : nf(v.price, 3) + ' €') : '—') + '</td>' +
     '<td class="num">' + (c.km ? fmtNum(c.km) : '—') + '</td>' +
     '<td class="num">' + chargeActionsHtml(c) + '</td></tr>';
