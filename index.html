@@ -952,48 +952,54 @@ html.car .chg-tablecard{display:none!important}
   html.car #dashRecentActivity > div > div:nth-child(2) > div:last-child{font-size:13px!important}
   html.car #dashRecentActivity > div > div:last-child{font-size:16px!important}
   html.car .toasts{bottom:20px}
-/* ---- Cargas en modo coche: dos columnas, 4 filas a toda la altura, sin entrada de datos ---- */
-  html.car[data-page="charges"] .content{padding:32px}
-  html.car #page-charges.active{width:100%;display:grid;grid-template-columns:380px minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);column-gap:32px;row-gap:20px;min-height:0;overflow:hidden}
-  html.car .chg-head{grid-column:1;grid-row:1;margin:0;align-items:center}
-  html.car .chg-eyebrow,html.car .chg-add,html.car .chg-minis .chg-mini:first-child{display:none}
-  html.car .chg-title{font-size:44px;letter-spacing:-1px}
-  html.car .chg-sum{grid-column:1;grid-row:2;align-self:start;gap:16px;margin:0}
-  html.car .chg-save{grid-template-columns:1fr;border-radius:20px;padding:24px;gap:10px}
-  html.car .chg-lbl{font-size:16px;letter-spacing:.5px}
-  html.car .chg-save-val{font-size:72px;letter-spacing:-2px;margin-top:6px}
-  html.car .chg-save-r{text-align:left;font-size:18px;gap:6px}
-  html.car .chg-base{font-size:16px;line-height:1.45;padding-top:12px}
-  html.car .chg-minis{grid-template-columns:1fr;gap:16px}
-  html.car .chg-mini{border-radius:20px;padding:16px 24px}
-  html.car .chg-mini-val{font-size:40px}
-  html.car .chg-side{grid-column:2;grid-row:1 / 3;display:flex;flex-direction:column;min-height:0}
-  html.car .chg-list-head h3{font-size:28px}
+/* ---- Cargas en modo coche: igual que en modo ordenador (resumen en una fila + tabla), con letra y zonas táctiles grandes ---- */
+  html.car[data-page="charges"] .content{padding:20px 32px}
+  html.car #page-charges.active{width:100%;display:flex;flex-direction:column;gap:14px;min-height:0;overflow:hidden}
+  html.car .chg-add,html.car .chg-act,html.car .chg-table th:last-child,html.car .chg-table td:last-child{display:none}
+  html.car .chg-head{margin:0;align-items:center}
+  html.car .chg-eyebrow,html.car .chg-minis .chg-mini:first-child{display:none}
+  html.car .chg-title{font-size:38px;letter-spacing:-.8px}
+  html.car .chg-sum{grid-template-columns:2fr 1fr 1fr;gap:14px;margin:0;align-items:stretch}
+  html.car .chg-minis{display:contents}
+  html.car .chg-save{border-radius:18px;padding:14px 20px;gap:4px 16px}
+  html.car .chg-lbl{font-size:16px;letter-spacing:.4px}
+  html.car .chg-save-val{font-size:40px;margin-top:2px;white-space:nowrap}
+  html.car .chg-save-l .chg-lbl{white-space:nowrap}
+  html.car .chg-save-r{font-size:18px;gap:2px}
+  html.car .chg-base{font-size:16px;line-height:1.35;padding-top:6px}
+  html.car .chg-mini{border-radius:18px;padding:12px 18px;display:flex;flex-direction:column;justify-content:center}
+  html.car .chg-mini-val{font-size:34px}
+  html.car .chg-side{flex:1;min-height:0;display:flex;flex-direction:column}
+  html.car .chg-list-head{margin-bottom:2px}
+  html.car .chg-list-head h3{font-size:26px}
   html.car .chg-count{font-size:18px}
-  html.car .chg-legend{font-size:16px;line-height:1.5;margin-bottom:12px}
-  html.car .chg-list{flex:1;min-height:0;overflow:hidden;grid-template-columns:1fr;grid-auto-rows:minmax(min-content,1fr);gap:12px}
-  html.car .chg-list.all{overflow-y:auto;grid-auto-rows:minmax(112px,auto);align-content:start;padding-right:4px}
-  html.car .chg-card{border-radius:20px;padding:0 28px;display:grid;grid-template-columns:minmax(0,1.05fr) auto auto;justify-content:space-between;grid-template-rows:auto auto;align-content:center;column-gap:14px;row-gap:6px}
-  html.car .chg-top{grid-area:1/1;flex-direction:column;align-items:flex-start;gap:2px;font-size:16px}
-  html.car .chg-when{font-size:24px;white-space:normal;line-height:1.2}
-  html.car .chg-loc svg{width:18px;height:18px}
-  html.car .chg-bot{grid-area:2/1}
-  html.car .chg-chip{font-size:16px;padding:3px 14px}
-  html.car .chg-mid{display:contents}
-  html.car .chg-soc{grid-area:1/2/3/3;align-self:center;border:0;padding:0}
-  html.car .chg-soc-val,html.car .chg-kwh-val{font-size:40px}
-  html.car .chg-soc-val .u,html.car .chg-kwh-val .u{font-size:22px;font-weight:700;color:var(--text-muted)}
-  html.car .chg-soc-val .arr{font-size:30px;margin:0 6px}
-  html.car .chg-kwh-sub{max-width:230px;margin-left:auto}
-  html.car .chg-bar{height:10px;margin-top:10px}
-  html.car .chg-kwh{grid-area:1/3/3/4;align-self:center;padding:0}
-  html.car .chg-kwh-sub{font-size:18px;margin-top:4px;line-height:1.25}
-  html.car button.chg-all{min-height:64px;font-size:18px;margin-top:12px}
-  html.car .chg-card .est,html.car #page-charges .empty-state p{font-size:inherit}
+  html.car .chg-legend{font-size:16px;line-height:1.4;margin-bottom:8px}
+  html.car .chg-list{display:none}
+  html.car .chg-tablecard{display:flex!important;flex-direction:column;flex:1;min-height:0;padding:0 18px;border-radius:18px}
+  html.car .chg-tablecard.empty{display:none!important}
+  html.car .chg-tablecard .table-wrap{flex:1;min-height:0;overflow:hidden}
+  html.car .chg-tablecard.all .table-wrap{overflow-y:auto}
+  html.car .chg-table{height:100%}
+  html.car .chg-tablecard.all .chg-table{height:auto}
+  html.car .chg-tablecard.all .chg-table th{position:sticky;top:0;background:var(--bg-card);z-index:1}
+  html.car .chg-table th{font-size:16px;padding:10px 10px}
+  html.car .chg-table td{font-size:22px;padding:4px 10px;min-height:64px}
+  html.car .chg-table td.when .dot{display:none}
+  html.car .chg-table td.when .t{display:block;font-size:18px;color:var(--text-muted);line-height:1.2}
+  html.car .chg-table td.when b{display:block;line-height:1.2}
+  html.car .chg-table tbody tr{height:64px}
+  html.car .chg-table .chg-loc{font-size:20px;gap:8px}
+  html.car .chg-table .chg-loc svg{width:20px;height:20px}
+  html.car .chg-table .chg-soc{min-width:150px}
+  html.car .chg-table .chg-soc-val{font-size:22px}
+  html.car .chg-table .chg-soc-val .u{font-size:16px}
+  html.car .chg-table .chg-bar{height:8px;margin-top:6px;max-width:150px}
+  html.car .chg-table .chg-chip{font-size:16px;padding:2px 12px}
+  html.car button.chg-all{min-height:64px;font-size:18px;margin-top:10px}
   html.car #page-charges .empty-state{font-size:18px}
   html.car #page-charges .empty-state p{font-size:20px}
   html.car .est{position:relative}
-  html.car .est::before{content:"";position:absolute;inset:-24px -10px}
+  html.car .est::before{content:"";position:absolute;inset:-22px -10px}
   html.car #estTip{font-size:16px;max-width:min(420px,calc(100vw - 16px))}
 </style>
 </head>
@@ -1580,7 +1586,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-23.2';
+const APP_VERSION = '2026-10-23.3';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2264,7 +2270,7 @@ function chargeCardHtml(v, withActions){
 function chargeRowHtml(v){
   const c = v.c, t = chargeParts(v, 2);
   const kwh = v.kwh > 0 ? (v.kwhEst ? estSpan(nf(v.kwh, 2), v.tips.kwh) : nf(v.kwh, 2)) : '—';
-  return '<tr><td class="when"><b>' + t.date + '</b> · ' + t.time + '</td>' +
+  return '<tr><td class="when"><b>' + t.date + '</b><span class="dot"> · </span><span class="t">' + t.time + '</span></td>' +
     '<td><span class="chg-loc">' + PIN_ICON + t.loc + '</span></td>' +
     '<td>' + (v.soc ? chargeSocHtml(v) : '—') + '</td>' +
     '<td class="num">' + kwh + '</td>' +
@@ -2327,9 +2333,9 @@ function renderCharges(){
   const sorted = [...state.charges].sort(chargeCmpDesc);
   const views = sorted.map(chargeView);
   const shown = (car && !chgShowAll) ? views.slice(0, 4) : views;
-  list.classList.toggle('all', car && chgShowAll);
-  list.innerHTML = shown.map(v=>chargeCardHtml(v, !car)).join('');
-  document.getElementById('chgTableBody').innerHTML = views.map(chargeRowHtml).join('');
+  document.querySelector('.chg-tablecard').classList.toggle('all', car && chgShowAll);
+  list.innerHTML = views.map(v=>chargeCardHtml(v, true)).join('');
+  document.getElementById('chgTableBody').innerHTML = shown.map(chargeRowHtml).join('');
   document.querySelector('.chg-tablecard').classList.toggle('empty', !state.charges.length);
   document.getElementById('chargesEmpty').style.display = state.charges.length ? 'none' : 'block';
   const kwhAll = views.reduce((s,v)=>s + v.kwh, 0), nEst = views.filter(v=>v.estimated).length;
