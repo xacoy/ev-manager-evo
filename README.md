@@ -26,6 +26,12 @@ Gestor integral web de tu **BYD Atto 3 EVO**: cargas, mantenimiento, revisiones 
 - Datos estimados siempre marcados con «≈» y subrayado punteado; al tocar, pasar el ratón o enfocar
   se explica la base del cálculo con tus cifras. Sin marca = introducido por ti
 
+### 🔋 Lecturas del coche (Configuración)
+- Ficha para copiar cada pocos días los datos de la app de BYD («Consumo de energía»): km totales, consumo acumulado y, opcional, el reciente
+- Muestra la fecha y hora de la última actualización y avisa («Toca actualizar») pasados 7 días
+- Con dos lecturas calcula el consumo real entre ellas (energía = consumo × km) y guarda el historial
+- La última lectura es el consumo del coche que usa el resto de la app
+
 ### 🔧 Mantenimiento
 - Registro por tipo (frenos, neumáticos, batería, filtros, etc.)
 - Coste, fecha y notas
