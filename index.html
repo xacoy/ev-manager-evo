@@ -877,6 +877,30 @@ html.car .chg-tablecard{display:none!important}
 @media(min-width:760px){.chg-list{grid-template-columns:1fr 1fr}.chg-sum{grid-template-columns:1fr}}
 @media(max-width:400px){.chg-save-val{font-size:26px}.chg-soc-val,.chg-kwh-val{font-size:20px}}
 
+
+/* ---------- lecturas del coche (Configuración) ---------- */
+.readings-card{margin-bottom:16px}
+.rd-status{font-size:11px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;padding:4px 10px;border-radius:99px}
+.rd-status.ok{color:var(--success);background:var(--success-soft)}
+.rd-status.stale{color:var(--est);background:var(--warning-soft)}
+.rd-help{font-size:13px;color:var(--text-muted);line-height:1.55;margin:-6px 0 14px}
+.rd-last{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:16px;display:grid;gap:10px;font-size:13px;color:var(--text-muted)}
+.rd-lbl{display:block;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text-faint);margin-bottom:2px}
+.rd-when b{font-family:var(--font-display);font-size:20px;color:var(--text);margin-right:8px}
+.rd-ago{font-size:12px;color:var(--text-muted);font-weight:600}
+.rd-vals{display:flex;flex-wrap:wrap;gap:6px 28px}
+.rd-vals b{font-size:15px;color:var(--text);font-variant-numeric:tabular-nums}
+.rd-fields{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:12px;align-items:end}
+.rd-fields .field{margin-bottom:0}
+.rd-save{height:46px;white-space:nowrap}
+.rd-between,.rd-hist{margin-top:16px;font-size:13px;color:var(--text-muted)}
+.rd-iv{margin-top:4px;line-height:1.6}
+.rd-iv b{color:var(--text)}
+.rd-rows{display:grid;gap:0;margin-top:4px}
+.rd-row{display:grid;grid-template-columns:1.3fr .8fr 1.6fr auto;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--border);font-variant-numeric:tabular-nums}
+.rd-row small{color:var(--text-faint)}
+@media(max-width:760px){.rd-fields{grid-template-columns:1fr}.rd-save{width:100%}.rd-row{grid-template-columns:1fr auto;grid-template-areas:"a d" "b d" "c d"}.rd-row>:nth-child(1){grid-area:a;color:var(--text)}.rd-row>:nth-child(2){grid-area:b}.rd-row>:nth-child(3){grid-area:c}.rd-row>button{grid-area:d}}
+
 /* ---------- modo pantalla del coche (clase html.car: automática en pantallas apaisadas o activable a mano) ---------- */
   html.car{--rail-w:128px}
   html.car .nav-rail{display:flex;padding:10px 4px;gap:4px}
@@ -1142,6 +1166,21 @@ html.car .chg-tablecard{display:none!important}
 
       <!-- SETUP -->
       <section class="page" id="page-setup">
+        <div class="card readings-card" id="readingsCard">
+          <div class="card-head"><h2>Lecturas del coche</h2><span class="rd-status" id="rdStatus"></span></div>
+          <p class="rd-help">Abre la app de BYD → <b>Consumo de energía</b> y copia estos datos cada pocos días. Con dos lecturas la app calcula el consumo real entre ellas, sin estimar con el % de batería.</p>
+          <div class="rd-last" id="rdLast"></div>
+          <form id="readingForm" autocomplete="off">
+            <div class="rd-fields">
+              <div class="field"><label>Kilometraje total (km)</label><input id="rd_km" type="number" min="0" step="1" inputmode="numeric" placeholder="Ej. 801"></div>
+              <div class="field"><label>Consumo acumulado (kWh/100 km)</label><input id="rd_aec" type="number" min="0" step="0.1" inputmode="decimal" placeholder="Ej. 16,2"></div>
+              <div class="field"><label>Consumo reciente <span class="opt-hint">(opcional, kWh/100 km)</span></label><input id="rd_recent" type="number" min="0" step="0.1" inputmode="decimal" placeholder="Ej. 15,4"></div>
+              <button type="submit" class="btn btn-primary rd-save">Guardar lectura</button>
+            </div>
+          </form>
+          <div class="rd-between" id="rdBetween"></div>
+          <div class="rd-hist" id="rdHist"></div>
+        </div>
         <div class="grid grid-2">
           <div class="card">
             <div class="card-head"><h2>Configuración del vehículo</h2></div>
@@ -1163,7 +1202,6 @@ html.car .chg-tablecard{display:none!important}
                 <div class="field"><label>Consumo medio (kWh/100km)</label><input id="f_consumption" type="number" step="0.1" placeholder="15"></div>
                 <div class="field"><label>Tarifa eléctrica (€/kWh)</label><input id="f_rate" type="number" step="0.01" placeholder="0.15"></div>
               </div>
-              <div class="field"><label>Consumo del coche (AEC acumulado, kWh/100km) <span class="opt-hint">(opcional)</span></label><input id="f_aec" type="number" step="0.1" min="0" placeholder="Ej. 16.6"><div class="muted" style="font-size:11.5px;color:var(--text-faint);margin-top:4px">Es el dato "AEC acumulativo" de la pantalla del coche. Mide la energía que sale de la batería; se convierte a kWh de la red dividiendo entre 0,9.</div></div>
               <div class="field-row">
                 <div class="field"><label>León FR 125 CV (l/100km)</label><input id="f_refcons" type="number" step="0.1" placeholder="6.5"></div>
                 <div class="field"><label>Gasolina de respaldo (€/l)</label><input id="f_fuel" type="number" step="0.01" placeholder="1.35"></div>
@@ -1589,7 +1627,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-23.5';
+const APP_VERSION = '2026-10-28.1';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -1616,6 +1654,7 @@ const REVISIONS_SCHEDULE = {
 /* ---------------- state ---------------- */
 let state = {
   config: { version: 'design', vin: '', currentKm: 0, purchaseDate: '', avgConsumption: 17, electricRate: 0.15, refConsumption: 6.5, fuelPrice: 1.35, carAec: null },
+  carReadings: [],
   charges: [],
   maintenance: [],
   notes: [],
@@ -1715,6 +1754,7 @@ function navigate(page, opts){
     try{ if(location.hash !== h) history.pushState(null, '', h); }catch(e){}
   }
   if(page==='charges') renderCharges();
+  if(page==='setup') renderReadings();
   if(page==='revisions') renderRevisions();
   if(page==='docs') setDocTab(docTab);
   if(page==='stats') renderStats();
@@ -2888,6 +2928,79 @@ function cancelQuickLinkEdit(){
   document.getElementById('quickLinkSubmitBtn').textContent = 'Guardar enlace';
 }
 
+/* ---------------- lecturas del coche (consumo medido por el propio coche) ---------------- */
+// Cada lectura: { id, ts, date, time, km, aec (kWh/100 km acumulado, de batería), recent (opcional) }. Se guardan tal cual: no se reescriben.
+const READING_STALE_DAYS = 7;
+function readingList(){ return (state.carReadings || []).slice().sort((a,b)=> a.ts - b.ts); }
+function readingDaysAgo(r){
+  const a = new Date(isoToday() + 'T12:00:00'), b = new Date(r.date + 'T12:00:00');
+  return Math.round((a - b) / 864e5);
+}
+function readingAgoText(d){ return d <= 0 ? 'hoy' : d === 1 ? 'ayer' : 'hace ' + d + ' días'; }
+// Consumo exacto entre dos lecturas: energía = aec₂ × km₂ − aec₁ × km₁ (batería); el de red aplica el rendimiento de carga supuesto.
+function readingInterval(r1, r2){
+  const km = r2.km - r1.km, kwh = (r2.aec * r2.km - r1.aec * r1.km) / 100;
+  if(!(km >= 1) || !(kwh > 0)) return { km, kwh, ok: false };
+  const cons = kwh / km * 100;
+  return { km, kwh, cons, wall: cons / CHARGE_EFF, ok: cons >= 5 && cons <= 60 };
+}
+function renderReadings(){
+  const card = document.getElementById('readingsCard'); if(!card) return;
+  const list = readingList(), last = list[list.length - 1];
+  const st = document.getElementById('rdStatus'), lastEl = document.getElementById('rdLast');
+  if(!last){
+    const cur = Number(state.config.carAec) > 0 ? ' Valor que se usa ahora (sin fecha de lectura): ' + nf(state.config.carAec, 1) + ' kWh/100 km.' : '';
+    st.className = 'rd-status stale'; st.textContent = 'Sin lecturas';
+    lastEl.innerHTML = 'Todavía no has guardado ninguna lectura.' + cur;
+  } else {
+    const d = readingDaysAgo(last), stale = d > READING_STALE_DAYS;
+    st.className = 'rd-status ' + (stale ? 'stale' : 'ok'); st.textContent = stale ? 'Toca actualizar' : 'Al día';
+    lastEl.innerHTML = '<div class="rd-when"><span class="rd-lbl">Última actualización</span><b>' + fmtDate(last.date) + ' · ' + escapeHtml(last.time) + '</b><span class="rd-ago">' + readingAgoText(d) + '</span></div>' +
+      '<div class="rd-vals"><div><span class="rd-lbl">Km totales</span><b>' + fmtNum(last.km) + ' km</b></div><div><span class="rd-lbl">Consumo acumulado</span><b>' + nf(last.aec, 1) + ' kWh/100 km</b></div>' +
+      (last.recent > 0 ? '<div><span class="rd-lbl">Consumo reciente</span><b>' + nf(last.recent, 1) + ' kWh/100 km</b></div>' : '') + '</div>';
+  }
+  // consumo entre las dos últimas lecturas
+  const bt = document.getElementById('rdBetween');
+  if(list.length >= 2){
+    const a = list[list.length - 2], b = last, iv = readingInterval(a, b);
+    bt.innerHTML = '<span class="rd-lbl">Entre las dos últimas lecturas</span>' + (iv.ok ?
+      '<div class="rd-iv"><b>' + fmtNum(iv.km) + ' km</b> · <b>' + nf(iv.kwh, 1) + ' kWh</b> de batería · <b>' + nf(iv.cons, 1) + ' kWh/100 km</b> · ' + estSpan(nf(iv.wall, 1) + ' kWh/100 km de red', 'Estimado: ' + nf(iv.cons, 1) + ' kWh/100 km de batería ÷ ' + nf(CHARGE_EFF, 1) + ' de rendimiento de carga') + '</div>'
+      : '<div class="rd-iv muted">' + (iv.km >= 1 ? 'Las lecturas no son coherentes (la energía no puede bajar): revisa los datos.' : 'Faltan km entre las lecturas para calcular el consumo.') + '</div>');
+  } else bt.innerHTML = '';
+  // historial (las 6 más recientes)
+  const hist = document.getElementById('rdHist');
+  hist.innerHTML = list.length ? '<span class="rd-lbl">Historial</span><div class="rd-rows">' + list.slice(-6).reverse().map(r=>
+    '<div class="rd-row"><span>' + fmtDate(r.date) + ' · ' + escapeHtml(r.time) + '</span><span>' + fmtNum(r.km) + ' km</span><span>' + nf(r.aec, 1) + ' kWh/100 km' + (r.recent > 0 ? ' <small>(reciente ' + nf(r.recent, 1) + ')</small>' : '') + '</span>' +
+    '<button type="button" class="icon-action danger" onclick="deleteReading(' + r.id + ')" aria-label="Eliminar lectura">' + ICONS.trash + '</button></div>').join('') + '</div>' : '';
+}
+function saveReading(e){
+  e.preventDefault();
+  const km = Number(document.getElementById('rd_km').value), aec = Number(document.getElementById('rd_aec').value);
+  const rv = document.getElementById('rd_recent').value, recent = rv === '' ? null : Number(rv);
+  if(!(km > 0)){ toast('Indica el kilometraje total', 'warning'); return; }
+  if(!(aec >= 5 && aec <= 60)){ toast('El consumo acumulado debe estar entre 5 y 60 kWh/100 km', 'warning'); return; }
+  if(recent != null && !(recent >= 5 && recent <= 60)){ toast('El consumo reciente debe estar entre 5 y 60 kWh/100 km', 'warning'); return; }
+  const last = readingList().pop();
+  if(last && km < last.km){ toast('Los km no pueden ser menores que los de la última lectura (' + fmtNum(last.km) + ' km)', 'warning'); return; }
+  const now = new Date();
+  state.carReadings = state.carReadings || [];
+  state.carReadings.push({ id: now.getTime(), ts: now.getTime(), date: isoToday(), time: String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0'), km, aec, recent });
+  // la última lectura es el consumo del coche que usa el resto de la app y también actualiza el odómetro
+  state.config.carAec = aec;
+  state.config.currentKm = Math.max(Number(state.config.currentKm) || 0, km);
+  saveState();
+  document.getElementById('readingForm').reset();
+  applyStateToForms(); renderReadings(); renderDashboard(); renderAlerts();
+  toast('Lectura guardada', 'success');
+}
+function deleteReading(id){
+  state.carReadings = (state.carReadings || []).filter(r=>r.id !== id);
+  const last = readingList().pop();
+  if(last) state.config.carAec = last.aec;   // vuelve a valer la lectura anterior
+  saveState(); applyStateToForms(); renderReadings(); renderDashboard();
+  toast('Lectura eliminada', 'info');
+}
+
 /* ---------------- stats ---------------- */
 
 /* ---------------- gráficas SVG ---------------- */
@@ -3372,7 +3485,6 @@ function applyStateToForms(){
   document.getElementById('f_km').value = getCurrentKm();
   document.getElementById('f_purchase').value = c.purchaseDate;
   document.getElementById('f_consumption').value = c.avgConsumption;
-  document.getElementById('f_aec').value = c.carAec ?? '';
   document.getElementById('f_rate').value = c.electricRate;
   document.getElementById('f_refcons').value = c.refConsumption ?? 6.5;
   document.getElementById('f_fuel').value = c.fuelPrice ?? 1.35;
@@ -3437,7 +3549,7 @@ function setupEventListeners(){
       currentKm: Number(document.getElementById('f_km').value)||0,
       purchaseDate: document.getElementById('f_purchase').value,
       avgConsumption: Number(document.getElementById('f_consumption').value)||17,
-      carAec: Number(document.getElementById('f_aec').value) > 0 ? Number(document.getElementById('f_aec').value) : null,
+      carAec: state.config.carAec,   // lo gestiona la ficha «Lecturas del coche»
       electricRate: Number(document.getElementById('f_rate').value)||0.15,
       refConsumption: Number(document.getElementById('f_refcons').value)||6.5,
       fuelPrice: Number(document.getElementById('f_fuel').value)||1.35
@@ -3532,6 +3644,7 @@ function setupEventListeners(){
     renderCharges(); renderDashboard(); renderAlerts(); toast(wasEditing ? 'Carga actualizada' : 'Carga registrada', 'success');
   });
   document.getElementById('chargeCancelEdit').addEventListener('click', cancelChargeEdit);
+  document.getElementById('readingForm').addEventListener('submit', saveReading);
   document.getElementById('chargeOpenBtn').addEventListener('click', ()=>{ cancelChargeEdit(); document.getElementById('chargeFormOverlay').classList.add('open'); });
   document.getElementById('chgAllBtn').addEventListener('click', ()=>{ chgShowAll = !chgShowAll; renderCharges(); });
 
