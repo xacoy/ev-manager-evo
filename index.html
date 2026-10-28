@@ -1339,6 +1339,7 @@ html.car .chg-tablecard{display:none!important}
         <div id="downloadsTab" style="display:none">
           <div class="card" style="padding:16px">
             <div class="card-head"><h2>Descargas</h2><span class="hint" id="dlCount"></span></div>
+            <div class="tags-bar" id="dlCats" style="margin-bottom:12px"></div>
             <div id="dlList"></div>
           </div>
         </div>
@@ -1695,7 +1696,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-28.11';
+const APP_VERSION = '2026-10-28.12';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2581,7 +2582,7 @@ function setDocTab(t){
   if(t === 'revs') renderRevisions(); else if(t === 'downloads') renderDownloads(); else if(t === 'notes') renderNotes(); else renderDocs();
 }
 const DOWNLOADS = [
-  { group: 'Fondos oscuros · 2560 × 1600', thumbs: true, items: [
+  { cat: 'oscuro', group: 'Oscuros', thumbs: true, items: [
     ['fondo_01_ocean.jpg','Océano','1588 KB'],
     ['fondo_02_velocidad.jpg','Velocidad','843 KB'],
     ['fondo_03_hex.jpg','Panal','1120 KB'],
@@ -2594,7 +2595,7 @@ const DOWNLOADS = [
     ['fondo_10_nebulosa.jpg','Nebulosa','897 KB'],
     ['fondo_11_topografia.jpg','Topografía','899 KB'],
     ['fondo_12_carbono.jpg','Carbono','571 KB'] ] },
-  { group: 'Fondos claros · 2560 × 1600 (tonos medios, sin deslumbrar)', thumbs: true, items: [
+  { cat: 'claro', group: 'Claros', thumbs: true, items: [
     ['fondo_claro_01_niebla.jpg','Niebla','283 KB'],
     ['fondo_claro_02_oleaje.jpg','Oleaje','678 KB'],
     ['fondo_claro_03_panal.jpg','Panal','539 KB'],
@@ -2607,7 +2608,7 @@ const DOWNLOADS = [
     ['fondo_claro_10_plata.jpg','Plata','480 KB'],
     ['fondo_claro_11_aurora.jpg','Aurora','292 KB'],
     ['fondo_claro_12_puntos.jpg','Puntos','365 KB'] ] },
-  { group: 'Con color · oscuros · 2560 × 1600', thumbs: true, items: [
+  { cat: 'colorido', group: 'Coloridos · oscuros', thumbs: true, items: [
     ['fondo_color_oscuro_01_verde_panal.jpg','Verde panal','1138 KB'],
     ['fondo_color_oscuro_02_rojo_velocidad.jpg','Rojo velocidad','844 KB'],
     ['fondo_color_oscuro_03_violeta_onda.jpg','Violeta onda','473 KB'],
@@ -2616,7 +2617,7 @@ const DOWNLOADS = [
     ['fondo_color_oscuro_06_naranja_topografia.jpg','Naranja topografía','899 KB'],
     ['fondo_color_oscuro_07_rosa_nebulosa.jpg','Rosa nebulosa','942 KB'],
     ['fondo_color_oscuro_08_lima_blade.jpg','Lima blade','904 KB'] ] },
-  { group: 'Con color · claros · 2560 × 1600', thumbs: true, items: [
+  { cat: 'colorido', group: 'Coloridos · claros', thumbs: true, items: [
     ['fondo_color_claro_01_salvia_niebla.jpg','Salvia niebla','282 KB'],
     ['fondo_color_claro_02_turquesa_oleaje.jpg','Turquesa oleaje','686 KB'],
     ['fondo_color_claro_03_lavanda_panal.jpg','Lavanda panal','554 KB'],
@@ -2626,10 +2627,14 @@ const DOWNLOADS = [
     ['fondo_color_claro_07_rosa_aurora.jpg','Rosa aurora','296 KB'],
     ['fondo_color_claro_08_malva_puntos.jpg','Malva puntos','377 KB'] ] }
 ];
+const DL_CATS = [['oscuro','Oscuro'],['claro','Claro'],['colorido','Colorido']];
+let dlCat = 'all';
 function renderDownloads(){
-  const n = DOWNLOADS.reduce((a,g)=>a + g.items.length, 0);
-  document.getElementById('dlCount').textContent = n + ' archivos';
-  document.getElementById('dlList').innerHTML = DOWNLOADS.map(g=>'<div class="dl-group">' + g.group + '</div><div class="dl-grid">' + g.items.map(([f,t,sz])=>{
+  const count = c=>DOWNLOADS.filter(g=>c === 'all' || g.cat === c).reduce((a,g)=>a + g.items.length, 0);
+  const chip = (v,l)=>'<button type="button" class="tag-toggle ' + (dlCat === v ? 'active' : '') + '" data-dlcat="' + v + '">' + l + ' (' + count(v) + ')</button>';
+  document.getElementById('dlCount').textContent = 'JPG · 2560 × 1600';
+  document.getElementById('dlCats').innerHTML = chip('all', 'Todos') + DL_CATS.map(c=>chip(c[0], c[1])).join('');
+  document.getElementById('dlList').innerHTML = DOWNLOADS.filter(g=>dlCat === 'all' || g.cat === dlCat).map(g=>'<div class="dl-group">' + g.group + '</div><div class="dl-grid">' + g.items.map(([f,t,sz])=>{
     const url = 'public/descargas/' + f, th = g.thumbs ? 'public/descargas/thumbs/' + f : url;
     return '<div class="dl-item"><a href="' + url + '" target="_blank" rel="noopener"><img src="' + th + '" alt="' + t + '" loading="lazy"></a><div class="dl-info"><b>' + t + '</b><small>' + f.split('.').pop().toUpperCase() + ' · ' + sz + '</small><a class="btn btn-primary btn-sm" href="' + url + '" download="' + f + '">Descargar</a></div></div>';
   }).join('') + '</div>').join('');
@@ -2795,6 +2800,7 @@ function setupDocs(){
   document.getElementById('d_cat').addEventListener('change', e=>fillDocSubs(e.target.value));
   document.getElementById('d_existing').addEventListener('click', e=>{ const b = e.target.closest('[data-att]'); if(!b) return; const a = editingDocFiles[Number(b.dataset.att)]; if(a){ a.removed = !a.removed; renderDocExisting(); } });
   document.getElementById('docSearch').addEventListener('input', renderDocs);
+  document.getElementById('dlCats').addEventListener('click', e=>{ const b = e.target.closest('[data-dlcat]'); if(b){ dlCat = b.dataset.dlcat; renderDownloads(); } });
   document.getElementById('docTabs').addEventListener('click', e=>{ const b = e.target.closest('[data-tab]'); if(b) setDocTab(b.dataset.tab); });
   document.getElementById('docCatBar').addEventListener('click', e=>{ const b = e.target.closest('[data-cat]'); if(!b) return; docFilterCat = b.dataset.cat; docFilterSub = ''; renderDocs(); });
   document.getElementById('docSubBar').addEventListener('click', e=>{ const b = e.target.closest('[data-sub]'); if(!b) return; docFilterSub = b.dataset.sub; renderDocs(); });
