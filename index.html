@@ -523,6 +523,14 @@ button{cursor:pointer}
 .att-item button,.att-item a{background:none;border:1px solid var(--border);border-radius:8px;color:var(--accent);padding:5px 10px;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none}
 .doc-tabs{display:flex;gap:6px;margin-bottom:14px;background:var(--bg-2);border:1px solid var(--border);border-radius:12px;padding:4px}
 .doc-tabs button{flex:1;background:none;border:0;border-radius:9px;padding:9px 10px;font-size:13px;font-weight:700;color:var(--text-dim);cursor:pointer}
+.dl-group{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--text-faint);margin:6px 0 10px}
+.dl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:14px;margin-bottom:18px}
+.dl-item{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;display:flex;flex-direction:column}
+.dl-item img{display:block;width:100%;aspect-ratio:8/5;object-fit:cover;background:var(--bg)}
+.dl-item .dl-info{padding:10px 12px 12px;display:flex;flex-direction:column;gap:2px}
+.dl-item b{font-size:13px;color:var(--text)}
+.dl-item small{font-size:11.5px;color:var(--text-faint);font-weight:600}
+.dl-item .btn{margin-top:8px;text-align:center;text-decoration:none}
 .doc-tabs button.active{background:var(--accent-soft);color:var(--accent)}
 .doc-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
 .doc-sum{font-size:13px;color:var(--text-dim)}
@@ -1287,7 +1295,7 @@ html.car .chg-tablecard{display:none!important}
       <!-- TALLER -->
       <!-- DOCUMENTS -->
       <section class="page" id="page-docs">
-        <div class="doc-tabs" id="docTabs"><button type="button" class="active" data-tab="docs">Documentos</button><button type="button" data-tab="notes">Notas</button><button type="button" data-tab="revs">Revisiones</button></div>
+        <div class="doc-tabs" id="docTabs"><button type="button" class="active" data-tab="docs">Documentos</button><button type="button" data-tab="notes">Notas</button><button type="button" data-tab="revs">Revisiones</button><button type="button" data-tab="downloads">Descargas</button></div>
         <div id="docsTab">
           <div class="card" style="padding:16px">
             <div class="doc-head">
@@ -1311,6 +1319,12 @@ html.car .chg-tablecard{display:none!important}
             <input id="noteSearch" type="text" placeholder="Buscar en notas..." style="width:100%;background:var(--bg-2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:13px;margin-bottom:6px">
             <div class="doc-list" id="notesList"></div>
             <div id="notesEmpty" class="empty-state" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg><p>No hay notas</p></div>
+          </div>
+        </div>
+        <div id="downloadsTab" style="display:none">
+          <div class="card" style="padding:16px">
+            <div class="card-head"><h2>Descargas</h2><span class="hint" id="dlCount"></span></div>
+            <div id="dlList"></div>
           </div>
         </div>
         <div id="revsTab" style="display:none">
@@ -1666,7 +1680,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-28.3';
+const APP_VERSION = '2026-10-28.4';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2549,7 +2563,24 @@ function setDocTab(t){
   document.getElementById('docsTab').style.display = t === 'docs' ? '' : 'none';
   document.getElementById('notesTab').style.display = t === 'notes' ? '' : 'none';
   document.getElementById('revsTab').style.display = t === 'revs' ? '' : 'none';
-  if(t === 'revs') renderRevisions(); else if(t === 'notes') renderNotes(); else renderDocs();
+  document.getElementById('downloadsTab').style.display = t === 'downloads' ? '' : 'none';
+  if(t === 'revs') renderRevisions(); else if(t === 'downloads') renderDownloads(); else if(t === 'notes') renderNotes(); else renderDocs();
+}
+const DOWNLOADS = [
+  { group: 'Fondos de pantalla · 2560 × 1600', thumbs: true, items: [
+    ['fondo_01_medianoche.jpg','Medianoche','428 KB'],['fondo_02_aurora.jpg','Aurora','429 KB'],['fondo_03_carbono.jpg','Carbono','679 KB'],['fondo_04_topografia.jpg','Topografía','835 KB'],
+    ['fondo_05_carretera.jpg','Carretera','449 KB'],['fondo_06_estrellas.jpg','Estrellas','444 KB'],['fondo_07_haces.jpg','Haces','438 KB'],['fondo_08_brasa.jpg','Brasa','425 KB']] },
+  { group: 'Fondos de pantalla · formato pequeño', thumbs: false, items: [
+    ['fondo_pantalla_1.png','Pantalla 1','98 KB'],['fondo_pantalla_2.png','Pantalla 2','76 KB'],['fondo_pantalla_3.png','Pantalla 3','92 KB'],['fondo_pantalla_4.png','Pantalla 4','85 KB'],
+    ['fondo_pantalla_5.png','Pantalla 5','81 KB'],['fondo_pantalla_6.png','Pantalla 6','104 KB'],['fondo_pantalla_7.png','Pantalla 7','69 KB'],['fondo_pantalla_8.png','Pantalla 8','124 KB']] }
+];
+function renderDownloads(){
+  const n = DOWNLOADS.reduce((a,g)=>a + g.items.length, 0);
+  document.getElementById('dlCount').textContent = n + ' archivos';
+  document.getElementById('dlList').innerHTML = DOWNLOADS.map(g=>'<div class="dl-group">' + g.group + '</div><div class="dl-grid">' + g.items.map(([f,t,sz])=>{
+    const url = 'public/descargas/' + f, th = g.thumbs ? 'public/descargas/thumbs/' + f : url;
+    return '<div class="dl-item"><a href="' + url + '" target="_blank" rel="noopener"><img src="' + th + '" alt="' + t + '" loading="lazy"></a><div class="dl-info"><b>' + t + '</b><small>' + f.split('.').pop().toUpperCase() + ' · ' + sz + '</small><a class="btn btn-primary btn-sm" href="' + url + '" download="' + f + '">Descargar</a></div></div>';
+  }).join('') + '</div>').join('');
 }
 function renderDocs(){
   const docs = state.docs || [];

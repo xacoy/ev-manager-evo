@@ -44,6 +44,10 @@ Gestor integral web de tu **BYD Atto 3 EVO**: cargas, mantenimiento, revisiones 
 - Descripción de tareas por revisión
 - Alertas visuales y notificaciones del navegador
 
+### ⬇️ Descargas (en Documentos)
+- Pestaña con archivos para descargar: por ahora 16 fondos de pantalla (8 JPG 2560×1600 y 8 PNG pequeños) en `public/descargas/`
+- Vista previa en miniatura y botón Descargar; para añadir más, copia el archivo a esa carpeta y añádelo a `DOWNLOADS` en `index.html`
+
 ### 📝 Notas
 - Notas libres con etiquetas
 - Filtrado por etiqueta y búsqueda
