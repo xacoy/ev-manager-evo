@@ -1024,11 +1024,12 @@ html.car .chg-tablecard{display:none!important}
   html.car #page-dashboard .save-value{font-size:clamp(28px,13cqw,48px)}
   html.car #page-dashboard .save-sub{font-size:clamp(12px,5.2cqw,17px)}
   html.car .act-title{font-size:16px}html.car .act-date{font-size:13px}html.car .act-cost{font-size:16px}
-  html.car #page-dashboard .quicklinks-grid{grid-column:2;grid-row:1;margin:0;grid-template-columns:repeat(2,1fr);grid-auto-rows:minmax(110px,1fr);gap:10px;min-height:0;overflow-y:auto}
-  html.car #page-dashboard .ql-tile{min-height:0;padding:12px;gap:10px}
-  html.car #page-dashboard .ql-tile-icon{width:52px;height:52px}
-  html.car #page-dashboard .ql-tile-icon svg{width:40px;height:40px}
-  html.car #page-dashboard .ql-tile-label{font-size:17px}
+  html.car #page-dashboard .quicklinks-grid{grid-column:2;grid-row:1;margin:0;grid-template-columns:repeat(var(--ql-cols,2),minmax(0,1fr));grid-template-rows:repeat(var(--ql-rows,2),minmax(0,1fr));grid-auto-rows:minmax(0,1fr);gap:10px;min-height:0;overflow:hidden}
+  html.car #page-dashboard .ql-tile{container-type:size;min-height:0;min-width:0;padding:6px;gap:0;overflow:hidden}
+  html.car #page-dashboard .ql-tile-icon{width:min(42cqh,58cqw);height:min(42cqh,58cqw);margin-bottom:min(5cqh,6px)}
+  html.car #page-dashboard .ql-tile-icon svg{width:100%;height:100%}
+  html.car #page-dashboard .ql-tile-label{font-size:clamp(11px,min(13cqh,15cqw),21px);line-height:1.15;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;max-width:100%;overflow-wrap:break-word;hyphens:auto}
+  html.car #page-dashboard[data-qlcols="4"],html.car #page-dashboard[data-qlcols="5"]{grid-template-columns:1.35fr 1fr}
   html.car #page-dashboard > .card{grid-column:2;grid-row:2;min-height:0;max-height:100%;align-self:end;overflow-y:auto}
   html.car .car-badge{font-size:12px}
   /* Legibilidad en el coche: textos más grandes, más contraste y botones más cómodos */
@@ -1045,7 +1046,6 @@ html.car .chg-tablecard{display:none!important}
   html.car .icon-btn svg{width:26px;height:26px}
   html.car .card-head h2{font-size:21px}
   html.car .car-badge{font-size:14px;padding:5px 12px}
-  html.car #page-dashboard .ql-tile-label{font-size:20px}
   html.car .toasts{bottom:20px}
 /* ---- Cargas en modo coche: igual que en modo ordenador (resumen en una fila + tabla), con letra y zonas táctiles grandes ---- */
   html.car[data-page="charges"] .content{padding:20px 32px}
@@ -1695,7 +1695,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-28.6';
+const APP_VERSION = '2026-10-28.7';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2947,6 +2947,9 @@ function renderQuickLinks(){
   const grid = document.getElementById('quickLinksGrid');
   if(!grid) return;
   const links = state.quickLinks || [];
+  // en el coche no se desplaza: más accesos → más columnas (2 hasta 4, 3 hasta 6, 4 hasta 8, 5 hasta 10 y luego más filas)
+  const cols = links.length <= 4 ? 2 : links.length <= 6 ? 3 : links.length <= 8 ? 4 : 5;
+  document.getElementById('page-dashboard').dataset.qlcols = cols; grid.style.setProperty('--ql-cols', cols); grid.style.setProperty('--ql-rows', Math.max(1, Math.ceil(links.length / cols)));
   grid.innerHTML = links.length ? links.map(l=>`
     <a class="ql-tile" href="${escapeAttr(l.url)}" ${/^#/.test(l.url) ? '' : 'target="_blank" rel="noopener noreferrer"'} title="${escapeAttr(l.title)}">
       <div class="ql-tile-icon">${ICONS[l.icon]||ICONS.link}</div>
