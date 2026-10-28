@@ -1695,7 +1695,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-28.10';
+const APP_VERSION = '2026-10-28.11';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2606,7 +2606,25 @@ const DOWNLOADS = [
     ['fondo_claro_09_blade.jpg','Blade','429 KB'],
     ['fondo_claro_10_plata.jpg','Plata','480 KB'],
     ['fondo_claro_11_aurora.jpg','Aurora','292 KB'],
-    ['fondo_claro_12_puntos.jpg','Puntos','365 KB'] ] }
+    ['fondo_claro_12_puntos.jpg','Puntos','365 KB'] ] },
+  { group: 'Con color · oscuros · 2560 × 1600', thumbs: true, items: [
+    ['fondo_color_oscuro_01_verde_panal.jpg','Verde panal','1138 KB'],
+    ['fondo_color_oscuro_02_rojo_velocidad.jpg','Rojo velocidad','844 KB'],
+    ['fondo_color_oscuro_03_violeta_onda.jpg','Violeta onda','473 KB'],
+    ['fondo_color_oscuro_04_ambar_carga.jpg','Ámbar carga','723 KB'],
+    ['fondo_color_oscuro_05_turquesa_oceano.jpg','Turquesa océano','1475 KB'],
+    ['fondo_color_oscuro_06_naranja_topografia.jpg','Naranja topografía','899 KB'],
+    ['fondo_color_oscuro_07_rosa_nebulosa.jpg','Rosa nebulosa','942 KB'],
+    ['fondo_color_oscuro_08_lima_blade.jpg','Lima blade','904 KB'] ] },
+  { group: 'Con color · claros · 2560 × 1600', thumbs: true, items: [
+    ['fondo_color_claro_01_salvia_niebla.jpg','Salvia niebla','282 KB'],
+    ['fondo_color_claro_02_turquesa_oleaje.jpg','Turquesa oleaje','686 KB'],
+    ['fondo_color_claro_03_lavanda_panal.jpg','Lavanda panal','554 KB'],
+    ['fondo_color_claro_04_coral_velocidad.jpg','Coral velocidad','443 KB'],
+    ['fondo_color_claro_05_dorado_carga.jpg','Dorado carga','391 KB'],
+    ['fondo_color_claro_06_verde_topografia.jpg','Verde topografía','504 KB'],
+    ['fondo_color_claro_07_rosa_aurora.jpg','Rosa aurora','296 KB'],
+    ['fondo_color_claro_08_malva_puntos.jpg','Malva puntos','377 KB'] ] }
 ];
 function renderDownloads(){
   const n = DOWNLOADS.reduce((a,g)=>a + g.items.length, 0);
