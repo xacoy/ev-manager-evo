@@ -271,7 +271,7 @@ button{cursor:pointer}
   height:88px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;
   padding:0 36px; gap:24px; border-bottom:1px solid var(--border);
 }
-.topbar h1{font-size:26px;font-weight:700;letter-spacing:-.3px;font-family:var(--font-display);color:var(--text)}
+.topbar h1{font-size:26px;font-weight:700;letter-spacing:-.3px;font-family:var(--font-display);color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 
 .title-accent{font-style:normal;color:var(--accent)}
 .info-value,.save-value,.stat-card .value,.chip .l1,.sync-btn,.ql-tile-label{font-family:var(--font-display)}
@@ -405,12 +405,27 @@ button{cursor:pointer}
 .status-tiles-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 .info-card-small{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;transition:border-color .2s var(--ease)}
 .info-card-small:hover{border-color:var(--border-strong)}
-.info-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--text-faint);margin-bottom:6px}
-.info-value{font-size:18px;font-weight:800;color:var(--text)}
+.info-card-small,.save-block{container-type:inline-size}
+.info-card-small{display:flex;flex-direction:column;justify-content:center}
+.info-label{font-size:clamp(10px,4.4cqw,13px)}
+.info-value{font-size:clamp(18px,11cqw,38px);line-height:1.1}
+.info-sub{font-size:clamp(11px,4.8cqw,14px)}
+.save-label{font-size:clamp(10px,4.6cqw,13px)}
+.save-value{font-size:clamp(26px,13cqw,44px)}
+.save-sub{font-size:clamp(11px,5cqw,15px)}
+.act-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.act-row:last-child{border-bottom:0}
+.act-row .activity-icon{width:34px;height:34px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--accent-soft);color:var(--accent)}
+.act-main{flex:1;min-width:0}
+.act-title{font-size:13.5px;font-weight:600;color:var(--text);overflow-wrap:anywhere}
+.act-date{font-size:11.5px;color:var(--text-faint);margin-top:2px}
+.act-cost{font-size:13.5px;font-weight:700;color:var(--text);flex-shrink:0;text-align:right}
+.info-label{font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--text-faint);margin-bottom:6px}
+.info-value{font-weight:800;color:var(--text)}
 .info-value.ok{color:var(--success)}
 .info-value.warning{color:var(--warning)}
 .info-value.danger{color:var(--danger)}
-.info-sub{font-size:11px;color:var(--text-muted);margin-top:2px}
+.info-sub{color:var(--text-muted);margin-top:2px}
 
 
 /* Panel: anillo de batería + fichas */
@@ -425,9 +440,9 @@ button{cursor:pointer}
 @media(prefers-reduced-motion:reduce){.car-img{animation:none}}
 .car-name{font-family:var(--font-display);font-size:15px;font-weight:700;color:var(--text);letter-spacing:-.2px}
 .save-block{text-align:center;border-top:1px solid var(--border);padding-top:12px;width:100%}
-.save-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--text-faint)}
-.save-value{font-size:28px;font-weight:800;color:var(--accent);margin-top:4px;line-height:1.1}
-.save-sub{font-size:11px;color:var(--text-muted);margin-top:4px;line-height:1.4}
+.save-label{font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--text-faint)}
+.save-value{font-weight:800;color:var(--accent);margin-top:4px;line-height:1.1}
+.save-sub{color:var(--text-muted);margin-top:4px;line-height:1.4}
 .battery-hero{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
 
 /* Resumen de cargas */
@@ -795,8 +810,10 @@ footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-
     padding-bottom:env(safe-area-inset-bottom); background:var(--bg-1); border-top:1px solid var(--border);
   }
   .content{padding:4px 16px calc(var(--bottomnav-h) + 24px + env(safe-area-inset-bottom))}
-  .topbar{padding:0 16px; height:76px}
-  .topbar h1{font-size:22px}
+  .topbar{padding:0 16px; height:76px; gap:8px}
+  .topbar h1{font-size:17px}
+  .topbar{gap:4px}.top-right{gap:0!important}.top-left:has(#homeBtn[style*="none"]){display:none}
+  .icon-btn{width:40px;height:40px}.sync-btn{height:40px;padding:0 10px}
   .chip{display:none}
   .cockpit-card{padding:24px}
   .panel-grid{grid-template-columns:1fr}
@@ -993,14 +1010,20 @@ html.car .chg-tablecard{display:none!important}
   html.car #page-dashboard .vehicle-id{margin-bottom:10px}
   html.car #page-dashboard .vehicle-id-name{font-size:26px}
   html.car #page-dashboard .cockpit-card{flex:1;display:flex;flex-direction:column;min-height:0}
-  html.car #page-dashboard .panel-grid{flex:1;min-height:0;grid-template-columns:240px 1fr;gap:12px}
+  html.car #page-dashboard .panel-grid{flex:1;min-height:0;grid-template-columns:minmax(230px,32%) 1fr;gap:12px}
   html.car #page-dashboard .panel-grid .status-tiles-grid{grid-template-columns:repeat(2,1fr);gap:10px;grid-auto-rows:1fr}
-  html.car #page-dashboard .save-value{font-size:26px}
-  html.car #page-dashboard .info-card-small{padding:14px 16px;display:flex;flex-direction:column;justify-content:center}
-  html.car #page-dashboard .info-label{font-size:12px;margin-bottom:4px}
-  html.car #page-dashboard .info-value{font-size:24px;line-height:1.1;white-space:nowrap}
   html.car footer.sig{display:none}
-  html.car #page-dashboard .info-sub{font-size:14px;margin-top:4px}
+  /* tamaños en función del tamaño real de cada ficha: nunca enormes ni diminutos */
+  html.car #page-dashboard .info-card-small{container-type:size;padding:0 14px;display:flex;flex-direction:column;justify-content:center;gap:4px;min-height:0;min-width:0}
+  html.car #page-dashboard .info-label{font-size:clamp(12px,min(8cqh,6cqw),17px);letter-spacing:.6px;margin:0}
+  html.car #page-dashboard .info-value{font-size:clamp(16px,min(19cqh,calc((100cqw - 28px) / 5.8)),58px);white-space:nowrap}
+  html.car #page-dashboard .info-sub{font-size:clamp(13px,min(9cqh,6cqw),19px);margin:0}
+  html.car #page-dashboard .battery-hero{padding:12px;gap:8px;min-height:0;overflow:hidden}
+  html.car #page-dashboard .car-wrap{max-width:none;width:100%;aspect-ratio:auto;flex:1 1 0;min-height:70px}
+  html.car #page-dashboard .save-block{padding-top:8px}
+  html.car #page-dashboard .save-value{font-size:clamp(28px,13cqw,48px)}
+  html.car #page-dashboard .save-sub{font-size:clamp(12px,5.2cqw,17px)}
+  html.car .act-title{font-size:16px}html.car .act-date{font-size:13px}html.car .act-cost{font-size:16px}
   html.car #page-dashboard .quicklinks-grid{grid-column:2;grid-row:1;margin:0;grid-template-columns:repeat(2,1fr);grid-auto-rows:minmax(110px,1fr);gap:10px;min-height:0;overflow-y:auto}
   html.car #page-dashboard .ql-tile{min-height:0;padding:12px;gap:10px}
   html.car #page-dashboard .ql-tile-icon{width:52px;height:52px}
@@ -1022,16 +1045,7 @@ html.car .chg-tablecard{display:none!important}
   html.car .icon-btn svg{width:26px;height:26px}
   html.car .card-head h2{font-size:21px}
   html.car .car-badge{font-size:14px;padding:5px 12px}
-  html.car #page-dashboard .info-label{font-size:14px;letter-spacing:.6px}
-  html.car #page-dashboard .info-value{font-size:36px}
-  html.car #page-dashboard .info-sub{font-size:16px}
-  html.car #page-dashboard .save-label{font-size:13px}
-  html.car #page-dashboard .save-value{font-size:36px}
-  html.car #page-dashboard .save-sub{font-size:14px}
   html.car #page-dashboard .ql-tile-label{font-size:20px}
-  html.car #dashRecentActivity > div > div:nth-child(2) > div:first-child{font-size:16px!important}
-  html.car #dashRecentActivity > div > div:nth-child(2) > div:last-child{font-size:13px!important}
-  html.car #dashRecentActivity > div > div:last-child{font-size:16px!important}
   html.car .toasts{bottom:20px}
 /* ---- Cargas en modo coche: igual que en modo ordenador (resumen en una fila + tabla), con letra y zonas táctiles grandes ---- */
   html.car[data-page="charges"] .content{padding:20px 32px}
@@ -1681,7 +1695,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-28.5';
+const APP_VERSION = '2026-10-28.6';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2241,17 +2255,16 @@ function buildRecentActivity(){
     const rawCost = ev.type==='maintenance' ? ev.data.price : ev.data.cost;
     const hasCost = rawCost != null && rawCost !== '';
     const cost = Number(rawCost||0);
-    return `<div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)">
-      <div class="activity-icon" style="width:34px;height:34px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--accent-soft);color:var(--accent)">${icon}</div>
-      <div style="flex:1;min-width:0">
-        <div style="font-size:13.5px;font-weight:600;color:var(--text)">${label}</div>
-        <div style="font-size:11.5px;color:var(--text-faint);margin-top:2px">${ev.type==='charge' ? chargeDateTimeHtml(ev.data) : fmtDate(ev.date)}</div>
+    const free = ev.type==='charge' && hasCost && cost === 0;
+    return `<div class="act-row">
+      <div class="activity-icon">${icon}</div>
+      <div class="act-main">
+        <div class="act-title">${label}</div>
+        <div class="act-date">${ev.type==='charge' ? chargeDateTimeHtml(ev.data) : fmtDate(ev.date)}</div>
       </div>
-      <div style="font-size:13.5px;font-weight:700;color:var(--text);flex-shrink:0">${hasCost ? fmtEUR(cost) : '—'}</div>
+      <div class="act-cost">${free ? '<span class="chg-chip free">Gratis</span>' : hasCost ? fmtEUR(cost) : '—'}</div>
     </div>`;
   }).join('');
-  const rows = container.children;
-  if(rows.length) rows[rows.length-1].style.borderBottom = 'none';
 }
 function refreshCharts(){ renderDashboard(); if(document.getElementById('page-stats').classList.contains('active')) renderStats(); }
 
