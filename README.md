@@ -59,10 +59,9 @@ Gestor integral web de tu **BYD Atto 3 EVO**: cargas, mantenimiento, revisiones 
 - Récords del periodo
 
 ### ⚙️ Configuración
-- Página unificada en tarjetas con accesos rápidos: Lecturas del coche, Coche y precios, Avisos e idioma, Datos y copia
-- «Coche y precios» agrupa solo lo que se usa: versión, fecha de compra, tarifa, consumo de respaldo, consumo del León y gasolina de respaldo
-- El botón de guardar solo se activa cuando hay cambios
-- Estado de las notificaciones, de Drive y fecha de la última copia de seguridad a la vista
+- Ficha destacada de **lecturas del coche** (fecha y hora de la última actualización, km, consumo acumulado y reciente) y ventana para actualizarlas
+- **Tu coche y tus precios** como fichas que se editan con un toque y se guardan al momento (sin formulario): versión, fecha de compra, tarifa, consumo de respaldo, consumo del León y gasolina de respaldo
+- Datos y copia: sincronización con Drive, exportar/importar y fecha de la última copia de seguridad
 
 ### 🎨 Interfaz Moderna
 - Diseño **multicolor con gradientes** modernos (cyan, verde neón, rosa)

@@ -878,67 +878,76 @@ html.car .chg-tablecard{display:none!important}
 @media(max-width:400px){.chg-save-val{font-size:26px}.chg-soc-val,.chg-kwh-val{font-size:20px}}
 
 
-/* ---------- lecturas del coche (Configuración) ---------- */
-.readings-card{margin-bottom:16px}
-.rd-status{font-size:11px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;padding:4px 10px;border-radius:99px}
-.rd-status.ok{color:var(--success);background:var(--success-soft)}
-.rd-status.stale{color:var(--est);background:var(--warning-soft)}
-.rd-help{font-size:13px;color:var(--text-muted);line-height:1.55;margin:-6px 0 14px}
-.rd-last{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:16px;display:grid;gap:10px;font-size:13px;color:var(--text-muted)}
-.rd-lbl{display:block;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text-faint);margin-bottom:2px}
-.rd-when b{font-family:var(--font-display);font-size:20px;color:var(--text);margin-right:8px}
-.rd-ago{font-size:12px;color:var(--text-muted);font-weight:600}
-.rd-vals{display:flex;flex-wrap:wrap;gap:6px 28px}
-.rd-vals b{font-size:15px;color:var(--text);font-variant-numeric:tabular-nums}
-.rd-fields{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:12px;align-items:end}
-.rd-fields .field{margin-bottom:0}
-.rd-save{height:46px;white-space:nowrap}
-.rd-between,.rd-hist{margin-top:16px;font-size:13px;color:var(--text-muted)}
-.rd-iv{margin-top:4px;line-height:1.6}
-.rd-iv b{color:var(--text)}
-.rd-rows{display:grid;gap:0;margin-top:4px}
-.rd-row{display:grid;grid-template-columns:1.3fr .8fr 1.6fr auto;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--border);font-variant-numeric:tabular-nums}
-.rd-row small{color:var(--text-faint)}
-@media(max-width:760px){.rd-fields{grid-template-columns:1fr}.rd-save{width:100%}.rd-row{grid-template-columns:1fr auto;grid-template-areas:"a d" "b d" "c d"}.rd-row>:nth-child(1){grid-area:a;color:var(--text)}.rd-row>:nth-child(2){grid-area:b}.rd-row>:nth-child(3){grid-area:c}.rd-row>button{grid-area:d}}
-
-
-/* ---------- Configuración unificada ---------- */
-#page-setup .ico,#page-setup .set-card .ico{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:10px;margin-right:10px;background:var(--accent-soft);color:var(--accent);flex-shrink:0}
+/* ---------- Configuración ---------- */
+#page-setup .ico{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:10px;margin-right:10px;background:var(--accent-soft);color:var(--accent);flex-shrink:0}
 #page-setup .ico svg{width:16px;height:16px;stroke:currentColor}
 #page-setup .card-head h2{display:flex;align-items:center}
-.set-nav{display:flex;gap:8px;overflow-x:auto;margin:2px 0 14px;padding-bottom:2px;scrollbar-width:none}
-.set-nav::-webkit-scrollbar{display:none}
-.set-nav button{flex-shrink:0;border:1px solid var(--border);background:var(--bg-card);color:var(--text-muted);font:700 12.5px var(--font);padding:7px 14px;border-radius:var(--radius-full);cursor:pointer;white-space:nowrap}
-.set-nav button:hover{color:var(--text);border-color:var(--border-strong)}
-.set-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px;align-items:start}
-.set-col{display:grid;gap:16px}
-@media(max-width:1000px){.set-grid{grid-template-columns:1fr}}
+.rd-status{font-size:11px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;padding:4px 10px;border-radius:99px}
+.rd-status:empty{display:none}
+.rd-status.ok{color:var(--success);background:var(--success-soft)}
+.rd-status.stale{color:var(--est);background:var(--warning-soft)}
+.set-hero{padding:22px 24px;margin-bottom:16px;background:linear-gradient(135deg,var(--accent-soft),transparent 62%),var(--bg-card)}
+.set-hero-top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.set-hero-id{display:flex;align-items:center;gap:14px}
+#page-setup .set-hero .ico{width:46px;height:46px;border-radius:14px;margin:0}
+#page-setup .set-hero .ico svg{width:23px;height:23px}
+.set-eyebrow{font-size:11px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:var(--text-faint)}
+.rd-when{font-family:var(--font-display);font-size:26px;font-weight:800;color:var(--text);line-height:1.15;margin:2px 0 6px;font-variant-numeric:tabular-nums}
+.rd-sub{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted);font-weight:600}
+.rd-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0 4px}
+.rd-tile{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:14px 16px}
+.rd-lbl{display:block;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text-faint);margin-bottom:4px}
+.rd-tile b{font-family:var(--font-display);font-size:30px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;line-height:1.1}
+.rd-tile small{font-size:12.5px;font-weight:700;color:var(--text-muted);margin-left:6px}
+.rd-empty{grid-column:1/-1;font-size:13px;color:var(--text-muted);margin:0}
+.rd-between{margin-top:14px;font-size:13px;color:var(--text-muted)}
+.rd-iv{margin-top:4px;line-height:1.6}
+.rd-iv b{color:var(--text)}
+.rd-details{margin-top:14px;border-top:1px solid var(--border);padding-top:10px}
+.rd-details summary{cursor:pointer;font-size:12.5px;font-weight:700;color:var(--text-muted);padding:4px 0;list-style:none}
+.rd-details summary::before{content:"▸";display:inline-block;margin-right:8px;transition:transform .15s}
+.rd-details[open] summary::before{transform:rotate(90deg)}
+.rd-rows{display:grid;margin-top:6px;font-size:13px;color:var(--text-muted)}
+.rd-row{display:grid;grid-template-columns:1.3fr .8fr 1.6fr auto;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--border);font-variant-numeric:tabular-nums}
+.rd-row small{color:var(--text-faint)}
+.rd-help{font-size:12px;color:var(--text-faint);line-height:1.55;margin:12px 0 0}
+.set-card{margin-bottom:16px}
 .set-help{font-size:12.5px;color:var(--text-muted);line-height:1.55;margin:-4px 0 14px}
-.set-group{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px 6px;margin-bottom:12px}
-.set-group-title{font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
-.set-group .field-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
-.set-group .field{margin-bottom:10px;min-width:0}
-.set-group input,.set-group select{width:100%;min-width:0;box-sizing:border-box}
-@media(max-width:520px){.set-group .field-row{grid-template-columns:1fr}}
-.fld-hint{display:block;font-size:11.5px;color:var(--text-faint);margin-top:5px;line-height:1.4}
-#setupSave:disabled{opacity:.45;cursor:default;filter:saturate(.6)}
-.set-item{padding:14px 0;border-top:1px solid var(--border)}
-.set-item:first-of-type{border-top:0;padding-top:0}
-.set-item-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:4px}
-.set-item-head b{font-size:14px;color:var(--text)}
-.set-item .set-help{margin:0 0 12px}
-.set-chip{font-size:11px;font-weight:800;padding:3px 10px;border-radius:99px;background:var(--bg-2);color:var(--text-muted);white-space:nowrap}
-.set-chip.ok{color:var(--success);background:var(--success-soft)}
-.set-chip.bad{color:var(--danger);background:var(--danger-soft)}
+.set-groups{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.set-group2-title{font-size:11px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.set-tiles{display:grid;gap:10px}
+.set-tile{background:var(--bg-2);border:1px solid var(--border);border-radius:14px;padding:12px 14px 11px;transition:border-color .15s var(--ease)}
+.set-tile:hover,.set-tile.editing{border-color:var(--accent)}
+.set-label{display:block;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text-faint)}
+.set-view{all:unset;display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;box-sizing:border-box;cursor:pointer;margin-top:4px}
+.set-view:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+.set-val{font-family:var(--font-display);font-size:24px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;line-height:1.2}
+.set-val small{font-family:var(--font);font-size:12.5px;font-weight:700;color:var(--text-muted);margin-left:6px}
+.set-pen{width:15px;height:15px;stroke:var(--text-faint);flex-shrink:0}
+.set-tile:hover .set-pen{stroke:var(--accent)}
+.set-hint{display:block;font-size:11.5px;color:var(--text-faint);margin-top:3px;line-height:1.35}
+.set-edit{display:grid;grid-template-columns:minmax(0,1fr) 38px 38px;gap:6px;align-items:center;margin-top:6px}
+.set-inwrap{position:relative;min-width:0}
+.set-inwrap .set-input{width:100%}
+.set-inwrap .set-unit+*{display:none}
+.set-input{flex:1;min-width:0;background:var(--bg-card);border:1px solid var(--accent);border-radius:10px;padding:9px 11px;font-size:17px;color:var(--text);font-family:var(--font-display);font-weight:700;outline:none;box-sizing:border-box}
+.set-unit{position:absolute;right:11px;top:50%;transform:translateY(-50%);font-size:12px;font-weight:700;color:var(--text-muted);white-space:nowrap;pointer-events:none}
+.set-inwrap:has(.set-unit) .set-input{padding-right:84px}
+.set-ok,.set-no{flex-shrink:0;width:38px;height:38px;border-radius:10px;border:1px solid var(--border-strong);background:var(--bg-card);color:var(--text-muted);font-size:16px;font-weight:800;cursor:pointer}
+.set-ok{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.set-actions{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.set-action{background:var(--bg-2);border:1px solid var(--border);border-radius:14px;padding:16px}
+.set-action-head{display:flex;align-items:center;margin-bottom:6px}
+.set-action-head b{font-size:14px;color:var(--text)}
+.set-action .set-help{margin:0 0 12px}
 .set-btns{display:flex;gap:8px;flex-wrap:wrap}
-.set-btns .btn{flex:1 1 150px}
+.set-btns .btn{flex:1 1 130px}
 .set-status{font-size:12px;color:var(--text-muted);margin-top:10px;line-height:1.45}
 .set-status.warn{color:var(--est)}
-.set-foot{font-size:11px;color:var(--text-faint);margin-top:6px;padding-top:12px;border-top:1px solid var(--border)}
+.set-foot{font-size:11px;color:var(--text-faint);text-align:center;margin:4px 0 8px}
 .btn-ico{width:16px;height:16px;stroke:currentColor;margin-right:6px;vertical-align:-3px}
-.rd-fields{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
-.rd-save{grid-column:1/-1}
-@media(min-width:1100px){.rd-fields{grid-template-columns:1fr 1fr 1fr auto}.rd-save{grid-column:auto}}
+@media(max-width:900px){.set-groups{grid-template-columns:repeat(2,minmax(0,1fr))}.set-actions{grid-template-columns:1fr}}
+@media(max-width:620px){.set-groups{grid-template-columns:1fr}.rd-tiles{grid-template-columns:1fr 1fr}.rd-tile:first-child{grid-column:1/-1}.set-hero{padding:18px}.set-hero-top .btn{width:100%}.rd-row{grid-template-columns:1fr auto;grid-template-areas:"a d" "b d" "c d"}.rd-row>:nth-child(1){grid-area:a;color:var(--text)}.rd-row>:nth-child(2){grid-area:b}.rd-row>:nth-child(3){grid-area:c}.rd-row>button{grid-area:d}}
 
 /* ---------- modo pantalla del coche (clase html.car: automática en pantallas apaisadas o activable a mano) ---------- */
   html.car{--rail-w:128px}
@@ -1205,99 +1214,54 @@ html.car .chg-tablecard{display:none!important}
 
       <!-- SETUP -->
       <section class="page" id="page-setup">
-        <nav class="set-nav" aria-label="Secciones de configuración">
-          <button type="button" data-go="readingsCard">Lecturas</button><button type="button" data-go="vehicleCard">Coche y precios</button><button type="button" data-go="alertsCard">Avisos e idioma</button><button type="button" data-go="dataCard">Datos y copia</button>
-        </nav>
-        <div class="card set-card readings-card" id="readingsCard">
-          <div class="card-head"><h2><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.3 17a10 10 0 1 1 17.4 0"/><path d="M12 14l4-4"/><circle cx="12" cy="14" r="1"/></svg></span>Lecturas del coche</h2><span class="rd-status" id="rdStatus"></span></div>
-          <p class="rd-help">Abre la app de BYD → <b>Consumo de energía</b> y copia estos datos cada pocos días. Con dos lecturas la app calcula el consumo real entre ellas, sin estimar con el % de batería.</p>
-          <div class="rd-last" id="rdLast"></div>
-          <form id="readingForm" autocomplete="off">
-            <div class="rd-fields">
-              <div class="field"><label>Kilometraje total (km)</label><input id="rd_km" type="number" min="0" step="1" inputmode="numeric" placeholder="Ej. 801"></div>
-              <div class="field"><label>Consumo acumulado (kWh/100 km)</label><input id="rd_aec" type="number" min="0" step="any" inputmode="decimal" placeholder="Ej. 16,2"></div>
-              <div class="field"><label>Consumo reciente <span class="opt-hint">(opcional, kWh/100 km)</span></label><input id="rd_recent" type="number" min="0" step="any" inputmode="decimal" placeholder="Ej. 15,4"></div>
-              <button type="submit" class="btn btn-primary rd-save">Guardar lectura</button>
+        <div class="card set-hero" id="readingsCard">
+          <div class="set-hero-top">
+            <div class="set-hero-id">
+              <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.3 17a10 10 0 1 1 17.4 0"/><path d="M12 14l4-4"/><circle cx="12" cy="14" r="1"/></svg></span>
+              <div>
+                <div class="set-eyebrow">Lecturas del coche</div>
+                <div class="rd-when" id="rdWhen">—</div>
+                <div class="rd-sub"><span class="rd-status" id="rdStatus"></span><span id="rdAgo"></span></div>
+              </div>
             </div>
-          </form>
+            <button type="button" class="btn btn-primary" id="readingOpenBtn">Actualizar lecturas</button>
+          </div>
+          <div class="rd-tiles" id="rdTiles"></div>
           <div class="rd-between" id="rdBetween"></div>
-          <div class="rd-hist" id="rdHist"></div>
+          <details class="rd-details" id="rdDetails"><summary id="rdSummary">Historial</summary><div class="rd-hist" id="rdHist"></div></details>
+          <p class="rd-help">Abre la app de BYD → <b>Consumo de energía</b> y copia estos datos cada pocos días. Con dos lecturas la app calcula el consumo real entre ellas, sin estimar con el % de batería.</p>
         </div>
-        <div class="set-grid">
-          <div class="card set-card" id="vehicleCard">
-            <div class="card-head"><h2><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h14M3 13l2-6a2 2 0 0 1 2-1.4h10a2 2 0 0 1 2 1.4l2 6v4H3z"/><circle cx="7.5" cy="15" r=".6"/><circle cx="16.5" cy="15" r=".6"/></svg></span>Coche y precios</h2><span class="rd-status" id="setupDirty"></span></div>
-            <p class="set-help">Valores de referencia que usa la app para calcular costes y ahorro. Cada carga guarda los que había cuando la registraste: cambiarlos no modifica lo anterior.</p>
-            <form id="setupForm">
-              <div class="set-group">
-                <div class="set-group-title">Tu coche</div>
-                <div class="field-row">
-                  <div class="field"><label>Versión</label>
-                    <select id="f_version">
-                      <option value="design">Design (RWD) · 313 CV · 510 km WLTP</option>
-                      <option value="excellence">Excellence (AWD) · 449 CV · 470 km WLTP</option>
-                    </select>
-                    <small class="fld-hint">Se muestra en la barra superior.</small></div>
-                  <div class="field"><label>Fecha de compra</label><input id="f_purchase" type="date"><small class="fld-hint">Calcula la antigüedad y las revisiones por tiempo.</small></div>
-                </div>
+
+        <div class="card set-card" id="vehicleCard">
+          <div class="card-head"><h2><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h14M3 13l2-6a2 2 0 0 1 2-1.4h10a2 2 0 0 1 2 1.4l2 6v4H3z"/><circle cx="7.5" cy="15" r=".6"/><circle cx="16.5" cy="15" r=".6"/></svg></span>Tu coche y tus precios</h2></div>
+          <p class="set-help">Toca un valor para cambiarlo: se guarda al momento. Las cargas ya registradas conservan los que había cuando las registraste.</p>
+          <div class="set-groups" id="setGroups"></div>
+        </div>
+
+        <div class="card set-card" id="dataCard">
+          <div class="card-head"><h2><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10a6 6 0 0 0-11.6-1.7A4.5 4.5 0 0 0 7 18h11a4 4 0 0 0 0-8z"/></svg></span>Datos y copia</h2></div>
+          <div class="set-actions">
+            <div class="set-action">
+              <div class="set-action-head"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 10a6 6 0 0 0-11.6-1.7A4.5 4.5 0 0 0 7 18h11a4 4 0 0 0 0-8z"/></svg></span><b>Google Drive</b></div>
+              <p class="set-help">Mantén tus datos iguales en el móvil y en el coche. Gana siempre la versión más reciente.</p>
+              <div class="set-btns">
+                <button class="btn btn-primary" id="driveSyncBtn" type="button">Sincronizar ahora</button>
+                <button class="btn btn-ghost" id="driveDisconnectBtn" type="button">Desconectar</button>
               </div>
-              <div class="set-group">
-                <div class="set-group-title">Energía</div>
-                <div class="field-row">
-                  <div class="field"><label>Tarifa eléctrica (€/kWh)</label><input id="f_rate" type="number" step="any" inputmode="decimal" placeholder="0,15"><small class="fld-hint">Para estimar el coste de las cargas sin importe.</small></div>
-                  <div class="field"><label>Consumo de respaldo (kWh/100 km)</label><input id="f_consumption" type="number" step="any" inputmode="decimal" placeholder="15"><small class="fld-hint">Solo si aún no hay lecturas del coche ni datos suficientes.</small></div>
-                </div>
-              </div>
-              <div class="set-group">
-                <div class="set-group-title">Comparativa con el León</div>
-                <div class="field-row">
-                  <div class="field"><label>León FR 125 CV (l/100 km)</label><input id="f_refcons" type="number" step="any" inputmode="decimal" placeholder="6,5"><small class="fld-hint">Consumo de referencia del coche con el que se compara.</small></div>
-                  <div class="field"><label>Gasolina de respaldo (€/l)</label><input id="f_fuel" type="number" step="any" inputmode="decimal" placeholder="1,35"><small class="fld-hint">Solo si no hay precio del día (Ministerio).</small></div>
-                </div>
-              </div>
-              <button type="submit" class="btn btn-primary btn-block" id="setupSave">Guardar cambios</button>
-            </form>
-          </div>
-          <div class="set-col">
-            <div class="card set-card" id="alertsCard">
-              <div class="card-head"><h2><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span>Avisos e idioma</h2></div>
-              <div class="set-item">
-                <div class="set-item-head"><b>Idioma de las revisiones</b></div>
-                <p class="set-help">Afecta al calendario de revisiones.</p>
-                <div class="lang-toggle" style="width:fit-content">
-                  <button id="langEs" class="active">🇪🇸 Español</button>
-                  <button id="langEn">🇬🇧 English</button>
-                </div>
-              </div>
-              <div class="set-item">
-                <div class="set-item-head"><b>Notificaciones del navegador</b><span class="set-chip" id="notifStatus"></span></div>
-                <p class="set-help">Avisos de revisiones próximas o vencidas, incluso con la app en segundo plano.</p>
-                <button class="btn btn-ghost btn-block" id="notifPermBtn">Activar notificaciones</button>
-              </div>
+              <p class="set-status" id="driveStatus">Sin conectar. Pulsa Sync.</p>
             </div>
-            <div class="card set-card" id="dataCard">
-              <div class="card-head"><h2><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></span>Datos y copia</h2></div>
-              <div class="set-item">
-                <div class="set-item-head"><b>Sincronizar con Google Drive</b></div>
-                <p class="set-help">Guarda tus datos en una carpeta privada de tu Drive para tenerlos iguales en el móvil y en el coche. Gana siempre la versión más reciente.</p>
-                <div class="set-btns">
-                  <button class="btn btn-primary" id="driveSyncBtn" type="button">Sincronizar ahora</button>
-                  <button class="btn btn-ghost" id="driveDisconnectBtn" type="button">Desconectar</button>
-                </div>
-                <p class="set-status" id="driveStatus">Sin conectar. Pulsa Sync.</p>
+            <div class="set-action">
+              <div class="set-action-head"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v13H3V8M1 3h22v5H1zM10 12h4"/></svg></span><b>Copia de seguridad</b></div>
+              <p class="set-help">Descarga todos tus datos en un archivo JSON o restáuralos desde uno guardado.</p>
+              <div class="set-btns">
+                <button class="btn btn-ghost" id="exportBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-ico"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Exportar</button>
+                <button class="btn btn-ghost" id="importBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-ico"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>Importar</button>
               </div>
-              <div class="set-item">
-                <div class="set-item-head"><b>Copia de seguridad</b></div>
-                <p class="set-help">Descarga todos tus datos en un archivo JSON o restáuralos desde uno guardado. Útil para cambiar de móvil o tener una copia propia.</p>
-                <div class="set-btns">
-                  <button class="btn btn-ghost" id="exportBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-ico"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Exportar datos</button>
-                  <button class="btn btn-ghost" id="importBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-ico"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>Importar datos</button>
-                </div>
-                <p class="set-status" id="backupInfo"></p>
-              </div>
-              <p class="set-foot" id="appVersion"></p>
+              <p class="set-status" id="backupInfo"></p>
             </div>
           </div>
         </div>
+        <p class="set-foot" id="appVersion"></p>
       </section>
 
       <!-- CHARGES -->
@@ -1497,6 +1461,19 @@ html.car .chg-tablecard{display:none!important}
   </div>
 </div>
 
+<div class="overlay" id="readingFormOverlay">
+  <div class="modal" style="max-width:460px">
+    <h3>Actualizar lecturas</h3>
+    <p class="set-help" style="margin-bottom:14px">Datos de la app de BYD → Consumo de energía.</p>
+    <form id="readingForm" autocomplete="off">
+      <div class="field"><label>Kilometraje total (km)</label><input id="rd_km" type="number" min="0" step="1" inputmode="numeric" placeholder="Ej. 801"></div>
+      <div class="field"><label>Consumo acumulado (kWh/100 km)</label><input id="rd_aec" type="number" min="0" step="any" inputmode="decimal" placeholder="Ej. 16,2"></div>
+      <div class="field"><label>Consumo reciente <span class="opt-hint">(opcional, kWh/100 km)</span></label><input id="rd_recent" type="number" min="0" step="any" inputmode="decimal" placeholder="Ej. 15,4"></div>
+      <div class="modal-actions"><button type="submit" class="btn btn-primary" id="readingSave">Guardar lectura</button><button type="button" class="btn btn-ghost" id="readingCancel">Cancelar</button></div>
+    </form>
+  </div>
+</div>
+
 <div class="overlay" id="noteFormOverlay">
   <div class="modal" style="max-height:92vh;overflow:auto">
     <h3 id="noteFormTitle">Nueva nota</h3>
@@ -1689,7 +1666,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-28.2';
+const APP_VERSION = '2026-10-28.3';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -1936,22 +1913,6 @@ function maybeNotify(alerts){
     state.meta.lastAlertCheck = today;
     saveState();
   }
-}
-function requestNotifPermission(){
-  if(!('Notification' in window)){ toast('Tu navegador no soporta notificaciones', 'warning'); return; }
-  Notification.requestPermission().then(p=>{
-    updateNotifStatus();
-    if(p==='granted'){ toast('Notificaciones activadas', 'success'); renderAlerts(); }
-    else toast('Permiso de notificaciones no concedido', 'warning');
-  });
-}
-function updateNotifStatus(){
-  const el = document.getElementById('notifStatus');
-  if(!('Notification' in window)){ el.textContent = 'No soportado'; el.className = 'set-chip'; return; }
-  const map = {granted:'Activadas', denied:'Bloqueadas', default:'Sin activar'};
-  el.textContent = map[Notification.permission] || '';
-  el.className = 'set-chip ' + (Notification.permission === 'granted' ? 'ok' : Notification.permission === 'denied' ? 'bad' : '');
-  el.title = Notification.permission === 'denied' ? 'Bloqueadas: revisa los permisos del navegador' : '';
 }
 
 /* ---------------- dashboard ---------------- */
@@ -2549,6 +2510,7 @@ function maintList(){
 // Migra datos antiguos: mantenimiento -> documentos de Taller, categorías sueltas -> Vehículo + subcategoría, un archivo -> lista de archivos.
 function normalizeState(){
   let changed = false;
+  if(state.lang !== 'es'){ state.lang = 'es'; changed = true; }   // el selector de idioma se retiró
   if(Array.isArray(state.charges) && state.charges.some(c=>!(Number(c.cons) > 0) || !(Number(c.refL) > 0) || !(Number(c.rate) > 0))){
     const fz = chargeFrozenValues();   // cargas sin valores propios: se fijan con los de ahora, para que a partir de aquí el pasado no cambie
     state.charges.forEach(c=>{ for(const k of ['cons','refL','rate']) if(!(Number(c[k]) > 0)) c[k] = fz[k]; });
@@ -3008,35 +2970,107 @@ function readingInterval(r1, r2){
   const cons = kwh / km * 100;
   return { km, kwh, cons, wall: cons / CHARGE_EFF, ok: cons >= 5 && cons <= 60 };
 }
+function openReadingForm(){
+  document.getElementById('readingFormOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('rd_km').focus(), 50);
+}
+function closeReadingForm(){
+  document.getElementById('readingFormOverlay').classList.remove('open');
+  document.getElementById('readingForm').reset();
+}
 function renderReadings(){
   const card = document.getElementById('readingsCard'); if(!card) return;
   const list = readingList(), last = list[list.length - 1];
-  const st = document.getElementById('rdStatus'), lastEl = document.getElementById('rdLast');
+  const st = document.getElementById('rdStatus'), tiles = document.getElementById('rdTiles');
+  const tile = (lbl, val, unit) => '<div class="rd-tile"><span class="rd-lbl">' + lbl + '</span><b>' + val + '</b><small>' + unit + '</small></div>';
   if(!last){
-    const cur = Number(state.config.carAec) > 0 ? ' Valor que se usa ahora (sin fecha de lectura): ' + nf(state.config.carAec, 1) + ' kWh/100 km.' : '';
     st.className = 'rd-status stale'; st.textContent = 'Sin lecturas';
-    lastEl.innerHTML = 'Todavía no has guardado ninguna lectura.' + cur;
+    document.getElementById('rdWhen').textContent = 'Aún sin datos';
+    document.getElementById('rdAgo').textContent = '';
+    const cur = Number(state.config.carAec) > 0 ? tile('Consumo en uso (sin fecha)', nf(state.config.carAec, 1), 'kWh/100 km') : '';
+    tiles.innerHTML = cur || '<p class="rd-empty">Anota los datos de la app de BYD para medir tu consumo real.</p>';
   } else {
     const d = readingDaysAgo(last), stale = d > READING_STALE_DAYS;
     st.className = 'rd-status ' + (stale ? 'stale' : 'ok'); st.textContent = stale ? 'Toca actualizar' : 'Al día';
-    lastEl.innerHTML = '<div class="rd-when"><span class="rd-lbl">Última actualización</span><b>' + fmtDate(last.date) + ' · ' + escapeHtml(last.time) + '</b><span class="rd-ago">' + readingAgoText(d) + '</span></div>' +
-      '<div class="rd-vals"><div><span class="rd-lbl">Km totales</span><b>' + fmtNum(last.km) + ' km</b></div><div><span class="rd-lbl">Consumo acumulado</span><b>' + nf(last.aec, 1) + ' kWh/100 km</b></div>' +
-      (last.recent > 0 ? '<div><span class="rd-lbl">Consumo reciente</span><b>' + nf(last.recent, 1) + ' kWh/100 km</b></div>' : '') + '</div>';
+    document.getElementById('rdWhen').textContent = fmtDate(last.date) + ' · ' + last.time;
+    document.getElementById('rdAgo').textContent = readingAgoText(d);
+    tiles.innerHTML = tile('Km totales', fmtNum(last.km), 'km') + tile('Consumo acumulado', nf(last.aec, 1), 'kWh/100 km') + (last.recent > 0 ? tile('Consumo reciente', nf(last.recent, 1), 'kWh/100 km') : '');
   }
-  // consumo entre las dos últimas lecturas
   const bt = document.getElementById('rdBetween');
   if(list.length >= 2){
-    const a = list[list.length - 2], b = last, iv = readingInterval(a, b);
+    const a = list[list.length - 2], iv = readingInterval(a, last);
     bt.innerHTML = '<span class="rd-lbl">Entre las dos últimas lecturas</span>' + (iv.ok ?
       '<div class="rd-iv"><b>' + fmtNum(iv.km) + ' km</b> · <b>' + nf(iv.kwh, 1) + ' kWh</b> de batería · <b>' + nf(iv.cons, 1) + ' kWh/100 km</b> · ' + estSpan(nf(iv.wall, 1) + ' kWh/100 km de red', 'Estimado: ' + nf(iv.cons, 1) + ' kWh/100 km de batería ÷ ' + nf(CHARGE_EFF, 1) + ' de rendimiento de carga') + '</div>'
       : '<div class="rd-iv muted">' + (iv.km >= 1 ? 'Las lecturas no son coherentes (la energía no puede bajar): revisa los datos.' : 'Faltan km entre las lecturas para calcular el consumo.') + '</div>');
   } else bt.innerHTML = '';
-  // historial (las 6 más recientes)
-  const hist = document.getElementById('rdHist');
-  hist.innerHTML = list.length ? '<span class="rd-lbl">Historial</span><div class="rd-rows">' + list.slice(-6).reverse().map(r=>
+  const det = document.getElementById('rdDetails');
+  det.style.display = list.length ? '' : 'none';
+  document.getElementById('rdSummary').textContent = 'Historial de lecturas (' + list.length + ')';
+  document.getElementById('rdHist').innerHTML = '<div class="rd-rows">' + list.slice(-8).reverse().map(r=>
     '<div class="rd-row"><span>' + fmtDate(r.date) + ' · ' + escapeHtml(r.time) + '</span><span>' + fmtNum(r.km) + ' km</span><span>' + nf(r.aec, 1) + ' kWh/100 km' + (r.recent > 0 ? ' <small>(reciente ' + nf(r.recent, 1) + ')</small>' : '') + '</span>' +
-    '<button type="button" class="icon-action danger" onclick="deleteReading(' + r.id + ')" aria-label="Eliminar lectura">' + ICONS.trash + '</button></div>').join('') + '</div>' : '';
+    '<button type="button" class="icon-action danger" onclick="deleteReading(' + r.id + ')" aria-label="Eliminar lectura">' + ICONS.trash + '</button></div>').join('') + '</div>';
 }
+
+/* ---------------- ajustes: fichas editables con un toque ---------------- */
+const PEN_ICON = '<svg class="set-pen" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg>';
+const SETTING_GROUPS = [
+  { title: 'Tu coche', items: [
+    { key:'version', label:'Versión', type:'select', options:{ design:'Design (RWD)', excellence:'Excellence (AWD)' }, hint: v=>({ design:'313 CV · 510 km WLTP', excellence:'449 CV · 470 km WLTP' }[v] || '') },
+    { key:'purchaseDate', label:'Fecha de compra', type:'date', fmt: v=>v ? fmtDate(v) : '—', hint: v=>v ? (monthsBetween(v) < 1 ? 'Menos de un mes' : 'Antigüedad: ' + monthsBetween(v) + (monthsBetween(v) === 1 ? ' mes' : ' meses')) : 'Calcula la antigüedad y las revisiones por tiempo' } ] },
+  { title: 'Energía', items: [
+    { key:'electricRate', label:'Tarifa eléctrica', unit:'€/kWh', dec:3, min:0.001, max:5, hint: ()=>'Para cargas sin importe anotado' },
+    { key:'avgConsumption', label:'Consumo de respaldo', unit:'kWh/100 km', dec:1, min:5, max:60, hint: ()=>'Solo si aún no hay lecturas del coche' } ] },
+  { title: 'Comparativa con el León', items: [
+    { key:'refConsumption', label:'León FR 125 CV', unit:'l/100 km', dec:1, min:2, max:30, hint: ()=>'Consumo de referencia para el ahorro' },
+    { key:'fuelPrice', label:'Gasolina de respaldo', unit:'€/l', dec:3, min:0.5, max:4, hint: ()=>'Solo si no hay precio del día' } ] }
+];
+const SETTING_DEFAULTS = { version:'design', purchaseDate:'', electricRate:0.15, avgConsumption:17, refConsumption:6.5, fuelPrice:1.35 };
+const settingDef = key => SETTING_GROUPS.flatMap(g=>g.items).find(i=>i.key === key);
+const settingValue = key => state.config[key] != null && state.config[key] !== '' ? state.config[key] : SETTING_DEFAULTS[key];
+const trimNum = (v, dec) => Number(v).toFixed(dec).replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, '').replace('.', ',');
+function settingDisplay(it){
+  const v = settingValue(it.key);
+  if(it.type === 'select') return escapeHtml(it.options[v] || '—');
+  if(it.type === 'date') return it.fmt(v);
+  return trimNum(v, it.dec) + '<small>' + it.unit + '</small>';
+}
+function renderSettings(){
+  const box = document.getElementById('setGroups'); if(!box) return;
+  box.innerHTML = SETTING_GROUPS.map(g=>'<div class="set-group2"><div class="set-group2-title">' + g.title + '</div><div class="set-tiles">' +
+    g.items.map(it=>'<div class="set-tile" data-key="' + it.key + '"><span class="set-label">' + it.label + '</span>' +
+      '<button type="button" class="set-view" aria-label="Cambiar ' + it.label.toLowerCase() + '"><span class="set-val">' + settingDisplay(it) + '</span>' + PEN_ICON + '</button>' +
+      '<span class="set-hint">' + it.hint(settingValue(it.key)) + '</span></div>').join('') + '</div></div>').join('');
+}
+function startSettingEdit(key){
+  const it = settingDef(key), tile = document.querySelector('.set-tile[data-key="' + key + '"]'); if(!it || !tile || tile.classList.contains('editing')) return;
+  tile.classList.add('editing');
+  const cur = settingValue(key);
+  let field;
+  if(it.type === 'select') field = '<select class="set-input" aria-label="' + it.label + '">' + Object.entries(it.options).map(([v,l])=>'<option value="' + v + '"' + (v === cur ? ' selected' : '') + '>' + l + '</option>').join('') + '</select>';
+  else if(it.type === 'date') field = '<input class="set-input" type="date" aria-label="' + it.label + '" value="' + escapeAttr(String(cur || '')) + '" max="' + isoToday() + '">';
+  else field = '<div class="set-inwrap"><input class="set-input" type="text" inputmode="decimal" aria-label="' + it.label + ' (' + it.unit + ')" value="' + trimNum(cur, it.dec) + '"><span class="set-unit">' + it.unit + '</span></div>';
+  if(it.type !== 'number' && !it.unit) field = '<div class="set-inwrap">' + field + '</div>';
+  tile.querySelector('.set-view').outerHTML = '<div class="set-edit">' + field + '<button type="button" class="set-ok" aria-label="Guardar">✓</button><button type="button" class="set-no" aria-label="Cancelar">✕</button></div>';
+  const input = tile.querySelector('.set-input'); input.focus(); if(input.select && input.type === 'text') input.select();
+  const done = save => { if(save) commitSetting(key, input.value); else renderSettings(); };
+  tile.querySelector('.set-ok').addEventListener('click', ()=>done(true));
+  tile.querySelector('.set-no').addEventListener('click', ()=>done(false));
+  input.addEventListener('keydown', e=>{ if(e.key === 'Enter'){ e.preventDefault(); done(true); } else if(e.key === 'Escape'){ e.preventDefault(); done(false); } });
+}
+function commitSetting(key, raw){
+  const it = settingDef(key); let v;
+  if(it.type === 'select') v = raw;
+  else if(it.type === 'date'){ v = raw; if(v && v > isoToday()){ toast('La fecha de compra no puede ser futura', 'warning'); return; } }
+  else {
+    v = Number(String(raw).trim().replace(',', '.'));
+    if(!(v >= it.min && v <= it.max)){ toast(it.label + ': introduce un valor entre ' + trimNum(it.min, it.dec) + ' y ' + trimNum(it.max, it.dec) + ' ' + it.unit, 'warning'); return; }
+  }
+  if(v === settingValue(key)){ renderSettings(); return; }
+  state.config[key] = v;
+  saveState(); renderSettings(); renderDashboard(); renderAlerts();
+  toast('Guardado · las cargas ya registradas no cambian', 'success');
+}
+
 function saveReading(e){
   e.preventDefault();
   const km = Number(document.getElementById('rd_km').value), aec = Number(document.getElementById('rd_aec').value);
@@ -3053,15 +3087,15 @@ function saveReading(e){
   state.config.carAec = aec;
   state.config.currentKm = Math.max(Number(state.config.currentKm) || 0, km);
   saveState();
-  document.getElementById('readingForm').reset();
-  applyStateToForms(); renderReadings(); renderDashboard(); renderAlerts();
+  closeReadingForm();
+  renderReadings(); renderDashboard(); renderAlerts();
   toast('Lectura guardada', 'success');
 }
 function deleteReading(id){
   state.carReadings = (state.carReadings || []).filter(r=>r.id !== id);
   const last = readingList().pop();
   if(last) state.config.carAec = last.aec;   // vuelve a valer la lectura anterior
-  saveState(); applyStateToForms(); renderReadings(); renderDashboard();
+  saveState(); renderReadings(); renderDashboard();
   toast('Lectura eliminada', 'info');
 }
 
@@ -3543,15 +3577,6 @@ function confirmImport(){
 }
 
 /* ---------------- forms wiring ---------------- */
-// Botón «Guardar» solo activo cuando hay cambios; navegación por secciones; fecha de la última copia.
-let setupSnap = '';
-const SETUP_FIELDS = ['f_version', 'f_purchase', 'f_consumption', 'f_rate', 'f_refcons', 'f_fuel'];
-function setupSnapshot(){ return SETUP_FIELDS.map(id=>document.getElementById(id).value).join('|'); }
-function updateSetupDirty(){
-  const dirty = setupSnapshot() !== setupSnap, btn = document.getElementById('setupSave'), tag = document.getElementById('setupDirty');
-  if(btn) btn.disabled = !dirty;
-  if(tag){ tag.className = 'rd-status ' + (dirty ? 'stale' : 'ok'); tag.textContent = dirty ? 'Cambios sin guardar' : 'Guardado'; }
-}
 function renderBackupInfo(){
   const el = document.getElementById('backupInfo'); if(!el) return;
   let iso = null; try{ iso = localStorage.getItem('lastBackupDate'); }catch(e){}
@@ -3560,18 +3585,7 @@ function renderBackupInfo(){
   el.textContent = 'Última copia: ' + d.toLocaleDateString('es-ES') + ' · ' + (days <= 0 ? 'hoy' : days === 1 ? 'ayer' : 'hace ' + days + ' días');
   el.className = 'set-status' + (days > 30 ? ' warn' : '');
 }
-function applyStateToForms(){
-  const c = state.config;
-  document.getElementById('f_version').value = c.version || 'design';
-  document.getElementById('f_purchase').value = c.purchaseDate;
-  document.getElementById('f_consumption').value = c.avgConsumption;
-  document.getElementById('f_rate').value = c.electricRate;
-  document.getElementById('f_refcons').value = c.refConsumption ?? 6.5;
-  document.getElementById('f_fuel').value = c.fuelPrice ?? 1.35;
-  document.getElementById('langEs').classList.toggle('active', state.lang==='es');
-  document.getElementById('langEn').classList.toggle('active', state.lang==='en');
-  setupSnap = setupSnapshot(); updateSetupDirty();
-}
+function applyStateToForms(){ renderSettings(); }
 
 function setupEventListeners(){
   try {
@@ -3616,24 +3630,6 @@ function setupEventListeners(){
     if(e.target.id==='moreSheetOverlay') document.getElementById('moreSheetOverlay').classList.remove('open');
   });
 
-  document.getElementById('notifPermBtn').addEventListener('click', requestNotifPermission);
-
-
-  document.getElementById('langEs').addEventListener('click', ()=>{ state.lang='es'; saveState(); applyStateToForms(); renderAlerts(); if(document.getElementById('page-docs').classList.contains('active')) renderRevisions(); renderDashboard(); });
-  document.getElementById('langEn').addEventListener('click', ()=>{ state.lang='en'; saveState(); applyStateToForms(); renderAlerts(); if(document.getElementById('page-docs').classList.contains('active')) renderRevisions(); renderDashboard(); });
-
-  document.getElementById('setupForm').addEventListener('submit', e=>{
-    e.preventDefault();
-    state.config = { ...state.config,   // conserva lo que gestionan otras fichas (km, consumo del coche, VIN guardado antes)
-      version: document.getElementById('f_version').value,
-      purchaseDate: document.getElementById('f_purchase').value,
-      avgConsumption: Number(document.getElementById('f_consumption').value)||17,
-      electricRate: Number(document.getElementById('f_rate').value)||0.15,
-      refConsumption: Number(document.getElementById('f_refcons').value)||6.5,
-      fuelPrice: Number(document.getElementById('f_fuel').value)||1.35
-    };
-    saveState(); applyStateToForms(); renderDashboard(); renderAlerts(); toast('Configuración guardada', 'success');
-  });
 
   function updateChargePriceDefault(){
     const locationType = document.getElementById('c_location_type').value;
@@ -3723,9 +3719,10 @@ function setupEventListeners(){
   });
   document.getElementById('chargeCancelEdit').addEventListener('click', cancelChargeEdit);
   document.getElementById('readingForm').addEventListener('submit', saveReading);
-  document.getElementById('setupForm').addEventListener('input', updateSetupDirty);
-  document.getElementById('setupForm').addEventListener('change', updateSetupDirty);
-  document.querySelectorAll('.set-nav button').forEach(b=>b.addEventListener('click', ()=>{ const t = document.getElementById(b.dataset.go); if(t) t.scrollIntoView({ behavior:'smooth', block:'start' }); }));
+  document.getElementById('setGroups').addEventListener('click', e=>{ const v = e.target.closest('.set-view'); if(v) startSettingEdit(v.closest('.set-tile').dataset.key); });
+  document.getElementById('readingOpenBtn').addEventListener('click', openReadingForm);
+  document.getElementById('readingCancel').addEventListener('click', closeReadingForm);
+  document.getElementById('readingFormOverlay').addEventListener('click', e=>{ if(e.target.id === 'readingFormOverlay') closeReadingForm(); });
   document.getElementById('chargeOpenBtn').addEventListener('click', ()=>{ cancelChargeEdit(); document.getElementById('chargeFormOverlay').classList.add('open'); });
   document.getElementById('chgAllBtn').addEventListener('click', ()=>{ chgShowAll = !chgShowAll; renderCharges(); });
 
@@ -4063,7 +4060,6 @@ function init(){
   applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
   buildThemePicker();
   applyStateToForms();
-  updateNotifStatus();
   document.getElementById('c_date').valueAsDate = new Date();
   navigate(pageFromHash() || 'dashboard', { fromHash: true });
   window.addEventListener('hashchange', ()=>{ const p = pageFromHash(); if(p) navigate(p, { fromHash: true }); });
