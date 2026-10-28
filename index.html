@@ -973,7 +973,8 @@ html.car .chg-tablecard{display:none!important}
   html.car .content{padding:10px 20px 10px;display:flex;flex-direction:column}
   html.car .content > *{flex-shrink:0}
   html.car .content > .page.active{flex:1 1 auto}
-  html.car .page{max-width:none}
+  html.car .page{max-width:none;width:100%}
+  html.car .dl-grid{grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
   html.car .card{padding:16px 20px}
   html.car .card-head{margin-bottom:12px}
   html.car .grid{gap:16px}
@@ -1680,7 +1681,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-28.4';
+const APP_VERSION = '2026-10-28.5';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2568,11 +2569,18 @@ function setDocTab(t){
 }
 const DOWNLOADS = [
   { group: 'Fondos de pantalla · 2560 × 1600', thumbs: true, items: [
-    ['fondo_01_medianoche.jpg','Medianoche','428 KB'],['fondo_02_aurora.jpg','Aurora','429 KB'],['fondo_03_carbono.jpg','Carbono','679 KB'],['fondo_04_topografia.jpg','Topografía','835 KB'],
-    ['fondo_05_carretera.jpg','Carretera','449 KB'],['fondo_06_estrellas.jpg','Estrellas','444 KB'],['fondo_07_haces.jpg','Haces','438 KB'],['fondo_08_brasa.jpg','Brasa','425 KB']] },
-  { group: 'Fondos de pantalla · formato pequeño', thumbs: false, items: [
-    ['fondo_pantalla_1.png','Pantalla 1','98 KB'],['fondo_pantalla_2.png','Pantalla 2','76 KB'],['fondo_pantalla_3.png','Pantalla 3','92 KB'],['fondo_pantalla_4.png','Pantalla 4','85 KB'],
-    ['fondo_pantalla_5.png','Pantalla 5','81 KB'],['fondo_pantalla_6.png','Pantalla 6','104 KB'],['fondo_pantalla_7.png','Pantalla 7','69 KB'],['fondo_pantalla_8.png','Pantalla 8','124 KB']] }
+    ['fondo_01_ocean.jpg','Océano','1588 KB'],
+    ['fondo_02_velocidad.jpg','Velocidad','843 KB'],
+    ['fondo_03_hex.jpg','Panal','1120 KB'],
+    ['fondo_04_blade.jpg','Blade','922 KB'],
+    ['fondo_05_carga.jpg','Carga','725 KB'],
+    ['fondo_06_onda.jpg','Onda','459 KB'],
+    ['fondo_07_carretera.jpg','Carretera','465 KB'],
+    ['fondo_08_atardecer.jpg','Atardecer','371 KB'],
+    ['fondo_09_aurora.jpg','Aurora','618 KB'],
+    ['fondo_10_nebulosa.jpg','Nebulosa','897 KB'],
+    ['fondo_11_topografia.jpg','Topografía','899 KB'],
+    ['fondo_12_carbono.jpg','Carbono','571 KB'] ] }
 ];
 function renderDownloads(){
   const n = DOWNLOADS.reduce((a,g)=>a + g.items.length, 0);
