@@ -991,7 +991,7 @@ html.car .chg-tablecard{display:none!important}
   html.car .bottom-nav{display:none}
   html.car .rail-brand{margin-bottom:2px}
   html.car .brand-mark{width:44px;height:44px}
-  html.car .nav-item{padding:6px 4px;gap:4px;flex:0 0 96px;height:96px;max-height:96px;justify-content:center}
+  html.car .nav-item{padding:6px 4px;gap:4px;flex:0 1 96px;height:96px;min-height:0;max-height:96px;justify-content:center}
   html.car .nav-item .ni-indicator{width:64px;height:48px}
   html.car .nav-item .ni-label{font-size:12px}
   html.car .topbar{height:60px;padding:0 20px}
@@ -1046,6 +1046,21 @@ html.car .chg-tablecard{display:none!important}
   html.car #dashRecentActivity{min-height:0;overflow:hidden}
   html.car .act-row{padding:8px 0}
   html.car .act-title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  /* pantallas bajas (navegador del coche con barras): todo se compacta para que quepa sin desplazar */
+  @container (max-height:112px){ .info-sub{display:none} }
+  @media(max-height:560px){
+    html.car .topbar{height:52px}
+    html.car .icon-btn,html.car .sync-btn{height:42px}html.car .icon-btn{width:42px}
+    html.car .nav-rail{padding:6px 4px;gap:2px}
+    html.car .brand-mark{width:34px;height:34px}
+    html.car .nav-item .ni-indicator{width:72px;height:40px}
+    html.car .nav-item .ni-indicator svg{width:26px;height:26px}
+    html.car .nav-item .ni-label{font-size:13px}
+    html.car .content{padding:8px 16px}
+    html.car #page-dashboard .info-label{line-height:1.1;letter-spacing:.3px}
+    html.car .cockpit-card{padding:12px 16px}
+    html.car .card-head{margin-bottom:6px}
+  }
   html.car .car-badge{font-size:12px}
   /* Legibilidad en el coche: textos más grandes, más contraste y botones más cómodos */
   html.car:not([data-theme="light"]):not([data-theme="mint"]):not([data-theme="contrast"]){--text-muted:#c0cada;--text-faint:#98a4b8}
@@ -1710,7 +1725,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-28.14';
+const APP_VERSION = '2026-10-28.16';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -1840,6 +1855,7 @@ function navigate(page, opts){
   if(page==='setup'){ renderReadings(); renderBackupInfo(); }
   if(page==='revisions') renderRevisions();
   if(page==='docs') setDocTab(docTab);
+  if(page==='dashboard') requestAnimationFrame(fitActivity);
   if(page==='stats') renderStats();
   if(page==='dashboard') {
     setTimeout(renderDashboard, 10);
@@ -2280,7 +2296,17 @@ function buildRecentActivity(){
       <div class="act-cost">${free ? '<span class="chg-chip free">Gratis</span>' : hasCost ? fmtEUR(cost) : '—'}</div>
     </div>`;
   }).join('');
+  requestAnimationFrame(fitActivity);
 }
+/* En el coche la actividad solo muestra las filas que caben enteras (nunca una cortada). */
+function fitActivity(){
+  const c = document.getElementById('dashRecentActivity'); if(!c) return;
+  const rows = [...c.children]; rows.forEach(r=>r.style.display = '');
+  if(!document.documentElement.classList.contains('car') || !c.offsetParent) return;
+  const lim = c.getBoundingClientRect().bottom + 1;
+  for(let i = rows.length - 1; i > 0 && rows[i].getBoundingClientRect().bottom > lim; i--) rows[i].style.display = 'none';
+}
+window.addEventListener('resize', ()=>requestAnimationFrame(fitActivity));
 function refreshCharts(){ renderDashboard(); if(document.getElementById('page-stats').classList.contains('active')) renderStats(); }
 
 /* ---------------- charges ---------------- */
@@ -4143,6 +4169,7 @@ function applyCarMode(){
   const wasCar = document.documentElement.classList.contains('car');
   document.documentElement.classList.toggle('car', pref === 'on' || (pref === 'auto' && auto));
   if(wasCar !== document.documentElement.classList.contains('car')){ chgShowAll = false; const pc = document.getElementById('page-charges'); if(pc && pc.classList.contains('active') && typeof renderCharges === 'function') renderCharges(); }
+  if(typeof fitActivity === 'function') requestAnimationFrame(fitActivity);
   const b = document.getElementById('carModeBtn');
   if(b) b.querySelector('span').textContent = 'Modo coche: ' + ({auto:'Auto', on:'Sí', off:'No'}[pref]);
 }
@@ -4150,6 +4177,7 @@ function setupCarMode(){
   applyCarMode();
   window.addEventListener('resize', applyCarMode);
   window.addEventListener('orientationchange', applyCarMode);
+  if(typeof fitActivity === 'function') requestAnimationFrame(fitActivity);
   const b = document.getElementById('carModeBtn');
   if(b) b.addEventListener('click', e=>{
     e.stopPropagation();
