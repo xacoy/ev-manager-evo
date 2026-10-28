@@ -901,6 +901,45 @@ html.car .chg-tablecard{display:none!important}
 .rd-row small{color:var(--text-faint)}
 @media(max-width:760px){.rd-fields{grid-template-columns:1fr}.rd-save{width:100%}.rd-row{grid-template-columns:1fr auto;grid-template-areas:"a d" "b d" "c d"}.rd-row>:nth-child(1){grid-area:a;color:var(--text)}.rd-row>:nth-child(2){grid-area:b}.rd-row>:nth-child(3){grid-area:c}.rd-row>button{grid-area:d}}
 
+
+/* ---------- Configuración unificada ---------- */
+#page-setup .ico,#page-setup .set-card .ico{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:10px;margin-right:10px;background:var(--accent-soft);color:var(--accent);flex-shrink:0}
+#page-setup .ico svg{width:16px;height:16px;stroke:currentColor}
+#page-setup .card-head h2{display:flex;align-items:center}
+.set-nav{display:flex;gap:8px;overflow-x:auto;margin:2px 0 14px;padding-bottom:2px;scrollbar-width:none}
+.set-nav::-webkit-scrollbar{display:none}
+.set-nav button{flex-shrink:0;border:1px solid var(--border);background:var(--bg-card);color:var(--text-muted);font:700 12.5px var(--font);padding:7px 14px;border-radius:var(--radius-full);cursor:pointer;white-space:nowrap}
+.set-nav button:hover{color:var(--text);border-color:var(--border-strong)}
+.set-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px;align-items:start}
+.set-col{display:grid;gap:16px}
+@media(max-width:1000px){.set-grid{grid-template-columns:1fr}}
+.set-help{font-size:12.5px;color:var(--text-muted);line-height:1.55;margin:-4px 0 14px}
+.set-group{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px 6px;margin-bottom:12px}
+.set-group-title{font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.set-group .field-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.set-group .field{margin-bottom:10px;min-width:0}
+.set-group input,.set-group select{width:100%;min-width:0;box-sizing:border-box}
+@media(max-width:520px){.set-group .field-row{grid-template-columns:1fr}}
+.fld-hint{display:block;font-size:11.5px;color:var(--text-faint);margin-top:5px;line-height:1.4}
+#setupSave:disabled{opacity:.45;cursor:default;filter:saturate(.6)}
+.set-item{padding:14px 0;border-top:1px solid var(--border)}
+.set-item:first-of-type{border-top:0;padding-top:0}
+.set-item-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:4px}
+.set-item-head b{font-size:14px;color:var(--text)}
+.set-item .set-help{margin:0 0 12px}
+.set-chip{font-size:11px;font-weight:800;padding:3px 10px;border-radius:99px;background:var(--bg-2);color:var(--text-muted);white-space:nowrap}
+.set-chip.ok{color:var(--success);background:var(--success-soft)}
+.set-chip.bad{color:var(--danger);background:var(--danger-soft)}
+.set-btns{display:flex;gap:8px;flex-wrap:wrap}
+.set-btns .btn{flex:1 1 150px}
+.set-status{font-size:12px;color:var(--text-muted);margin-top:10px;line-height:1.45}
+.set-status.warn{color:var(--est)}
+.set-foot{font-size:11px;color:var(--text-faint);margin-top:6px;padding-top:12px;border-top:1px solid var(--border)}
+.btn-ico{width:16px;height:16px;stroke:currentColor;margin-right:6px;vertical-align:-3px}
+.rd-fields{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.rd-save{grid-column:1/-1}
+@media(min-width:1100px){.rd-fields{grid-template-columns:1fr 1fr 1fr auto}.rd-save{grid-column:auto}}
+
 /* ---------- modo pantalla del coche (clase html.car: automática en pantallas apaisadas o activable a mano) ---------- */
   html.car{--rail-w:128px}
   html.car .nav-rail{display:flex;padding:10px 4px;gap:4px}
@@ -1166,74 +1205,97 @@ html.car .chg-tablecard{display:none!important}
 
       <!-- SETUP -->
       <section class="page" id="page-setup">
-        <div class="card readings-card" id="readingsCard">
-          <div class="card-head"><h2>Lecturas del coche</h2><span class="rd-status" id="rdStatus"></span></div>
+        <nav class="set-nav" aria-label="Secciones de configuración">
+          <button type="button" data-go="readingsCard">Lecturas</button><button type="button" data-go="vehicleCard">Coche y precios</button><button type="button" data-go="alertsCard">Avisos e idioma</button><button type="button" data-go="dataCard">Datos y copia</button>
+        </nav>
+        <div class="card set-card readings-card" id="readingsCard">
+          <div class="card-head"><h2><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.3 17a10 10 0 1 1 17.4 0"/><path d="M12 14l4-4"/><circle cx="12" cy="14" r="1"/></svg></span>Lecturas del coche</h2><span class="rd-status" id="rdStatus"></span></div>
           <p class="rd-help">Abre la app de BYD → <b>Consumo de energía</b> y copia estos datos cada pocos días. Con dos lecturas la app calcula el consumo real entre ellas, sin estimar con el % de batería.</p>
           <div class="rd-last" id="rdLast"></div>
           <form id="readingForm" autocomplete="off">
             <div class="rd-fields">
               <div class="field"><label>Kilometraje total (km)</label><input id="rd_km" type="number" min="0" step="1" inputmode="numeric" placeholder="Ej. 801"></div>
-              <div class="field"><label>Consumo acumulado (kWh/100 km)</label><input id="rd_aec" type="number" min="0" step="0.1" inputmode="decimal" placeholder="Ej. 16,2"></div>
-              <div class="field"><label>Consumo reciente <span class="opt-hint">(opcional, kWh/100 km)</span></label><input id="rd_recent" type="number" min="0" step="0.1" inputmode="decimal" placeholder="Ej. 15,4"></div>
+              <div class="field"><label>Consumo acumulado (kWh/100 km)</label><input id="rd_aec" type="number" min="0" step="any" inputmode="decimal" placeholder="Ej. 16,2"></div>
+              <div class="field"><label>Consumo reciente <span class="opt-hint">(opcional, kWh/100 km)</span></label><input id="rd_recent" type="number" min="0" step="any" inputmode="decimal" placeholder="Ej. 15,4"></div>
               <button type="submit" class="btn btn-primary rd-save">Guardar lectura</button>
             </div>
           </form>
           <div class="rd-between" id="rdBetween"></div>
           <div class="rd-hist" id="rdHist"></div>
         </div>
-        <div class="grid grid-2">
-          <div class="card">
-            <div class="card-head"><h2>Configuración del vehículo</h2></div>
+        <div class="set-grid">
+          <div class="card set-card" id="vehicleCard">
+            <div class="card-head"><h2><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h14M3 13l2-6a2 2 0 0 1 2-1.4h10a2 2 0 0 1 2 1.4l2 6v4H3z"/><circle cx="7.5" cy="15" r=".6"/><circle cx="16.5" cy="15" r=".6"/></svg></span>Coche y precios</h2><span class="rd-status" id="setupDirty"></span></div>
+            <p class="set-help">Valores de referencia que usa la app para calcular costes y ahorro. Cada carga guarda los que había cuando la registraste: cambiarlos no modifica lo anterior.</p>
             <form id="setupForm">
-              <div class="field">
-                <label>Versión</label>
-                <select id="f_version">
-                  <option value="design">Design (RWD) · 313 CV · 510 km WLTP</option>
-                  <option value="excellence">Excellence (AWD) · 449 CV · 470 km WLTP</option>
-                </select>
+              <div class="set-group">
+                <div class="set-group-title">Tu coche</div>
+                <div class="field-row">
+                  <div class="field"><label>Versión</label>
+                    <select id="f_version">
+                      <option value="design">Design (RWD) · 313 CV · 510 km WLTP</option>
+                      <option value="excellence">Excellence (AWD) · 449 CV · 470 km WLTP</option>
+                    </select>
+                    <small class="fld-hint">Se muestra en la barra superior.</small></div>
+                  <div class="field"><label>Fecha de compra</label><input id="f_purchase" type="date"><small class="fld-hint">Calcula la antigüedad y las revisiones por tiempo.</small></div>
+                </div>
               </div>
-              <div class="field"><label>Batería</label><input type="text" value="74.8 kWh (Blade Battery + Cell to Body)" disabled style="opacity:.7"></div>
-              <div class="field"><label>VIN</label><input id="f_vin" type="text" placeholder="LGXC...12345"></div>
-              <div class="field-row">
-                <div class="field"><label>Kilometraje actual</label><input id="f_km" type="number" min="0" placeholder="0"></div>
-                <div class="field"><label>Fecha de compra</label><input id="f_purchase" type="date"></div>
+              <div class="set-group">
+                <div class="set-group-title">Energía</div>
+                <div class="field-row">
+                  <div class="field"><label>Tarifa eléctrica (€/kWh)</label><input id="f_rate" type="number" step="any" inputmode="decimal" placeholder="0,15"><small class="fld-hint">Para estimar el coste de las cargas sin importe.</small></div>
+                  <div class="field"><label>Consumo de respaldo (kWh/100 km)</label><input id="f_consumption" type="number" step="any" inputmode="decimal" placeholder="15"><small class="fld-hint">Solo si aún no hay lecturas del coche ni datos suficientes.</small></div>
+                </div>
               </div>
-              <div class="field-row">
-                <div class="field"><label>Consumo medio (kWh/100km)</label><input id="f_consumption" type="number" step="0.1" placeholder="15"></div>
-                <div class="field"><label>Tarifa eléctrica (€/kWh)</label><input id="f_rate" type="number" step="0.01" placeholder="0.15"></div>
+              <div class="set-group">
+                <div class="set-group-title">Comparativa con el León</div>
+                <div class="field-row">
+                  <div class="field"><label>León FR 125 CV (l/100 km)</label><input id="f_refcons" type="number" step="any" inputmode="decimal" placeholder="6,5"><small class="fld-hint">Consumo de referencia del coche con el que se compara.</small></div>
+                  <div class="field"><label>Gasolina de respaldo (€/l)</label><input id="f_fuel" type="number" step="any" inputmode="decimal" placeholder="1,35"><small class="fld-hint">Solo si no hay precio del día (Ministerio).</small></div>
+                </div>
               </div>
-              <div class="field-row">
-                <div class="field"><label>León FR 125 CV (l/100km)</label><input id="f_refcons" type="number" step="0.1" placeholder="6.5"></div>
-                <div class="field"><label>Gasolina de respaldo (€/l)</label><input id="f_fuel" type="number" step="0.01" placeholder="1.35"></div>
-              </div>
-              <button type="submit" class="btn btn-primary btn-block">Guardar configuración</button>
+              <button type="submit" class="btn btn-primary btn-block" id="setupSave">Guardar cambios</button>
             </form>
           </div>
-          <div class="card">
-            <div class="card-head"><h2>Idioma de las revisiones</h2></div>
-            <p style="font-size:12.5px;color:var(--text-muted);margin-bottom:14px">Afecta al calendario de revisiones.</p>
-            <div class="lang-toggle" style="width:fit-content;margin-bottom:20px">
-              <button id="langEs" class="active">🇪🇸 Español</button>
-              <button id="langEn">🇬🇧 English</button>
+          <div class="set-col">
+            <div class="card set-card" id="alertsCard">
+              <div class="card-head"><h2><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></span>Avisos e idioma</h2></div>
+              <div class="set-item">
+                <div class="set-item-head"><b>Idioma de las revisiones</b></div>
+                <p class="set-help">Afecta al calendario de revisiones.</p>
+                <div class="lang-toggle" style="width:fit-content">
+                  <button id="langEs" class="active">🇪🇸 Español</button>
+                  <button id="langEn">🇬🇧 English</button>
+                </div>
+              </div>
+              <div class="set-item">
+                <div class="set-item-head"><b>Notificaciones del navegador</b><span class="set-chip" id="notifStatus"></span></div>
+                <p class="set-help">Avisos de revisiones próximas o vencidas, incluso con la app en segundo plano.</p>
+                <button class="btn btn-ghost btn-block" id="notifPermBtn">Activar notificaciones</button>
+              </div>
             </div>
-            <div class="card-head"><h2>Notificaciones automáticas</h2></div>
-            <p style="font-size:12.5px;color:var(--text-muted);margin-bottom:12px">Activa avisos del navegador para revisiones próximas o vencidas, incluso si tienes la app en segundo plano.</p>
-            <button class="btn btn-ghost btn-block" id="notifPermBtn">Activar notificaciones del navegador</button>
-            <p style="font-size:11px;color:var(--text-faint);margin-top:10px" id="notifStatus"></p>
-            <div class="card-head" style="margin-top:24px"><h2>Sincronizar con Google Drive</h2></div>
-            <p style="font-size:12.5px;color:var(--text-muted);margin-bottom:12px">Guarda tus datos en una carpeta privada de tu Drive para tenerlos iguales en el móvil y en el coche. Gana siempre la versión más reciente.</p>
-            <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <button class="btn btn-primary" id="driveSyncBtn" type="button" style="flex:1">Sincronizar ahora</button>
-              <button class="btn btn-ghost" id="driveDisconnectBtn" type="button">Desconectar</button>
+            <div class="card set-card" id="dataCard">
+              <div class="card-head"><h2><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></span>Datos y copia</h2></div>
+              <div class="set-item">
+                <div class="set-item-head"><b>Sincronizar con Google Drive</b></div>
+                <p class="set-help">Guarda tus datos en una carpeta privada de tu Drive para tenerlos iguales en el móvil y en el coche. Gana siempre la versión más reciente.</p>
+                <div class="set-btns">
+                  <button class="btn btn-primary" id="driveSyncBtn" type="button">Sincronizar ahora</button>
+                  <button class="btn btn-ghost" id="driveDisconnectBtn" type="button">Desconectar</button>
+                </div>
+                <p class="set-status" id="driveStatus">Sin conectar. Pulsa Sync.</p>
+              </div>
+              <div class="set-item">
+                <div class="set-item-head"><b>Copia de seguridad</b></div>
+                <p class="set-help">Descarga todos tus datos en un archivo JSON o restáuralos desde uno guardado. Útil para cambiar de móvil o tener una copia propia.</p>
+                <div class="set-btns">
+                  <button class="btn btn-ghost" id="exportBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-ico"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Exportar datos</button>
+                  <button class="btn btn-ghost" id="importBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-ico"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>Importar datos</button>
+                </div>
+                <p class="set-status" id="backupInfo"></p>
+              </div>
+              <p class="set-foot" id="appVersion"></p>
             </div>
-            <p style="font-size:12px;color:var(--text-muted);margin-top:10px" id="driveStatus">Sin conectar. Pulsa Sync.</p>
-            <div class="card-head" style="margin-top:24px"><h2>Copia de seguridad</h2></div>
-            <p style="font-size:12.5px;color:var(--text-muted);margin-bottom:12px">Descarga todos tus datos en un archivo JSON o restáuralos desde uno guardado. Útil para cambiar de móvil o tener una copia propia.</p>
-            <div style="display:flex;gap:8px;flex-wrap:wrap">
-              <button class="btn btn-ghost" id="exportBtn" type="button" style="flex:1"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;stroke:currentColor;margin-right:6px;vertical-align:-3px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>Exportar datos</button>
-              <button class="btn btn-ghost" id="importBtn" type="button" style="flex:1"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;stroke:currentColor;margin-right:6px;vertical-align:-3px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>Importar datos</button>
-            </div>
-            <p style="font-size:11px;color:var(--text-faint);margin-top:14px" id="appVersion"></p>
           </div>
         </div>
       </section>
@@ -1627,7 +1689,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-28.1';
+const APP_VERSION = '2026-10-28.2';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -1754,7 +1816,7 @@ function navigate(page, opts){
     try{ if(location.hash !== h) history.pushState(null, '', h); }catch(e){}
   }
   if(page==='charges') renderCharges();
-  if(page==='setup') renderReadings();
+  if(page==='setup'){ renderReadings(); renderBackupInfo(); }
   if(page==='revisions') renderRevisions();
   if(page==='docs') setDocTab(docTab);
   if(page==='stats') renderStats();
@@ -1885,9 +1947,11 @@ function requestNotifPermission(){
 }
 function updateNotifStatus(){
   const el = document.getElementById('notifStatus');
-  if(!('Notification' in window)){ el.textContent = 'No soportado en este navegador.'; return; }
-  const map = {granted:'✅ Activadas', denied:'🚫 Bloqueadas (revisa permisos del navegador)', default:'⏸️ No activadas todavía'};
+  if(!('Notification' in window)){ el.textContent = 'No soportado'; el.className = 'set-chip'; return; }
+  const map = {granted:'Activadas', denied:'Bloqueadas', default:'Sin activar'};
   el.textContent = map[Notification.permission] || '';
+  el.className = 'set-chip ' + (Notification.permission === 'granted' ? 'ok' : Notification.permission === 'denied' ? 'bad' : '');
+  el.title = Notification.permission === 'denied' ? 'Bloqueadas: revisa los permisos del navegador' : '';
 }
 
 /* ---------------- dashboard ---------------- */
@@ -3451,6 +3515,7 @@ function exportData(){
   document.body.appendChild(a); a.click(); a.remove();
   URL.revokeObjectURL(url);
   localStorage.setItem('lastBackupDate', new Date().toISOString());
+  renderBackupInfo();
   toast('Datos exportados correctamente', 'success');
 }
 let pendingImport = null;
@@ -3478,11 +3543,26 @@ function confirmImport(){
 }
 
 /* ---------------- forms wiring ---------------- */
+// Botón «Guardar» solo activo cuando hay cambios; navegación por secciones; fecha de la última copia.
+let setupSnap = '';
+const SETUP_FIELDS = ['f_version', 'f_purchase', 'f_consumption', 'f_rate', 'f_refcons', 'f_fuel'];
+function setupSnapshot(){ return SETUP_FIELDS.map(id=>document.getElementById(id).value).join('|'); }
+function updateSetupDirty(){
+  const dirty = setupSnapshot() !== setupSnap, btn = document.getElementById('setupSave'), tag = document.getElementById('setupDirty');
+  if(btn) btn.disabled = !dirty;
+  if(tag){ tag.className = 'rd-status ' + (dirty ? 'stale' : 'ok'); tag.textContent = dirty ? 'Cambios sin guardar' : 'Guardado'; }
+}
+function renderBackupInfo(){
+  const el = document.getElementById('backupInfo'); if(!el) return;
+  let iso = null; try{ iso = localStorage.getItem('lastBackupDate'); }catch(e){}
+  if(!iso){ el.textContent = 'Aún no has descargado ninguna copia.'; el.className = 'set-status warn'; return; }
+  const d = new Date(iso), days = Math.round((Date.now() - d.getTime()) / 864e5);
+  el.textContent = 'Última copia: ' + d.toLocaleDateString('es-ES') + ' · ' + (days <= 0 ? 'hoy' : days === 1 ? 'ayer' : 'hace ' + days + ' días');
+  el.className = 'set-status' + (days > 30 ? ' warn' : '');
+}
 function applyStateToForms(){
   const c = state.config;
   document.getElementById('f_version').value = c.version || 'design';
-  document.getElementById('f_vin').value = c.vin;
-  document.getElementById('f_km').value = getCurrentKm();
   document.getElementById('f_purchase').value = c.purchaseDate;
   document.getElementById('f_consumption').value = c.avgConsumption;
   document.getElementById('f_rate').value = c.electricRate;
@@ -3490,6 +3570,7 @@ function applyStateToForms(){
   document.getElementById('f_fuel').value = c.fuelPrice ?? 1.35;
   document.getElementById('langEs').classList.toggle('active', state.lang==='es');
   document.getElementById('langEn').classList.toggle('active', state.lang==='en');
+  setupSnap = setupSnapshot(); updateSetupDirty();
 }
 
 function setupEventListeners(){
@@ -3543,18 +3624,15 @@ function setupEventListeners(){
 
   document.getElementById('setupForm').addEventListener('submit', e=>{
     e.preventDefault();
-    state.config = {
+    state.config = { ...state.config,   // conserva lo que gestionan otras fichas (km, consumo del coche, VIN guardado antes)
       version: document.getElementById('f_version').value,
-      vin: document.getElementById('f_vin').value.trim(),
-      currentKm: Number(document.getElementById('f_km').value)||0,
       purchaseDate: document.getElementById('f_purchase').value,
       avgConsumption: Number(document.getElementById('f_consumption').value)||17,
-      carAec: state.config.carAec,   // lo gestiona la ficha «Lecturas del coche»
       electricRate: Number(document.getElementById('f_rate').value)||0.15,
       refConsumption: Number(document.getElementById('f_refcons').value)||6.5,
       fuelPrice: Number(document.getElementById('f_fuel').value)||1.35
     };
-    saveState(); renderDashboard(); renderAlerts(); toast('Configuración guardada', 'success');
+    saveState(); applyStateToForms(); renderDashboard(); renderAlerts(); toast('Configuración guardada', 'success');
   });
 
   function updateChargePriceDefault(){
@@ -3645,6 +3723,9 @@ function setupEventListeners(){
   });
   document.getElementById('chargeCancelEdit').addEventListener('click', cancelChargeEdit);
   document.getElementById('readingForm').addEventListener('submit', saveReading);
+  document.getElementById('setupForm').addEventListener('input', updateSetupDirty);
+  document.getElementById('setupForm').addEventListener('change', updateSetupDirty);
+  document.querySelectorAll('.set-nav button').forEach(b=>b.addEventListener('click', ()=>{ const t = document.getElementById(b.dataset.go); if(t) t.scrollIntoView({ behavior:'smooth', block:'start' }); }));
   document.getElementById('chargeOpenBtn').addEventListener('click', ()=>{ cancelChargeEdit(); document.getElementById('chargeFormOverlay').classList.add('open'); });
   document.getElementById('chgAllBtn').addEventListener('click', ()=>{ chgShowAll = !chgShowAll; renderCharges(); });
 
