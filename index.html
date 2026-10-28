@@ -1695,7 +1695,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-28.7';
+const APP_VERSION = '2026-10-28.8';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2243,7 +2243,7 @@ function buildRecentActivity(){
   const allEvents = [
     ...state.charges.map(c=>({type:'charge', date:c.date, ts:chargeTs(c), data:c})),
     ...maintList().map(m=>({type:'maintenance', date:m.date, ts:(new Date(m.date).getTime()||0), data:m}))
-  ].sort((a,b)=> (b.ts-a.ts) || ((b.type==='charge'?chargeAddedAt(b.data):0) - (a.type==='charge'?chargeAddedAt(a.data):0))).slice(0, 6);
+  ].sort((a,b)=> (b.ts-a.ts) || ((b.type==='charge'?chargeAddedAt(b.data):0) - (a.type==='charge'?chargeAddedAt(a.data):0))).slice(0, 3);
 
   if(!allEvents.length){ container.innerHTML = `<div class="empty-state" style="padding:28px 10px"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18M18 17V9M13 17V5M8 17v-4"/></svg><p>Sin actividad reciente</p></div>`; return; }
 
