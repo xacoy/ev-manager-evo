@@ -549,6 +549,11 @@ button{cursor:pointer}
 .dl-cat > .dl-grid,.dl-cat > .dl-group{margin-left:14px;margin-right:14px}
 .dl-cat > .dl-group:first-of-type{margin-top:14px}
 .dl-cat > .dl-grid:first-of-type{margin-top:14px}
+.dl-acts{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.dl-acts .btn{margin-top:0;width:100%}
+.dl-ask{font-size:12.5px;font-weight:700;color:var(--text);text-align:center}
+.dl-danger{background:var(--danger);color:#fff;border:0}
+.dl-empty{font-size:13px;color:var(--text-faint);margin:6px 2px}
 .dl-cat .dl-item{background:var(--bg-card)}
 .dl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:14px;margin-bottom:18px}
 .dl-item{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;display:flex;flex-direction:column}
@@ -1368,7 +1373,7 @@ html.car .chg-tablecard{display:none!important}
         </div>
         <div id="downloadsTab" style="display:none">
           <div class="card" style="padding:16px">
-            <div class="card-head"><h2>Descargas</h2></div>
+            <div class="card-head"><h2>Descargas</h2><span id="dlRestore"></span></div>
             <div id="dlList"></div>
           </div>
         </div>
@@ -1725,7 +1730,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-29.2';
+const APP_VERSION = '2026-10-29.3';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -1760,6 +1765,7 @@ let state = {
   completedRevisions: [],
   recommendedDone: {},
   quickLinks: DEFAULT_QUICK_LINKS.slice(),
+  hiddenWalls: [],
   lang: 'es',
   meta: { notifiedRevisions: [], lastAlertCheck: '' }
 };
@@ -2623,10 +2629,6 @@ function setDocTab(t){
 }
 const DOWNLOADS = [
   { cat: 'oscuro', group: 'Minimalistas', thumbs: true, items: [
-    ['fondo_min_01_negro.jpg','Negro puro','298 KB'],
-    ['fondo_min_02_noche.jpg','Noche','290 KB'],
-    ['fondo_min_03_grafito.jpg','Grafito','282 KB'],
-    ['fondo_min_04_diagonal_azul.jpg','Azul diagonal','289 KB'],
     ['fondo_min_05_halo.jpg','Halo','306 KB'],
     ['fondo_min_06_brillo_inferior.jpg','Brillo inferior','310 KB'],
     ['fondo_min_07_brillo_lateral.jpg','Brillo lateral','301 KB'],
@@ -2636,13 +2638,9 @@ const DOWNLOADS = [
     ['fondo_min_11_horizonte.jpg','Horizonte','323 KB'],
     ['fondo_min_12_diagonal.jpg','Diagonal','348 KB'],
     ['fondo_min_13_anillo.jpg','Anillo','338 KB'],
-    ['fondo_min_14_anillos.jpg','Anillos','320 KB'],
     ['fondo_min_15_arco.jpg','Arco','341 KB'],
     ['fondo_min_16_franja.jpg','Franja','314 KB'],
-    ['fondo_min_17_haz.jpg','Haz','305 KB'],
-    ['fondo_min_18_cuadricula.jpg','Cuadrícula','360 KB'],
-    ['fondo_min_19_puntos.jpg','Puntos','312 KB'],
-    ['fondo_min_20_planos.jpg','Planos','290 KB'] ] },
+    ['fondo_min_17_haz.jpg','Haz','305 KB'] ] },
   { cat: 'oscuro', group: 'Con diseño', thumbs: true, items: [
     ['fondo_01_ocean.jpg','Océano','1588 KB'],
     ['fondo_02_velocidad.jpg','Velocidad','843 KB'],
@@ -2676,7 +2674,6 @@ const DOWNLOADS = [
     ['fondo_medio_08_sol_bajo.jpg','Sol bajo','300 KB'],
     ['fondo_medio_09_montanas.jpg','Montañas','312 KB'],
     ['fondo_medio_10_olas.jpg','Olas','313 KB'],
-    ['fondo_medio_11_plano_diagonal.jpg','Plano diagonal','294 KB'],
     ['fondo_medio_12_arco_dorado.jpg','Arco dorado','317 KB'],
     ['fondo_medio_13_lineas.jpg','Líneas','429 KB'],
     ['fondo_medio_14_puntos_suaves.jpg','Puntos suaves','326 KB'],
@@ -2688,16 +2685,30 @@ const DOWNLOADS = [
 ];
 const DL_CATS = [['oscuro','Oscuro'],['medio','Tono medio'],['colorido','Colorido']];
 const dlOpen = new Set();
+function wallHidden(){ return state.hiddenWalls || []; }
 function renderDownloads(){
+  const hidden = new Set(wallHidden());
   const item = (g,[f,t,sz])=>{
     const url = 'public/descargas/' + f, th = g.thumbs ? 'public/descargas/thumbs/' + f : url;
-    return '<div class="dl-item"><a href="' + url + '" target="_blank" rel="noopener"><img src="' + th + '" alt="' + t + '" loading="lazy"></a><div class="dl-info"><b>' + t + '</b><small>' + f.split('.').pop().toUpperCase() + ' · ' + sz + '</small><a class="btn btn-primary btn-sm" href="' + url + '" download="' + f + '">Descargar</a></div></div>';
+    return '<div class="dl-item" data-f="' + f + '"><a href="' + url + '" target="_blank" rel="noopener"><img src="' + th + '" alt="' + t + '" loading="lazy"></a><div class="dl-info"><b>' + t + '</b><small>' + f.split('.').pop().toUpperCase() + ' · ' + sz + '</small><div class="dl-acts"><a class="btn btn-primary btn-sm" href="' + url + '" download="' + f + '">Descargar</a><button type="button" class="btn btn-ghost btn-sm dl-del" data-f="' + f + '" title="Eliminar este fondo">Eliminar</button></div></div></div>';
   };
   const det = (c,label,count,body)=>'<details class="dl-cat" data-cat="' + c + '"' + (dlOpen.has(c) ? ' open' : '') + '><summary><span>' + label + '</span><small>' + count + '</small></summary>' + body + '</details>';
+  const total = DOWNLOADS.reduce((a,g)=>a + g.items.length, 0), shown = DOWNLOADS.reduce((a,g)=>a + g.items.filter(i=>!hidden.has(i[0])).length, 0);
+  document.getElementById('dlRestore').innerHTML = total > shown ? '<button type="button" class="btn btn-ghost btn-sm" id="dlRestoreBtn">Restaurar eliminados (' + (total - shown) + ')</button>' : '';
   document.getElementById('dlList').innerHTML = DL_CATS.map(([c,label])=>{
-    const gs = DOWNLOADS.filter(g=>g.cat === c), n = gs.reduce((a,g)=>a + g.items.length, 0), sub = gs.length > 1;
+    const gs = DOWNLOADS.filter(g=>g.cat === c).map(g=>({...g, items:g.items.filter(i=>!hidden.has(i[0]))})).filter(g=>g.items.length);
+    const n = gs.reduce((a,g)=>a + g.items.length, 0), sub = gs.length > 1;
+    if(!n) return '';
     return det(c, label, n + ' fondos', gs.map(g=>(sub ? '<div class="dl-group">' + g.group + '</div>' : '') + '<div class="dl-grid">' + g.items.map(i=>item(g,i)).join('') + '</div>').join(''));
-  }).join('');
+  }).join('') || '<p class="dl-empty">No queda ningún fondo. Pulsa «Restaurar eliminados» para recuperarlos.</p>';
+}
+/* Eliminar pide confirmación en la propia ficha; los fondos quitados se pueden restaurar y la lista se sincroniza con el resto de datos. */
+function wallAskDelete(f){
+  const card = document.querySelector('.dl-item[data-f="' + f + '"] .dl-acts'); if(!card) return;
+  card.innerHTML = '<div class="dl-ask">¿Eliminar este fondo?</div><button type="button" class="btn btn-ghost btn-sm" data-wallcancel="' + f + '">Cancelar</button><button type="button" class="btn btn-sm dl-danger" data-wallok="' + f + '">Eliminar</button>';
+}
+function wallDelete(f){
+  state.hiddenWalls = Array.from(new Set([...wallHidden(), f])); saveState(); renderDownloads(); toast('Fondo eliminado', 'info');
 }
 function renderDocs(){
   const docs = state.docs || [];
@@ -2860,6 +2871,11 @@ function setupDocs(){
   document.getElementById('d_cat').addEventListener('change', e=>fillDocSubs(e.target.value));
   document.getElementById('d_existing').addEventListener('click', e=>{ const b = e.target.closest('[data-att]'); if(!b) return; const a = editingDocFiles[Number(b.dataset.att)]; if(a){ a.removed = !a.removed; renderDocExisting(); } });
   document.getElementById('docSearch').addEventListener('input', renderDocs);
+  document.getElementById('dlList').addEventListener('click', e=>{
+    const d = e.target.closest('.dl-del'), ok = e.target.closest('[data-wallok]'), no = e.target.closest('[data-wallcancel]');
+    if(d) wallAskDelete(d.dataset.f); else if(ok) wallDelete(ok.dataset.wallok); else if(no) renderDownloads();
+  });
+  document.getElementById('dlRestore').addEventListener('click', e=>{ if(e.target.closest('#dlRestoreBtn')){ state.hiddenWalls = []; saveState(); renderDownloads(); toast('Fondos restaurados', 'success'); } });
   document.getElementById('dlList').addEventListener('toggle', e=>{ const d = e.target; if(d.dataset && d.dataset.cat){ d.open ? dlOpen.add(d.dataset.cat) : dlOpen.delete(d.dataset.cat); } }, true);
   document.getElementById('docTabs').addEventListener('click', e=>{ const b = e.target.closest('[data-tab]'); if(b) setDocTab(b.dataset.tab); });
   document.getElementById('docCatBar').addEventListener('click', e=>{ const b = e.target.closest('[data-cat]'); if(!b) return; docFilterCat = b.dataset.cat; docFilterSub = ''; renderDocs(); });
