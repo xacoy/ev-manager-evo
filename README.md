@@ -45,8 +45,9 @@ Gestor integral web de tu **BYD Atto 3 EVO**: cargas, mantenimiento, revisiones 
 - Alertas visuales y notificaciones del navegador
 
 ### ⬇️ Descargas (en Documentos)
-- Pestaña con archivos para descargar: 40 fondos de pantalla en JPG 2560×1600: 12 oscuros y 12 claros (azules, estilo tecnológico BYD) y 16 con color (8 oscuros y 8 claros) en `public/descargas/`
-- Vista previa en miniatura y botón Descargar; para añadir más, copia el archivo a esa carpeta y añádelo a `DOWNLOADS` en `index.html`
+- Pestaña con fondos de pantalla para descargar (JPG 2560×1600, en `public/descargas/`): 32 oscuros (20 minimalistas) y 8 coloridos oscuros, en secciones desplegables
+- **Mis fondos**: botón «+ Subir fondo» para añadir tus propias imágenes (hasta 30 MB cada una); se guardan solo en ese dispositivo y se pueden descargar o eliminar
+- Para añadir más fondos de la web, copia el archivo a esa carpeta y añádelo a `DOWNLOADS` en `index.html`
 
 ### 📝 Notas
 - Notas libres con etiquetas

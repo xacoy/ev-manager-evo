@@ -546,9 +546,12 @@ button{cursor:pointer}
 .dl-cat summary::after{content:'';width:9px;height:9px;border-right:2px solid var(--text-muted);border-bottom:2px solid var(--text-muted);transform:rotate(45deg);margin:-4px 4px 0 6px;transition:transform .2s var(--ease)}
 .dl-cat[open] summary::after{transform:rotate(-135deg);margin-top:4px}
 .dl-cat[open] summary{border-bottom:1px solid var(--border)}
-.dl-cat > .dl-grid,.dl-cat > .dl-group{margin-left:14px;margin-right:14px}
+.dl-empty{margin:0;font-size:13px;color:var(--text-faint)}
+.dl-item .dl-del.arm{background:var(--danger-soft);color:var(--danger);border-color:var(--danger)}
+.dl-item .btn+.btn{margin-top:6px}
+.dl-cat > #dlMine,.dl-cat > .dl-grid,.dl-cat > .dl-group{margin-left:14px;margin-right:14px}
 .dl-cat > .dl-group:first-of-type{margin-top:14px}
-.dl-cat > .dl-grid:first-of-type{margin-top:14px}
+.dl-cat > .dl-grid:first-of-type,.dl-cat > #dlMine{margin-top:14px;margin-bottom:14px}
 .dl-cat .dl-item{background:var(--bg-card)}
 .dl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:14px;margin-bottom:18px}
 .dl-item{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;display:flex;flex-direction:column}
@@ -1368,7 +1371,8 @@ html.car .chg-tablecard{display:none!important}
         </div>
         <div id="downloadsTab" style="display:none">
           <div class="card" style="padding:16px">
-            <div class="card-head"><h2>Descargas</h2><span class="hint" id="dlCount"></span></div>
+            <div class="card-head"><h2>Descargas</h2><button type="button" class="btn btn-primary btn-sm" id="dlUploadBtn">+ Subir fondo</button></div>
+            <input type="file" id="dlFile" accept="image/*" multiple hidden>
             <div id="dlList"></div>
           </div>
         </div>
@@ -1725,7 +1729,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-28.16';
+const APP_VERSION = '2026-10-29.1';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2622,7 +2626,28 @@ function setDocTab(t){
   if(t === 'revs') renderRevisions(); else if(t === 'downloads') renderDownloads(); else if(t === 'notes') renderNotes(); else renderDocs();
 }
 const DOWNLOADS = [
-  { cat: 'oscuro', group: 'Oscuros', thumbs: true, items: [
+  { cat: 'oscuro', group: 'Minimalistas', thumbs: true, items: [
+    ['fondo_min_01_negro.jpg','Negro puro','298 KB'],
+    ['fondo_min_02_noche.jpg','Noche','290 KB'],
+    ['fondo_min_03_grafito.jpg','Grafito','282 KB'],
+    ['fondo_min_04_diagonal_azul.jpg','Azul diagonal','289 KB'],
+    ['fondo_min_05_halo.jpg','Halo','306 KB'],
+    ['fondo_min_06_brillo_inferior.jpg','Brillo inferior','310 KB'],
+    ['fondo_min_07_brillo_lateral.jpg','Brillo lateral','301 KB'],
+    ['fondo_min_08_esquina_violeta.jpg','Esquina violeta','291 KB'],
+    ['fondo_min_09_verde_tenue.jpg','Verde tenue','293 KB'],
+    ['fondo_min_10_rojo_tenue.jpg','Rojo tenue','297 KB'],
+    ['fondo_min_11_horizonte.jpg','Horizonte','323 KB'],
+    ['fondo_min_12_diagonal.jpg','Diagonal','348 KB'],
+    ['fondo_min_13_anillo.jpg','Anillo','338 KB'],
+    ['fondo_min_14_anillos.jpg','Anillos','320 KB'],
+    ['fondo_min_15_arco.jpg','Arco','341 KB'],
+    ['fondo_min_16_franja.jpg','Franja','314 KB'],
+    ['fondo_min_17_haz.jpg','Haz','305 KB'],
+    ['fondo_min_18_cuadricula.jpg','Cuadrícula','360 KB'],
+    ['fondo_min_19_puntos.jpg','Puntos','312 KB'],
+    ['fondo_min_20_planos.jpg','Planos','290 KB'] ] },
+  { cat: 'oscuro', group: 'Con diseño', thumbs: true, items: [
     ['fondo_01_ocean.jpg','Océano','1588 KB'],
     ['fondo_02_velocidad.jpg','Velocidad','843 KB'],
     ['fondo_03_hex.jpg','Panal','1120 KB'],
@@ -2635,20 +2660,7 @@ const DOWNLOADS = [
     ['fondo_10_nebulosa.jpg','Nebulosa','897 KB'],
     ['fondo_11_topografia.jpg','Topografía','899 KB'],
     ['fondo_12_carbono.jpg','Carbono','571 KB'] ] },
-  { cat: 'claro', group: 'Claros', thumbs: true, items: [
-    ['fondo_claro_01_niebla.jpg','Niebla','283 KB'],
-    ['fondo_claro_02_oleaje.jpg','Oleaje','678 KB'],
-    ['fondo_claro_03_panal.jpg','Panal','539 KB'],
-    ['fondo_claro_04_velocidad.jpg','Velocidad','476 KB'],
-    ['fondo_claro_05_carga.jpg','Carga','395 KB'],
-    ['fondo_claro_06_topografia.jpg','Topografía','491 KB'],
-    ['fondo_claro_07_amanecer.jpg','Amanecer','316 KB'],
-    ['fondo_claro_08_carretera.jpg','Carretera','311 KB'],
-    ['fondo_claro_09_blade.jpg','Blade','429 KB'],
-    ['fondo_claro_10_plata.jpg','Plata','480 KB'],
-    ['fondo_claro_11_aurora.jpg','Aurora','292 KB'],
-    ['fondo_claro_12_puntos.jpg','Puntos','365 KB'] ] },
-  { cat: 'colorido', group: 'Coloridos · oscuros', thumbs: true, items: [
+  { cat: 'colorido', group: 'Coloridos', thumbs: true, items: [
     ['fondo_color_oscuro_01_verde_panal.jpg','Verde panal','1138 KB'],
     ['fondo_color_oscuro_02_rojo_velocidad.jpg','Rojo velocidad','844 KB'],
     ['fondo_color_oscuro_03_violeta_onda.jpg','Violeta onda','473 KB'],
@@ -2656,31 +2668,61 @@ const DOWNLOADS = [
     ['fondo_color_oscuro_05_turquesa_oceano.jpg','Turquesa océano','1475 KB'],
     ['fondo_color_oscuro_06_naranja_topografia.jpg','Naranja topografía','899 KB'],
     ['fondo_color_oscuro_07_rosa_nebulosa.jpg','Rosa nebulosa','942 KB'],
-    ['fondo_color_oscuro_08_lima_blade.jpg','Lima blade','904 KB'] ] },
-  { cat: 'colorido', group: 'Coloridos · claros', thumbs: true, items: [
-    ['fondo_color_claro_01_salvia_niebla.jpg','Salvia niebla','282 KB'],
-    ['fondo_color_claro_02_turquesa_oleaje.jpg','Turquesa oleaje','686 KB'],
-    ['fondo_color_claro_03_lavanda_panal.jpg','Lavanda panal','554 KB'],
-    ['fondo_color_claro_04_coral_velocidad.jpg','Coral velocidad','443 KB'],
-    ['fondo_color_claro_05_dorado_carga.jpg','Dorado carga','391 KB'],
-    ['fondo_color_claro_06_verde_topografia.jpg','Verde topografía','504 KB'],
-    ['fondo_color_claro_07_rosa_aurora.jpg','Rosa aurora','296 KB'],
-    ['fondo_color_claro_08_malva_puntos.jpg','Malva puntos','377 KB'] ] }
+    ['fondo_color_oscuro_08_lima_blade.jpg','Lima blade','904 KB'] ] }
 ];
-const DL_CATS = [['oscuro','Oscuro'],['claro','Claro'],['colorido','Colorido']];
+const DL_CATS = [['oscuro','Oscuro'],['colorido','Colorido']];
 const dlOpen = new Set();
+/* Mis fondos: los que sube el usuario se guardan en este dispositivo (IndexedDB), no en la web ni en Drive. */
+const WALL_MAX = 30 * 1024 * 1024;
+let wallUrls = [];
+function wallDb(){ return new Promise((res,rej)=>{ const r = indexedDB.open('evManagerEvo:wallpapers', 1); r.onupgradeneeded = ()=>r.result.createObjectStore('w', {keyPath:'id'}); r.onsuccess = ()=>res(r.result); r.onerror = ()=>rej(r.error); }); }
+async function wallTx(mode, fn){ const db = await wallDb(); return new Promise((res,rej)=>{ const tx = db.transaction('w', mode), q = fn(tx.objectStore('w')); tx.oncomplete = ()=>res(q && q.result); tx.onerror = tx.onabort = ()=>rej(tx.error); }); }
+const wallAll = async ()=>((await wallTx('readonly', st=>st.getAll())) || []).sort((a,b)=>b.added - a.added);
+async function wallMakeThumb(file){
+  const bmp = await createImageBitmap(file), k = Math.min(1, 640 / bmp.width);
+  const c = document.createElement('canvas'); c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k);
+  c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+  const thumb = await new Promise(r=>c.toBlob(r, 'image/jpeg', .85));
+  const w = bmp.width, h = bmp.height; if(bmp.close) bmp.close();
+  return {thumb, w, h};
+}
+async function wallUpload(files){
+  let ok = 0;
+  for(const f of files){
+    if(!/^image\//.test(f.type)){ toast('«' + f.name + '» no es una imagen', 'error'); continue; }
+    if(f.size > WALL_MAX){ toast('«' + f.name + '» pesa más de 30 MB', 'error'); continue; }
+    try{
+      const {thumb, w, h} = await wallMakeThumb(f);
+      await wallTx('readwrite', st=>st.put({id: 'w' + Date.now() + Math.random().toString(36).slice(2, 6), name: f.name, type: f.type, size: f.size, blob: f, thumb, w, h, added: Date.now()}));
+      ok++;
+    }catch(e){ toast('No se pudo guardar «' + f.name + '»', 'error'); }
+  }
+  if(ok){ toast(ok === 1 ? 'Fondo guardado en Mis fondos' : ok + ' fondos guardados en Mis fondos', 'success'); dlOpen.add('mios'); }
+  renderDownloads();
+}
+const fmtSize = n=>n >= 1048576 ? (n / 1048576).toFixed(1).replace('.', ',') + ' MB' : Math.max(1, Math.round(n / 1024)) + ' KB';
+async function renderMyWalls(){
+  const box = document.getElementById('dlMine'); if(!box) return;
+  let list = [];
+  try{ list = await wallAll(); }catch(e){ box.innerHTML = '<p class="dl-empty">Este navegador no permite guardar archivos propios.</p>'; return; }
+  wallUrls.forEach(u=>URL.revokeObjectURL(u)); wallUrls = [];
+  const sum = document.getElementById('dlMineCount'); if(sum) sum.textContent = list.length + (list.length === 1 ? ' fondo' : ' fondos');
+  box.innerHTML = list.length ? '<div class="dl-grid">' + list.map(w=>{
+    const t = URL.createObjectURL(w.thumb), u = URL.createObjectURL(w.blob); wallUrls.push(t, u);
+    return '<div class="dl-item"><a href="' + u + '" target="_blank" rel="noopener"><img src="' + t + '" alt="' + escapeAttr(w.name) + '"></a><div class="dl-info"><b title="' + escapeAttr(w.name) + '">' + escapeHtml(w.name.replace(/\.[^.]+$/, '')) + '</b><small>' + w.w + ' × ' + w.h + ' · ' + fmtSize(w.size) + '</small><a class="btn btn-primary btn-sm" href="' + u + '" download="' + escapeAttr(w.name) + '">Descargar</a><button type="button" class="btn btn-ghost btn-sm dl-del" data-wid="' + w.id + '">Eliminar</button></div></div>';
+  }).join('') + '</div>' : '<p class="dl-empty">Aún no has subido ninguno. Pulsa «+ Subir fondo» para añadir tus imágenes (se guardan solo en este dispositivo).</p>';
+}
 function renderDownloads(){
-  document.getElementById('dlCount').textContent = 'JPG · 2560 × 1600';
   const item = (g,[f,t,sz])=>{
     const url = 'public/descargas/' + f, th = g.thumbs ? 'public/descargas/thumbs/' + f : url;
     return '<div class="dl-item"><a href="' + url + '" target="_blank" rel="noopener"><img src="' + th + '" alt="' + t + '" loading="lazy"></a><div class="dl-info"><b>' + t + '</b><small>' + f.split('.').pop().toUpperCase() + ' · ' + sz + '</small><a class="btn btn-primary btn-sm" href="' + url + '" download="' + f + '">Descargar</a></div></div>';
   };
+  const det = (c,label,count,body)=>'<details class="dl-cat" data-cat="' + c + '"' + (dlOpen.has(c) ? ' open' : '') + '><summary><span>' + label + '</span><small' + (c === 'mios' ? ' id="dlMineCount"' : '') + '>' + count + '</small></summary>' + body + '</details>';
   document.getElementById('dlList').innerHTML = DL_CATS.map(([c,label])=>{
-    const gs = DOWNLOADS.filter(g=>g.cat === c), n = gs.reduce((a,g)=>a + g.items.length, 0);
-    const sub = gs.length > 1;
-    return '<details class="dl-cat" data-cat="' + c + '"' + (dlOpen.has(c) ? ' open' : '') + '><summary><span>' + label + '</span><small>' + n + ' fondos</small></summary>' +
-      gs.map(g=>(sub ? '<div class="dl-group">' + g.group + '</div>' : '') + '<div class="dl-grid">' + g.items.map(i=>item(g,i)).join('') + '</div>').join('') + '</details>';
-  }).join('');
+    const gs = DOWNLOADS.filter(g=>g.cat === c), n = gs.reduce((a,g)=>a + g.items.length, 0), sub = gs.length > 1;
+    return det(c, label, n + ' fondos', gs.map(g=>(sub ? '<div class="dl-group">' + g.group + '</div>' : '') + '<div class="dl-grid">' + g.items.map(i=>item(g,i)).join('') + '</div>').join(''));
+  }).join('') + det('mios', 'Mis fondos', '', '<div id="dlMine"></div>');
+  renderMyWalls();
 }
 function renderDocs(){
   const docs = state.docs || [];
@@ -2843,6 +2885,14 @@ function setupDocs(){
   document.getElementById('d_cat').addEventListener('change', e=>fillDocSubs(e.target.value));
   document.getElementById('d_existing').addEventListener('click', e=>{ const b = e.target.closest('[data-att]'); if(!b) return; const a = editingDocFiles[Number(b.dataset.att)]; if(a){ a.removed = !a.removed; renderDocExisting(); } });
   document.getElementById('docSearch').addEventListener('input', renderDocs);
+  document.getElementById('dlUploadBtn').addEventListener('click', ()=>document.getElementById('dlFile').click());
+  document.getElementById('dlFile').addEventListener('change', e=>{ const fs = [...e.target.files]; e.target.value = ''; if(fs.length) wallUpload(fs); });
+  document.getElementById('dlList').addEventListener('click', async e=>{
+    const b = e.target.closest('.dl-del'); if(!b) return;
+    if(!b.classList.contains('arm')){ b.classList.add('arm'); b.textContent = '¿Seguro?'; setTimeout(()=>{ if(b.isConnected){ b.classList.remove('arm'); b.textContent = 'Eliminar'; } }, 3000); return; }
+    try{ await wallTx('readwrite', st=>st.delete(b.dataset.wid)); }catch(err){ toast('No se pudo eliminar', 'error'); }
+    renderMyWalls();
+  });
   document.getElementById('dlList').addEventListener('toggle', e=>{ const d = e.target; if(d.dataset && d.dataset.cat){ d.open ? dlOpen.add(d.dataset.cat) : dlOpen.delete(d.dataset.cat); } }, true);
   document.getElementById('docTabs').addEventListener('click', e=>{ const b = e.target.closest('[data-tab]'); if(b) setDocTab(b.dataset.tab); });
   document.getElementById('docCatBar').addEventListener('click', e=>{ const b = e.target.closest('[data-cat]'); if(!b) return; docFilterCat = b.dataset.cat; docFilterSub = ''; renderDocs(); });
