@@ -1809,7 +1809,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-29.12';
+const APP_VERSION = '2026-10-29.13';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2158,15 +2158,41 @@ const FUN_POOL = {
   moon:   { em:'🚀', lbl:'Viaje a la Luna', sub:'Tus km frente a la distancia a la Luna', f:d=>({ num: nf(d.km / MOON_KM * 100, 2) + ' %', tip: fmtNum(d.km) + ' de ' + fmtNum(MOON_KM) + ' km · faltan ' + fmtNum(Math.max(0, MOON_KM - d.km)) + ' km', track: { pct: d.km / MOON_KM * 100, end: '🌕' } }) },
   home:   { em:'🏠', lbl:'De consumo de una casa', sub:'Días que tu energía daría a una casa', f:d=>d.kwh > 0 ? { num: nf(d.kwh / HOME_KWH_YEAR * 365, 1) + ' días', tip: nf(d.kwh, 1) + ' kWh cargados · una casa media consume ≈ ' + nf(HOME_KWH_YEAR / 365, 1) + ' kWh al día' } : null },
   earth:  { em:'🌍', lbl:'De la vuelta a la Tierra', sub:'Tus km frente a una vuelta al mundo', f:d=>({ num: nf(d.km / EARTH_KM * 100, 1) + ' %', tip: fmtNum(d.km) + ' de ' + fmtNum(EARTH_KM) + ' km' }) },
-  iss:    { em:'🛰️', lbl:'La altura de la ISS', sub:'Tus km puestos en vertical llegarían hasta ella', f:d=>({ num: nf(d.km / 408, 1) + '×', tip: 'La estación espacial orbita a unos 408 km de altura' }) },
-  everest:{ em:'⛰️', lbl:'Everests apilados', sub:'Tus km en vertical, montaña sobre montaña', f:d=>({ num: fmtNum(d.km / 8.849), tip: 'El Everest mide 8,85 km de altura' }) },
+  iss:    { em:'🛰️', lbl:'La altura de la ISS', sub:'Tus km en vertical llegarían a ella', f:d=>({ num: nf(d.km / 408, 1) + '×', tip: 'La estación espacial orbita a unos 408 km de altura' }) },
+  everest:{ em:'⛰️', lbl:'Everests apilados', sub:'Tus km en vertical, uno sobre otro', f:d=>({ num: fmtNum(d.km / 8.849), tip: 'El Everest mide 8,85 km de altura' }) },
   marathon:{ em:'🏃', lbl:'Maratones', sub:'Lo que correrías haciendo tus km a pie', f:d=>({ num: fmtNum(d.km / 42.195), tip: 'Un maratón son 42,195 km' }) },
   phone:  { em:'📱', lbl:'Cargas de móvil', sub:'Móviles que podrías cargar con tu energía', f:d=>d.kwh > 0 ? { num: '≈ ' + fmtNum(d.kwh / 0.014), tip: nf(d.kwh, 1) + ' kWh · un móvil usa unos 14 Wh por carga completa' } : null },
   bulb:   { em:'💡', lbl:'Una bombilla encendida', sub:'Tiempo que alumbraría con tu energía', f:d=>{ if(!(d.kwh > 0)) return null; const h = d.kwh / 0.010; return { num: h >= 8760 ? nf(h / 8760, 1) + ' años' : nf(h / 24, 0) + ' días', tip: nf(d.kwh, 1) + ' kWh · una bombilla LED de 10 W encendida sin parar' }; } },
   songs:  { em:'🎵', lbl:'Canciones al volante', sub:'Las que oirías conduciendo tus km', f:d=>({ num: fmtNum(d.km / 100 * 20), tip: 'A unos 100 km/h y canciones de 3 minutos' }) },
   plane:  { em:'✈️', lbl:'De vuelo en avión', sub:'Lo que tardaría un avión en hacer tus km', f:d=>({ num: nf(d.km / 800, 1) + ' h', tip: 'Un avión de pasajeros vuela a unos 800 km/h' }) },
   light:  { em:'⚡', lbl:'A la velocidad de la luz', sub:'Lo que tarda la luz en recorrer tus km', f:d=>({ num: nf(d.km / 299792 * 1000, 1) + ' ms', tip: 'La luz viaja a 299.792 km por segundo' }) },
-  mars:   { em:'🔴', lbl:'Camino a Marte', sub:'Tus km frente a la distancia a Marte', f:d=>({ num: nf(d.km / MARS_KM * 100, 4) + ' %', tip: 'Marte está a unos 225 millones de km en el mejor caso', track: { pct: d.km / MARS_KM * 100, end: '🔴' } }) }
+  mars:   { em:'🔴', lbl:'Camino a Marte', sub:'Tus km frente a la distancia a Marte', f:d=>({ num: nf(d.km / MARS_KM * 100, 4) + ' %', tip: 'Marte está a unos 225 millones de km en el mejor caso', track: { pct: d.km / MARS_KM * 100, end: '🔴' } }) },
+  sun:    { em:'☀️', lbl:'Camino al Sol', sub:'Tus km frente a la distancia al Sol', f:d=>({ num: nf(d.km / 149.6e6 * 100, 5) + ' %', tip: 'El Sol está a unos 149,6 millones de km', track: { pct: d.km / 149.6e6 * 100, end: '☀️' } }) },
+  teide:  { em:'🌋', lbl:'Teides apilados', sub:'Tus km en vertical, Teide sobre Teide', f:d=>({ num: fmtNum(d.km * 1000 / 3715), tip: 'El Teide mide 3.715 m' }) },
+  santiago:{ em:'🥾', lbl:'Camino de Santiago', sub:'Veces que harías el Camino Francés', f:d=>({ num: nf(d.km / 780, 1) + '×', tip: 'El Camino Francés mide unos 780 km' }) },
+  route66:{ em:'🛣️', lbl:'De la Ruta 66', sub:'Tus km frente a la carretera más famosa', f:d=>({ num: nf(d.km / 3940 * 100, 0) + ' %', tip: 'La Ruta 66 mide unos 3.940 km' }) },
+  wall:   { em:'🧱', lbl:'De la Gran Muralla', sub:'Tus km frente a la muralla china', f:d=>({ num: nf(d.km / 21196 * 100, 1) + ' %', tip: 'La Gran Muralla mide unos 21.196 km' }) },
+  eiffel: { em:'🗼', lbl:'Torres Eiffel', sub:'Tus km en vertical, torre sobre torre', f:d=>({ num: fmtNum(d.km * 1000 / 330), tip: 'La torre Eiffel mide 330 m' }) },
+  football:{ em:'🏟️', lbl:'Campos de fútbol', sub:'Los que cabrían en fila a lo largo de tus km', f:d=>({ num: fmtNum(d.km * 1000 / 105), tip: 'Un campo de fútbol mide unos 105 m' }) },
+  whale:  { em:'🐋', lbl:'Ballenas azules', sub:'Las que cabrían en fila a lo largo de tus km', f:d=>({ num: fmtNum(d.km * 1000 / 25), tip: 'Una ballena azul mide unos 25 m' }) },
+  giraffe:{ em:'🦒', lbl:'Jirafas apiladas', sub:'Tus km en vertical, jirafa sobre jirafa', f:d=>({ num: fmtNum(d.km * 1000 / 5), tip: 'Una jirafa mide unos 5 m' }) },
+  channel:{ em:'🏊', lbl:'Canal de la Mancha', sub:'Veces que lo cruzarías a nado con tus km', f:d=>({ num: fmtNum(d.km / 33.8), tip: 'El Canal de la Mancha tiene 33,8 km en su parte más estrecha' }) },
+  steps:  { em:'👣', lbl:'Pasos', sub:'Los que darías andando tus km', f:d=>({ num: fmtNum(d.km * 1000 / 0.75), tip: 'Un paso mide unos 75 cm' }) },
+  bike:   { em:'🚲', lbl:'Pedaleando', sub:'Lo que tardarías haciendo tus km en bici', f:d=>({ num: nf(d.km / 20, 0) + ' h', tip: 'A unos 20 km/h' }) },
+  cheetah:{ em:'🐆', lbl:'Un guepardo a tope', sub:'Lo que tardaría si aguantase el sprint', f:d=>({ num: nf(d.km / 100, 1) + ' h', tip: 'Un guepardo corre a unos 100 km/h, aunque solo unos segundos' }) },
+  turtle: { em:'🐢', lbl:'Una tortuga', sub:'Lo que tardaría en hacer tus km', f:d=>({ num: fmtNum(d.km / 0.3 / 24) + ' días', tip: 'Una tortuga anda a unos 0,3 km/h' }) },
+  snail:  { em:'🐌', lbl:'Un caracol', sub:'Lo que tardaría en hacer tus km', f:d=>({ num: nf(d.km / 0.047 / 24 / 365, 1) + ' años', tip: 'Un caracol de jardín avanza a unos 0,05 km/h' }) },
+  issfast:{ em:'🛰️', lbl:'La ISS, en tus km', sub:'Lo que tardaría la estación espacial', f:d=>({ num: nf(d.km / 27600 * 60, 1) + ' min', tip: 'La ISS viaja a unos 27.600 km/h' }) },
+  toaster:{ em:'🍞', lbl:'Una tostadora', sub:'Tiempo que funcionaría con tu energía', f:d=>d.kwh > 0 ? { num: fmtNum(d.kwh / 0.8) + ' h', tip: nf(d.kwh, 1) + ' kWh · una tostadora gasta unos 800 W' } : null },
+  tv:     { em:'📺', lbl:'Una tele encendida', sub:'Tiempo que funcionaría con tu energía', f:d=>d.kwh > 0 ? { num: nf(d.kwh / 0.1 / 24, 0) + ' días', tip: nf(d.kwh, 1) + ' kWh · una tele gasta unos 100 W' } : null },
+  washer: { em:'🧺', lbl:'Lavadoras', sub:'Coladas que harías con tu energía', f:d=>d.kwh > 0 ? { num: fmtNum(d.kwh / 1), tip: nf(d.kwh, 1) + ' kWh · una lavadora gasta ≈ 1 kWh por colada' } : null },
+  fridge: { em:'🧊', lbl:'Una nevera', sub:'Tiempo que funcionaría con tu energía', f:d=>d.kwh > 0 ? { num: fmtNum(d.kwh / 350 * 365) + ' días', tip: nf(d.kwh, 1) + ' kWh · una nevera gasta unos 350 kWh al año' } : null },
+  shower: { em:'🚿', lbl:'Duchas calientes', sub:'Las que te darías con tu energía', f:d=>d.kwh > 0 ? { num: fmtNum(d.kwh / 2), tip: nf(d.kwh, 1) + ' kWh · una ducha con termo eléctrico gasta unos 2 kWh' } : null },
+  console:{ em:'🎮', lbl:'Horas de consola', sub:'Las que jugarías con tu energía', f:d=>d.kwh > 0 ? { num: fmtNum(d.kwh / 0.2) + ' h', tip: nf(d.kwh, 1) + ' kWh · una consola gasta unos 200 W' } : null },
+  laptop: { em:'💻', lbl:'Un portátil encendido', sub:'Tiempo que funcionaría con tu energía', f:d=>d.kwh > 0 ? { num: nf(d.kwh / 0.05 / 24, 0) + ' días', tip: nf(d.kwh, 1) + ' kWh · un portátil gasta unos 50 W' } : null },
+  coffee: { em:'☕', lbl:'Cafés pagados', sub:'Los que te tomarías con lo que ahorras', f:d=>d.saved > 0 ? { num: fmtNum(d.saved / 1.5), tip: fmtEUR(d.saved) + ' ahorrados · a 1,50 € el café' } : null },
+  pizza:  { em:'🍕', lbl:'Pizzas pagadas', sub:'Las que te comerías con lo que ahorras', f:d=>d.saved > 0 ? { num: fmtNum(d.saved / 10), tip: fmtEUR(d.saved) + ' ahorrados · a 10 € la pizza' } : null },
+  cinema: { em:'🎬', lbl:'Entradas de cine', sub:'Las que comprarías con lo que ahorras', f:d=>d.saved > 0 ? { num: fmtNum(d.saved / 8), tip: fmtEUR(d.saved) + ' ahorrados · a 8 € la entrada' } : null }
 };
 const FUN_DEFAULT = ['moon', 'home', 'earth'];
 function funPick(){
@@ -2189,9 +2215,10 @@ function renderFunTiles(km, totalKwh){
   const clampPct = p => Math.min(Math.max(p, 0), 100);
   // Tarjetas 1, 2 y 4: equivalencias elegidas (cambian con el botón)
   const pick = funPick();
+  const sv = computeSavings();
   document.querySelectorAll('#funGrid .fun-tile[data-slot]').forEach(tile=>{
     const it = FUN_POOL[pick[Number(tile.dataset.slot)]]; if(!it) return;
-    const r = it.f({ km, kwh: totalKwh });
+    const r = it.f({ km, kwh: totalKwh, saved: sv.saved });
     tile.querySelector('.fun-em').textContent = it.em;
     tile.querySelector('.fun-num').textContent = r ? r.num : '—';
     tile.querySelector('.fun-lbl').textContent = it.lbl;
@@ -2206,7 +2233,7 @@ function renderFunTiles(km, totalKwh){
   set('funBigNum', big ? (kwhIsEst(big.ch) ? '≈ ' : '') + nf(big.k, 2) + ' kWh' : '—');
   set('funBigSub', big ? fmtDate(big.ch.date) + (big.ch.location ? ' · ' + big.ch.location : '') : 'Aún sin cargas', big ? 'La carga con más energía de todas las registradas' : '');
   // Coste cada 100 km: electricidad y gasolina equivalente, con lo que guardó cada carga
-  const r = computeSavings();
+  const r = sv;
   set('funPerKmNum', r.kmEq > 0 ? fmtEUR(r.elec / r.kmEq * 100) : '—');
   set('funPerKmSub', r.kmEq > 0 ? 'Lo que gastas en luz (gasolina: ' + fmtEUR(r.gas / r.kmEq * 100) + ')' : 'Aún sin cargas', 'Coste de la electricidad cada 100 km, comparado con lo que costaría en gasolina');
   // Baterías cargadas
