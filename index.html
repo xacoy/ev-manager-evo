@@ -452,7 +452,7 @@ button{cursor:pointer}
 .fun-tile.hot{background:linear-gradient(135deg,var(--accent-soft),var(--success-soft));border-color:var(--accent-glow)}
 .fun-em{font-size:34px;line-height:1;flex-shrink:0}
 .fun-txt{min-width:0;flex:1}
-.fun-num{font-family:var(--font-display);font-weight:800;font-size:24px;line-height:1.1;color:var(--text);white-space:nowrap}
+.fun-num{font-family:var(--font-display);font-weight:800;font-size:24px;line-height:1.1;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fun-lbl{font-size:13px;font-weight:700;color:var(--text);margin-top:1px}
 .fun-sub{font-size:12px;color:var(--text-muted);margin-top:1px}
 .fun-bar{height:6px;border-radius:99px;background:var(--bg-card);margin-top:6px;overflow:hidden}
@@ -1809,7 +1809,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-29.13';
+const APP_VERSION = '2026-10-29.14';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2192,8 +2192,30 @@ const FUN_POOL = {
   laptop: { em:'💻', lbl:'Un portátil encendido', sub:'Tiempo que funcionaría con tu energía', f:d=>d.kwh > 0 ? { num: nf(d.kwh / 0.05 / 24, 0) + ' días', tip: nf(d.kwh, 1) + ' kWh · un portátil gasta unos 50 W' } : null },
   coffee: { em:'☕', lbl:'Cafés pagados', sub:'Los que te tomarías con lo que ahorras', f:d=>d.saved > 0 ? { num: fmtNum(d.saved / 1.5), tip: fmtEUR(d.saved) + ' ahorrados · a 1,50 € el café' } : null },
   pizza:  { em:'🍕', lbl:'Pizzas pagadas', sub:'Las que te comerías con lo que ahorras', f:d=>d.saved > 0 ? { num: fmtNum(d.saved / 10), tip: fmtEUR(d.saved) + ' ahorrados · a 10 € la pizza' } : null },
-  cinema: { em:'🎬', lbl:'Entradas de cine', sub:'Las que comprarías con lo que ahorras', f:d=>d.saved > 0 ? { num: fmtNum(d.saved / 8), tip: fmtEUR(d.saved) + ' ahorrados · a 8 € la entrada' } : null }
+  cinema: { em:'🎬', lbl:'Entradas de cine', sub:'Las que comprarías con lo que ahorras', f:d=>d.saved > 0 ? { num: fmtNum(d.saved / 8), tip: fmtEUR(d.saved) + ' ahorrados · a 8 € la entrada' } : null },
+  // ---- datos curiosos sobre ti y tu coche (salen de tus cargas y de la fecha de compra) ----
+  owned:  { em:'📅', lbl:'Con tu coche', sub:'Desde el día que lo compraste', f:d=>{ const n = funDaysOwned(d); return n > 0 ? { num: fmtNum(n) + ' días', tip: 'Fecha de compra: ' + fmtDate(d.cfg.purchaseDate) } : null; } },
+  perday: { em:'🛣️', lbl:'Tu media diaria', sub:'Lo que recorres cada día de media', f:d=>{ const n = funDaysOwned(d); return n > 0 && d.km > 0 ? { num: nf(d.km / n, 1) + ' km', tip: fmtNum(d.km) + ' km en ' + fmtNum(n) + ' días' } : null; } },
+  favday: { em:'🗓️', lbl:'Tu día de carga', sub:'El día de la semana en que más cargas', f:d=>{ const m = funMode(d.ch.filter(c=>c.date).map(c=>FUN_DAYS[new Date(c.date + 'T12:00:00').getDay()])); return m && d.ch.length > 1 ? { num: m.v, tip: m.n + ' de ' + d.ch.length + ' cargas' } : null; } },
+  favhour:{ em:'⏰', lbl:'Tu hora de carga', sub:'La hora a la que sueles enchufar', f:d=>{ const mins = d.ch.map(c=>/^(\d{1,2}):(\d{2})/.exec(c.time || '')).filter(Boolean).map(m=>Number(m[1]) * 60 + Number(m[2])).sort((a, b)=>a - b); if(!mins.length) return null; const m = mins[Math.floor(mins.length / 2)]; return { num: String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'), tip: 'Hora mediana de tus ' + mins.length + ' cargas con hora' }; } },
+  favplace:{ em:'📍', lbl:'Tu sitio favorito', sub:'Donde más has cargado', f:d=>{ const m = funMode(d.ch.map(c=>(c.location || '').trim()).filter(Boolean)); return m ? { num: m.v, tip: m.n + ' de ' + d.ch.length + ' cargas' } : null; } },
+  streak: { em:'🔥', lbl:'Cargas gratis seguidas', sub:'Tu racha actual de cargas gratis', f:d=>{ if(!d.ch.length) return null; let n = 0; for(const c of d.ch.slice().sort((a, b)=>chargeTs(b) - chargeTs(a))){ if(c.cost != null && c.cost !== '' && Number(c.cost) === 0) n++; else break; } return { num: String(n), tip: 'Cargas seguidas sin pagar, desde la última hacia atrás' }; } },
+  freepct:{ em:'🎁', lbl:'Cargas gratis', sub:'Del total de cargas que has hecho', f:d=>{ if(!d.ch.length) return null; const n = d.ch.filter(c=>c.cost != null && c.cost !== '' && Number(c.cost) === 0).length; return { num: nf(n / d.ch.length * 100, 0) + ' %', tip: n + ' de ' + d.ch.length + ' cargas gratis' }; } },
+  avgkwh: { em:'🔌', lbl:'Una carga media', sub:'Lo que metes en cada carga', f:d=>d.kwh > 0 && d.ch.length ? { num: nf(d.kwh / d.ch.length, 1) + ' kWh', tip: nf(d.kwh, 1) + ' kWh en ' + d.ch.length + ' cargas' } : null },
+  every:  { em:'⏳', lbl:'Cargas cada', sub:'Tiempo medio entre una carga y otra', f:d=>{ const t = d.ch.filter(c=>c.date).map(c=>chargeTs(c)).sort((a, b)=>a - b); return t.length > 1 ? { num: nf((t[t.length - 1] - t[0]) / (t.length - 1) / 864e5, 1) + ' días', tip: 'Media entre tus ' + t.length + ' cargas' } : null; } },
+  perCharge:{ em:'🧭', lbl:'Cada carga te da', sub:'Los km que sacas de una carga media', f:d=>d.kmEq > 0 && d.ch.length ? { num: fmtNum(d.kmEq / d.ch.length) + ' km', tip: 'Km equivalentes a la energía de cada carga, de media' } : null },
+  smallest:{ em:'🐜', lbl:'Tu carga más pequeña', sub:'La que menos energía metió', f:d=>{ const k = d.ch.map(c=>kwhOf(c)).filter(x=>x > 0); return k.length > 1 ? { num: nf(Math.min(...k), 2) + ' kWh', tip: 'La carga con menos energía de las ' + k.length + ' registradas' } : null; } },
+  // ---- curiosidades de verdad sobre los coches eléctricos (y la Luna) ----
+  rover:  { em:'🌕', lbl:'Un eléctrico en la Luna', sub:'El rover del Apolo 15 era eléctrico', f:()=>({ num: '1971', tip: 'Los vehículos lunares de las misiones Apolo 15, 16 y 17 funcionaban con baterías' }) },
+  jenatzy:{ em:'🏁', lbl:'Primer coche a +100 km/h', sub:'Fue eléctrico: La Jamais Contente', f:()=>({ num: '1899', tip: 'Camille Jenatzy superó los 100 km/h con un coche eléctrico (105,9 km/h)' }) },
+  firstev:{ em:'🚗', lbl:'El primer eléctrico', sub:'Nació antes que el de gasolina', f:()=>({ num: '≈ 1830', tip: 'Los primeros coches eléctricos rudimentarios son de la década de 1830; el de gasolina, de 1885-86' }) },
+  effic:  { em:'🧠', lbl:'Más eficiente que gasolina', sub:'Aprovecha el 90 % de la energía, no el 30', f:()=>({ num: '≈ 3×', tip: 'Un motor eléctrico aprovecha en torno al 85-90 % de la energía; uno de gasolina, en torno al 25-30 %' }) },
+  torque: { em:'🏎️', lbl:'Tu par motor', sub:'Fuerza máxima desde que arrancas', f:()=>({ num: 'Al instante', tip: 'Un motor eléctrico entrega su par máximo desde cero revoluciones' }) }
 };
+const FUN_DAYS = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+function funDaysOwned(d){ const p = d.cfg && d.cfg.purchaseDate ? new Date(d.cfg.purchaseDate + 'T12:00:00') : null; return p && !isNaN(p) ? Math.floor((Date.now() - p.getTime()) / 864e5) : 0; }
+// El valor más repetido de una lista y cuántas veces sale
+function funMode(list){ const c = {}; list.forEach(v=>{ c[v] = (c[v] || 0) + 1; }); let best = null; Object.keys(c).forEach(v=>{ if(!best || c[v] > best.n) best = { v, n: c[v] }; }); return best; }
 const FUN_DEFAULT = ['moon', 'home', 'earth'];
 function funPick(){
   let p = null;
@@ -2218,7 +2240,7 @@ function renderFunTiles(km, totalKwh){
   const sv = computeSavings();
   document.querySelectorAll('#funGrid .fun-tile[data-slot]').forEach(tile=>{
     const it = FUN_POOL[pick[Number(tile.dataset.slot)]]; if(!it) return;
-    const r = it.f({ km, kwh: totalKwh, saved: sv.saved });
+    const r = it.f({ km, kwh: totalKwh, saved: sv.saved, kmEq: sv.kmEq, ch: state.charges, cfg: state.config });
     tile.querySelector('.fun-em').textContent = it.em;
     tile.querySelector('.fun-num').textContent = r ? r.num : '—';
     tile.querySelector('.fun-lbl').textContent = it.lbl;
