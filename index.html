@@ -1799,7 +1799,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-29.10';
+const APP_VERSION = '2026-10-29.11';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2143,33 +2143,34 @@ function computeAvgConsumption(c){
 const MOON_KM = 384400, EARTH_KM = 40075;
 const HOME_KWH_YEAR = 3000;   // consumo eléctrico anual aproximado de un hogar medio en España
 function renderFunTiles(km, totalKwh){
-  const set = (id, t)=>{ const el = document.getElementById(id); if(el) el.textContent = t; };
+  const set = (id, t, tip)=>{ const el = document.getElementById(id); if(!el) return; el.textContent = t; if(tip != null){ const tile = el.closest('.fun-tile'); if(tile) tile.title = tip; } };
   const clampPct = p => Math.min(Math.max(p, 0), 100);
+  // Cada ficha dice con una frase sencilla a qué se refiere; el detalle técnico queda en el texto emergente (title).
   // Viaje a la Luna
   const moonPct = km / MOON_KM * 100;
   set('funMoonNum', nf(moonPct, 2) + ' %');
-  set('funMoonSub', fmtNum(km) + ' de ' + fmtNum(MOON_KM) + ' km · faltan ' + fmtNum(Math.max(0, MOON_KM - km)) + ' km');
+  set('funMoonSub', 'Tus km frente a la distancia a la Luna', fmtNum(km) + ' de ' + fmtNum(MOON_KM) + ' km · faltan ' + fmtNum(Math.max(0, MOON_KM - km)) + ' km');
   const mBar = document.getElementById('funMoonBar'); if(mBar) mBar.style.width = clampPct(moonPct) + '%';
   const mCar = document.querySelector('#funGrid .fun-car'); if(mCar) mCar.style.left = 'calc(' + clampPct(moonPct) + '% - 6px)';
   // Casa: la energía cargada, en días de consumo de un hogar medio
   const homeDays = totalKwh / HOME_KWH_YEAR * 365;
-  set('funHomeNum', totalKwh > 0 ? nf(homeDays, 1) + ' días' : '—');
-  set('funHomeSub', nf(totalKwh, 1) + ' kWh · casa media ≈ ' + nf(HOME_KWH_YEAR / 365, 1) + ' kWh/día');
+  set('funHomeNum', totalKwh > 0 ? nf(homeDays, 1) + ' días' : '—', nf(totalKwh, 1) + ' kWh cargados · una casa media consume ≈ ' + nf(HOME_KWH_YEAR / 365, 1) + ' kWh al día');
+  set('funHomeSub', 'Días que tu energía daría a una casa');
   // Tu mayor carga
   let big = null;
   state.charges.forEach(ch=>{ const k = kwhOf(ch); if(k > 0 && (!big || k > big.k)) big = { k, ch }; });
   set('funBigNum', big ? (kwhIsEst(big.ch) ? '≈ ' : '') + nf(big.k, 2) + ' kWh' : '—');
-  set('funBigSub', big ? fmtDate(big.ch.date) + (big.ch.location ? ' · ' + big.ch.location : '') : 'Aún sin cargas');
+  set('funBigSub', big ? fmtDate(big.ch.date) + (big.ch.location ? ' · ' + big.ch.location : '') : 'Aún sin cargas', big ? 'La carga con más energía de todas las registradas' : '');
   // Vuelta a la Tierra
   set('funEarthNum', nf(km / EARTH_KM * 100, 1) + ' %');
-  set('funEarthSub', fmtNum(km) + ' de ' + fmtNum(EARTH_KM) + ' km');
+  set('funEarthSub', 'Tus km frente a una vuelta al mundo', fmtNum(km) + ' de ' + fmtNum(EARTH_KM) + ' km');
   // Coste cada 100 km: electricidad y gasolina equivalente, con lo que guardó cada carga
   const r = computeSavings();
   set('funPerKmNum', r.kmEq > 0 ? fmtEUR(r.elec / r.kmEq * 100) : '—');
-  set('funPerKmSub', r.kmEq > 0 ? 'Gasolina: ' + fmtEUR(r.gas / r.kmEq * 100) : 'Aún sin cargas');
+  set('funPerKmSub', r.kmEq > 0 ? 'Lo que gastas en luz (gasolina: ' + fmtEUR(r.gas / r.kmEq * 100) + ')' : 'Aún sin cargas', 'Coste de la electricidad cada 100 km, comparado con lo que costaría en gasolina');
   // Baterías cargadas
-  set('funBatNum', totalKwh > 0 ? nf(totalKwh / VEHICLE_BATTERY_KWH, 1) : '—');
-  set('funBatSub', nf(totalKwh, 1) + ' kWh ÷ ' + nf(VEHICLE_BATTERY_KWH, 1) + ' kWh');
+  set('funBatNum', totalKwh > 0 ? nf(totalKwh / VEHICLE_BATTERY_KWH, 1) : '—', nf(totalKwh, 1) + ' kWh cargados ÷ ' + nf(VEHICLE_BATTERY_KWH, 1) + ' kWh de batería');
+  set('funBatSub', 'Veces que has llenado la batería');
 }
 function renderDashboard(){
   renderQuickLinks();
