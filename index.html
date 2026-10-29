@@ -553,6 +553,11 @@ button{cursor:pointer}
 .dl-acts .btn{margin-top:0;width:100%}
 .dl-ask{font-size:12.5px;font-weight:700;color:var(--text);text-align:center}
 .dl-danger{background:var(--danger);color:#fff;border:0}
+.dl-hidden{position:relative;font-size:12.5px}
+.dl-hidden summary{cursor:pointer;color:var(--text-muted);font-weight:700;list-style:none;padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius-full)}
+.dl-hidden[open]{position:absolute;right:16px;z-index:5;background:var(--bg-card);border:1px solid var(--border-strong);border-radius:var(--radius-sm);padding:8px 12px;max-height:60vh;overflow:auto;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.dl-hidden[open] summary{border:0;padding:4px 0}
+.dl-hidden ul{margin:6px 0 10px;padding-left:18px;color:var(--text)}
 .dl-empty{font-size:13px;color:var(--text-faint);margin:6px 2px}
 .dl-cat .dl-item{background:var(--bg-card)}
 .dl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:14px;margin-bottom:18px}
@@ -1730,7 +1735,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-29.6';
+const APP_VERSION = '2026-10-29.7';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2665,7 +2670,8 @@ const DOWNLOADS = [
     ['fondo_color_oscuro_07_rosa_nebulosa.jpg','Rosa nebulosa','942 KB'],
     ['fondo_color_oscuro_08_lima_blade.jpg','Lima blade','904 KB'],
     ['fondo_color_x_cubos_rojos.jpg','Cubos rojos','710 KB'],
-    ['fondo_color_x_sintetica.jpg','Montañas sintéticas','1226 KB'] ] },
+    ['fondo_color_x_sintetica.jpg','Montañas sintéticas','1226 KB'],
+    ['fondo_color_x_esferas.jpg','Esferas','440 KB'] ] },
   { cat: 'medio', group: 'Tono medio', thumbs: true, items: [
     ['fondo_medio_01_pizarra.jpg','Pizarra','290 KB'],
     ['fondo_medio_02_turquesa.jpg','Turquesa','292 KB'],
@@ -2708,7 +2714,8 @@ function renderDownloads(){
   };
   const det = (c,label,count,body)=>'<details class="dl-cat" data-cat="' + c + '"' + (dlOpen.has(c) ? ' open' : '') + '><summary><span>' + label + '</span><small>' + count + '</small></summary>' + body + '</details>';
   const total = DOWNLOADS.reduce((a,g)=>a + g.items.length, 0), shown = DOWNLOADS.reduce((a,g)=>a + g.items.filter(i=>!hidden.has(i[0])).length, 0);
-  document.getElementById('dlRestore').innerHTML = total > shown ? '<button type="button" class="btn btn-ghost btn-sm" id="dlRestoreBtn">Restaurar eliminados (' + (total - shown) + ')</button>' : '';
+  const names = {}; DOWNLOADS.forEach(g=>g.items.forEach(i=>names[i[0]] = i[1] + ' (' + (DL_CATS.find(c=>c[0] === g.cat) || ['', g.cat])[1] + ')'));
+  document.getElementById('dlRestore').innerHTML = total > shown ? '<details class="dl-hidden"><summary>Eliminados (' + (total - shown) + ')</summary><ul>' + [...hidden].filter(f=>names[f]).map(f=>'<li>' + names[f] + '</li>').join('') + '</ul><button type="button" class="btn btn-ghost btn-sm" id="dlRestoreBtn">Restaurar todos</button></details>' : '';
   document.getElementById('dlList').innerHTML = DL_CATS.map(([c,label])=>{
     const gs = DOWNLOADS.filter(g=>g.cat === c).map(g=>({...g, items:g.items.filter(i=>!hidden.has(i[0]))})).filter(g=>g.items.length);
     const n = gs.reduce((a,g)=>a + g.items.length, 0), sub = gs.length > 1;
