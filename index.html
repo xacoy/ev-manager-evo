@@ -461,6 +461,12 @@ button{cursor:pointer}
 .fun-track i{position:absolute;left:0;top:0;bottom:0;width:0;min-width:3px;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent-2))}
 .fun-car{position:absolute;bottom:4px;left:0;font-size:13px;line-height:1;transform:scaleX(-1)}
 .fun-moonpin{position:absolute;right:-22px;bottom:-8px;font-size:20px;line-height:1}
+.head-actions{display:flex;align-items:center;gap:10px}
+.fun-shuffle{display:inline-flex;align-items:center;gap:6px;background:var(--bg-2);border:1px solid var(--border);color:var(--text-muted);border-radius:var(--radius-full);padding:6px 12px;font:600 12px var(--font);cursor:pointer;transition:border-color .2s var(--ease),color .2s var(--ease)}
+.fun-shuffle:hover{border-color:var(--accent);color:var(--accent)}
+.fun-shuffle svg{width:14px;height:14px;stroke:currentColor}
+.fun-shuffle.spin svg{animation:funspin .5s var(--ease)}
+@keyframes funspin{to{transform:rotate(360deg)}}
 .dash-activity{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 16px}
 .dash-activity .card-head{margin-bottom:4px}
 
@@ -1068,6 +1074,8 @@ html.car .chg-tablecard{display:none!important}
   html.car #page-dashboard .fun-num{font-size:clamp(16px,min(24cqh,8cqw),34px)}
   html.car #page-dashboard .fun-lbl{font-size:clamp(11px,min(13cqh,5cqw),17px)}
   html.car #page-dashboard .fun-sub{font-size:clamp(10px,min(11cqh,4.2cqw),14px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  html.car .fun-shuffle{min-height:40px;padding:6px 16px;font-size:14px}
+  html.car .fun-shuffle svg{width:18px;height:18px}
   html.car #page-dashboard .fun-track{margin-top:max(12px,min(10cqh,16px))}
   html.car #page-dashboard .dash-activity{flex:.95 1 0;min-height:0;overflow:hidden;display:flex;flex-direction:column;padding:8px 16px}
   html.car #page-dashboard .dash-activity .card-head{flex-shrink:0;margin-bottom:4px}
@@ -1242,7 +1250,7 @@ html.car .chg-tablecard{display:none!important}
         <!-- Estado general: coche pequeño + 4 datos, 6 curiosidades y actividad reciente -->
         <div class="dash-header">
           <div class="card cockpit-card">
-            <div class="card-head"><h2>Estado general</h2><div class="car-badge" id="carStatusBadge">OK</div></div>
+            <div class="card-head"><h2>Estado general</h2><div class="head-actions"><button type="button" class="fun-shuffle" id="funShuffle" onclick="shuffleFun()" title="Cambiar las curiosidades de las tarjetas de equivalencias" aria-label="Cambiar curiosidades"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v6h-6"/></svg><span>Cambiar</span></button><div class="car-badge" id="carStatusBadge">OK</div></div></div>
             <div class="cockpit-body">
               <div class="panel-grid">
                 <div class="battery-hero car-hero">
@@ -1276,21 +1284,22 @@ html.car .chg-tablecard{display:none!important}
               </div>
 
               <div class="fun-grid" id="funGrid">
-                <div class="fun-tile fun-moon">
-                  <div class="fun-em">🚀</div>
+                <div class="fun-tile" data-slot="0">
+                  <div class="fun-em"></div>
                   <div class="fun-txt">
-                    <div class="fun-num" id="funMoonNum">—</div>
-                    <div class="fun-lbl">Viaje a la Luna</div>
-                    <div class="fun-sub" id="funMoonSub">—</div>
-                    <div class="fun-track"><i id="funMoonBar"></i><span class="fun-car">🚗</span><span class="fun-moonpin">🌕</span></div>
+                    <div class="fun-num">—</div>
+                    <div class="fun-lbl"></div>
+                    <div class="fun-sub"></div>
+                    <div class="fun-extra"></div>
                   </div>
                 </div>
-                <div class="fun-tile">
-                  <div class="fun-em">🏠</div>
+                <div class="fun-tile" data-slot="1">
+                  <div class="fun-em"></div>
                   <div class="fun-txt">
-                    <div class="fun-num" id="funHomeNum">—</div>
-                    <div class="fun-lbl">De consumo de una casa</div>
-                    <div class="fun-sub" id="funHomeSub">—</div>
+                    <div class="fun-num">—</div>
+                    <div class="fun-lbl"></div>
+                    <div class="fun-sub"></div>
+                    <div class="fun-extra"></div>
                   </div>
                 </div>
                 <div class="fun-tile">
@@ -1301,12 +1310,13 @@ html.car .chg-tablecard{display:none!important}
                     <div class="fun-sub" id="funBigSub">—</div>
                   </div>
                 </div>
-                <div class="fun-tile">
-                  <div class="fun-em">🌍</div>
+                <div class="fun-tile" data-slot="2">
+                  <div class="fun-em"></div>
                   <div class="fun-txt">
-                    <div class="fun-num" id="funEarthNum">—</div>
-                    <div class="fun-lbl">De la vuelta a la Tierra</div>
-                    <div class="fun-sub" id="funEarthSub">—</div>
+                    <div class="fun-num">—</div>
+                    <div class="fun-lbl"></div>
+                    <div class="fun-sub"></div>
+                    <div class="fun-extra"></div>
                   </div>
                 </div>
                 <div class="fun-tile">
@@ -1799,7 +1809,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-29.11';
+const APP_VERSION = '2026-10-29.12';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2140,30 +2150,61 @@ function computeAvgConsumption(c){
   return consumptionIsReliable(w) ? w.kwh/w.km*100 : (Number(c.avgConsumption)||0);
 }
 // Curiosidades de Inicio: todo sale de los km y de las cargas ya registradas (cada carga conserva sus propios valores).
-const MOON_KM = 384400, EARTH_KM = 40075;
+const MOON_KM = 384400, EARTH_KM = 40075, MARS_KM = 225e6;
 const HOME_KWH_YEAR = 3000;   // consumo eléctrico anual aproximado de un hogar medio en España
+// Equivalencias que se reparten en las tarjetas 1, 2 y 4: cada una dice en una frase a qué se refiere y deja el detalle técnico en el texto emergente.
+// d = {km, kwh}; los que dependen de la energía devuelven null si aún no hay cargas.
+const FUN_POOL = {
+  moon:   { em:'🚀', lbl:'Viaje a la Luna', sub:'Tus km frente a la distancia a la Luna', f:d=>({ num: nf(d.km / MOON_KM * 100, 2) + ' %', tip: fmtNum(d.km) + ' de ' + fmtNum(MOON_KM) + ' km · faltan ' + fmtNum(Math.max(0, MOON_KM - d.km)) + ' km', track: { pct: d.km / MOON_KM * 100, end: '🌕' } }) },
+  home:   { em:'🏠', lbl:'De consumo de una casa', sub:'Días que tu energía daría a una casa', f:d=>d.kwh > 0 ? { num: nf(d.kwh / HOME_KWH_YEAR * 365, 1) + ' días', tip: nf(d.kwh, 1) + ' kWh cargados · una casa media consume ≈ ' + nf(HOME_KWH_YEAR / 365, 1) + ' kWh al día' } : null },
+  earth:  { em:'🌍', lbl:'De la vuelta a la Tierra', sub:'Tus km frente a una vuelta al mundo', f:d=>({ num: nf(d.km / EARTH_KM * 100, 1) + ' %', tip: fmtNum(d.km) + ' de ' + fmtNum(EARTH_KM) + ' km' }) },
+  iss:    { em:'🛰️', lbl:'La altura de la ISS', sub:'Tus km puestos en vertical llegarían hasta ella', f:d=>({ num: nf(d.km / 408, 1) + '×', tip: 'La estación espacial orbita a unos 408 km de altura' }) },
+  everest:{ em:'⛰️', lbl:'Everests apilados', sub:'Tus km en vertical, montaña sobre montaña', f:d=>({ num: fmtNum(d.km / 8.849), tip: 'El Everest mide 8,85 km de altura' }) },
+  marathon:{ em:'🏃', lbl:'Maratones', sub:'Lo que correrías haciendo tus km a pie', f:d=>({ num: fmtNum(d.km / 42.195), tip: 'Un maratón son 42,195 km' }) },
+  phone:  { em:'📱', lbl:'Cargas de móvil', sub:'Móviles que podrías cargar con tu energía', f:d=>d.kwh > 0 ? { num: '≈ ' + fmtNum(d.kwh / 0.014), tip: nf(d.kwh, 1) + ' kWh · un móvil usa unos 14 Wh por carga completa' } : null },
+  bulb:   { em:'💡', lbl:'Una bombilla encendida', sub:'Tiempo que alumbraría con tu energía', f:d=>{ if(!(d.kwh > 0)) return null; const h = d.kwh / 0.010; return { num: h >= 8760 ? nf(h / 8760, 1) + ' años' : nf(h / 24, 0) + ' días', tip: nf(d.kwh, 1) + ' kWh · una bombilla LED de 10 W encendida sin parar' }; } },
+  songs:  { em:'🎵', lbl:'Canciones al volante', sub:'Las que oirías conduciendo tus km', f:d=>({ num: fmtNum(d.km / 100 * 20), tip: 'A unos 100 km/h y canciones de 3 minutos' }) },
+  plane:  { em:'✈️', lbl:'De vuelo en avión', sub:'Lo que tardaría un avión en hacer tus km', f:d=>({ num: nf(d.km / 800, 1) + ' h', tip: 'Un avión de pasajeros vuela a unos 800 km/h' }) },
+  light:  { em:'⚡', lbl:'A la velocidad de la luz', sub:'Lo que tarda la luz en recorrer tus km', f:d=>({ num: nf(d.km / 299792 * 1000, 1) + ' ms', tip: 'La luz viaja a 299.792 km por segundo' }) },
+  mars:   { em:'🔴', lbl:'Camino a Marte', sub:'Tus km frente a la distancia a Marte', f:d=>({ num: nf(d.km / MARS_KM * 100, 4) + ' %', tip: 'Marte está a unos 225 millones de km en el mejor caso', track: { pct: d.km / MARS_KM * 100, end: '🔴' } }) }
+};
+const FUN_DEFAULT = ['moon', 'home', 'earth'];
+function funPick(){
+  let p = null;
+  try{ p = JSON.parse(localStorage.getItem('funPick') || 'null'); }catch(e){}
+  return (Array.isArray(p) && p.length === 3 && p.every(k=>FUN_POOL[k])) ? p : FUN_DEFAULT.slice();
+}
+// Elige tres equivalencias nuevas, distintas de las que se están viendo.
+function shuffleFun(){
+  const cur = funPick();
+  const pool = Object.keys(FUN_POOL).filter(k=>!cur.includes(k));
+  for(let i = pool.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
+  try{ localStorage.setItem('funPick', JSON.stringify(pool.slice(0, 3))); }catch(e){}
+  const b = document.getElementById('funShuffle');
+  if(b){ b.classList.remove('spin'); void b.offsetWidth; b.classList.add('spin'); }
+  renderFunTiles(getCurrentKm(), state.charges.reduce((s,x)=>s+kwhOf(x),0));
+}
 function renderFunTiles(km, totalKwh){
   const set = (id, t, tip)=>{ const el = document.getElementById(id); if(!el) return; el.textContent = t; if(tip != null){ const tile = el.closest('.fun-tile'); if(tile) tile.title = tip; } };
   const clampPct = p => Math.min(Math.max(p, 0), 100);
-  // Cada ficha dice con una frase sencilla a qué se refiere; el detalle técnico queda en el texto emergente (title).
-  // Viaje a la Luna
-  const moonPct = km / MOON_KM * 100;
-  set('funMoonNum', nf(moonPct, 2) + ' %');
-  set('funMoonSub', 'Tus km frente a la distancia a la Luna', fmtNum(km) + ' de ' + fmtNum(MOON_KM) + ' km · faltan ' + fmtNum(Math.max(0, MOON_KM - km)) + ' km');
-  const mBar = document.getElementById('funMoonBar'); if(mBar) mBar.style.width = clampPct(moonPct) + '%';
-  const mCar = document.querySelector('#funGrid .fun-car'); if(mCar) mCar.style.left = 'calc(' + clampPct(moonPct) + '% - 6px)';
-  // Casa: la energía cargada, en días de consumo de un hogar medio
-  const homeDays = totalKwh / HOME_KWH_YEAR * 365;
-  set('funHomeNum', totalKwh > 0 ? nf(homeDays, 1) + ' días' : '—', nf(totalKwh, 1) + ' kWh cargados · una casa media consume ≈ ' + nf(HOME_KWH_YEAR / 365, 1) + ' kWh al día');
-  set('funHomeSub', 'Días que tu energía daría a una casa');
+  // Tarjetas 1, 2 y 4: equivalencias elegidas (cambian con el botón)
+  const pick = funPick();
+  document.querySelectorAll('#funGrid .fun-tile[data-slot]').forEach(tile=>{
+    const it = FUN_POOL[pick[Number(tile.dataset.slot)]]; if(!it) return;
+    const r = it.f({ km, kwh: totalKwh });
+    tile.querySelector('.fun-em').textContent = it.em;
+    tile.querySelector('.fun-num').textContent = r ? r.num : '—';
+    tile.querySelector('.fun-lbl').textContent = it.lbl;
+    tile.querySelector('.fun-sub').textContent = it.sub;
+    tile.title = r ? r.tip : '';
+    const p = r && r.track ? clampPct(r.track.pct) : null;
+    tile.querySelector('.fun-extra').innerHTML = p == null ? '' : '<div class="fun-track"><i style="width:' + p + '%"></i><span class="fun-car" style="left:calc(' + p + '% - 6px)">🚗</span><span class="fun-moonpin">' + r.track.end + '</span></div>';
+  });
   // Tu mayor carga
   let big = null;
   state.charges.forEach(ch=>{ const k = kwhOf(ch); if(k > 0 && (!big || k > big.k)) big = { k, ch }; });
   set('funBigNum', big ? (kwhIsEst(big.ch) ? '≈ ' : '') + nf(big.k, 2) + ' kWh' : '—');
   set('funBigSub', big ? fmtDate(big.ch.date) + (big.ch.location ? ' · ' + big.ch.location : '') : 'Aún sin cargas', big ? 'La carga con más energía de todas las registradas' : '');
-  // Vuelta a la Tierra
-  set('funEarthNum', nf(km / EARTH_KM * 100, 1) + ' %');
-  set('funEarthSub', 'Tus km frente a una vuelta al mundo', fmtNum(km) + ' de ' + fmtNum(EARTH_KM) + ' km');
   // Coste cada 100 km: electricidad y gasolina equivalente, con lo que guardó cada carga
   const r = computeSavings();
   set('funPerKmNum', r.kmEq > 0 ? fmtEUR(r.elec / r.kmEq * 100) : '—');
