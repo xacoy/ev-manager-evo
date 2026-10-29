@@ -1286,12 +1286,11 @@ html.car .chg-tablecard{display:none!important}
                   </div>
                 </div>
                 <div class="fun-tile">
-                  <div class="fun-em">🎯</div>
+                  <div class="fun-em">🏠</div>
                   <div class="fun-txt">
-                    <div class="fun-num" id="funGoalNum">—</div>
-                    <div class="fun-lbl" id="funGoalLbl">Reto</div>
-                    <div class="fun-sub" id="funGoalSub">—</div>
-                    <div class="fun-bar"><i id="funGoalBar"></i></div>
+                    <div class="fun-num" id="funHomeNum">—</div>
+                    <div class="fun-lbl">De consumo de una casa</div>
+                    <div class="fun-sub" id="funHomeSub">—</div>
                   </div>
                 </div>
                 <div class="fun-tile">
@@ -1800,7 +1799,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-29.9';
+const APP_VERSION = '2026-10-29.10';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2142,7 +2141,7 @@ function computeAvgConsumption(c){
 }
 // Curiosidades de Inicio: todo sale de los km y de las cargas ya registradas (cada carga conserva sus propios valores).
 const MOON_KM = 384400, EARTH_KM = 40075;
-const KM_GOALS = [1000, 2000, 5000, 10000, 20000, 30000, 50000, 75000, 100000, 150000, 200000, 300000, 500000, 1000000];
+const HOME_KWH_YEAR = 3000;   // consumo eléctrico anual aproximado de un hogar medio en España
 function renderFunTiles(km, totalKwh){
   const set = (id, t)=>{ const el = document.getElementById(id); if(el) el.textContent = t; };
   const clampPct = p => Math.min(Math.max(p, 0), 100);
@@ -2152,12 +2151,10 @@ function renderFunTiles(km, totalKwh){
   set('funMoonSub', fmtNum(km) + ' de ' + fmtNum(MOON_KM) + ' km · faltan ' + fmtNum(Math.max(0, MOON_KM - km)) + ' km');
   const mBar = document.getElementById('funMoonBar'); if(mBar) mBar.style.width = clampPct(moonPct) + '%';
   const mCar = document.querySelector('#funGrid .fun-car'); if(mCar) mCar.style.left = 'calc(' + clampPct(moonPct) + '% - 6px)';
-  // Reto: siguiente cifra redonda de km
-  const goal = KM_GOALS.find(g=>g > km) || Math.ceil((km + 1) / 1000000) * 1000000;
-  set('funGoalNum', Math.floor(km / goal * 100) + ' %');
-  set('funGoalLbl', 'Reto: ' + fmtNum(goal) + ' km');
-  set('funGoalSub', 'te faltan ' + fmtNum(goal - km) + ' km');
-  const gBar = document.getElementById('funGoalBar'); if(gBar) gBar.style.width = clampPct(km / goal * 100) + '%';
+  // Casa: la energía cargada, en días de consumo de un hogar medio
+  const homeDays = totalKwh / HOME_KWH_YEAR * 365;
+  set('funHomeNum', totalKwh > 0 ? nf(homeDays, 1) + ' días' : '—');
+  set('funHomeSub', nf(totalKwh, 1) + ' kWh · casa media ≈ ' + nf(HOME_KWH_YEAR / 365, 1) + ' kWh/día');
   // Tu mayor carga
   let big = null;
   state.charges.forEach(ch=>{ const k = kwhOf(ch); if(k > 0 && (!big || k > big.k)) big = { k, ch }; });
