@@ -799,6 +799,10 @@ tr:hover td{background:var(--bg-2)}
 .rev-item{border-left:3px solid color-mix(in srgb,var(--tone,var(--border)) 70%,transparent)}
 .rev-item.neutral .rev-status{background:color-mix(in srgb,var(--tone) 16%,transparent);color:var(--tone)}
 .rev-kind{font-size:10.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--tone);margin-bottom:3px}
+.rev-hist-head{display:flex;align-items:baseline;gap:10px;margin:28px 0 4px;padding-top:20px;border-top:1px solid var(--border)}
+.rev-hist-head h3{font-size:16px;font-weight:800;font-family:var(--font-display)}
+.rev-hist-note{font-size:12px;color:var(--text-faint);margin-bottom:14px}
+.rev-item.hist .rev-body p{margin-top:2px}
 .rev-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;font-weight:700;color:var(--text-muted)}
 .rev-legend span{display:inline-flex;align-items:center;gap:6px}
 .rev-legend i{width:10px;height:10px;border-radius:50%;display:inline-block}
@@ -1499,6 +1503,7 @@ html.car .chg-tablecard{display:none!important}
             <div class="card-head"><h2>Calendario de mantenimiento</h2><div class="rev-legend"><span class="k-byd"><i></i>Calendario BYD</span><span class="k-rec"><i></i>Recomendadas</span></div></div>
             <p style="font-size:12px;color:var(--text-faint);margin-bottom:14px">Orientativo: los intervalos varían según mercado, confírmalos en tu manual. Las «Recomendadas» son operaciones que aconsejan BYD, sus concesionarios y las guías de eléctricos y que no siempre salen en el calendario; márcalas al hacerlas y la app calcula la siguiente.</p>
             <div id="revisionsList"></div>
+            <div id="revHistory"></div>
           </div>
         </div>
       </section>
@@ -1618,7 +1623,7 @@ html.car .chg-tablecard{display:none!important}
 
 <div class="overlay" id="doneOverlay">
   <div class="modal" style="max-width:460px;max-height:92vh;overflow:auto">
-    <h3>Añadir documento</h3>
+    <h3 id="doneTitle">Añadir documento</h3>
     <p class="set-help" id="doneName" style="margin-bottom:14px"></p>
     <form id="doneForm" autocomplete="off">
       <div class="field-row">
@@ -1629,7 +1634,7 @@ html.car .chg-tablecard{display:none!important}
       <div class="field"><label>Factura o documento <span class="opt-hint">(opcional · PDF o imagen, máx. 10 MB · se guarda en tu Drive)</span></label>
         <input id="dn_files" type="file" multiple accept="image/*,application/pdf">
       </div>
-      <p class="set-help" style="margin-bottom:6px">Se marca como hecha y queda guardado también en Documentos → Taller.</p>
+      <p class="set-help" id="doneNote" style="margin-bottom:6px"></p>
       <div class="modal-actions"><button type="submit" class="btn btn-primary" id="doneSave">Guardar</button><button type="button" class="btn btn-ghost" id="doneCancel">Cancelar</button></div>
     </form>
   </div>
@@ -1840,7 +1845,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-30.21';
+const APP_VERSION = '2026-10-30.22';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -1875,6 +1880,7 @@ let state = {
   completedRevisions: [],
   recommendedDone: {},
   revisionDone: {},
+  revisionLog: [],
   quickLinks: DEFAULT_QUICK_LINKS.slice(),
   hiddenWalls: [],
   lang: 'es',
@@ -2826,6 +2832,12 @@ function normalizeState(){
       km:m.km || null, location:m.location || '', date:m.date || '', expires:'', files:(m.attachments || []).map(a=>({ ...a })) });
   });
   if(old.length){ state.maintenance = []; changed = true; }
+  // Historial de revisiones hechas: lo guardado antes (solo la última vez de cada una) pasa a ser una entrada del historial.
+  if(!Array.isArray(state.revisionLog)){ state.revisionLog = []; changed = true; }
+  const hasLog = (kind, key) => state.revisionLog.some(e=>e.kind === kind && e.key === key);
+  (state.completedRevisions || []).forEach(k=>{ if(!hasLog('byd', k)){ const r = (state.revisionDone || {})[k] || {}; state.revisionLog.push({ id: uid(), kind:'byd', key:k, date:r.date || '', km:r.km || 0, docId:r.docId || null }); changed = true; } });
+  Object.keys(state.recommendedDone || {}).forEach(k=>{ if(!hasLog('rec', k)){ const r = state.recommendedDone[k] || {}; state.revisionLog.push({ id: uid(), kind:'rec', key:k, date:r.date || '', km:r.km || 0, docId:r.docId || null }); changed = true; } });
+  rebuildDone();
   return changed;
 }
 function docDaysLeft(d){ if(!d.expires) return null; return Math.ceil((new Date(d.expires + 'T00:00:00') - new Date(new Date().toDateString())) / 86400000); }
@@ -3066,6 +3078,7 @@ async function confirmDeleteDoc(){
     return;
   }
   document.getElementById('docDelOverlay').classList.remove('open'); delStep = 0;
+  if(delKind === 'revlog'){ restoreEntry(delDocId); return; }
   if(delKind === 'charge'){ deleteCharge(delDocId); return; }
   if(delKind === 'note'){
     if(editingNoteId === delDocId) cancelNoteEdit();
@@ -3112,17 +3125,18 @@ function renderRevisions(){
   const km = getCurrentKm();
   const container = document.getElementById('revisionsList');
   if(!container) { console.error('revisionsList container not found'); return; }
-  // una sola lista: lo más urgente arriba y lo ya hecho al final, sea del calendario BYD o recomendado
+  // una sola lista de lo pendiente (calendario BYD + recomendadas), lo más urgente arriba; lo ya hecho va al apartado «Hechos»
   const items = [
-    ...sched.map(rev=>{ const done = state.completedRevisions.includes(rev.km), st = getScheduleForRevision(rev, km); return { done, progress: st.progress, html: bydRevisionHtml(rev, st, done) }; }),
-    ...RECOMMENDED.map(r=>{ const st = recStatus(r, km); return { done: false, progress: st.progress, html: recommendedHtml(r, st) }; })
-  ].sort((a,b)=> (a.done - b.done) || (b.progress - a.progress));
+    ...sched.filter(rev=>!state.completedRevisions.includes(rev.km)).map(rev=>{ const st = getScheduleForRevision(rev, km); return { progress: st.progress, html: bydRevisionHtml(rev, st) }; }),
+    ...RECOMMENDED.map(r=>{ const st = recStatus(r, km); return { progress: st.progress, html: recommendedHtml(r, st) }; })
+  ].sort((a,b)=> b.progress - a.progress);
   container.innerHTML = items.map(x=>x.html).join('');
+  renderRevHistory();
 }
-function bydRevisionHtml(rev, st, done){
-  const cls = done ? 'done' : st.overdue ? 'overdue' : st.upcoming ? 'due' : 'neutral';
-  const statusIcon = done ? ICONS.check : st.overdue ? ICONS.alert : ICONS.clock;
-  const statusStyle = done ? 'color:var(--success);background:var(--success-soft)' : st.overdue ? 'color:var(--danger);background:var(--danger-soft)' : st.upcoming ? 'color:var(--warning);background:var(--warning-soft)' : '';
+function bydRevisionHtml(rev, st){
+  const cls = st.overdue ? 'overdue' : st.upcoming ? 'due' : 'neutral';
+  const statusIcon = st.overdue ? ICONS.alert : ICONS.clock;
+  const statusStyle = st.overdue ? 'color:var(--danger);background:var(--danger-soft)' : st.upcoming ? 'color:var(--warning);background:var(--warning-soft)' : '';
   return `
     <div class="rev-item k-byd ${cls}">
       <div class="rev-status" style="${statusStyle}">${statusIcon}</div>
@@ -3133,9 +3147,9 @@ function bydRevisionHtml(rev, st, done){
         <div class="rev-tasks">${(rev.tasks||[]).map(t=>`<span class="tag-pill">${t}</span>`).join('')}</div>
       </div>
       <div class="rev-side">
-        <div class="rev-meta">${done ? 'Completada' : revMetaHtml(st)}</div>
-        ${revDocBtn((state.revisionDone || {})[rev.km], 'byd', rev.km)}
-        ${done ? `<button class="btn btn-ghost btn-sm" onclick="toggleRevision(${rev.km})">Deshacer</button>` : `<button class="btn btn-primary btn-sm" onclick="quickDone('byd', ${rev.km})">Hecho</button>`}
+        <div class="rev-meta">${revMetaHtml(st)}</div>
+        ${revDocBtn(null, "openDone('byd', " + rev.km + ")")}
+        <button class="btn btn-primary btn-sm" onclick="quickDone('byd', ${rev.km})">Hecho</button>
       </div>
     </div>`;
 }
@@ -3183,24 +3197,48 @@ function recommendedHtml(r, st){
     </div>
     <div class="rev-side">
       <div class="rev-meta">${meta}</div>
-      ${revDocBtn(st.last, 'rec', r.id)}
+      ${revDocBtn(st.last, "openDone('rec', '" + r.id + "')")}
       <button class="btn btn-primary btn-sm" onclick="quickDone('rec', '${r.id}')">Hecho</button>
-      ${st.last ? `<button class="btn btn-ghost btn-sm" onclick="clearRecommended('${r.id}')" title="Quitar el último registro">Deshacer</button>` : ''}
     </div>
   </div>`;
 }
-// Marcar como hecha: pide fecha y km (por defecto hoy y el actual) y, si quieres, coste y factura; con coste o archivos se guarda también como documento de Taller.
+// Historial de revisiones hechas (state.revisionLog): cada «Hecho» es una entrada con fecha, km y, si lo hay, su documento de Taller.
+// recommendedDone / revisionDone / completedRevisions se reconstruyen desde él (la última entrada de cada revisión) para el resto de la app.
 const REC_SUB = { 'tyre-rot':'Neumáticos', 'align':'Alineación', 'brake-fluid':'Frenos', 'gear-oil':'Cambio aceite reductora', 'cabin':'Filtros', 'brakes':'Frenos' };
+const logCmp = (a, b) => String(a.date || '').localeCompare(String(b.date || '')) || (a.id - b.id);
+function rebuildDone(){
+  const log = (state.revisionLog || []).slice().sort(logCmp);
+  state.completedRevisions = [...new Set(log.filter(e=>e.kind === 'byd').map(e=>e.key))];
+  state.revisionDone = {}; state.recommendedDone = {};
+  log.forEach(e=>{ (e.kind === 'byd' ? state.revisionDone : state.recommendedDone)[e.key] = { date: e.date, km: e.km, docId: e.docId || null }; });
+}
+const latestEntry = (kind, key) => (state.revisionLog || []).filter(e=>e.kind === kind && e.key === key).sort(logCmp).pop() || null;
+const revItem = (kind, key) => kind === 'byd' ? (REVISIONS_SCHEDULE[state.lang] || REVISIONS_SCHEDULE.es).find(r=>r.km === key) : RECOMMENDED.find(r=>r.id === key);
 let doneTarget = null;
+// «Hecho»: se marca con la fecha de hoy y los km actuales, sin más preguntas.
+function quickDone(kind, key){
+  state.revisionLog.push({ id: uid(), kind, key, date: isoToday(), km: getCurrentKm(), docId: null });
+  rebuildDone(); saveState(); renderRevisions(); renderAlerts(); renderDashboard();
+  toast('Marcada como hecha', 'success');
+}
+// Ventana de fecha, km, coste y archivos. Modo «doc»: añade documento a la última vez (o la marca como hecha si no hay); modo «edit»: edita una entrada del historial.
 function openDone(kind, key){
-  const item = kind === 'byd' ? (REVISIONS_SCHEDULE[state.lang] || REVISIONS_SCHEDULE.es).find(r=>r.km === key) : RECOMMENDED.find(r=>r.id === key);
-  if(!item) return;
-  doneTarget = { kind, key, name: item.name, sub: kind === 'byd' ? 'Revisión general' : (REC_SUB[key] || 'Otro') };
+  const e = latestEntry(kind, key); openDoneForm(kind, key, e, 'doc');
+}
+function openEditEntry(id){
+  const e = state.revisionLog.find(x=>x.id === id); if(e) openDoneForm(e.kind, e.key, e, 'edit');
+}
+function openDoneForm(kind, key, entry, mode){
+  const item = revItem(kind, key); if(!item) return;
+  doneTarget = { mode, entryId: entry ? entry.id : null, kind, key, name: item.name, sub: kind === 'byd' ? 'Revisión general' : (REC_SUB[key] || 'Otro') };
+  const doc = entry && entry.docId ? state.docs.find(x=>x.id === entry.docId) : null;
   document.getElementById('doneForm').reset();
+  document.getElementById('doneTitle').textContent = mode === 'edit' ? 'Editar hecho' : 'Añadir documento';
   document.getElementById('doneName').textContent = item.name;
-  const prev = kind === 'byd' ? (state.revisionDone || {})[key] : (state.recommendedDone || {})[key];
-  document.getElementById('dn_date').value = (prev && prev.date) || isoToday();
-  document.getElementById('dn_km').value = (prev && prev.km) || getCurrentKm() || '';
+  document.getElementById('dn_date').value = (entry && entry.date) || isoToday();
+  document.getElementById('dn_km').value = (entry && entry.km) || getCurrentKm() || '';
+  document.getElementById('dn_cost').value = doc && doc.price != null ? doc.price : '';
+  document.getElementById('doneNote').textContent = mode === 'edit' ? 'Los archivos nuevos se suman a los que ya tiene; para quitar archivos, edítalo en Documentos → Taller.' : 'Se marca como hecha y queda guardado también en Documentos → Taller.';
   document.getElementById('doneOverlay').classList.add('open');
 }
 function closeDone(){ document.getElementById('doneOverlay').classList.remove('open'); doneTarget = null; }
@@ -3209,7 +3247,7 @@ async function submitDone(e){
   if(!doneTarget) return;
   const t = doneTarget, date = document.getElementById('dn_date').value || isoToday(), km = Number(document.getElementById('dn_km').value) || getCurrentKm();
   const costRaw = document.getElementById('dn_cost').value, files = Array.from(document.getElementById('dn_files').files || []);
-  if(!files.length && costRaw === ''){ toast('Añade un archivo o un coste', 'warning'); return; }
+  if(t.mode === 'doc' && !files.length && costRaw === ''){ toast('Añade un archivo o un coste', 'warning'); return; }
   const btn = document.getElementById('doneSave'), label = btn.textContent, uploaded = [];
   if(files.length){
     btn.disabled = true; btn.textContent = 'Subiendo…';
@@ -3223,44 +3261,65 @@ async function submitDone(e){
     }
     btn.disabled = false; btn.textContent = label;
   }
-  const prev = t.kind === 'byd' ? (state.revisionDone || {})[t.key] : (state.recommendedDone || {})[t.key];
-  const old = prev && prev.docId ? state.docs.find(x=>x.id === prev.docId) : null;
-  let docId;
-  if(old){   // ya había un documento de esta revisión: se le añaden los archivos y el coste
-    old.files = [...(old.files || []), ...uploaded]; if(costRaw !== '') old.price = Number(costRaw); old.date = date; if(km) old.km = km;
-    docId = old.id;
-  } else {
-    docId = uid();
-    state.docs.push({ id: docId, category:'Taller', sub: t.sub, name: t.name, date, price: costRaw === '' ? null : Number(costRaw), noCount:false, km: km || null, location:'', note:'Desde el calendario de mantenimiento', expires:'', files: uploaded });
+  let entry = t.entryId ? state.revisionLog.find(x=>x.id === t.entryId) : null;
+  if(!entry){ entry = { id: uid(), kind: t.kind, key: t.key, date, km, docId: null }; state.revisionLog.push(entry); }
+  const old = entry.docId ? state.docs.find(x=>x.id === entry.docId) : null;
+  if(old){   // ya tiene documento: se actualizan sus datos y se le suman los archivos
+    old.files = [...(old.files || []), ...uploaded]; old.price = costRaw === '' ? null : Number(costRaw); old.date = date; old.km = km || null;
+  } else if(uploaded.length || costRaw !== ''){
+    entry.docId = uid();
+    state.docs.push({ id: entry.docId, category:'Taller', sub: t.sub, name: t.name, date, price: costRaw === '' ? null : Number(costRaw), noCount:false, km: km || null, location:'', note:'Desde el calendario de mantenimiento', expires:'', files: uploaded });
   }
-  setDoneRecord(t.kind, t.key, { date, km, docId });
-  closeDone(); saveState(); renderRevisions(); renderDocs(); renderAlerts(); renderDashboard();
-  toast('Documento guardado en Taller', 'success');
+  entry.date = date; entry.km = km;
+  rebuildDone(); closeDone(); saveState(); renderRevisions(); renderDocs(); renderAlerts(); renderDashboard();
+  toast(t.mode === 'edit' ? 'Cambios guardados' : 'Documento guardado en Taller', 'success');
 }
-// Botón junto a «Hecho»: ver el documento (factura…) si lo hay o, si no, añadirlo.
-function revDocBtn(rec, kind, key){
+// Botón junto a «Hecho»: ver el documento (factura…) si lo hay o, si no, añadirlo (addJs = qué hace «Añadir documento»).
+function revDocBtn(rec, addJs){
   const d = rec && rec.docId ? state.docs.find(x=>x.id === rec.docId) : null;
   if(d && (d.files || []).length) return `<button class="btn btn-ghost btn-sm" onclick="viewRevDoc(${d.id})">Ver documento</button>`;
-  return `<button class="btn btn-ghost btn-sm" onclick="openDone('${kind}', ${typeof key === 'number' ? key : "'" + key + "'"})">Añadir documento</button>`;
-}
-// «Hecho»: se marca con la fecha de hoy y los km actuales, sin más preguntas.
-function setDoneRecord(kind, key, rec){
-  if(kind === 'byd'){
-    if(!state.completedRevisions.includes(key)) state.completedRevisions.push(key);
-    state.revisionDone = state.revisionDone || {}; state.revisionDone[key] = rec;
-  } else {
-    state.recommendedDone = state.recommendedDone || {}; state.recommendedDone[key] = rec;
-  }
-}
-function quickDone(kind, key){
-  setDoneRecord(kind, key, { date: isoToday(), km: getCurrentKm(), docId: null });
-  saveState(); renderRevisions(); renderAlerts(); renderDashboard();
-  toast('Marcada como hecha', 'success');
+  return `<button class="btn btn-ghost btn-sm" onclick="${addJs}">Añadir documento</button>`;
 }
 function viewRevDoc(id){ const d = state.docs.find(x=>x.id === id); if(d) openDocFiles(d); }
-function clearRecommended(id){
-  if(state.recommendedDone) delete state.recommendedDone[id];
-  saveState(); renderRevisions();
+// Apartado «Hechos»: todo lo marcado como hecho, con su documento; se puede editar o restaurar (vuelve a pendiente).
+function renderRevHistory(){
+  const el = document.getElementById('revHistory'); if(!el) return;
+  const log = (state.revisionLog || []).slice().sort(logCmp).reverse();
+  if(!log.length){ el.innerHTML = ''; return; }
+  el.innerHTML = '<div class="rev-hist-head"><h3>Hechos</h3><span class="hint">' + log.length + '</span></div>' +
+    '<p class="rev-hist-note">Edita la fecha, los km o el documento de lo ya hecho, o restáuralo para que vuelva a pendiente (el documento y su coste siguen en Documentos).</p>' +
+    log.map(e=>{
+      const item = revItem(e.kind, e.key), doc = e.docId ? state.docs.find(x=>x.id === e.docId) : null;
+      const parts = [e.date ? fmtDate(e.date) : 'Sin fecha', e.km ? fmtNum(e.km) + ' km' : '', doc && doc.price != null ? fmtEUR(doc.price) : ''].filter(Boolean).join(' · ');
+      return `
+    <div class="rev-item hist k-${e.kind}">
+      <div class="rev-status" style="color:var(--success);background:var(--success-soft)">${ICONS.check}</div>
+      <div class="rev-body">
+        <div class="rev-kind">${e.kind === 'byd' ? 'Calendario BYD' : 'Recomendada'}</div>
+        <h4>${item ? item.name : e.key}</h4>
+        <p>${parts}</p>
+      </div>
+      <div class="rev-side">
+        ${revDocBtn(e, 'openEditEntry(' + e.id + ')')}
+        <button class="btn btn-ghost btn-sm" onclick="openEditEntry(${e.id})">Editar</button>
+        <button class="btn btn-ghost btn-sm" onclick="askRestoreEntry(${e.id})">Restaurar</button>
+      </div>
+    </div>`;
+    }).join('');
+}
+function askRestoreEntry(id){
+  const e = state.revisionLog.find(x=>x.id === id); if(!e) return;
+  const item = revItem(e.kind, e.key);
+  delDocId = id; delStep = 2; delKind = 'revlog';   // un solo paso
+  document.getElementById('docDelTitle').textContent = '¿Restaurar como pendiente?';
+  document.getElementById('docDelText').textContent = '"' + (item ? item.name : e.key) + '" se quita de «Hechos» y vuelve a la lista de pendientes. El documento y su coste siguen en Documentos.';
+  document.getElementById('docDelYes').textContent = 'Restaurar';
+  document.getElementById('docDelOverlay').classList.add('open');
+}
+function restoreEntry(id){
+  state.revisionLog = state.revisionLog.filter(x=>x.id !== id);
+  rebuildDone(); saveState(); renderRevisions(); renderAlerts(); renderDashboard();
+  toast('Restaurada como pendiente', 'success');
 }
 function revMetaHtml(st){
   if(st.overdue){
@@ -3270,11 +3329,6 @@ function revMetaHtml(st){
   const kmTxt = fmtNum(st.kmRemaining) + ' km', timeTxt = fmtTimeLeft(st.daysLeft);
   if(!timeTxt) return kmTxt;
   return (st.byTime ? timeTxt : kmTxt) + '<span class="rev-sub">o ' + (st.byTime ? kmTxt : timeTxt) + (st.due ? ' · ' + fmtDate(st.due) : '') + '</span>';
-}
-function toggleRevision(km){
-  if(state.completedRevisions.includes(km)){ state.completedRevisions = state.completedRevisions.filter(k=>k!==km); if(state.revisionDone) delete state.revisionDone[km]; }
-  else state.completedRevisions.push(km);
-  saveState(); renderRevisions(); renderAlerts(); renderDashboard();
 }
 
 /* ---------------- notes ---------------- */
