@@ -1618,7 +1618,7 @@ html.car .chg-tablecard{display:none!important}
 
 <div class="overlay" id="doneOverlay">
   <div class="modal" style="max-width:460px;max-height:92vh;overflow:auto">
-    <h3>Marcar como hecha</h3>
+    <h3>Añadir documento</h3>
     <p class="set-help" id="doneName" style="margin-bottom:14px"></p>
     <form id="doneForm" autocomplete="off">
       <div class="field-row">
@@ -1629,8 +1629,8 @@ html.car .chg-tablecard{display:none!important}
       <div class="field"><label>Factura o documento <span class="opt-hint">(opcional · PDF o imagen, máx. 10 MB · se guarda en tu Drive)</span></label>
         <input id="dn_files" type="file" multiple accept="image/*,application/pdf">
       </div>
-      <p class="set-help" style="margin-bottom:6px">Si añades coste o archivos, también queda guardado en Documentos → Taller.</p>
-      <div class="modal-actions"><button type="submit" class="btn btn-primary" id="doneSave">Marcar hecha</button><button type="button" class="btn btn-ghost" id="doneCancel">Cancelar</button></div>
+      <p class="set-help" style="margin-bottom:6px">Se marca como hecha y queda guardado también en Documentos → Taller.</p>
+      <div class="modal-actions"><button type="submit" class="btn btn-primary" id="doneSave">Guardar</button><button type="button" class="btn btn-ghost" id="doneCancel">Cancelar</button></div>
     </form>
   </div>
 </div>
@@ -1840,7 +1840,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-30.20';
+const APP_VERSION = '2026-10-30.21';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -3134,8 +3134,8 @@ function bydRevisionHtml(rev, st, done){
       </div>
       <div class="rev-side">
         <div class="rev-meta">${done ? 'Completada' : revMetaHtml(st)}</div>
-        ${revDocBtn((state.revisionDone || {})[rev.km])}
-        ${done ? `<button class="btn btn-ghost btn-sm" onclick="toggleRevision(${rev.km})">Deshacer</button>` : `<button class="btn btn-primary btn-sm" onclick="openDone('byd', ${rev.km})">Marcar hecha</button>`}
+        ${revDocBtn((state.revisionDone || {})[rev.km], 'byd', rev.km)}
+        ${done ? `<button class="btn btn-ghost btn-sm" onclick="toggleRevision(${rev.km})">Deshacer</button>` : `<button class="btn btn-primary btn-sm" onclick="quickDone('byd', ${rev.km})">Hecho</button>`}
       </div>
     </div>`;
 }
@@ -3183,8 +3183,8 @@ function recommendedHtml(r, st){
     </div>
     <div class="rev-side">
       <div class="rev-meta">${meta}</div>
-      ${revDocBtn(st.last)}
-      <button class="btn btn-primary btn-sm" onclick="openDone('rec', '${r.id}')">Marcar hecha</button>
+      ${revDocBtn(st.last, 'rec', r.id)}
+      <button class="btn btn-primary btn-sm" onclick="quickDone('rec', '${r.id}')">Hecho</button>
       ${st.last ? `<button class="btn btn-ghost btn-sm" onclick="clearRecommended('${r.id}')" title="Quitar el último registro">Deshacer</button>` : ''}
     </div>
   </div>`;
@@ -3198,8 +3198,9 @@ function openDone(kind, key){
   doneTarget = { kind, key, name: item.name, sub: kind === 'byd' ? 'Revisión general' : (REC_SUB[key] || 'Otro') };
   document.getElementById('doneForm').reset();
   document.getElementById('doneName').textContent = item.name;
-  document.getElementById('dn_date').value = isoToday();
-  document.getElementById('dn_km').value = getCurrentKm() || '';
+  const prev = kind === 'byd' ? (state.revisionDone || {})[key] : (state.recommendedDone || {})[key];
+  document.getElementById('dn_date').value = (prev && prev.date) || isoToday();
+  document.getElementById('dn_km').value = (prev && prev.km) || getCurrentKm() || '';
   document.getElementById('doneOverlay').classList.add('open');
 }
 function closeDone(){ document.getElementById('doneOverlay').classList.remove('open'); doneTarget = null; }
@@ -3208,6 +3209,7 @@ async function submitDone(e){
   if(!doneTarget) return;
   const t = doneTarget, date = document.getElementById('dn_date').value || isoToday(), km = Number(document.getElementById('dn_km').value) || getCurrentKm();
   const costRaw = document.getElementById('dn_cost').value, files = Array.from(document.getElementById('dn_files').files || []);
+  if(!files.length && costRaw === ''){ toast('Añade un archivo o un coste', 'warning'); return; }
   const btn = document.getElementById('doneSave'), label = btn.textContent, uploaded = [];
   if(files.length){
     btn.disabled = true; btn.textContent = 'Subiendo…';
@@ -3221,25 +3223,39 @@ async function submitDone(e){
     }
     btn.disabled = false; btn.textContent = label;
   }
-  let docId = null;
-  if(uploaded.length || costRaw !== ''){
+  const prev = t.kind === 'byd' ? (state.revisionDone || {})[t.key] : (state.recommendedDone || {})[t.key];
+  const old = prev && prev.docId ? state.docs.find(x=>x.id === prev.docId) : null;
+  let docId;
+  if(old){   // ya había un documento de esta revisión: se le añaden los archivos y el coste
+    old.files = [...(old.files || []), ...uploaded]; if(costRaw !== '') old.price = Number(costRaw); old.date = date; if(km) old.km = km;
+    docId = old.id;
+  } else {
     docId = uid();
     state.docs.push({ id: docId, category:'Taller', sub: t.sub, name: t.name, date, price: costRaw === '' ? null : Number(costRaw), noCount:false, km: km || null, location:'', note:'Desde el calendario de mantenimiento', expires:'', files: uploaded });
   }
-  const rec = { date, km, docId };
-  if(t.kind === 'byd'){
-    if(!state.completedRevisions.includes(t.key)) state.completedRevisions.push(t.key);
-    state.revisionDone = state.revisionDone || {}; state.revisionDone[t.key] = rec;
-  } else {
-    state.recommendedDone = state.recommendedDone || {}; state.recommendedDone[t.key] = rec;
-  }
+  setDoneRecord(t.kind, t.key, { date, km, docId });
   closeDone(); saveState(); renderRevisions(); renderDocs(); renderAlerts(); renderDashboard();
-  toast('Marcada como hecha' + (docId ? ' y guardada en Taller' : ''), 'success');
+  toast('Documento guardado en Taller', 'success');
 }
-// Botón para ver la factura o el documento de una revisión hecha, si lo hay.
-function revDocBtn(rec){
+// Botón junto a «Hecho»: ver el documento (factura…) si lo hay o, si no, añadirlo.
+function revDocBtn(rec, kind, key){
   const d = rec && rec.docId ? state.docs.find(x=>x.id === rec.docId) : null;
-  return d && (d.files || []).length ? `<button class="btn btn-ghost btn-sm" onclick="viewRevDoc(${d.id})">Ver factura</button>` : '';
+  if(d && (d.files || []).length) return `<button class="btn btn-ghost btn-sm" onclick="viewRevDoc(${d.id})">Ver documento</button>`;
+  return `<button class="btn btn-ghost btn-sm" onclick="openDone('${kind}', ${typeof key === 'number' ? key : "'" + key + "'"})">Añadir documento</button>`;
+}
+// «Hecho»: se marca con la fecha de hoy y los km actuales, sin más preguntas.
+function setDoneRecord(kind, key, rec){
+  if(kind === 'byd'){
+    if(!state.completedRevisions.includes(key)) state.completedRevisions.push(key);
+    state.revisionDone = state.revisionDone || {}; state.revisionDone[key] = rec;
+  } else {
+    state.recommendedDone = state.recommendedDone || {}; state.recommendedDone[key] = rec;
+  }
+}
+function quickDone(kind, key){
+  setDoneRecord(kind, key, { date: isoToday(), km: getCurrentKm(), docId: null });
+  saveState(); renderRevisions(); renderAlerts(); renderDashboard();
+  toast('Marcada como hecha', 'success');
 }
 function viewRevDoc(id){ const d = state.docs.find(x=>x.id === id); if(d) openDocFiles(d); }
 function clearRecommended(id){
