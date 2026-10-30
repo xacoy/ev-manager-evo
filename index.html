@@ -1616,6 +1616,25 @@ html.car .chg-tablecard{display:none!important}
   </div>
 </div>
 
+<div class="overlay" id="doneOverlay">
+  <div class="modal" style="max-width:460px;max-height:92vh;overflow:auto">
+    <h3>Marcar como hecha</h3>
+    <p class="set-help" id="doneName" style="margin-bottom:14px"></p>
+    <form id="doneForm" autocomplete="off">
+      <div class="field-row">
+        <div class="field"><label>Fecha</label><input id="dn_date" type="date" required></div>
+        <div class="field"><label>Km</label><input id="dn_km" type="number" min="0" step="1" inputmode="numeric"></div>
+      </div>
+      <div class="field"><label>Coste (€) <span class="opt-hint">(opcional)</span></label><input id="dn_cost" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0,00"></div>
+      <div class="field"><label>Factura o documento <span class="opt-hint">(opcional · PDF o imagen, máx. 10 MB · se guarda en tu Drive)</span></label>
+        <input id="dn_files" type="file" multiple accept="image/*,application/pdf">
+      </div>
+      <p class="set-help" style="margin-bottom:6px">Si añades coste o archivos, también queda guardado en Documentos → Taller.</p>
+      <div class="modal-actions"><button type="submit" class="btn btn-primary" id="doneSave">Marcar hecha</button><button type="button" class="btn btn-ghost" id="doneCancel">Cancelar</button></div>
+    </form>
+  </div>
+</div>
+
 <div class="overlay" id="readingFormOverlay">
   <div class="modal" style="max-width:460px">
     <h3>Actualizar lecturas</h3>
@@ -1821,7 +1840,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-30.19';
+const APP_VERSION = '2026-10-30.20';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -1855,6 +1874,7 @@ let state = {
   docs: [],
   completedRevisions: [],
   recommendedDone: {},
+  revisionDone: {},
   quickLinks: DEFAULT_QUICK_LINKS.slice(),
   hiddenWalls: [],
   lang: 'es',
@@ -3114,7 +3134,8 @@ function bydRevisionHtml(rev, st, done){
       </div>
       <div class="rev-side">
         <div class="rev-meta">${done ? 'Completada' : revMetaHtml(st)}</div>
-        <button class="btn ${done?'btn-ghost':'btn-primary'} btn-sm" onclick="toggleRevision(${rev.km})">${done ? 'Deshacer' : 'Marcar hecha'}</button>
+        ${revDocBtn((state.revisionDone || {})[rev.km])}
+        ${done ? `<button class="btn btn-ghost btn-sm" onclick="toggleRevision(${rev.km})">Deshacer</button>` : `<button class="btn btn-primary btn-sm" onclick="openDone('byd', ${rev.km})">Marcar hecha</button>`}
       </div>
     </div>`;
 }
@@ -3162,16 +3183,65 @@ function recommendedHtml(r, st){
     </div>
     <div class="rev-side">
       <div class="rev-meta">${meta}</div>
-      <button class="btn btn-primary btn-sm" onclick="markRecommended('${r.id}')">Hecha hoy</button>
-      ${st.last ? `<button class="btn btn-ghost btn-sm" onclick="clearRecommended('${r.id}')" title="Quitar el último registro">Quitar</button>` : ''}
+      ${revDocBtn(st.last)}
+      <button class="btn btn-primary btn-sm" onclick="openDone('rec', '${r.id}')">Marcar hecha</button>
+      ${st.last ? `<button class="btn btn-ghost btn-sm" onclick="clearRecommended('${r.id}')" title="Quitar el último registro">Deshacer</button>` : ''}
     </div>
   </div>`;
 }
-function markRecommended(id){
-  state.recommendedDone = state.recommendedDone || {};
-  state.recommendedDone[id] = { date: isoToday(), km: getCurrentKm() };
-  saveState(); renderRevisions();
+// Marcar como hecha: pide fecha y km (por defecto hoy y el actual) y, si quieres, coste y factura; con coste o archivos se guarda también como documento de Taller.
+const REC_SUB = { 'tyre-rot':'Neumáticos', 'align':'Alineación', 'brake-fluid':'Frenos', 'gear-oil':'Cambio aceite reductora', 'cabin':'Filtros', 'brakes':'Frenos' };
+let doneTarget = null;
+function openDone(kind, key){
+  const item = kind === 'byd' ? (REVISIONS_SCHEDULE[state.lang] || REVISIONS_SCHEDULE.es).find(r=>r.km === key) : RECOMMENDED.find(r=>r.id === key);
+  if(!item) return;
+  doneTarget = { kind, key, name: item.name, sub: kind === 'byd' ? 'Revisión general' : (REC_SUB[key] || 'Otro') };
+  document.getElementById('doneForm').reset();
+  document.getElementById('doneName').textContent = item.name;
+  document.getElementById('dn_date').value = isoToday();
+  document.getElementById('dn_km').value = getCurrentKm() || '';
+  document.getElementById('doneOverlay').classList.add('open');
 }
+function closeDone(){ document.getElementById('doneOverlay').classList.remove('open'); doneTarget = null; }
+async function submitDone(e){
+  e.preventDefault();
+  if(!doneTarget) return;
+  const t = doneTarget, date = document.getElementById('dn_date').value || isoToday(), km = Number(document.getElementById('dn_km').value) || getCurrentKm();
+  const costRaw = document.getElementById('dn_cost').value, files = Array.from(document.getElementById('dn_files').files || []);
+  const btn = document.getElementById('doneSave'), label = btn.textContent, uploaded = [];
+  if(files.length){
+    btn.disabled = true; btn.textContent = 'Subiendo…';
+    try{
+      await driveEnsureToken();
+      for(const f of files){ const pr = await prepareAttachment(f); const id = await driveUploadFile(pr.blob, pr.name, pr.mime); uploaded.push({ id, name: pr.name, mime: pr.mime, size: pr.size }); }
+    }catch(err){
+      uploaded.forEach(u=>driveDeleteFile(u.id));
+      btn.disabled = false; btn.textContent = label;
+      toast('No se pudo subir: ' + err.message, 'danger'); return;
+    }
+    btn.disabled = false; btn.textContent = label;
+  }
+  let docId = null;
+  if(uploaded.length || costRaw !== ''){
+    docId = uid();
+    state.docs.push({ id: docId, category:'Taller', sub: t.sub, name: t.name, date, price: costRaw === '' ? null : Number(costRaw), noCount:false, km: km || null, location:'', note:'Desde el calendario de mantenimiento', expires:'', files: uploaded });
+  }
+  const rec = { date, km, docId };
+  if(t.kind === 'byd'){
+    if(!state.completedRevisions.includes(t.key)) state.completedRevisions.push(t.key);
+    state.revisionDone = state.revisionDone || {}; state.revisionDone[t.key] = rec;
+  } else {
+    state.recommendedDone = state.recommendedDone || {}; state.recommendedDone[t.key] = rec;
+  }
+  closeDone(); saveState(); renderRevisions(); renderDocs(); renderAlerts(); renderDashboard();
+  toast('Marcada como hecha' + (docId ? ' y guardada en Taller' : ''), 'success');
+}
+// Botón para ver la factura o el documento de una revisión hecha, si lo hay.
+function revDocBtn(rec){
+  const d = rec && rec.docId ? state.docs.find(x=>x.id === rec.docId) : null;
+  return d && (d.files || []).length ? `<button class="btn btn-ghost btn-sm" onclick="viewRevDoc(${d.id})">Ver factura</button>` : '';
+}
+function viewRevDoc(id){ const d = state.docs.find(x=>x.id === id); if(d) openDocFiles(d); }
 function clearRecommended(id){
   if(state.recommendedDone) delete state.recommendedDone[id];
   saveState(); renderRevisions();
@@ -3186,7 +3256,7 @@ function revMetaHtml(st){
   return (st.byTime ? timeTxt : kmTxt) + '<span class="rev-sub">o ' + (st.byTime ? kmTxt : timeTxt) + (st.due ? ' · ' + fmtDate(st.due) : '') + '</span>';
 }
 function toggleRevision(km){
-  if(state.completedRevisions.includes(km)) state.completedRevisions = state.completedRevisions.filter(k=>k!==km);
+  if(state.completedRevisions.includes(km)){ state.completedRevisions = state.completedRevisions.filter(k=>k!==km); if(state.revisionDone) delete state.revisionDone[km]; }
   else state.completedRevisions.push(km);
   saveState(); renderRevisions(); renderAlerts(); renderDashboard();
 }
@@ -3915,6 +3985,9 @@ function setupEventListeners(){
   document.getElementById('setGroups').addEventListener('click', e=>{ const v = e.target.closest('.set-view'); if(v) startSettingEdit(v.closest('.set-tile').dataset.key); });
   document.getElementById('readingOpenBtn').addEventListener('click', openReadingForm);
   document.getElementById('readingCancel').addEventListener('click', closeReadingForm);
+  document.getElementById('doneForm').addEventListener('submit', submitDone);
+  document.getElementById('doneCancel').addEventListener('click', closeDone);
+  document.getElementById('doneOverlay').addEventListener('click', e=>{ if(e.target.id === 'doneOverlay') closeDone(); });
   document.getElementById('readingFormOverlay').addEventListener('click', e=>{ if(e.target.id === 'readingFormOverlay') closeReadingForm(); });
   document.getElementById('chargeOpenBtn').addEventListener('click', ()=>{ cancelChargeEdit(); document.getElementById('chargeFormOverlay').classList.add('open'); });
   document.getElementById('chgAllBtn').addEventListener('click', ()=>{ chgShowAll = !chgShowAll; renderCharges(); });
