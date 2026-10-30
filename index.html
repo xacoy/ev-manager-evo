@@ -1813,7 +1813,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-30.14';
+const APP_VERSION = '2026-10-30.15';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -1890,7 +1890,7 @@ const fmtEUR = n => {
   const [intPart, decPart] = Math.abs(num).toFixed(2).split('.');
   return sign + fmtNum(intPart) + ',' + decPart + ' €';
 };
-const fmtDate = d => { if(!d) return '—'; const dt = new Date(d); return isNaN(dt) ? d : dt.toLocaleDateString('es-ES'); };
+const fmtDate = d => { if(!d) return '—'; const dt = new Date(/^\d{4}-\d\d-\d\d$/.test(d) ? d + 'T12:00:00' : d); return isNaN(dt) ? d : dt.toLocaleDateString('es-ES'); };
 const uid = () => Date.now() + Math.floor(Math.random()*1000);
 function animateCountUp(el, target){
   if(!el) return;
@@ -1905,7 +1905,7 @@ function animateCountUp(el, target){
   }
   requestAnimationFrame(tick);
 }
-function monthsBetween(a,b){ if(!a) return 0; const d1=new Date(a), d2=b?new Date(b):new Date(); return (d2.getFullYear()-d1.getFullYear())*12 + (d2.getMonth()-d1.getMonth()); }
+function monthsBetween(a,b){ if(!a) return 0; const d1=new Date(a), d2=b?new Date(b):new Date(); let m=(d2.getFullYear()-d1.getFullYear())*12 + (d2.getMonth()-d1.getMonth()); if(d2.getDate() < d1.getDate()) m--; return Math.max(0, m); }   // meses completos
 
 function toast(msg, type='info'){
   const box = document.getElementById('toasts');
@@ -2050,7 +2050,7 @@ function renderAlerts(){
 }
 function maybeNotify(alerts){
   if(!('Notification' in window) || Notification.permission !== 'granted') return;
-  const today = new Date().toISOString().slice(0,10);
+  const today = isoToday();
   const overdue = alerts.filter(a=>a.level==='overdue');
   const alreadyToday = state.meta.lastAlertCheck === today;
   const newOverdueKms = overdue.map(a=>a.rev.km).filter(km=>!state.meta.notifiedRevisions.includes(km));
@@ -2270,7 +2270,6 @@ function renderDashboard(){
   renderQuickLinks();
   const c = state.config;
   const km = getCurrentKm();
-  const totalCost = state.charges.reduce((s,x)=>s+Number(x.cost||0),0) + maintList().reduce((s,x)=>s+Number(x.cost||0),0);
 
   const sched = REVISIONS_SCHEDULE[state.lang] || REVISIONS_SCHEDULE.es;
   const next = pickNextRevision(sched, km);
@@ -2323,7 +2322,7 @@ function renderDashboard(){
 
   const cons = computeAvgConsumption(c);
   const totalKwh = state.charges.reduce((s,x)=>s+kwhOf(x),0);
-  document.getElementById('sideConsumption').textContent = cons.toFixed(1);
+  document.getElementById('sideConsumption').textContent = nf(cons, 1);
   document.getElementById('sideConsSub').textContent = 'kWh/100km (' + ({soc:'por batería',aec:'AEC del coche',window:'medido',config:'configurado'}[consumptionSource()]) + ')';
   renderSavings();
   renderFunTiles(km, totalKwh);
@@ -2360,7 +2359,7 @@ function currentFuelPrice(){
 // Precio de la gasolina de una fecha y si es estimado (est) o el dato real de ese día.
 function fuelPriceInfo(date){
   const hist = (fuelAuto && fuelAuto.history) || [];
-  const today = new Date().toISOString().slice(0, 10);
+  const today = isoToday();
   const exact = date ? hist.find(e=>e.date === date && Number(e.price) > 0) : null;
   if(exact) return { price: Number(exact.price), est: false };
   // hoy (o futuro) sin dato todavía: el último precio conocido, como estimación hasta que llegue el del día
@@ -2439,9 +2438,9 @@ function renderSavings(){
   if(!vals.length) return;
   const r = computeSavings();
   const has = r.kwhTotal > 0;
-  const priceText = 'Precio medio de hoy: ' + r.price.toFixed(3) + '€/l' + (r.auto ? '' : ' (manual)') + (r.fuelEst ? ' · gasolina estimada en ' + r.fuelEst + (r.fuelEst === 1 ? ' carga' : ' cargas') : '');
-  const title = 'SEAT León FR 2018 125 CV (' + r.refL.toFixed(1) + ' l/100 km) · gasolina 95 a ' + r.price.toFixed(3) + ' €/l' + (r.auto ? ' (media Canarias' + (fuelAuto.updated ? ', ' + fuelAuto.updated.slice(0,10) : '') + ')' : ' (precio manual)')
-    + ' · cada carga usa el precio del día en que se hizo · ' + Math.round(r.kmEq) + ' km equivalentes a ' + r.kwhTotal.toFixed(1) + ' kWh (media de ' + r.cons.toFixed(1) + ' kWh/100 km; cada carga conserva el consumo que tenía al registrarse)' + (r.fuelEst ? '. En ' + r.fuelEst + (r.fuelEst === 1 ? ' carga' : ' cargas') + ' el precio de la gasolina es estimado (media de 7 días o último conocido) y se sustituirá por el real cuando exista.' : '');
+  const priceText = 'Precio medio de hoy: ' + nf(r.price, 3) + '€/l' + (r.auto ? '' : ' (manual)') + (r.fuelEst ? ' · gasolina estimada en ' + r.fuelEst + (r.fuelEst === 1 ? ' carga' : ' cargas') : '');
+  const title = 'SEAT León FR 2018 125 CV (' + nf(r.refL, 1) + ' l/100 km) · gasolina 95 a ' + nf(r.price, 3) + ' €/l' + (r.auto ? ' (media Canarias' + (fuelAuto.updated ? ', ' + fuelAuto.updated.slice(0,10) : '') + ')' : ' (precio manual)')
+    + ' · cada carga usa el precio del día en que se hizo · ' + Math.round(r.kmEq) + ' km equivalentes a ' + nf(r.kwhTotal, 1) + ' kWh (media de ' + nf(r.cons, 1) + ' kWh/100 km; cada carga conserva el consumo que tenía al registrarse)' + (r.fuelEst ? '. En ' + r.fuelEst + (r.fuelEst === 1 ? ' carga' : ' cargas') + ' el precio de la gasolina es estimado (media de 7 días o último conocido) y se sustituirá por el real cuando exista.' : '');
   vals.forEach(el=>{ el.textContent = has ? fmtEUR(r.saved) : '—'; el.style.color = r.saved < 0 ? 'var(--danger)' : 'var(--accent)'; });
   document.querySelectorAll('[data-save="sub"]').forEach(el=>{ el.textContent = has ? 'Gasolina: ' + fmtEUR(r.gas) + ' - Electricidad: ' + fmtEUR(r.elec) : 'Gasolina: — - Electricidad: —'; el.title = title; });
   document.querySelectorAll('[data-save="price"]').forEach(el=>{ el.textContent = priceText; el.title = title; });
@@ -2451,16 +2450,6 @@ function renderSavings(){
 }
 
 
-function updateLastChargeInfo(){
-  const infoEl = document.getElementById('lastChargeInfo');
-  const dateEl = document.getElementById('lastChargeDate');
-  if(!infoEl || !dateEl) return;
-  if(!state.charges.length){ infoEl.textContent = '—'; dateEl.textContent = '—'; return; }
-  const last = state.charges.sort((a,b)=> new Date(b.date)-new Date(a.date))[0];
-  if(!last){ infoEl.textContent = '—'; dateEl.textContent = '—'; return; }
-  infoEl.textContent = (last.kwh ? last.kwh.toFixed(2) + ' kWh' : '—') + (last.location ? ' · ' + last.location : '');
-  dateEl.textContent = fmtDate(last.date) + (last.cost != null && last.cost !== '' ? ' · ' + fmtEUR(last.cost) : '');
-}
 function buildRecentActivity(){
   const container = document.getElementById('dashRecentActivity');
   if(!container) return;
@@ -2474,7 +2463,7 @@ function buildRecentActivity(){
   container.innerHTML = allEvents.map(ev=>{
     const icon = ev.type==='charge' ? ICONS.bolt : ICONS.wrench;
     const label = ev.type==='charge'
-      ? (kwhOf(ev.data) ? (kwhIsEst(ev.data) ? '≈ ' : '') + kwhOf(ev.data).toFixed(2)+' kWh cargados' : 'Carga registrada') + (ev.data.location ? ' · '+ev.data.location : '')
+      ? (kwhOf(ev.data) ? (kwhIsEst(ev.data) ? '≈ ' : '') + nf(kwhOf(ev.data), 2)+' kWh cargados' : 'Carga registrada') + (ev.data.location ? ' · '+ev.data.location : '')
       : (ev.data.label);
     const rawCost = ev.type==='maintenance' ? ev.data.price : ev.data.cost;
     const hasCost = rawCost != null && rawCost !== '';
@@ -2960,7 +2949,7 @@ function openDocForm(d){
   const cat = d ? docCat(d) : (docFilterCat || 'Otros');
   catSel.value = cat; fillDocSubs(cat, d && d.sub);
   document.getElementById('d_name').value = d ? (d.name || '') : '';
-  document.getElementById('d_date').value = d ? (d.date || '') : new Date().toISOString().slice(0,10);
+  document.getElementById('d_date').value = d ? (d.date || '') : isoToday();
   document.getElementById('d_price').value = d && d.price != null ? d.price : '';
   document.getElementById('d_nocount').checked = !!(d && d.noCount);
   document.getElementById('d_km').value = d && d.km ? d.km : '';
@@ -3493,6 +3482,9 @@ function statsRange(){
   else { s = shiftMonths(now, 12); s.setDate(s.getDate() + 1); }
   return { all: false, from: isoLocal(s), to, pfrom: isoLocal(shiftMonths(s, k)), pto: isoLocal(shiftMonths(now, k)) };
 }
+// Primer registro (carga o taller) y fecha desde la que se cuenta el tiempo del coche: la de compra o, si no hay, el primer registro.
+function firstRecordIso(){ const d = [...state.charges.map(c=>c.date), ...maintList().map(x=>x.date)].filter(Boolean).sort(); return d[0] || null; }
+function dataStartIso(){ return state.config.purchaseDate || firstRecordIso(); }
 const inRange = (date, from, to) => !!date && (!from || (date >= from && date <= to));
 function applyStatsHelp(){
   let on = true; try{ on = localStorage.getItem('statsHelp') !== '0'; }catch(e){}
@@ -3628,7 +3620,7 @@ function renderPlaces(m){
   const th = (key, label, cls) => '<th class="' + (cls === undefined ? 'num' : cls) + '"><button type="button" onclick="setPlaceSort(\'' + key + '\')">' + label + (sk === key ? (placeSort.dir < 0 ? ' ▼' : ' ▲') : '') + '</button></th>';
   tbl.innerHTML = '<thead><tr>' + th('name', 'Lugar', '') + th('n', 'Cargas', 'num hide-sm') + th('kwh', 'kWh') + th('cost', 'Gasto') + th('price', '€/kWh') + '</tr></thead><tbody>' +
     rows.map(r=>'<tr><td style="font-weight:700">' + escapeHtml(r.name) + '<span class="cnt show-sm"> · ' + r.n + '</span></td>' +
-      '<td class="num hide-sm">' + r.n + '</td><td class="num">' + r.kwh.toFixed(1) + '</td><td class="num">' + fmtEUR(r.cost) + '</td><td class="num">' + r.price.toFixed(3) + '</td></tr>').join('') + '</tbody>';
+      '<td class="num hide-sm">' + r.n + '</td><td class="num">' + nf(r.kwh, 1) + '</td><td class="num">' + fmtEUR(r.cost) + '</td><td class="num">' + nf(r.price, 3) + '</td></tr>').join('') + '</tbody>';
 }
 
 // Conclusiones en lenguaje llano a partir de los datos del periodo.
@@ -3639,32 +3631,32 @@ function renderInsights(m){
   const homeKwh = state.charges.filter(c=>isHome(c) && kwhOf(c) > 0 && c.cost != null && c.cost !== '' && Number(c.cost) > 0);
   const homePrice = homeKwh.length ? homeKwh.reduce((s,c)=>s + Number(c.cost), 0) / homeKwh.reduce((s,c)=>s + kwhOf(c), 0) : HOME_RATE;
   // 1. ahorro anual a este ritmo (con todo el historial: un periodo corto engaña)
-  const all = computeSavings(), dated = state.charges.filter(c=>c.date).map(c=>c.date).sort();
-  if(all.saved > 0 && dated.length){
-    const days = Math.max(1, (Date.now() - new Date(dated[0] + 'T12:00:00')) / 864e5);
+  const all = computeSavings(), since = dataStartIso();
+  if(all.saved > 0 && since){
+    const days = Math.max(1, Math.round((Date.now() - new Date(since + 'T12:00:00')) / 864e5) + 1);   // mismos días que la proyección anual del resumen
     if(days >= 30) card('≈ ' + fmtEUR(all.saved / days * 365), 'es lo que ahorrarías al año frente al León si sigues a este ritmo.');
   }
   // 2. depósitos
   if(m.saved != null && m.saved > 0){
     const tanks = m.saved / (50 * currentFuelPrice());
-    if(tanks >= 0.3) card(tanks.toFixed(1).replace('.', ',') + ' depósitos', 'de 50 l de gasolina es lo que llevas ahorrado en este periodo.');
+    if(tanks >= 0.3) card(nf(tanks, 1) + ' depósitos', 'de 50 l de gasolina es lo que llevas ahorrado en este periodo.');
   }
   // 3. cargar en casa
   const pub = m.ch.filter(c=>!isHome(c) && !isWork(c) && kwhOf(c) > 0 && c.cost != null && c.cost !== '' && Number(c.cost) > 0);
   if(pub.length){
     const kw = pub.reduce((s,c)=>s + kwhOf(c), 0), paid = pub.reduce((s,c)=>s + Number(c.cost), 0), diff = paid - kw * homePrice;
-    if(diff >= 1) card(fmtEUR(diff), 'habrías ahorrado cargando en casa los ' + kw.toFixed(0) + ' kWh que pagaste fuera (' + (paid / kw).toFixed(2) + ' frente a ' + homePrice.toFixed(3) + ' €/kWh).');
+    if(diff >= 1) card(fmtEUR(diff), 'habrías ahorrado cargando en casa los ' + nf(kw, 0) + ' kWh que pagaste fuera (' + nf(paid / kw, 2) + ' frente a ' + nf(homePrice, 3) + ' €/kWh).');
   }
   // 4. cargas gratis
   if(m.free.length){
     const kw = m.free.reduce((s,c)=>s + kwhOf(c), 0);
-    card(fmtEUR(kw * homePrice), m.free.length + (m.free.length === 1 ? ' carga gratis' : ' cargas gratis') + ' (' + kw.toFixed(0) + ' kWh): lo que costarían a tarifa de casa.');
+    card(fmtEUR(kw * homePrice), m.free.length + (m.free.length === 1 ? ' carga gratis' : ' cargas gratis') + ' (' + nf(kw, 0) + ' kWh): lo que costarían a tarifa de casa.');
   }
   // 5. tendencia del consumo
   if(m.trips.length >= 6){
     const h = Math.floor(m.trips.length / 2), avg = a=>a.reduce((s,t)=>s + t.value, 0) / a.length;
     const first = avg(m.trips.slice(0, h)), last = avg(m.trips.slice(-h)), d = (last - first) / first * 100;
-    if(Math.abs(d) >= 3) card((d < 0 ? '▼ ' : '▲ ') + Math.abs(d).toFixed(0) + ' %', 'ha ' + (d < 0 ? 'bajado' : 'subido') + ' tu consumo en la segunda mitad del periodo (' + first.toFixed(1) + ' → ' + last.toFixed(1) + ' kWh/100 km).');
+    if(Math.abs(d) >= 3) card((d < 0 ? '▼ ' : '▲ ') + Math.abs(d).toFixed(0) + ' %', 'ha ' + (d < 0 ? 'bajado' : 'subido') + ' tu consumo en la segunda mitad del periodo (' + nf(first, 1) + ' → ' + nf(last, 1) + ' kWh/100 km).');
   }
   el.innerHTML = out.length ? out.slice(0, 4).join('') : '<div class="empty-mini" style="grid-column:1/-1">Registra cargas con kWh, coste y km para ver conclusiones.</div>';
 }
@@ -3675,26 +3667,26 @@ function renderStats(){
   const m = periodMetrics(from, to), pm = r.all ? null : periodMetrics(r.pfrom, r.pto);
   document.querySelectorAll('#statsPeriodSeg button').forEach(b=> b.classList.toggle('on', b.dataset.p === statsPeriod));
   document.getElementById('statsRangeLabel').textContent = r.all ? 'Todo el historial' : fmtDate(r.from) + ' – ' + fmtDate(r.to) + ' · comparado con ' + fmtDate(r.pfrom) + ' – ' + fmtDate(r.pto);
+  const fr = firstRecordIso(), full = r.all || !fr || r.from <= fr;   // el periodo ya incluye todos los registros: mismas cifras que «Todo»
   const set = (id, v) => { document.getElementById(id).textContent = v; };
 
   // destacadas
   set('st_saved', m.saved != null ? fmtEUR(m.saved) : '—');
   set('st_savedSub', m.saved != null ? (m.gas > 0 ? Math.round(m.saved / m.gas * 100) + ' % menos que con el León' : 'acumulado') : 'Registra cargas con kWh');
   document.getElementById('dl_saved').innerHTML = deltaHtml(m.saved, pm && pm.saved, true);
-  const cpk = r.all ? (m.total > 0 && m.km > 0 ? m.total / m.km : null) : m.costKm;
-  set('st_costPerKm', cpk != null ? cpk.toFixed(3) + ' €' : '—');
-  set('st_costPerKmSub', cpk != null ? (cpk * 100).toFixed(2) + ' €/100 km · ' + fmtNum(m.km) + ' km' : 'Anota los km en tus registros');
+  const cpk = full ? (m.total > 0 && m.km > 0 ? m.total / m.km : null) : m.costKm;
+  set('st_costPerKm', cpk != null ? nf(cpk, 3) + ' €' : '—');
+  set('st_costPerKmSub', cpk != null ? nf(cpk * 100, 2) + ' €/100 km · ' + fmtNum(m.km) + ' km' : 'Anota los km en tus registros');
   document.getElementById('dl_costKm').innerHTML = deltaHtml(cpk, pm && pm.costKm, false);
-  const allCons = computeAvgConsumption(state.config), cons = r.all ? (allCons > 0 ? allCons : null) : m.cons;
-  set('st_cons', cons != null ? cons.toFixed(1) : '—');
-  set('st_consSub', r.all ? 'kWh / 100 km · ' + ({soc:'por % de batería',aec:'AEC del coche',window:'por kWh y km',config:'configurado'}[consumptionSource()]) : (m.trips.length ? 'kWh / 100 km · ' + m.trips.length + (m.trips.length === 1 ? ' tramo' : ' tramos') : 'Sin tramos en este periodo'));
-  document.getElementById('dl_cons').innerHTML = deltaHtml(r.all ? null : m.cons, pm && pm.cons, false);
+  const allCons = computeAvgConsumption(state.config), cons = full ? (allCons > 0 ? allCons : null) : m.cons;
+  set('st_cons', cons != null ? nf(cons, 1) : '—');
+  set('st_consSub', full ? 'kWh / 100 km · ' + ({soc:'por % de batería',aec:'AEC del coche',window:'por kWh y km',config:'configurado'}[consumptionSource()]) : (m.trips.length ? 'kWh / 100 km · ' + m.trips.length + (m.trips.length === 1 ? ' tramo' : ' tramos') : 'Sin tramos en este periodo'));
+  document.getElementById('dl_cons').innerHTML = deltaHtml(full ? null : m.cons, pm && pm.cons, false);
 
   // gasto mensual
   const series = monthSeries(from, to);
   // mismo cálculo en todos los periodos: gasto del periodo repartido por los días que abarca (un periodo nunca empieza antes de la compra o el primer registro)
-  const firstDates = [state.config.purchaseDate, ...state.charges.map(c=>c.date), ...maintList().map(x=>x.date)].filter(Boolean).sort();
-  const first = state.config.purchaseDate || firstDates[0], startIso = r.all ? first : (first && first > r.from ? first : r.from), endIso = r.all ? isoLocal(new Date()) : r.to;
+  const first = dataStartIso(), startIso = r.all ? first : (first && first > r.from ? first : r.from), endIso = r.all ? isoLocal(new Date()) : r.to;
   const days = startIso ? Math.max(1, Math.round((new Date(endIso + 'T12:00:00') - new Date(startIso + 'T12:00:00')) / 864e5) + 1) : 0;
   const monthlyAvg = days ? m.total / (days / 30.44) : null;
   const yearProj = days ? m.total / days * 365 : null;
@@ -3707,9 +3699,9 @@ function renderStats(){
   const p100 = (v) => m.kwhS > 0 && m.kmEq > 0 ? fmtEUR(v / m.kmEq * 100) : '—', leonTip = 'SEAT León FR 2018 125 CV: solo combustible, al precio de la gasolina de cada día de carga.';
   document.getElementById('blkSummary').innerHTML =
     kvRow('Km recorridos', m.km > 0 ? fmtNum(m.km) + ' km' : '—') +
-    kvRow('Cargas', m.ch.length, m.ch.length ? 'de media ' + (m.kwh / m.ch.length).toFixed(1) + ' kWh' : '') +
-    kvRow('kWh cargados', m.kwh.toFixed(1) + ' kWh') +
-    kvRow('Precio medio', m.price != null ? m.price.toFixed(3) + ' €/kWh' : '—') +
+    kvRow('Cargas', m.ch.length, m.ch.length ? 'de media ' + nf(m.kwh / m.ch.length, 1) + ' kWh' : '') +
+    kvRow('kWh cargados', nf(m.kwh, 1) + ' kWh') +
+    kvRow('Precio medio', m.price != null ? nf(m.price, 3) + ' €/kWh' : '—') +
     kvRow('Gasto en cargas', fmtEUR(m.eCost)) +
     kvRow('Gasto en mantenimiento', fmtEUR(m.mCost), m.mt.length + (m.mt.length === 1 ? ' registro' : ' registros')) +
     kvRow('100 km con el EVO', p100(m.elec)) +
@@ -3721,7 +3713,7 @@ function renderStats(){
   document.getElementById('monthTblHint').textContent = series.length > rowsM.length && rowsM.length ? 'últimos ' + rowsM.length + ' meses' : '';
   mtb.innerHTML = rowsM.length ?
     '<thead><tr><th>Mes</th><th class="num">kWh</th><th class="num">Energía</th><th class="num hide-sm">Mant.</th><th class="num">Total</th><th class="num">Km</th></tr></thead><tbody>' +
-    rowsM.map(x=>'<tr><td style="font-weight:700">' + x.label + '</td><td class="num">' + (x.kwh > 0 ? x.kwh.toFixed(1) : '—') + '</td><td class="num">' + (x.energy > 0 ? fmtEUR(x.energy) : '—') + '</td><td class="num hide-sm">' + (x.maint > 0 ? fmtEUR(x.maint) : '—') + '</td><td class="num" style="font-weight:700">' + (x.energy + x.maint > 0 ? fmtEUR(x.energy + x.maint) : '—') + '</td><td class="num">' + (x.km > 0 ? fmtNum(x.km) : '—') + '</td></tr>').join('') + '</tbody>' :
+    rowsM.map(x=>'<tr><td style="font-weight:700">' + x.label + '</td><td class="num">' + (x.kwh > 0 ? nf(x.kwh, 1) : '—') + '</td><td class="num">' + (x.energy > 0 ? fmtEUR(x.energy) : '—') + '</td><td class="num hide-sm">' + (x.maint > 0 ? fmtEUR(x.maint) : '—') + '</td><td class="num" style="font-weight:700">' + (x.energy + x.maint > 0 ? fmtEUR(x.energy + x.maint) : '—') + '</td><td class="num">' + (x.km > 0 ? fmtNum(x.km) : '—') + '</td></tr>').join('') + '</tbody>' :
     '<tbody><tr><td><div class="empty-mini">Sin datos en este periodo</div></td></tr></tbody>';
 
   const aEl = document.getElementById('chAhorro');
@@ -3739,7 +3731,7 @@ function exportData(){
   const blob = new Blob([JSON.stringify(state,null,2)], {type:'application/json'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url; a.download = `ev-manager-evo-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.href = url; a.download = `ev-manager-evo-backup-${isoToday()}.json`;
   document.body.appendChild(a); a.click(); a.remove();
   URL.revokeObjectURL(url);
   localStorage.setItem('lastBackupDate', new Date().toISOString());
