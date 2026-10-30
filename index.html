@@ -511,9 +511,16 @@ button{cursor:pointer}
 #page-stats .card-head + .what{margin:-10px 0 16px}
 #page-stats .stat-card .what{margin-top:12px;padding-top:10px;border-top:1px solid var(--border)}
 .stats-top .help-toggle{padding:0 12px;min-height:32px;height:32px;font-size:12px;font-weight:600;width:auto;border-radius:var(--radius-full)}
-.stats-kv{display:grid;grid-template-columns:1fr 1fr;gap:0 40px}
-@media(max-width:700px){.stats-kv{grid-template-columns:1fr}}
-.stats-kv .kv-row:first-child{padding-top:10px}.stats-kv .kv-row:last-child{padding-bottom:10px;border-bottom:1px solid var(--border)}
+.sum3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:900px){.sum3{grid-template-columns:1fr}}
+.sum-grp{border:1px solid var(--border);border-radius:14px;padding:16px 18px;background:color-mix(in srgb,var(--text) 3%,transparent)}
+.sum-grp h3{font-size:11.5px;letter-spacing:.8px;text-transform:uppercase;color:var(--text-faint);font-weight:800;margin-bottom:10px}
+.sum-big{padding-bottom:12px;margin-bottom:10px;border-bottom:1px solid var(--border)}
+.sum-big .l{font-size:12.5px;color:var(--text-muted);font-weight:600}
+.sum-big .n{font-family:var(--font-display);font-size:28px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;margin-top:2px;letter-spacing:-.4px}
+.sum-big .s{font-size:11.5px;color:var(--text-faint);font-weight:600;margin-top:2px}
+.sum-grp .kv-row{padding:7px 0;border-bottom:0}
+.sum-grp .kv-row:first-of-type{padding-top:0}
 .kv-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}
 .kv-row:last-child{border-bottom:0;padding-bottom:0}
 .kv-row:first-child{padding-top:0}
@@ -1521,9 +1528,8 @@ html.car .chg-tablecard{display:none!important}
 
         <div class="card" style="margin-bottom:16px">
           <div class="card-head"><h2>Resumen del periodo</h2></div>
-          <p class="what">Lo que has gastado y lo que saldría al año. Debajo, el detalle: cuánto cuestan 100 km con el EVO y con el León, y el CO₂ que evitas (es una estimación).</p>
-          <div class="sumline" id="gastoSummary" style="margin:0 0 14px;padding:0 0 14px;border-top:0;border-bottom:1px solid var(--border)"></div>
-          <div class="stats-kv" id="blkSummary"></div>
+          <p class="what">Cuánto gastas, cuánto usas el coche y cómo sale frente al León. El CO₂ evitado es una estimación.</p>
+          <div class="sum3" id="blkSummary"></div>
         </div>
 
         <div class="card" style="margin-bottom:16px">
@@ -1813,7 +1819,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-30.15';
+const APP_VERSION = '2026-10-30.16';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -3690,23 +3696,21 @@ function renderStats(){
   const days = startIso ? Math.max(1, Math.round((new Date(endIso + 'T12:00:00') - new Date(startIso + 'T12:00:00')) / 864e5) + 1) : 0;
   const monthlyAvg = days ? m.total / (days / 30.44) : null;
   const yearProj = days ? m.total / days * 365 : null;
-  document.getElementById('gastoSummary').innerHTML =
-    '<div>Total del periodo<b>' + fmtEUR(m.total) + '</b></div>' +
-    '<div>Media mensual<b>' + (monthlyAvg != null ? fmtEUR(monthlyAvg) : '—') + '</b></div>' +
-    '<div>Proyección anual<b>' + (yearProj != null ? fmtEUR(yearProj) : '—') + '</b></div>';
-
-  // resumen
   const p100 = (v) => m.kwhS > 0 && m.kmEq > 0 ? fmtEUR(v / m.kmEq * 100) : '—', leonTip = 'SEAT León FR 2018 125 CV: solo combustible, al precio de la gasolina de cada día de carga.';
+  const grp = (title, bl, bv, bs, rows) => '<div class="sum-grp"><h3>' + title + '</h3><div class="sum-big"><div class="l">' + bl + '</div><div class="n">' + bv + '</div>' + (bs ? '<div class="s">' + bs + '</div>' : '') + '</div>' + rows + '</div>';
   document.getElementById('blkSummary').innerHTML =
-    kvRow('Km recorridos', m.km > 0 ? fmtNum(m.km) + ' km' : '—') +
-    kvRow('Cargas', m.ch.length, m.ch.length ? 'de media ' + nf(m.kwh / m.ch.length, 1) + ' kWh' : '') +
-    kvRow('kWh cargados', nf(m.kwh, 1) + ' kWh') +
-    kvRow('Precio medio', m.price != null ? nf(m.price, 3) + ' €/kWh' : '—') +
-    kvRow('Gasto en cargas', fmtEUR(m.eCost)) +
-    kvRow('Gasto en mantenimiento', fmtEUR(m.mCost), m.mt.length + (m.mt.length === 1 ? ' registro' : ' registros')) +
-    kvRow('100 km con el EVO', p100(m.elec)) +
-    kvRow('100 km con el León', p100(m.gas), null, leonTip) +
-    kvRow('CO₂ evitado', m.co2 != null ? fmtKg(m.co2) : '—', null, 'Estimación: gasolina ' + CO2_PETROL + ' kg/l frente a ' + CO2_GRID + ' kg/kWh de la red eléctrica');
+    grp('Gasto', 'Total del periodo', fmtEUR(m.total), '', 
+      kvRow('Cada mes, de media', monthlyAvg != null ? fmtEUR(monthlyAvg) : '—') +
+      kvRow('Previsión al año', yearProj != null ? fmtEUR(yearProj) : '—') +
+      kvRow('En cargas', fmtEUR(m.eCost)) +
+      kvRow('En mantenimiento', fmtEUR(m.mCost), m.mt.length + (m.mt.length === 1 ? ' registro' : ' registros'))) +
+    grp('Uso', 'Km recorridos', m.km > 0 ? fmtNum(m.km) + ' km' : '—', '',
+      kvRow('Cargas', m.ch.length, m.ch.length ? 'de media ' + nf(m.kwh / m.ch.length, 1) + ' kWh' : '') +
+      kvRow('Energía cargada', nf(m.kwh, 1) + ' kWh') +
+      kvRow('Precio medio', m.price != null ? nf(m.price, 3) + ' €/kWh' : '—')) +
+    grp('Frente al León', 'Cada 100 km con el EVO', p100(m.elec), '',
+      kvRow('Cada 100 km con el León', p100(m.gas), null, leonTip) +
+      kvRow('CO₂ evitado', m.co2 != null ? fmtKg(m.co2) : '—', null, 'Estimación: gasolina ' + CO2_PETROL + ' kg/l frente a ' + CO2_GRID + ' kg/kWh de la red eléctrica'));
 
   // mes a mes
   const mtb = document.getElementById('tblMonths'), rowsM = series.filter(x=>x.energy + x.maint + x.kwh + x.km > 0).reverse().slice(0, 12);
