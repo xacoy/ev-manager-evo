@@ -1813,7 +1813,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-30.13';
+const APP_VERSION = '2026-10-30.14';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -3692,10 +3692,12 @@ function renderStats(){
 
   // gasto mensual
   const series = monthSeries(from, to);
-  const months = Math.max(1, monthsBetween(state.config.purchaseDate));
-  const days = r.all ? 0 : Math.max(1, Math.round((new Date(r.to) - new Date(r.from)) / 864e5) + 1);
-  const monthlyAvg = r.all ? (state.config.purchaseDate ? m.total / months : (series.length ? m.total / series.length : 0)) : (statsPeriod === 'm' ? null : m.total / (days / 30.44));
-  const yearProj = r.all ? (state.config.purchaseDate ? m.total / months * 12 : null) : m.total / days * 365;
+  // mismo cálculo en todos los periodos: gasto del periodo repartido por los días que abarca (un periodo nunca empieza antes de la compra o el primer registro)
+  const firstDates = [state.config.purchaseDate, ...state.charges.map(c=>c.date), ...maintList().map(x=>x.date)].filter(Boolean).sort();
+  const first = state.config.purchaseDate || firstDates[0], startIso = r.all ? first : (first && first > r.from ? first : r.from), endIso = r.all ? isoLocal(new Date()) : r.to;
+  const days = startIso ? Math.max(1, Math.round((new Date(endIso + 'T12:00:00') - new Date(startIso + 'T12:00:00')) / 864e5) + 1) : 0;
+  const monthlyAvg = days ? m.total / (days / 30.44) : null;
+  const yearProj = days ? m.total / days * 365 : null;
   document.getElementById('gastoSummary').innerHTML =
     '<div>Total del periodo<b>' + fmtEUR(m.total) + '</b></div>' +
     '<div>Media mensual<b>' + (monthlyAvg != null ? fmtEUR(monthlyAvg) : '—') + '</b></div>' +
