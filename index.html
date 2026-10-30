@@ -1812,7 +1812,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-30.4';
+const APP_VERSION = '2026-10-30.5';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -3522,9 +3522,10 @@ function svgLineChart(el, items, o){
   g += '<text class="val" x="' + Math.min(x(items.length - 1), W - R - 4) + '" y="' + (y(last.value) - 11) + '" text-anchor="' + (items.length > 1 ? 'end' : 'middle') + '">' + (o.fmt ? o.fmt(last.value) : Math.round(last.value)) + '</text>';
   el.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + (o.aria || 'Gráfica') + '">' + g + '</svg>';
 }
+const eurShort = v => (Number.isInteger(Math.round(v * 100) / 100) ? Math.round(v) : (Math.round(v * 10) / 10).toFixed(1).replace('.', ',')) + '€';
 function svgStackedBarChart(el, items, o){
   o = o || {};
-  const W = 640, H = 250, L = 46, R = 14, T = 24, B = 38, iw = W - L - R, ih = H - T - B;
+  const wide = el.clientWidth > 700, W = wide ? 1000 : 640, H = wide ? 200 : 250, L = 46, R = 14, T = 24, B = 38, iw = W - L - R, ih = H - T - B;
   const max = niceMax(Math.max(...items.map(i=>i.a + i.b), o.avg || 0) * 1.08);
   const y = v => T + ih - v / max * ih;
   const step = iw / items.length, bw = Math.min(46, step * 0.62);
@@ -3814,7 +3815,7 @@ function renderStats(){
   const yearProj = r.all ? (state.config.purchaseDate ? m.total / months * 12 : null) : m.total / days * 365;
   if(hasSpend){
     const avg = series.reduce((s,x)=>s + x.energy + x.maint, 0) / series.length;
-    svgStackedBarChart(gEl, series.map(s=>({ label: s.label, a: s.energy, b: s.maint })), { avg, fmt: v=>Math.round(v) + '€', axis: v=>Math.round(v) + '€', aria: 'Gasto mensual' });
+    svgStackedBarChart(gEl, series.map(s=>({ label: s.label, a: s.energy, b: s.maint })), { avg, fmt: eurShort, axis: eurShort, aria: 'Gasto mensual' });
   } else emptyChart(gEl, 'Sin gastos en este periodo.');
   document.getElementById('gastoSummary').innerHTML =
     '<div>Total del periodo<b>' + fmtEUR(m.total) + '</b></div>' +
