@@ -1813,7 +1813,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-30.12';
+const APP_VERSION = '2026-10-30.13';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -3526,7 +3526,7 @@ function kmDriven(from, to){
   const pts = odoPoints(), upTo = pts.filter(p=>p.date <= to);
   if(!upTo.length) return 0;
   const end = upTo[upTo.length - 1].km, before = pts.filter(p=>p.date < from);
-  const start = before.length ? before[before.length - 1].km : (pts.find(p=>p.date >= from) || { km: end }).km;
+  const start = before.length ? before[before.length - 1].km : 0;   // sin lecturas anteriores, cuenta desde 0 como «Todo»
   return Math.max(0, end - start);
 }
 
@@ -3589,12 +3589,15 @@ function periodMetrics(from, to){
   ch.forEach(c=>{ const k = kwhOf(c); if(k > 0 && c.cost != null && c.cost !== ''){ pk += k; pc += Number(c.cost) || 0; } });
   const trips = consumptionByTrip().items.filter(t=>inRange(t.date, from, to));
   const km = kmDriven(from, to), total = eCost + mCost;
+  // mismo método que «Todo»: batería gastada entre los km de los tramos del periodo (cada km pesa igual)
+  const segs = socSegments().filter(x=>inRange(x.date, from, to)), segKm = segs.reduce((a,x)=>a + x.km, 0);
+  const socCons = segKm > 0 ? segs.reduce((a,x)=>a + x.kwhBattery, 0) / segKm * 100 / CHARGE_EFF : null;
   return {
     ch, mt, kwh, eCost, mCost, total, km, trips, kwhS, kmEq, fuelEst,
     saved: kwhS > 0 ? gas - elec : null, gas, elec, consAvg: kmEq > 0 ? kwhS / kmEq * 100 : null, refAvg: kmEq > 0 ? refKm / kmEq : null,
     price: pk > 0 ? pc / pk : null,
     costKm: km > 0 ? total / km : null, eKm: km > 0 ? eCost / km : null, mKm: km > 0 ? mCost / km : null,
-    cons: trips.length ? trips.reduce((s,t)=>s + t.value, 0) / trips.length : null,
+    cons: socCons != null ? socCons : (trips.length ? trips.reduce((s,t)=>s + t.value, 0) / trips.length : null),
     co2: kmEq > 0 ? refKm / 100 * CO2_PETROL - kwhS * CO2_GRID : null,   // litros de cada carga, con el consumo del León que tenía al registrarse
     free: ch.filter(c=>c.cost != null && c.cost !== '' && Number(c.cost) === 0 && kwhOf(c) > 0)
   };
