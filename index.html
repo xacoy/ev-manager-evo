@@ -761,15 +761,16 @@ button{cursor:pointer}
 .field input,.field select,.field textarea{
   background:var(--bg-2); border:1px solid var(--border); border-radius:10px; padding:14px 16px;
   font-size:15px; color:var(--text); outline:none; transition:border-color .15s var(--ease), background .15s var(--ease);
-  font-family:var(--font); min-height:48px;
+  font-family:var(--font); min-height:48px; width:100%; min-width:0; box-sizing:border-box;
 }
 .field input:focus,.field select:focus,.field textarea:focus{
   border-color:var(--accent); background:var(--bg-card);
   box-shadow:0 0 0 3px var(--accent-soft);
 }
 .field textarea{resize:vertical;min-height:80px}
-.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media(max-width:520px){.field-row{grid-template-columns:1fr}}
+.field-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.field-row>.field{min-width:0}
+@media(max-width:520px){.field-row{grid-template-columns:minmax(0,1fr)}}
 
 /* ---------- table ---------- */
 .table-wrap{overflow-x:auto}
@@ -889,7 +890,9 @@ tr:hover td{background:var(--bg-2)}
 .modal h3{font-size:15px;font-weight:800;margin-bottom:6px}
 .modal p{font-size:12.5px;color:var(--text-muted);margin-bottom:18px}
 .modal-actions{display:flex;gap:10px;margin-top:6px}
-.modal-actions .btn{flex:1}
+.modal-actions .btn{flex:1 1 0;min-width:0;padding-left:12px;padding-right:12px}
+.modal .btn-block{flex:1 1 0;min-width:0}
+@media(max-width:400px){.modal{padding:20px}}
 
 footer.sig{text-align:center;padding:26px 0 6px;font-size:11px;color:var(--text-faint);font-weight:600}
 /* Versión de la web: siempre a la vista pero muy discreta (ni se pulsa ni se selecciona) */
@@ -1678,7 +1681,7 @@ html.car .chg-tablecard{display:none!important}
   </div>
 </div>
 <div class="overlay" id="docFormOverlay">
-  <div class="modal" style="max-height:92vh;overflow:auto">
+  <div class="modal modal-wide">
     <h3 id="docFormTitle">Añadir documento</h3>
     <form id="docForm">
       <div class="field"><label>Archivos <span class="opt-hint">(PDF o imagen, máx. 10 MB · se guardan en tu Drive)</span></label>
@@ -1856,7 +1859,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202610300955';   // AAAAMMDDHHMM
+const APP_VERSION = '202610301008';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
