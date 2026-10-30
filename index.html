@@ -1609,6 +1609,7 @@ html.car .chg-tablecard{display:none!important}
                 <button type="submit" class="btn btn-primary btn-block" id="chargeSubmitBtn">Registrar carga</button>
                 <button type="button" class="btn btn-ghost" id="chargeCancelEdit">Cancelar</button>
               </div>
+              <button type="button" class="btn btn-danger btn-block" id="chargeDeleteBtn" style="display:none;margin-top:8px">Eliminar carga</button>
             </form>
   </div>
 </div>
@@ -1818,7 +1819,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-30.1';
+const APP_VERSION = '2026-10-30.2';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2593,7 +2594,7 @@ function chargeSocHtml(v){
     '<div class="chg-bar" aria-hidden="true"><i style="left:' + a + '%;width:' + Math.max(0, Math.min(100 - a, v.soc.b - v.soc.a)) + '%"></i></div></div>';
 }
 function chargeActionsHtml(c){
-  return '<span class="chg-act"><button type="button" class="icon-action" onclick="editCharge(' + c.id + ')" aria-label="Editar carga">' + ICONS.edit + '</button><button type="button" class="icon-action danger" onclick="deleteCharge(' + c.id + ')" aria-label="Eliminar carga">' + ICONS.trash + '</button></span>';
+  return '<span class="chg-act"><button type="button" class="icon-action" onclick="editCharge(' + c.id + ')" aria-label="Editar carga">' + ICONS.edit + '</button></span>';
 }
 function chargeCardHtml(v, withActions){
   const c = v.c, t = chargeParts(v, 1);
@@ -2685,6 +2686,13 @@ function renderCharges(){
   all.textContent = chgShowAll ? 'Ver menos' : 'Ver todas';
   renderSavings();   // también repinta el resumen de Cargas
 }
+function askDeleteCharge(id){
+  delDocId = id; delStep = 1; delKind = 'charge';
+  document.getElementById('docDelTitle').textContent = '¿Eliminar carga?';
+  document.getElementById('docDelText').textContent = 'Se quitará esta carga del historial.';
+  document.getElementById('docDelYes').textContent = 'Eliminar';
+  document.getElementById('docDelOverlay').classList.add('open');
+}
 function deleteCharge(id){
   if(editingChargeId===id) cancelChargeEdit();
   state.charges = state.charges.filter(c=>c.id!==id);
@@ -2709,6 +2717,7 @@ function editCharge(id){
   if(locType==='Otro') document.getElementById('c_location_other').value = c.location || '';
   document.getElementById('chargeSubmitBtn').textContent = 'Guardar cambios';
   document.getElementById('chargeFormTitle').textContent = 'Editar carga';
+  document.getElementById('chargeDeleteBtn').style.display = '';
   document.getElementById('chargeFormOverlay').classList.add('open');
 }
 function cancelChargeEdit(){
@@ -2718,6 +2727,7 @@ function cancelChargeEdit(){
   document.getElementById('c_location_other_wrap').style.display = 'none';
   document.getElementById('chargeSubmitBtn').textContent = 'Registrar carga';
   document.getElementById('chargeFormTitle').textContent = 'Registrar carga';
+  document.getElementById('chargeDeleteBtn').style.display = 'none';
   document.getElementById('chargeFormOverlay').classList.remove('open');
 }
 
@@ -3045,6 +3055,7 @@ async function confirmDeleteDoc(){
     return;
   }
   document.getElementById('docDelOverlay').classList.remove('open'); delStep = 0;
+  if(delKind === 'charge'){ deleteCharge(delDocId); return; }
   if(delKind === 'note'){
     if(editingNoteId === delDocId) cancelNoteEdit();
     state.notes = state.notes.filter(n=>n.id !== delDocId); saveState(); renderNotes(); toast('Nota eliminada', 'success');
@@ -4080,6 +4091,7 @@ function setupEventListeners(){
     renderCharges(); renderDashboard(); renderAlerts(); toast(wasEditing ? 'Carga actualizada' : 'Carga registrada', 'success');
   });
   document.getElementById('chargeCancelEdit').addEventListener('click', cancelChargeEdit);
+  document.getElementById('chargeDeleteBtn').addEventListener('click', ()=>{ if(editingChargeId!=null) askDeleteCharge(editingChargeId); });
   document.getElementById('readingForm').addEventListener('submit', saveReading);
   document.getElementById('setGroups').addEventListener('click', e=>{ const v = e.target.closest('.set-view'); if(v) startSettingEdit(v.closest('.set-tile').dataset.key); });
   document.getElementById('readingOpenBtn').addEventListener('click', openReadingForm);
