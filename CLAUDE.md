@@ -2,7 +2,7 @@
 
 ## Número de versión
 - Cada cambio que se suba a `master` y toque `index.html` debe **actualizar `APP_VERSION`** (cerca del inicio del script, junto a `VEHICLE_BATTERY_KWH`).
-- Formato: `AAAA-MM-DD.N`. Si ya hay una versión de hoy, sube solo `N` (`2026-10-22.1` → `2026-10-22.2`); si es otro día, usa la fecha de hoy con `.1`.
+- Formato: `AAAAMMDDHHMM` con la fecha y hora (hora de Canarias) del cambio, p. ej. `202610300952`. Se muestra como `v202610300952`. Al subir otro cambio, usa siempre una hora posterior.
 - Se ve en Configuración («Versión de la web») y sirve para comprobar que el despliegue es el último.
 
 ## Principio: el pasado no cambia nunca
