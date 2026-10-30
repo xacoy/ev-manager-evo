@@ -1504,14 +1504,8 @@ html.car .chg-tablecard{display:none!important}
 
         <div class="card" style="margin-bottom:16px">
           <div class="card-head"><h2>Resumen del periodo</h2></div>
+          <div class="sumline" id="gastoSummary" style="margin:0 0 14px;padding:0 0 14px;border-top:0;border-bottom:1px solid var(--border)"></div>
           <div class="stats-kv" id="blkSummary"></div>
-        </div>
-
-        <div class="card" style="margin-bottom:16px">
-          <div class="card-head"><h2>Gasto mensual</h2><span class="hint">energía + mantenimiento</span></div>
-          <div class="legend"><span><i style="background:var(--accent)"></i>Energía</span><span><i style="background:color-mix(in srgb,var(--accent) 45%,var(--bg-card))"></i>Mantenimiento</span><span><i class="dash"></i>Media mensual</span></div>
-          <div class="svg-chart" id="chGasto"></div>
-          <div class="sumline" id="gastoSummary"></div>
         </div>
 
         <div class="grid grid-2eq" style="margin-bottom:16px">
@@ -1812,7 +1806,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-30.5';
+const APP_VERSION = '2026-10-30.6';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -3807,16 +3801,11 @@ function renderStats(){
   document.getElementById('dl_cons').innerHTML = deltaHtml(r.all ? null : m.cons, pm && pm.cons, false);
 
   // gasto mensual
-  const series = monthSeries(from, to), gEl = document.getElementById('chGasto');
-  const hasSpend = series.some(s=>s.energy + s.maint > 0);
+  const series = monthSeries(from, to);
   const months = Math.max(1, monthsBetween(state.config.purchaseDate));
   const days = r.all ? 0 : Math.max(1, Math.round((new Date(r.to) - new Date(r.from)) / 864e5) + 1);
   const monthlyAvg = r.all ? (state.config.purchaseDate ? m.total / months : (series.length ? m.total / series.length : 0)) : (statsPeriod === 'm' ? null : m.total / (days / 30.44));
   const yearProj = r.all ? (state.config.purchaseDate ? m.total / months * 12 : null) : m.total / days * 365;
-  if(hasSpend){
-    const avg = series.reduce((s,x)=>s + x.energy + x.maint, 0) / series.length;
-    svgStackedBarChart(gEl, series.map(s=>({ label: s.label, a: s.energy, b: s.maint })), { avg, fmt: eurShort, axis: eurShort, aria: 'Gasto mensual' });
-  } else emptyChart(gEl, 'Sin gastos en este periodo.');
   document.getElementById('gastoSummary').innerHTML =
     '<div>Total del periodo<b>' + fmtEUR(m.total) + '</b></div>' +
     '<div>Media mensual<b>' + (monthlyAvg != null ? fmtEUR(monthlyAvg) : '—') + '</b></div>' +
@@ -3839,8 +3828,8 @@ function renderStats(){
   const mtb = document.getElementById('tblMonths'), rowsM = series.filter(x=>x.energy + x.maint + x.kwh + x.km > 0).reverse().slice(0, 12);
   document.getElementById('monthTblHint').textContent = series.length > rowsM.length && rowsM.length ? 'últimos ' + rowsM.length + ' meses' : '';
   mtb.innerHTML = rowsM.length ?
-    '<thead><tr><th>Mes</th><th class="num">kWh</th><th class="num">Energía</th><th class="num hide-sm">Mant.</th><th class="num">Km</th></tr></thead><tbody>' +
-    rowsM.map(x=>'<tr><td style="font-weight:700">' + x.label + '</td><td class="num">' + (x.kwh > 0 ? x.kwh.toFixed(1) : '—') + '</td><td class="num">' + (x.energy > 0 ? fmtEUR(x.energy) : '—') + '</td><td class="num hide-sm">' + (x.maint > 0 ? fmtEUR(x.maint) : '—') + '</td><td class="num">' + (x.km > 0 ? fmtNum(x.km) : '—') + '</td></tr>').join('') + '</tbody>' :
+    '<thead><tr><th>Mes</th><th class="num">kWh</th><th class="num">Energía</th><th class="num hide-sm">Mant.</th><th class="num">Total</th><th class="num">Km</th></tr></thead><tbody>' +
+    rowsM.map(x=>'<tr><td style="font-weight:700">' + x.label + '</td><td class="num">' + (x.kwh > 0 ? x.kwh.toFixed(1) : '—') + '</td><td class="num">' + (x.energy > 0 ? fmtEUR(x.energy) : '—') + '</td><td class="num hide-sm">' + (x.maint > 0 ? fmtEUR(x.maint) : '—') + '</td><td class="num" style="font-weight:700">' + (x.energy + x.maint > 0 ? fmtEUR(x.energy + x.maint) : '—') + '</td><td class="num">' + (x.km > 0 ? fmtNum(x.km) : '—') + '</td></tr>').join('') + '</tbody>' :
     '<tbody><tr><td><div class="empty-mini">Sin datos en este periodo</div></td></tr></tbody>';
 
   const cEl = document.getElementById('chConsumo');
