@@ -789,11 +789,22 @@ tr:hover td{background:var(--bg-2)}
 
 /* ---------- revisions ---------- */
 .rev-item{
-  display:flex;align-items:center;gap:16px;padding:20px 24px;border-radius:var(--radius);
+  display:grid;grid-template-columns:minmax(0,1fr) 190px 44px;align-items:center;gap:16px;padding:18px 18px 18px 22px;border-radius:var(--radius);
   border:1px solid var(--border); background:var(--bg-card);
   margin-bottom:12px; transition:border-color .2s var(--ease);
 }
 .rev-item:hover{border-color:var(--border-strong)}
+.rev-main{display:flex;gap:14px;align-items:flex-start;min-width:0}
+.rev-when{font-size:12px;color:var(--text-faint);font-weight:700;text-align:right}
+.rev-when .rev-sub{display:block;font-size:11px;font-weight:600;margin-top:2px;color:var(--text-faint)}
+.rev-act{display:flex;justify-content:flex-end}
+.rev-more{width:38px;height:38px;border-radius:11px;border:1px solid var(--border);background:none;color:var(--text-muted);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,color .15s}
+.rev-more:hover{background:var(--bg-2);color:var(--text)}
+.rev-more svg{width:18px;height:18px}
+.rev-menu{position:fixed;z-index:300;min-width:210px;background:var(--bg-card);border:1px solid var(--border-strong);border-radius:12px;padding:6px;box-shadow:0 14px 40px rgba(0,0,0,.45)}
+.rev-menu button{display:block;width:100%;text-align:left;padding:10px 12px;border:0;background:none;color:var(--text);font:inherit;font-size:13.5px;font-weight:600;border-radius:8px;cursor:pointer}
+.rev-menu button:hover{background:var(--bg-2)}
+.rev-menu button.danger{color:var(--danger)}
 .rev-item.k-byd{--tone:var(--accent)}
 .rev-item.k-rec{--tone:var(--accent-2)}
 .rev-item{border-left:3px solid color-mix(in srgb,var(--tone,var(--border)) 70%,transparent)}
@@ -827,14 +838,13 @@ tr:hover td{background:var(--bg-2)}
 @media (max-width:640px){
   #revsTab .card{padding:14px}
   #revsTab .card-head{flex-wrap:wrap;gap:4px}
-  .rev-item{flex-wrap:wrap;align-items:flex-start;gap:10px 12px;padding:14px}
+  .rev-item{grid-template-columns:minmax(0,1fr) 40px;gap:10px 12px;padding:14px}
   .rev-status{width:34px;height:34px}
-  .rev-body{flex:1 1 calc(100% - 50px)}
+  .rev-main{grid-column:1/-1}
   .rev-body h4{font-size:14px;line-height:1.3}
   .rev-body p{font-size:12.5px}
-  .rev-side{flex:1 1 100%;justify-content:space-between;border-top:1px solid var(--border);padding-top:10px}
-  .rev-meta{text-align:left;min-width:0;font-size:12px}
-  .rev-side .btn{flex-shrink:0}
+  .rev-when{grid-column:1;text-align:left;border-top:1px solid var(--border);padding-top:10px}
+  .rev-act{grid-column:2;align-self:end}
 }
 
 /* ---------- notes ---------- */
@@ -1623,7 +1633,7 @@ html.car .chg-tablecard{display:none!important}
 
 <div class="overlay" id="doneOverlay">
   <div class="modal" style="max-width:460px;max-height:92vh;overflow:auto">
-    <h3 id="doneTitle">Añadir documento</h3>
+    <h3 id="doneTitle">Editar hecho</h3>
     <p class="set-help" id="doneName" style="margin-bottom:14px"></p>
     <form id="doneForm" autocomplete="off">
       <div class="field-row">
@@ -1634,8 +1644,8 @@ html.car .chg-tablecard{display:none!important}
       <div class="field"><label>Factura o documento <span class="opt-hint">(opcional · PDF o imagen, máx. 10 MB · se guarda en tu Drive)</span></label>
         <input id="dn_files" type="file" multiple accept="image/*,application/pdf">
       </div>
-      <p class="set-help" id="doneNote" style="margin-bottom:6px"></p>
-      <div class="modal-actions"><button type="submit" class="btn btn-primary" id="doneSave">Guardar</button><button type="button" class="btn btn-ghost" id="doneCancel">Cancelar</button></div>
+      <p class="set-help" style="margin-bottom:6px">Los archivos nuevos se suman a los que ya tiene; para quitar archivos, edítalo en Documentos → Taller.</p>
+      <div class="modal-actions"><button type="submit" class="btn btn-primary" id="doneSave">Guardar cambios</button><button type="button" class="btn btn-ghost" id="doneCancel">Cancelar</button></div>
     </form>
   </div>
 </div>
@@ -1757,6 +1767,7 @@ const STORAGE_KEY = 'evManagerEvo:v1';
 const THEME_KEY = 'evManagerEvo:theme';
 
 const ICONS = {
+  dots: '<svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><circle cx="12" cy="5" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="12" cy="19" r="1.8"/></svg>',
   ghost: '<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d="M9 10h.01"/><path d="M15 10h.01"/><path d="M12 2a8 8 0 0 0-8 8v12l3-3 2.5 2.5L12 19l2.5 2.5L17 19l3 3V10a8 8 0 0 0-8-8z"/></svg>',
   skull: '<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><path d="M8 20v2h8v-2"/><path d="m12.5 17-.5-1-.5 1h1z"/><path d="M16 20a2 2 0 0 0 1.56-3.25 8 8 0 1 0-11.12 0A2 2 0 0 0 8 20"/></svg>',
   sword: '<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" y1="19" x2="19" y2="13"/><line x1="16" y1="16" x2="20" y2="20"/><line x1="19" y1="21" x2="21" y2="19"/></svg>',
@@ -1845,7 +1856,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-30.22';
+const APP_VERSION = '202610300955';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2794,6 +2805,7 @@ const DOC_SUBS = {
   'Facturas': [], 'Multas': [], 'Otros': []
 };
 const DOC_CAT_ALIAS = { 'Permiso de circulación':'Vehículo', 'Ficha técnica':'Vehículo', 'Garantía':'Vehículo', 'Manual':'Vehículo' };
+let docLink = null;   // al abrir el formulario desde una revisión: {kind, key, entryId}; al guardar, el documento queda enlazado con ella
 let docTab = 'docs', docFilterCat = '', docFilterSub = '', editingDocId = null, editingDocFiles = [];
 function maintTypeOf(sub){ return Object.keys(MAINT_LABELS).find(k=>MAINT_LABELS[k] === sub) || 'other'; }
 // Las intervenciones de taller son documentos de categoría "Taller"; esta vista alimenta estadísticas, km y actividad reciente.
@@ -3000,7 +3012,7 @@ function openDocForm(d){
   renderDocExisting();
   document.getElementById('docFormOverlay').classList.add('open');
 }
-function closeDocForm(){ document.getElementById('docFormOverlay').classList.remove('open'); editingDocId = null; editingDocFiles = []; }
+function closeDocForm(){ document.getElementById('docFormOverlay').classList.remove('open'); editingDocId = null; editingDocFiles = []; docLink = null; }
 async function submitDoc(e){
   e.preventDefault();
   const category = document.getElementById('d_cat').value;
@@ -3028,9 +3040,11 @@ async function submitDoc(e){
   data.files = [...keep, ...uploaded];
   const wasEditing = editingDocId != null;
   if(wasEditing){ const d = state.docs.find(x=>x.id === editingDocId); if(d) Object.assign(d, data); }
-  else state.docs.push({ id: uid(), ...data });
+  let savedId = editingDocId;
+  if(!wasEditing){ savedId = uid(); state.docs.push({ id: savedId, ...data }); }
   if(drop.length && driveHasToken()) drop.forEach(a=>driveDeleteFile(a.id));
-  saveState(); closeDocForm(); renderDocs(); renderAlerts(); renderDashboard();
+  if(docLink) linkDocToEntry(docLink, savedId, data);
+  saveState(); closeDocForm(); renderDocs(); renderRevisions(); renderAlerts(); renderDashboard();
   toast(wasEditing ? 'Documento actualizado' : 'Documento guardado', 'success');
 }
 async function fetchDocFile(f){ await driveEnsureToken(); return await driveFetchBlob(f.id); }
@@ -3133,25 +3147,29 @@ function renderRevisions(){
   container.innerHTML = items.map(x=>x.html).join('');
   renderRevHistory();
 }
+// Fila de revisión en tres columnas: 1) tipo, texto y etiquetas · 2) cuándo · 3) menú ⋯ con las acciones.
+function revRowHtml(o){
+  return `
+    <div class="rev-item ${o.tone} ${o.cls}">
+      <div class="rev-main">
+        <div class="rev-status" style="${o.iconStyle || ''}">${o.icon}</div>
+        <div class="rev-body">
+          <div class="rev-kind">${o.kindLabel}</div>
+          <h4>${o.name}</h4>
+          ${o.desc ? `<p>${o.desc}</p>` : ''}
+          <div class="rev-tasks">${o.tags || ''}</div>
+        </div>
+      </div>
+      <div class="rev-when">${o.when}</div>
+      <div class="rev-act"><button type="button" class="rev-more" aria-label="Opciones" data-ctx="${o.ctx}" data-kind="${o.kind}" data-key="${o.key}" data-entry="${o.entryId || ''}" onclick="openRevMenu(this)">${ICONS.dots}</button></div>
+    </div>`;
+}
 function bydRevisionHtml(rev, st){
   const cls = st.overdue ? 'overdue' : st.upcoming ? 'due' : 'neutral';
-  const statusIcon = st.overdue ? ICONS.alert : ICONS.clock;
-  const statusStyle = st.overdue ? 'color:var(--danger);background:var(--danger-soft)' : st.upcoming ? 'color:var(--warning);background:var(--warning-soft)' : '';
-  return `
-    <div class="rev-item k-byd ${cls}">
-      <div class="rev-status" style="${statusStyle}">${statusIcon}</div>
-      <div class="rev-body">
-        <div class="rev-kind">Calendario BYD</div>
-        <h4>${rev.name}</h4>
-        <p>${rev.description}</p>
-        <div class="rev-tasks">${(rev.tasks||[]).map(t=>`<span class="tag-pill">${t}</span>`).join('')}</div>
-      </div>
-      <div class="rev-side">
-        <div class="rev-meta">${revMetaHtml(st)}</div>
-        ${revDocBtn(null, "openDone('byd', " + rev.km + ")")}
-        <button class="btn btn-primary btn-sm" onclick="quickDone('byd', ${rev.km})">Hecho</button>
-      </div>
-    </div>`;
+  return revRowHtml({ tone:'k-byd', cls, ctx:'main', kind:'byd', key:rev.km, entryId:null,
+    icon: st.overdue ? ICONS.alert : ICONS.clock,
+    iconStyle: st.overdue ? 'color:var(--danger);background:var(--danger-soft)' : st.upcoming ? 'color:var(--warning);background:var(--warning-soft)' : '',
+    kindLabel:'Calendario BYD', name:rev.name, desc:rev.description, tags:(rev.tasks||[]).map(t=>`<span class="tag-pill">${t}</span>`).join(''), when:revMetaHtml(st) });
 }
 /* ---------------- mantenimiento recomendado (no oficial) ---------------- */
 const RECOMMENDED = [
@@ -3185,22 +3203,10 @@ function recommendedHtml(r, st){
     meta = 'Toca ya<span class="rev-sub">' + late + '</span>';
   } else if(kmTxt && timeTxt) meta = (st.byTime ? timeTxt : kmTxt) + '<span class="rev-sub">o ' + (st.byTime ? kmTxt : timeTxt) + '</span>';
   else meta = (timeTxt || kmTxt || '—');
-  const cls = st.overdue || st.upcoming ? 'due' : 'neutral';
-  return `
-  <div class="rev-item k-rec rec ${cls}">
-    <div class="rev-status">${st.overdue ? ICONS.alert : ICONS.clock}</div>
-    <div class="rev-body">
-      <div class="rev-kind">Recomendada</div>
-      <h4>${r.name}</h4>
-      <p>${r.desc}</p>
-      <div class="rev-tasks"><span class="tag-pill rec-cat">${r.cat}</span><span class="tag-pill">${every}</span><span class="tag-pill">${lastTxt}</span></div>
-    </div>
-    <div class="rev-side">
-      <div class="rev-meta">${meta}</div>
-      ${revDocBtn(st.last, "openDone('rec', '" + r.id + "')")}
-      <button class="btn btn-primary btn-sm" onclick="quickDone('rec', '${r.id}')">Hecho</button>
-    </div>
-  </div>`;
+  const cls = st.overdue || st.upcoming ? 'due' : 'neutral', last = latestEntry('rec', r.id);
+  return revRowHtml({ tone:'k-rec', cls, ctx:'main', kind:'rec', key:r.id, entryId:last ? last.id : null,
+    icon: st.overdue ? ICONS.alert : ICONS.clock, kindLabel:'Recomendada', name:r.name, desc:r.desc,
+    tags:`<span class="tag-pill rec-cat">${r.cat}</span><span class="tag-pill">${every}</span><span class="tag-pill">${lastTxt}</span>`, when:meta });
 }
 // Historial de revisiones hechas (state.revisionLog): cada «Hecho» es una entrada con fecha, km y, si lo hay, su documento de Taller.
 // recommendedDone / revisionDone / completedRevisions se reconstruyen desde él (la última entrada de cada revisión) para el resto de la app.
@@ -3214,40 +3220,50 @@ function rebuildDone(){
 }
 const latestEntry = (kind, key) => (state.revisionLog || []).filter(e=>e.kind === kind && e.key === key).sort(logCmp).pop() || null;
 const revItem = (kind, key) => kind === 'byd' ? (REVISIONS_SCHEDULE[state.lang] || REVISIONS_SCHEDULE.es).find(r=>r.km === key) : RECOMMENDED.find(r=>r.id === key);
-let doneTarget = null;
-// «Hecho»: se marca con la fecha de hoy y los km actuales, sin más preguntas.
-function quickDone(kind, key){
-  state.revisionLog.push({ id: uid(), kind, key, date: isoToday(), km: getCurrentKm(), docId: null });
-  rebuildDone(); saveState(); renderRevisions(); renderAlerts(); renderDashboard();
-  toast('Marcada como hecha', 'success');
-}
-// Ventana de fecha, km, coste y archivos. Modo «doc»: añade documento a la última vez (o la marca como hecha si no hay); modo «edit»: edita una entrada del historial.
-function openDone(kind, key){
-  const e = latestEntry(kind, key); openDoneForm(kind, key, e, 'doc');
-}
-function openEditEntry(id){
-  const e = state.revisionLog.find(x=>x.id === id); if(e) openDoneForm(e.kind, e.key, e, 'edit');
-}
-function openDoneForm(kind, key, entry, mode){
+const entryDoc = e => e && e.docId ? state.docs.find(x=>x.id === e.docId) : null;
+function revChanged(){ rebuildDone(); saveState(); renderRevisions(); renderDocs(); renderAlerts(); renderDashboard(); }
+// Abre «Documentos → Añadir» con los datos de la revisión ya puestos; al guardar, el documento queda enlazado con ella.
+function openRevDocForm(kind, key, entry){
   const item = revItem(kind, key); if(!item) return;
-  doneTarget = { mode, entryId: entry ? entry.id : null, kind, key, name: item.name, sub: kind === 'byd' ? 'Revisión general' : (REC_SUB[key] || 'Otro') };
-  const doc = entry && entry.docId ? state.docs.find(x=>x.id === entry.docId) : null;
+  const doc = entryDoc(entry);
+  openDocForm(doc || { category:'Taller', sub: kind === 'byd' ? 'Revisión general' : (REC_SUB[key] || 'Otro'), name: item.name, date: (entry && entry.date) || isoToday(), km: (entry && entry.km) || getCurrentKm() || null, price:null, files:[] });
+  if(!doc) document.getElementById('docFormTitle').textContent = 'Añadir documento';
+  docLink = { kind, key, entryId: entry ? entry.id : null };
+}
+function linkDocToEntry(link, docId, data){
+  let e = link.entryId ? state.revisionLog.find(x=>x.id === link.entryId) : null;
+  if(!e){ e = { id: uid(), kind: link.kind, key: link.key, date: data.date || isoToday(), km: data.km || getCurrentKm(), docId: null }; state.revisionLog.push(e); }
+  e.docId = docId; if(data.date) e.date = data.date; if(data.km) e.km = data.km;
+  rebuildDone();
+}
+// «Marcar como hecho»: queda hecha con la fecha de hoy y los km actuales, y se abre «Documentos → Añadir» por si quieres guardar la factura (puedes cancelar).
+function markDone(kind, key){
+  const e = { id: uid(), kind, key, date: isoToday(), km: getCurrentKm(), docId: null };
+  state.revisionLog.push(e); revChanged();
+  toast('Marcada como hecha', 'success');
+  openRevDocForm(kind, key, e);
+}
+function viewRevDoc(id){ const d = state.docs.find(x=>x.id === id); if(d) openDocFiles(d); }
+// Editar un hecho: fecha, km y coste (y archivos nuevos); si ya tiene documento de Taller, se actualiza también.
+let doneTarget = null;
+function openEditEntry(id){
+  const e = state.revisionLog.find(x=>x.id === id), item = e && revItem(e.kind, e.key); if(!e || !item) return;
+  doneTarget = { entryId: id, name: item.name, sub: e.kind === 'byd' ? 'Revisión general' : (REC_SUB[e.key] || 'Otro') };
+  const doc = entryDoc(e);
   document.getElementById('doneForm').reset();
-  document.getElementById('doneTitle').textContent = mode === 'edit' ? 'Editar hecho' : 'Añadir documento';
   document.getElementById('doneName').textContent = item.name;
-  document.getElementById('dn_date').value = (entry && entry.date) || isoToday();
-  document.getElementById('dn_km').value = (entry && entry.km) || getCurrentKm() || '';
+  document.getElementById('dn_date').value = e.date || isoToday();
+  document.getElementById('dn_km').value = e.km || getCurrentKm() || '';
   document.getElementById('dn_cost').value = doc && doc.price != null ? doc.price : '';
-  document.getElementById('doneNote').textContent = mode === 'edit' ? 'Los archivos nuevos se suman a los que ya tiene; para quitar archivos, edítalo en Documentos → Taller.' : 'Se marca como hecha y queda guardado también en Documentos → Taller.';
   document.getElementById('doneOverlay').classList.add('open');
 }
 function closeDone(){ document.getElementById('doneOverlay').classList.remove('open'); doneTarget = null; }
 async function submitDone(e){
   e.preventDefault();
   if(!doneTarget) return;
-  const t = doneTarget, date = document.getElementById('dn_date').value || isoToday(), km = Number(document.getElementById('dn_km').value) || getCurrentKm();
+  const t = doneTarget, entry = state.revisionLog.find(x=>x.id === t.entryId); if(!entry){ closeDone(); return; }
+  const date = document.getElementById('dn_date').value || isoToday(), km = Number(document.getElementById('dn_km').value) || getCurrentKm();
   const costRaw = document.getElementById('dn_cost').value, files = Array.from(document.getElementById('dn_files').files || []);
-  if(t.mode === 'doc' && !files.length && costRaw === ''){ toast('Añade un archivo o un coste', 'warning'); return; }
   const btn = document.getElementById('doneSave'), label = btn.textContent, uploaded = [];
   if(files.length){
     btn.disabled = true; btn.textContent = 'Subiendo…';
@@ -3261,66 +3277,70 @@ async function submitDone(e){
     }
     btn.disabled = false; btn.textContent = label;
   }
-  let entry = t.entryId ? state.revisionLog.find(x=>x.id === t.entryId) : null;
-  if(!entry){ entry = { id: uid(), kind: t.kind, key: t.key, date, km, docId: null }; state.revisionLog.push(entry); }
-  const old = entry.docId ? state.docs.find(x=>x.id === entry.docId) : null;
-  if(old){   // ya tiene documento: se actualizan sus datos y se le suman los archivos
+  const old = entryDoc(entry);
+  if(old){
     old.files = [...(old.files || []), ...uploaded]; old.price = costRaw === '' ? null : Number(costRaw); old.date = date; old.km = km || null;
   } else if(uploaded.length || costRaw !== ''){
     entry.docId = uid();
     state.docs.push({ id: entry.docId, category:'Taller', sub: t.sub, name: t.name, date, price: costRaw === '' ? null : Number(costRaw), noCount:false, km: km || null, location:'', note:'Desde el calendario de mantenimiento', expires:'', files: uploaded });
   }
   entry.date = date; entry.km = km;
-  rebuildDone(); closeDone(); saveState(); renderRevisions(); renderDocs(); renderAlerts(); renderDashboard();
-  toast(t.mode === 'edit' ? 'Cambios guardados' : 'Documento guardado en Taller', 'success');
+  closeDone(); revChanged();
+  toast('Cambios guardados', 'success');
 }
-// Botón junto a «Hecho»: ver el documento (factura…) si lo hay o, si no, añadirlo (addJs = qué hace «Añadir documento»).
-function revDocBtn(rec, addJs){
-  const d = rec && rec.docId ? state.docs.find(x=>x.id === rec.docId) : null;
-  if(d && (d.files || []).length) return `<button class="btn btn-ghost btn-sm" onclick="viewRevDoc(${d.id})">Ver documento</button>`;
-  return `<button class="btn btn-ghost btn-sm" onclick="${addJs}">Añadir documento</button>`;
-}
-function viewRevDoc(id){ const d = state.docs.find(x=>x.id === id); if(d) openDocFiles(d); }
-// Apartado «Hechos»: todo lo marcado como hecho, con su documento; se puede editar o restaurar (vuelve a pendiente).
+// Apartado «Hechos»: todo lo marcado como hecho, con su documento; se puede editar o deshacer (vuelve a pendiente).
 function renderRevHistory(){
   const el = document.getElementById('revHistory'); if(!el) return;
   const log = (state.revisionLog || []).slice().sort(logCmp).reverse();
   if(!log.length){ el.innerHTML = ''; return; }
   el.innerHTML = '<div class="rev-hist-head"><h3>Hechos</h3><span class="hint">' + log.length + '</span></div>' +
-    '<p class="rev-hist-note">Edita la fecha, los km o el documento de lo ya hecho, o restáuralo para que vuelva a pendiente (el documento y su coste siguen en Documentos).</p>' +
+    '<p class="rev-hist-note">Lo que ya has hecho. En ⋯ puedes editarlo, ver o añadir su documento, o deshacerlo para que vuelva a pendiente.</p>' +
     log.map(e=>{
-      const item = revItem(e.kind, e.key), doc = e.docId ? state.docs.find(x=>x.id === e.docId) : null;
-      const parts = [e.date ? fmtDate(e.date) : 'Sin fecha', e.km ? fmtNum(e.km) + ' km' : '', doc && doc.price != null ? fmtEUR(doc.price) : ''].filter(Boolean).join(' · ');
-      return `
-    <div class="rev-item hist k-${e.kind}">
-      <div class="rev-status" style="color:var(--success);background:var(--success-soft)">${ICONS.check}</div>
-      <div class="rev-body">
-        <div class="rev-kind">${e.kind === 'byd' ? 'Calendario BYD' : 'Recomendada'}</div>
-        <h4>${item ? item.name : e.key}</h4>
-        <p>${parts}</p>
-      </div>
-      <div class="rev-side">
-        ${revDocBtn(e, 'openEditEntry(' + e.id + ')')}
-        <button class="btn btn-ghost btn-sm" onclick="openEditEntry(${e.id})">Editar</button>
-        <button class="btn btn-ghost btn-sm" onclick="askRestoreEntry(${e.id})">Restaurar</button>
-      </div>
-    </div>`;
+      const item = revItem(e.kind, e.key), doc = entryDoc(e), nFiles = doc ? (doc.files || []).length : 0;
+      return revRowHtml({ tone:'k-' + e.kind, cls:'hist', ctx:'hist', kind:e.kind, key:e.key, entryId:e.id, icon:ICONS.check, iconStyle:'color:var(--success);background:var(--success-soft)',
+        kindLabel: e.kind === 'byd' ? 'Calendario BYD' : 'Recomendada', name: item ? item.name : e.key, desc:'',
+        tags: nFiles ? `<span class="tag-pill">${nFiles === 1 ? '1 documento' : nFiles + ' documentos'}</span>` : '',
+        when: (e.date ? fmtDate(e.date) : 'Sin fecha') + '<span class="rev-sub">' + [e.km ? fmtNum(e.km) + ' km' : '', doc && doc.price != null ? fmtEUR(doc.price) : ''].filter(Boolean).join(' · ') + '</span>' });
     }).join('');
 }
 function askRestoreEntry(id){
   const e = state.revisionLog.find(x=>x.id === id); if(!e) return;
   const item = revItem(e.kind, e.key);
   delDocId = id; delStep = 2; delKind = 'revlog';   // un solo paso
-  document.getElementById('docDelTitle').textContent = '¿Restaurar como pendiente?';
-  document.getElementById('docDelText').textContent = '"' + (item ? item.name : e.key) + '" se quita de «Hechos» y vuelve a la lista de pendientes. El documento y su coste siguen en Documentos.';
-  document.getElementById('docDelYes').textContent = 'Restaurar';
+  document.getElementById('docDelTitle').textContent = '¿Deshacer?';
+  document.getElementById('docDelText').textContent = '"' + (item ? item.name : e.key) + '" se quita de «Hechos» y vuelve a pendiente. El documento y su coste siguen en Documentos.';
+  document.getElementById('docDelYes').textContent = 'Deshacer';
   document.getElementById('docDelOverlay').classList.add('open');
 }
 function restoreEntry(id){
   state.revisionLog = state.revisionLog.filter(x=>x.id !== id);
-  rebuildDone(); saveState(); renderRevisions(); renderAlerts(); renderDashboard();
-  toast('Restaurada como pendiente', 'success');
+  revChanged();
+  toast('Deshecho: vuelve a pendiente', 'success');
 }
+// Menú ⋯ de cada revisión.
+let revMenuOff = null;
+function closeRevMenu(){ const m = document.getElementById('revMenu'); if(m) m.remove(); if(revMenuOff){ revMenuOff(); revMenuOff = null; } }
+function openRevMenu(btn){
+  closeRevMenu();
+  const ctx = btn.dataset.ctx, kind = btn.dataset.kind, key = kind === 'byd' ? Number(btn.dataset.key) : btn.dataset.key;
+  const entry = btn.dataset.entry ? state.revisionLog.find(x=>x.id === Number(btn.dataset.entry)) : null, doc = entryDoc(entry);
+  const items = [];
+  if(ctx === 'main') items.push(['Marcar como hecho', ()=>markDone(kind, key)]);
+  if(doc && (doc.files || []).length) items.push(['Ver documento', ()=>viewRevDoc(doc.id)]);
+  else items.push(['Añadir documento', ()=>openRevDocForm(kind, key, entry)]);
+  if(entry){ items.push(['Editar', ()=>openEditEntry(entry.id)]); items.push(['Deshacer', ()=>askRestoreEntry(entry.id), true]); }
+  const m = document.createElement('div'); m.id = 'revMenu'; m.className = 'rev-menu';
+  items.forEach(([label, fn, danger])=>{ const b = document.createElement('button'); b.type = 'button'; b.textContent = label; if(danger) b.className = 'danger'; b.addEventListener('click', ()=>{ closeRevMenu(); fn(); }); m.appendChild(b); });
+  document.body.appendChild(m);
+  const r = btn.getBoundingClientRect(), h = m.offsetHeight;
+  m.style.right = Math.max(8, window.innerWidth - r.right) + 'px';
+  m.style.top = (r.bottom + 6 + h > window.innerHeight - 8 ? Math.max(8, r.top - 6 - h) : r.bottom + 6) + 'px';
+  const t0 = Date.now(), off = ev=>{ if(!ev.target.closest('#revMenu')) closeRevMenu(); }, onScroll = ()=>{ if(Date.now() - t0 > 300) closeRevMenu(); };   // el desplazamiento al pulsar no lo cierra
+  setTimeout(()=>document.addEventListener('click', off, true), 0);
+  window.addEventListener('scroll', onScroll, true);
+  revMenuOff = ()=>{ document.removeEventListener('click', off, true); window.removeEventListener('scroll', onScroll, true); };
+}
+document.addEventListener('keydown', e=>{ if(e.key === 'Escape') closeRevMenu(); });
 function revMetaHtml(st){
   if(st.overdue){
     const why = st.overdueKm && st.overdueTime ? 'por km y tiempo' : st.overdueKm ? 'por km' : 'por tiempo';
