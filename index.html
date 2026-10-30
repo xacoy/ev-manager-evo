@@ -506,6 +506,11 @@ button{cursor:pointer}
 .vsb-row .bar i{display:block;height:100%;border-radius:7px}
 .vsb-save{margin-top:4px;padding-top:14px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:baseline;font-size:13px;color:var(--text-muted);font-weight:600}
 .vsb-save b{font-family:var(--font-display);font-size:24px;color:var(--accent);font-variant-numeric:tabular-nums}
+.what{display:none;font-size:12.5px;line-height:1.45;color:var(--text-faint);font-weight:500}
+#page-stats.help .what{display:block}
+#page-stats .card-head + .what{margin:-10px 0 16px}
+#page-stats .stat-card .what{margin-top:12px;padding-top:10px;border-top:1px solid var(--border)}
+.stats-top .help-toggle{padding:0 12px;min-height:32px;height:32px;font-size:12px;font-weight:600;width:auto;border-radius:var(--radius-full)}
 .stats-kv{display:grid;grid-template-columns:1fr 1fr;gap:0 40px}
 @media(max-width:700px){.stats-kv{grid-template-columns:1fr}}
 .stats-kv .kv-row:first-child{padding-top:10px}.stats-kv .kv-row:last-child{padding-bottom:10px;border-bottom:1px solid var(--border)}
@@ -538,6 +543,7 @@ button{cursor:pointer}
 #page-stats .stat-card{padding:22px 24px}
 #page-stats .stat-card .spark{position:absolute;right:16px;bottom:14px;width:34%;max-width:130px;opacity:.95}
 #page-stats .stat-card .spark svg{display:block;width:100%;height:auto;overflow:visible}
+@media(max-width:560px){#page-stats .stat-card{padding:16px}#page-stats .stat-card .value{font-size:23px;white-space:nowrap}#page-stats .stat-card .vsb-row .t b{font-size:14px}}
 #page-stats .stat-card .vsb{gap:10px;margin-top:14px;padding-top:0}
 #page-stats .stat-card .vsb-row .t{font-size:12px;margin-bottom:4px}
 #page-stats .stat-card .vsb-row .t b{font-size:16px}
@@ -1498,33 +1504,38 @@ html.car .chg-tablecard{display:none!important}
             <button type="button" data-p="m" onclick="setStatsPeriod('m')">Este mes</button>
           </div>
           <div class="range" id="statsRangeLabel"></div>
+          <button type="button" class="btn btn-ghost help-toggle" id="statsHelpBtn" onclick="toggleStatsHelp()">Ocultar explicaciones</button>
         </div>
 
         <div class="grid grid-4" style="margin-bottom:16px">
-          <div class="card stat-card tone-accent"><div class="label-row"><div class="label">Ahorro vs gasolina</div><span id="dl_saved"></span></div><div class="value" id="st_saved">—</div><div class="sub" id="st_savedSub">acumulado</div></div>
-          <div class="card stat-card tone-accent"><div class="label-row"><div class="label">Coste / km</div><span id="dl_costKm"></span></div><div class="value" id="st_costPerKm">—</div><div class="sub" id="st_costPerKmSub">cargas + mantenimiento</div></div>
-          <div class="card stat-card tone-accent"><div class="label-row"><div class="label">Consumo (de la red)</div><span id="dl_cons"></span></div><div class="value" id="st_cons">—</div><div class="sub" id="st_consSub">kWh / 100 km</div></div>
-          <div class="card stat-card tone-accent"><div class="label-row"><div class="label">León vs EVO</div></div><div class="vsb" id="chAhorro"></div></div>
+          <div class="card stat-card tone-accent"><div class="label-row"><div class="label">Ahorro vs gasolina</div><span id="dl_saved"></span></div><div class="value" id="st_saved">—</div><div class="sub" id="st_savedSub">acumulado</div><p class="what">Lo que te has ahorrado frente a hacer los mismos km con el SEAT León.</p></div>
+          <div class="card stat-card tone-accent"><div class="label-row"><div class="label">Coste / km</div><span id="dl_costKm"></span></div><div class="value" id="st_costPerKm">—</div><div class="sub" id="st_costPerKmSub">cargas + mantenimiento</div><p class="what">Lo que te cuesta cada km: cargas y mantenimiento.</p></div>
+          <div class="card stat-card tone-accent"><div class="label-row"><div class="label">Consumo (de la red)</div><span id="dl_cons"></span></div><div class="value" id="st_cons">—</div><div class="sub" id="st_consSub">kWh / 100 km</div><p class="what">Energía que gasta el coche cada 100 km, contando lo que se pierde al cargar.</p></div>
+          <div class="card stat-card tone-accent"><div class="label-row"><div class="label">León vs EVO</div></div><div class="vsb" id="chAhorro"></div><p class="what">Gasolina que habría gastado el León frente a la electricidad del EVO.</p></div>
         </div>
 
         <div class="card" style="margin-bottom:16px" id="insightsCard">
           <div class="card-head"><h2>Lo que dicen tus datos</h2></div>
+          <p class="what">Frases con lo más útil de tus datos: ahorro anual, depósitos ahorrados, cargas gratis… Solo salen las que aplican.</p>
           <div class="insights" id="statsInsights"></div>
         </div>
 
         <div class="card" style="margin-bottom:16px">
           <div class="card-head"><h2>Resumen del periodo</h2></div>
+          <p class="what">Arriba, lo gastado y la proyección anual; debajo, el detalle. El León se calcula con su consumo de Configuración y la gasolina de cada día de carga. El CO₂ evitado es una estimación.</p>
           <div class="sumline" id="gastoSummary" style="margin:0 0 14px;padding:0 0 14px;border-top:0;border-bottom:1px solid var(--border)"></div>
           <div class="stats-kv" id="blkSummary"></div>
         </div>
 
         <div class="card" style="margin-bottom:16px">
           <div class="card-head"><h2>Mes a mes</h2><span class="hint" id="monthTblHint"></span></div>
+          <p class="what">Tus últimos 12 meses: energía cargada, gasto (energía + mantenimiento) y km recorridos.</p>
           <div class="table-wrap"><table class="places-table" id="tblMonths"></table></div>
         </div>
 
         <div class="card" style="margin-bottom:16px">
           <div class="card-head"><h2>Dónde cargas</h2></div>
+          <p class="what">Cuánto cargas y pagas en cada lugar. Pulsa una cabecera para ordenar.</p>
           <div class="table-wrap"><table class="places-table" id="chLugares"></table></div>
         </div>
       </section>
@@ -1804,7 +1815,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-30.10';
+const APP_VERSION = '2026-10-30.11';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -3485,6 +3496,16 @@ function statsRange(){
   return { all: false, from: isoLocal(s), to, pfrom: isoLocal(shiftMonths(s, k)), pto: isoLocal(shiftMonths(now, k)) };
 }
 const inRange = (date, from, to) => !!date && (!from || (date >= from && date <= to));
+function applyStatsHelp(){
+  let on = true; try{ on = localStorage.getItem('statsHelp') !== '0'; }catch(e){}
+  document.getElementById('page-stats').classList.toggle('help', on);
+  document.getElementById('statsHelpBtn').textContent = on ? 'Ocultar explicaciones' : 'Ver explicaciones';
+}
+function toggleStatsHelp(){
+  const on = !document.getElementById('page-stats').classList.contains('help');
+  try{ localStorage.setItem('statsHelp', on ? '1' : '0'); }catch(e){}
+  applyStatsHelp();
+}
 function setStatsPeriod(p){
   statsPeriod = p;
   try{ localStorage.setItem('statsPeriod', p); }catch(e){}
@@ -3648,6 +3669,7 @@ function renderInsights(m){
 }
 function renderStats(){
   if(!document.getElementById('chAhorro')) return;
+  applyStatsHelp();
   const r = statsRange(), from = r.all ? null : r.from, to = r.all ? null : r.to;
   const m = periodMetrics(from, to), pm = r.all ? null : periodMetrics(r.pfrom, r.pto);
   document.querySelectorAll('#statsPeriodSeg button').forEach(b=> b.classList.toggle('on', b.dataset.p === statsPeriod));
