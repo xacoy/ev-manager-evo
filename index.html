@@ -1609,7 +1609,7 @@ html.car .chg-tablecard{display:none!important}
                 <button type="submit" class="btn btn-primary btn-block" id="chargeSubmitBtn">Registrar carga</button>
                 <button type="button" class="btn btn-ghost" id="chargeCancelEdit">Cancelar</button>
               </div>
-              <button type="button" class="btn btn-danger btn-block" id="chargeDeleteBtn" style="display:none;margin-top:8px">Eliminar carga</button>
+              <button type="button" id="chargeDeleteBtn" style="display:none;margin:22px auto 0;background:none;border:0;color:var(--text-faint);font-size:12px;text-decoration:underline;cursor:pointer;padding:4px 8px">Eliminar esta carga</button>
             </form>
   </div>
 </div>
@@ -1819,7 +1819,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-30.2';
+const APP_VERSION = '2026-10-30.3';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2717,7 +2717,7 @@ function editCharge(id){
   if(locType==='Otro') document.getElementById('c_location_other').value = c.location || '';
   document.getElementById('chargeSubmitBtn').textContent = 'Guardar cambios';
   document.getElementById('chargeFormTitle').textContent = 'Editar carga';
-  document.getElementById('chargeDeleteBtn').style.display = '';
+  document.getElementById('chargeDeleteBtn').style.display = 'block';
   document.getElementById('chargeFormOverlay').classList.add('open');
 }
 function cancelChargeEdit(){
