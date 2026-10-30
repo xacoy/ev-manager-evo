@@ -1819,7 +1819,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-30.17';
+const APP_VERSION = '2026-10-30.18';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -3705,7 +3705,8 @@ function renderStats(){
       kvRow('En cargas', fmtEUR(m.eCost)) +
       kvRow('En mantenimiento', fmtEUR(m.mCost), m.mt.length + (m.mt.length === 1 ? ' registro' : ' registros'))) +
     grp('Uso', 'Km recorridos', m.km > 0 ? fmtNum(m.km) + ' km' : '—', '',
-      kvRow('Cargas', m.ch.length, m.ch.length ? 'de media ' + nf(m.kwh / m.ch.length, 1) + ' kWh' : '') +
+      kvRow('Cargas', m.ch.length) +
+      kvRow('Media por carga', m.ch.length ? nf(m.kwh / m.ch.length, 1) + ' kWh' : '—') +
       kvRow('Energía cargada', nf(m.kwh, 1) + ' kWh') +
       kvRow('Precio medio', m.price != null ? nf(m.price, 3) + ' €/kWh' : '—')) +
     grp('Frente al León', 'Cada 100 km con el EVO', p100(m.elec), '',
