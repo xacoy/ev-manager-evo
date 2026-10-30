@@ -794,6 +794,15 @@ tr:hover td{background:var(--bg-2)}
   margin-bottom:12px; transition:border-color .2s var(--ease);
 }
 .rev-item:hover{border-color:var(--border-strong)}
+.rev-item.k-byd{--tone:var(--accent)}
+.rev-item.k-rec{--tone:var(--accent-2)}
+.rev-item{border-left:3px solid color-mix(in srgb,var(--tone,var(--border)) 70%,transparent)}
+.rev-item.neutral .rev-status{background:color-mix(in srgb,var(--tone) 16%,transparent);color:var(--tone)}
+.rev-kind{font-size:10.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--tone);margin-bottom:3px}
+.rev-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;font-weight:700;color:var(--text-muted)}
+.rev-legend span{display:inline-flex;align-items:center;gap:6px}
+.rev-legend i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.rev-legend .k-byd i{background:var(--accent)}.rev-legend .k-rec i{background:var(--accent-2)}
 .rev-item.due{border-left:3px solid var(--warning)}
 .rev-item.overdue{border-left:3px solid var(--danger)}
 .rev-item.done{opacity:.55}
@@ -806,11 +815,6 @@ tr:hover td{background:var(--bg-2)}
 .tag-pill{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;background:var(--bg-2);color:var(--text-muted)}
 .rev-meta{font-size:11px;color:var(--text-faint);font-weight:700;flex-shrink:0;text-align:right;min-width:90px}
 .est-mark{display:inline-block;margin-left:6px;padding:1px 7px;border:1px solid var(--border-strong);border-radius:99px;font-size:10px;font-weight:700;color:var(--text-faint);white-space:nowrap;vertical-align:1px}
-.rec-head{display:flex;gap:12px;align-items:flex-start;margin:26px 0 12px;padding-top:20px;border-top:1px solid var(--border)}
-.rec-head h3{font-size:15px;font-weight:800;font-family:var(--font-display)}
-.rec-head p{font-size:12px;color:var(--text-faint);margin-top:3px;line-height:1.45}
-.rec-dot{width:10px;height:10px;border-radius:50%;background:var(--accent-2);margin-top:6px;flex-shrink:0}
-.rev-item.rec .rev-status{background:color-mix(in srgb,var(--accent-2) 16%,transparent);color:var(--accent-2)}
 .rev-item.rec.due .rev-status{background:var(--warning-soft);color:var(--warning)}
 .tag-pill.rec-cat{background:color-mix(in srgb,var(--accent-2) 16%,transparent);color:var(--accent-2)}
 .rev-item.rec .rev-side{gap:8px}
@@ -1492,11 +1496,9 @@ html.car .chg-tablecard{display:none!important}
         </div>
         <div id="revsTab" style="display:none">
           <div class="card">
-            <div class="card-head"><h2>Calendario BYD</h2><span class="hint" id="revLangHint">cada 20k km / 24 meses</span></div>
-            <p style="font-size:12px;color:var(--text-faint)">Orientativo. Verifica los intervalos exactos en el manual oficial de tu mercado.</p>
+            <div class="card-head"><h2>Calendario de mantenimiento</h2><div class="rev-legend"><span class="k-byd"><i></i>Calendario BYD</span><span class="k-rec"><i></i>Recomendadas</span></div></div>
+            <p style="font-size:12px;color:var(--text-faint);margin-bottom:14px">Orientativo: los intervalos varían según mercado, confírmalos en tu manual. Las «Recomendadas» son operaciones que aconsejan BYD, sus concesionarios y las guías de eléctricos y que no siempre salen en el calendario; márcalas al hacerlas y la app calcula la siguiente.</p>
             <div id="revisionsList"></div>
-            <div class="rec-head"><span class="rec-dot"></span><div><h3>Recomendadas</h3><p>Operaciones que recomiendan BYD, sus concesionarios y las guías de eléctricos, y que no siempre salen en el calendario. Los intervalos varían según mercado: confírmalos en tu manual. Márcalas al hacerlas y la app calcula la siguiente.</p></div></div>
-            <div id="recList"></div>
           </div>
         </div>
       </section>
@@ -1819,7 +1821,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-30.18';
+const APP_VERSION = '2026-10-30.19';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -3090,18 +3092,22 @@ function renderRevisions(){
   const km = getCurrentKm();
   const container = document.getElementById('revisionsList');
   if(!container) { console.error('revisionsList container not found'); return; }
-  renderRecommended();
-  container.innerHTML = sched.map(rev=>{
-    const done = state.completedRevisions.includes(rev.km);
-    const st = getScheduleForRevision(rev, km);
-    const cls = done ? 'done' : st.overdue ? 'overdue' : st.upcoming ? 'due' : '';
-    const statusIcon = done ? ICONS.check : st.overdue ? ICONS.alert : ICONS.clock;
-    const statusColor = done ? 'var(--success)' : st.overdue ? 'var(--danger)' : st.upcoming ? 'var(--warning)' : 'var(--text-faint)';
-    const statusBg = done ? 'var(--success-soft)' : st.overdue ? 'var(--danger-soft)' : st.upcoming ? 'var(--warning-soft)' : 'rgba(255,255,255,.05)';
-    return `
-    <div class="rev-item ${cls}">
-      <div class="rev-status" style="color:${statusColor};background:${statusBg}">${statusIcon}</div>
+  // una sola lista: lo más urgente arriba y lo ya hecho al final, sea del calendario BYD o recomendado
+  const items = [
+    ...sched.map(rev=>{ const done = state.completedRevisions.includes(rev.km), st = getScheduleForRevision(rev, km); return { done, progress: st.progress, html: bydRevisionHtml(rev, st, done) }; }),
+    ...RECOMMENDED.map(r=>{ const st = recStatus(r, km); return { done: false, progress: st.progress, html: recommendedHtml(r, st) }; })
+  ].sort((a,b)=> (a.done - b.done) || (b.progress - a.progress));
+  container.innerHTML = items.map(x=>x.html).join('');
+}
+function bydRevisionHtml(rev, st, done){
+  const cls = done ? 'done' : st.overdue ? 'overdue' : st.upcoming ? 'due' : 'neutral';
+  const statusIcon = done ? ICONS.check : st.overdue ? ICONS.alert : ICONS.clock;
+  const statusStyle = done ? 'color:var(--success);background:var(--success-soft)' : st.overdue ? 'color:var(--danger);background:var(--danger-soft)' : st.upcoming ? 'color:var(--warning);background:var(--warning-soft)' : '';
+  return `
+    <div class="rev-item k-byd ${cls}">
+      <div class="rev-status" style="${statusStyle}">${statusIcon}</div>
       <div class="rev-body">
+        <div class="rev-kind">Calendario BYD</div>
         <h4>${rev.name}</h4>
         <p>${rev.description}</p>
         <div class="rev-tasks">${(rev.tasks||[]).map(t=>`<span class="tag-pill">${t}</span>`).join('')}</div>
@@ -3111,7 +3117,6 @@ function renderRevisions(){
         <button class="btn ${done?'btn-ghost':'btn-primary'} btn-sm" onclick="toggleRevision(${rev.km})">${done ? 'Deshacer' : 'Marcar hecha'}</button>
       </div>
     </div>`;
-  }).join('');
 }
 /* ---------------- mantenimiento recomendado (no oficial) ---------------- */
 const RECOMMENDED = [
@@ -3135,36 +3140,32 @@ function recStatus(r, km){
   const tp = daysLeft !== null ? 1 - daysLeft / (r.months * 30.4375) : 0, kp = kmRemaining !== null ? 1 - kmRemaining / r.km : 0;
   return { last, due, daysLeft, kmRemaining, overdue, upcoming, progress: Math.max(tp, kp), byTime: daysLeft !== null && tp >= kp };
 }
-function renderRecommended(){
-  const el = document.getElementById('recList'); if(!el) return;
-  const km = getCurrentKm();
-  const rows = RECOMMENDED.map(r=>({ r, st: recStatus(r, km) })).sort((a,b)=> b.st.progress - a.st.progress);
-  el.innerHTML = rows.map(({ r, st })=>{
-    const every = [r.km ? 'cada ' + fmtNum(r.km) + ' km' : '', r.months ? (r.months === 1 ? 'cada mes' : r.months % 12 === 0 ? 'cada ' + (r.months === 12 ? 'año' : r.months / 12 + ' años') : 'cada ' + r.months + ' meses') : ''].filter(Boolean).join(' o ');
-    const lastTxt = st.last ? 'Última vez: ' + fmtDate(st.last.date) + (st.last.km ? ' · ' + fmtNum(st.last.km) + ' km' : '') : 'Aún sin registrar';
-    const kmTxt = st.kmRemaining !== null ? fmtNum(Math.max(0, st.kmRemaining)) + ' km' : '', timeTxt = st.daysLeft !== null ? fmtTimeLeft(st.daysLeft) : '';
-    let meta;
-    if(st.overdue){
-      const late = st.daysLeft !== null && st.daysLeft <= 0 ? 'hace ' + timeTxt : 'pasado en km';
-      meta = 'Toca ya<span class="rev-sub">' + late + '</span>';
-    } else if(kmTxt && timeTxt) meta = (st.byTime ? timeTxt : kmTxt) + '<span class="rev-sub">o ' + (st.byTime ? kmTxt : timeTxt) + '</span>';
-    else meta = (timeTxt || kmTxt || '—');
-    const cls = st.overdue || st.upcoming ? 'due' : '';
-    return `
-    <div class="rev-item rec ${cls}">
-      <div class="rev-status">${st.overdue ? ICONS.alert : ICONS.clock}</div>
-      <div class="rev-body">
-        <h4>${r.name}</h4>
-        <p>${r.desc}</p>
-        <div class="rev-tasks"><span class="tag-pill rec-cat">${r.cat}</span><span class="tag-pill">${every}</span><span class="tag-pill">${lastTxt}</span></div>
-      </div>
-      <div class="rev-side">
-        <div class="rev-meta">${meta}</div>
-        <button class="btn btn-primary btn-sm" onclick="markRecommended('${r.id}')">Hecha hoy</button>
-        ${st.last ? `<button class="btn btn-ghost btn-sm" onclick="clearRecommended('${r.id}')" title="Quitar el último registro">Quitar</button>` : ''}
-      </div>
-    </div>`;
-  }).join('');
+function recommendedHtml(r, st){
+  const every = [r.km ? 'cada ' + fmtNum(r.km) + ' km' : '', r.months ? (r.months === 1 ? 'cada mes' : r.months % 12 === 0 ? 'cada ' + (r.months === 12 ? 'año' : r.months / 12 + ' años') : 'cada ' + r.months + ' meses') : ''].filter(Boolean).join(' o ');
+  const lastTxt = st.last ? 'Última vez: ' + fmtDate(st.last.date) + (st.last.km ? ' · ' + fmtNum(st.last.km) + ' km' : '') : 'Aún sin registrar';
+  const kmTxt = st.kmRemaining !== null ? fmtNum(Math.max(0, st.kmRemaining)) + ' km' : '', timeTxt = st.daysLeft !== null ? fmtTimeLeft(st.daysLeft) : '';
+  let meta;
+  if(st.overdue){
+    const late = st.daysLeft !== null && st.daysLeft <= 0 ? 'hace ' + timeTxt : 'pasado en km';
+    meta = 'Toca ya<span class="rev-sub">' + late + '</span>';
+  } else if(kmTxt && timeTxt) meta = (st.byTime ? timeTxt : kmTxt) + '<span class="rev-sub">o ' + (st.byTime ? kmTxt : timeTxt) + '</span>';
+  else meta = (timeTxt || kmTxt || '—');
+  const cls = st.overdue || st.upcoming ? 'due' : 'neutral';
+  return `
+  <div class="rev-item k-rec rec ${cls}">
+    <div class="rev-status">${st.overdue ? ICONS.alert : ICONS.clock}</div>
+    <div class="rev-body">
+      <div class="rev-kind">Recomendada</div>
+      <h4>${r.name}</h4>
+      <p>${r.desc}</p>
+      <div class="rev-tasks"><span class="tag-pill rec-cat">${r.cat}</span><span class="tag-pill">${every}</span><span class="tag-pill">${lastTxt}</span></div>
+    </div>
+    <div class="rev-side">
+      <div class="rev-meta">${meta}</div>
+      <button class="btn btn-primary btn-sm" onclick="markRecommended('${r.id}')">Hecha hoy</button>
+      ${st.last ? `<button class="btn btn-ghost btn-sm" onclick="clearRecommended('${r.id}')" title="Quitar el último registro">Quitar</button>` : ''}
+    </div>
+  </div>`;
 }
 function markRecommended(id){
   state.recommendedDone = state.recommendedDone || {};
