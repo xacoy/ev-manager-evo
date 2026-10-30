@@ -499,6 +499,13 @@ button{cursor:pointer}
 .sumline{display:flex;flex-wrap:wrap;gap:8px 28px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
 .sumline div{font-size:12px;color:var(--text-faint);font-weight:600}
 .sumline b{display:block;font-size:16px;color:var(--text);font-family:var(--font-display);font-variant-numeric:tabular-nums;margin-top:2px}
+.vsb{display:flex;flex-direction:column;gap:14px;padding-top:4px}
+.vsb-row .t{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;color:var(--text-muted);font-weight:600;margin-bottom:6px}
+.vsb-row .t b{font-family:var(--font-display);font-size:20px;color:var(--text);font-variant-numeric:tabular-nums}
+.vsb-row .bar{height:14px;border-radius:7px;background:var(--border);overflow:hidden}
+.vsb-row .bar i{display:block;height:100%;border-radius:7px}
+.vsb-save{margin-top:4px;padding-top:14px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:baseline;font-size:13px;color:var(--text-muted);font-weight:600}
+.vsb-save b{font-family:var(--font-display);font-size:24px;color:var(--accent);font-variant-numeric:tabular-nums}
 .stats-kv{display:grid;grid-template-columns:1fr 1fr;gap:0 40px}
 @media(max-width:700px){.stats-kv{grid-template-columns:1fr}}
 .stats-kv .kv-row:first-child{padding-top:10px}.stats-kv .kv-row:last-child{padding-bottom:10px;border-bottom:1px solid var(--border)}
@@ -1514,9 +1521,8 @@ html.car .chg-tablecard{display:none!important}
             <div class="svg-chart" id="chConsumo"></div>
           </div>
           <div class="card">
-            <div class="card-head"><h2>León vs EVO</h2><span class="hint">gasto acumulado</span></div>
-            <div class="legend"><span><i style="background:var(--text-faint)"></i>SEAT León</span><span><i style="background:var(--accent)"></i>BYD EVO</span><span><i style="background:var(--accent-soft);border:1px solid var(--accent)"></i>Ahorro</span></div>
-            <div class="svg-chart" id="chAhorro"></div>
+            <div class="card-head"><h2>León vs EVO</h2><span class="hint">gasto del periodo</span></div>
+            <div class="vsb" id="chAhorro"></div>
           </div>
         </div>
 
@@ -1806,7 +1812,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-30.6';
+const APP_VERSION = '2026-10-30.7';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -3463,17 +3469,24 @@ function deleteReading(id){
 
 /* ---------------- gráficas SVG ---------------- */
 function niceMax(v){ if(!(v > 0)) return 1; const p = Math.pow(10, Math.floor(Math.log10(v))), n = v / p; return (n <= 1 ? 1 : n <= 2 ? 2 : n <= 5 ? 5 : 10) * p; }
+// Escala con marcas redondas (1, 2, 5, 10 × 10^k), como mucho 5 tramos.
+function niceTicks(v){
+  if(!(v > 0)) return { max: 1, step: 0.25, n: 4 };
+  const p = Math.pow(10, Math.floor(Math.log10(v / 5)));
+  const step = [1, 2, 5, 10].map(k=>k * p).find(st=>v / st <= 5), n = Math.ceil(v / step - 1e-9);
+  return { max: n * step, step, n };
+}
 function shortDate(d){ const x = new Date(d); return isNaN(x) ? '' : x.getDate() + '/' + (x.getMonth() + 1); }
 function emptyChart(el, msg){ el.innerHTML = '<div class="empty">' + msg + '</div>'; }
 function svgBarChart(el, items, o){
   o = o || {};
   const W = 640, H = 250, L = 46, R = 14, T = 24, B = 38, iw = W - L - R, ih = H - T - B;
-  const max = niceMax(Math.max(...items.map(i=>i.value), o.avg || 0) * 1.08);
+  const tk = niceTicks(Math.max(...items.map(i=>i.value), o.avg || 0) * 1.08), max = tk.max;
   const y = v => T + ih - v / max * ih;
   const step = iw / items.length, bw = Math.min(46, step * 0.62);
   let g = '';
-  for(let i = 0; i <= 4; i++){
-    const v = max / 4 * i, yy = y(v);
+  for(let i = 0; i <= tk.n; i++){
+    const v = tk.step * i, yy = y(v);
     g += '<line x1="' + L + '" y1="' + yy + '" x2="' + (W - R) + '" y2="' + yy + '" style="stroke:var(--border)"/>';
     g += '<text x="' + (L - 6) + '" y="' + (yy + 4) + '" text-anchor="end">' + (o.axis ? o.axis(v) : Math.round(v)) + '</text>';
   }
@@ -3544,43 +3557,6 @@ function svgStackedBarChart(el, items, o){
   el.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + (o.aria || 'Gráfica') + '">' + g + '</svg>';
 }
 
-// Dos acumulados (a = León, b = EVO) con el hueco entre ambos sombreado: es el ahorro.
-function svgGapChart(el, items, o){
-  o = o || {};
-  const W = 640, H = 250, L = 52, R = 22, T = 28, B = 38, iw = W - L - R, ih = H - T - B;
-  const max = niceMax(Math.max(...items.map(i=>Math.max(i.a, i.b)), 1) * 1.12);
-  const y = v => T + ih - v / max * ih;
-  const x = i => items.length === 1 ? L + iw / 2 : L + iw * i / (items.length - 1);
-  let g = '';
-  for(let i = 0; i <= 4; i++){
-    const v = max / 4 * i, yy = y(v);
-    g += '<line x1="' + L + '" y1="' + yy + '" x2="' + (W - R) + '" y2="' + yy + '" style="stroke:var(--border)"/>';
-    g += '<text x="' + (L - 6) + '" y="' + (yy + 4) + '" text-anchor="end">' + Math.round(v) + '€</text>';
-  }
-  const pa = items.map((it, i)=> x(i) + ',' + y(it.a)), pb = items.map((it, i)=> x(i) + ',' + y(it.b));
-  if(items.length > 1) g += '<polygon points="' + pa.join(' ') + ' ' + pb.slice().reverse().join(' ') + '" style="fill:var(--accent);opacity:.14"/>';
-  else g += '<line x1="' + x(0) + '" y1="' + y(items[0].a) + '" x2="' + x(0) + '" y2="' + y(items[0].b) + '" stroke-width="6" stroke-linecap="round" style="stroke:var(--accent);opacity:.3"/>';
-  g += '<polyline points="' + pa.join(' ') + '" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="stroke:var(--text-faint)"/>';
-  g += '<polyline points="' + pb.join(' ') + '" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="stroke:var(--accent)"/>';
-  const every = items.length > 10 ? Math.ceil(items.length / 10) : 1;
-  items.forEach((it, i)=>{
-    g += '<circle cx="' + x(i) + '" cy="' + y(it.a) + '" r="3.2" style="fill:var(--text-faint)"><title>' + it.label + ' · León ' + fmtEUR(it.a) + '</title></circle>';
-    g += '<circle cx="' + x(i) + '" cy="' + y(it.b) + '" r="3.2" style="fill:var(--accent)"><title>' + it.label + ' · EVO ' + fmtEUR(it.b) + '</title></circle>';
-    if(i % every === 0 || i === items.length - 1) g += '<text x="' + x(i) + '" y="' + (H - 13) + '" text-anchor="middle">' + it.label + '</text>';
-  });
-  const last = items[items.length - 1], lx = Math.min(x(items.length - 1), W - R - 4);
-  g += '<text class="val" x="' + lx + '" y="' + (y(last.a) - 11) + '" text-anchor="end" style="fill:var(--text-muted)">' + fmtEUR(last.a) + '</text>';
-  g += '<text class="val" x="' + lx + '" y="' + (y(last.b) + 20) + '" text-anchor="end" style="fill:var(--accent)">' + fmtEUR(last.b) + '</text>';
-  el.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + (o.aria || 'Gráfica') + '">' + g + '</svg>';
-}
-function sparkSvg(vals, tone){
-  vals = vals.filter(v=>isFinite(v));
-  if(vals.length < 2) return '';
-  const W = 120, H = 36, p = 4, lo = Math.min(...vals), hi = Math.max(...vals), rg = hi - lo || 1;
-  const pts = vals.map((v, i)=> [p + (W - 2 * p) * i / (vals.length - 1), H - p - (v - lo) / rg * (H - 2 * p)]);
-  const line = pts.map(q=>q[0].toFixed(1) + ',' + q[1].toFixed(1)).join(' '), end = pts[pts.length - 1];
-  return '<svg viewBox="0 0 ' + W + ' ' + H + '" aria-hidden="true"><polygon points="' + p + ',' + H + ' ' + line + ' ' + (W - p) + ',' + H + '" style="fill:var(--' + tone + ');opacity:.14"/><polyline points="' + line + '" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="stroke:var(--' + tone + ')"/><circle cx="' + end[0] + '" cy="' + end[1] + '" r="3" style="fill:var(--' + tone + ')"/></svg>';
-}
 
 /* ---- periodo ---- */
 const CO2_PETROL = 2.31, CO2_GRID = 0.5;   // kg CO₂ por litro de gasolina y por kWh de la red (estimación para Canarias)
@@ -3655,19 +3631,6 @@ function consumptionByTrip(){
   }
   items.sort((a,b)=> a.ts - b.ts);
   return { items };
-}
-function monthlySavingsSeries(from, to){
-  const cons = savingsConsumption(), refL = Number(state.config.refConsumption) || 6.5, rate = Number(state.config.electricRate) || 0.15;
-  const per = {};
-  [...state.charges].sort((a,b)=> chargeTs(a) - chargeTs(b)).forEach(ch=>{
-    if(!inRange(ch.date, from, to)) return;
-    const r = chargeSavingParts(ch, cons, refL, rate);
-    if(!r) return;
-    const k = String(ch.date).slice(0, 7), p = per[k] || (per[k] = { gas: 0, elec: 0 });
-    p.gas += r.gas; p.elec += r.cost;
-  });
-  let gas = 0, elec = 0;
-  return Object.keys(per).sort().map(k=>{ gas += per[k].gas; elec += per[k].elec; return { label: monthLabel(k), a: gas, b: elec }; });
 }
 function monthLabel(k){ return new Date(k + '-01T12:00:00').toLocaleDateString('es-ES', { month: 'short', year: '2-digit' }); }
 
@@ -3835,9 +3798,13 @@ function renderStats(){
   const cEl = document.getElementById('chConsumo');
   if(m.trips.length) svgBarChart(cEl, m.trips, { avg: m.cons, fmt: v=>v.toFixed(1), aria: 'Consumo por tramo' });
   else emptyChart(cEl, r.all ? 'Anota los km en al menos dos cargas (y el % de batería para más precisión).' : 'Sin tramos de consumo en este periodo.');
-  const ms = monthlySavingsSeries(from, to), aEl = document.getElementById('chAhorro');
-  if(ms.length) svgGapChart(aEl, ms, { aria: 'Gasto acumulado del León frente al EVO' });
-  else emptyChart(aEl, 'Registra cargas con kWh para ver la comparación.');
+  const aEl = document.getElementById('chAhorro');
+  if(m.kwhS > 0 && m.gas > 0){
+    const top = Math.max(m.gas, m.elec), pct = m.saved != null && m.gas > 0 ? Math.round(m.saved / m.gas * 100) : null;
+    const row = (l, v, c) => '<div class="vsb-row"><div class="t"><span>' + l + '</span><b>' + fmtEUR(v) + '</b></div><div class="bar"><i style="width:' + Math.max(2, v / top * 100) + '%;background:' + c + '"></i></div></div>';
+    aEl.innerHTML = row('SEAT León (gasolina)', m.gas, 'var(--text-faint)') + row('BYD EVO (electricidad)', m.elec, 'var(--accent)') +
+      '<div class="vsb-save"><span>Ahorro' + (pct != null ? ' · ' + pct + ' %' : '') + '</span><b>' + fmtEUR(m.saved) + '</b></div>';
+  } else aEl.innerHTML = '<div class="empty-mini">Registra cargas con kWh para ver la comparación.</div>';
   renderInsights(m);
   renderPlaces(m);
 }
