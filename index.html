@@ -538,8 +538,10 @@ button{cursor:pointer}
 #page-stats .stat-card{padding:22px 24px}
 #page-stats .stat-card .spark{position:absolute;right:16px;bottom:14px;width:34%;max-width:130px;opacity:.95}
 #page-stats .stat-card .spark svg{display:block;width:100%;height:auto;overflow:visible}
-#page-stats .stat-card .sub{max-width:62%}
-@media(max-width:560px){#page-stats .stat-card .sub{max-width:100%;margin-bottom:34px}#page-stats .stat-card .spark{width:45%;bottom:12px}}
+#page-stats .stat-card .vsb{gap:10px;margin-top:14px;padding-top:0}
+#page-stats .stat-card .vsb-row .t{font-size:12px;margin-bottom:4px}
+#page-stats .stat-card .vsb-row .t b{font-size:16px}
+#page-stats .stat-card .vsb-row .bar{height:10px}
 #page-stats .card-head h2{display:flex;align-items:center}
 #page-stats .ico{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:10px;margin-right:10px;background:var(--ts);color:var(--t);flex-shrink:0}
 #page-stats .ico svg{width:16px;height:16px;stroke:currentColor}
@@ -1498,15 +1500,11 @@ html.car .chg-tablecard{display:none!important}
           <div class="range" id="statsRangeLabel"></div>
         </div>
 
-        <div class="grid grid-3" style="margin-bottom:16px">
+        <div class="grid grid-4" style="margin-bottom:16px">
           <div class="card stat-card tone-accent"><div class="label-row"><div class="label">Ahorro vs gasolina</div><span id="dl_saved"></span></div><div class="value" id="st_saved">—</div><div class="sub" id="st_savedSub">acumulado</div></div>
           <div class="card stat-card tone-accent"><div class="label-row"><div class="label">Coste / km</div><span id="dl_costKm"></span></div><div class="value" id="st_costPerKm">—</div><div class="sub" id="st_costPerKmSub">cargas + mantenimiento</div></div>
           <div class="card stat-card tone-accent"><div class="label-row"><div class="label">Consumo (de la red)</div><span id="dl_cons"></span></div><div class="value" id="st_cons">—</div><div class="sub" id="st_consSub">kWh / 100 km</div></div>
-        </div>
-
-        <div class="card" style="margin-bottom:16px">
-          <div class="card-head"><h2>León vs EVO</h2><span class="hint">gasto del periodo</span></div>
-          <div class="vsb" id="chAhorro"></div>
+          <div class="card stat-card tone-accent"><div class="label-row"><div class="label">León vs EVO</div></div><div class="vsb" id="chAhorro"></div></div>
         </div>
 
         <div class="card" style="margin-bottom:16px" id="insightsCard">
@@ -1806,7 +1804,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '2026-10-30.9';
+const APP_VERSION = '2026-10-30.10';
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -3658,7 +3656,7 @@ function renderStats(){
 
   // destacadas
   set('st_saved', m.saved != null ? fmtEUR(m.saved) : '—');
-  set('st_savedSub', m.saved != null ? 'Gasolina ' + fmtEUR(m.gas) + ' · Electricidad ' + fmtEUR(m.elec) : 'Registra cargas con kWh');
+  set('st_savedSub', m.saved != null ? (m.gas > 0 ? Math.round(m.saved / m.gas * 100) + ' % menos que con el León' : 'acumulado') : 'Registra cargas con kWh');
   document.getElementById('dl_saved').innerHTML = deltaHtml(m.saved, pm && pm.saved, true);
   const cpk = r.all ? (m.total > 0 && m.km > 0 ? m.total / m.km : null) : m.costKm;
   set('st_costPerKm', cpk != null ? cpk.toFixed(3) + ' €' : '—');
@@ -3703,11 +3701,10 @@ function renderStats(){
 
   const aEl = document.getElementById('chAhorro');
   if(m.kwhS > 0 && m.gas > 0){
-    const top = Math.max(m.gas, m.elec), pct = m.saved != null && m.gas > 0 ? Math.round(m.saved / m.gas * 100) : null;
+    const top = Math.max(m.gas, m.elec);
     const row = (l, v, c) => '<div class="vsb-row"><div class="t"><span>' + l + '</span><b>' + fmtEUR(v) + '</b></div><div class="bar"><i style="width:' + Math.max(2, v / top * 100) + '%;background:' + c + '"></i></div></div>';
-    aEl.innerHTML = row('SEAT León (gasolina)', m.gas, 'var(--text-faint)') + row('BYD EVO (electricidad)', m.elec, 'var(--accent)') +
-      '<div class="vsb-save"><span>Ahorro' + (pct != null ? ' · ' + pct + ' %' : '') + '</span><b>' + fmtEUR(m.saved) + '</b></div>';
-  } else aEl.innerHTML = '<div class="empty-mini">Registra cargas con kWh para ver la comparación.</div>';
+    aEl.innerHTML = row('SEAT León', m.gas, 'var(--text-faint)') + row('BYD EVO', m.elec, 'var(--accent)');
+  } else aEl.innerHTML = '<div class="empty-mini">Sin datos de kWh</div>';
   renderInsights(m);
   renderPlaces(m);
 }
