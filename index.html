@@ -200,7 +200,7 @@
 }
 :root[data-theme="vicecity"]{
   color-scheme:dark;
-  --bg:#0f0a2e; --bg-1:#161040; --bg-2:rgba(120,100,255,.14); --bg-card:rgba(38,28,104,.62);
+  --bg:#0f0a2e; --bg-1:#161040; --bg-2:rgba(255,255,255,.10); --bg-card:rgba(40,26,120,.38);
   --border:rgba(160,140,255,.22); --border-strong:rgba(190,170,255,.42);
   --text:#f4f0ff; --text-muted:#bdb2ee; --text-faint:#8b80c4;
   --accent:#2fe6d0; --accent-2:#ff8a4c; --accent-3:#ff4fa3;
@@ -217,7 +217,8 @@
   --orange:#ff8a4c; --orange-soft:rgba(255,138,76,0.12);
   --shadow-card:0 8px 28px rgba(8,4,40,.5), inset 0 1px 0 rgba(255,255,255,.08); --shadow-1:0 10px 30px rgba(8,4,40,.55);
 }
-:root[data-theme="vicecity"] body{background:linear-gradient(160deg,#1b1260 0%,#2a1a86 45%,#4a2aa8 100%) fixed;background-image:radial-gradient(70% 45% at 0% 100%, rgba(255,138,76,.38), transparent 65%),radial-gradient(60% 45% at 100% 0%, rgba(255,79,163,.22), transparent 65%),radial-gradient(60% 50% at 70% 100%, rgba(47,230,208,.18), transparent 65%),linear-gradient(160deg,#1b1260 0%,#2a1a86 45%,#4a2aa8 100%)}
+:root[data-theme="vicecity"] body{background:#2a1a8a fixed;background-image:radial-gradient(90% 70% at 0% 100%, rgba(255,150,80,.85), rgba(255,110,120,.45) 45%, transparent 75%),radial-gradient(70% 55% at 100% 0%, rgba(255,79,163,.55), transparent 70%),radial-gradient(70% 60% at 100% 100%, rgba(47,230,208,.45), transparent 70%),linear-gradient(160deg,#2c1cb0 0%,#5a30d8 50%,#8a45e0 100%)}
+:root[data-theme="vicecity"] .nav-rail,:root[data-theme="vicecity"] .bottom-nav{background:rgba(30,20,100,.55);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
 :root[data-theme="vicecity"] .card{backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%);border-radius:22px}
 :root[data-theme="vicecity"] .btn{border-radius:999px}
 :root[data-theme="vicecity"] .btn-primary{background:linear-gradient(135deg,#2fe6d0,#6aa8ff);box-shadow:0 6px 20px -6px rgba(47,230,208,.65), inset 0 1px 0 rgba(255,255,255,.35)}
@@ -1886,7 +1887,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611012218';   // AAAAMMDDHHMM
+const APP_VERSION = '202611012219';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
