@@ -226,6 +226,34 @@
 :root[data-theme="vicecity"] .btn-ghost:hover{background:rgba(47,230,208,.12);box-shadow:0 0 16px -4px var(--accent-glow)}
 :root[data-theme="vicecity"] .seg button.on,:root[data-theme="vicecity"] .nav-item.active .ni-indicator{background:linear-gradient(135deg,#ff8a4c,#ff4fa3);color:#fff;box-shadow:0 4px 16px -4px rgba(255,100,120,.7)}
 :root[data-theme="vicecity"] .nav-item.active{color:#fff}
+:root[data-theme="vicecitynight"]{
+  color-scheme:dark;
+  --bg:#07041a; --bg-1:#0d0829; --bg-2:rgba(255,255,255,.10); --bg-card:rgba(22,14,64,.55);
+  --border:rgba(140,120,240,.18); --border-strong:rgba(190,170,255,.42);
+  --text:#f4f0ff; --text-muted:#bdb2ee; --text-faint:#8b80c4;
+  --accent:#2fe6d0; --accent-2:#ff8a4c; --accent-3:#ff4fa3;
+  --accent-soft:rgba(47,230,208,0.16); --accent-glow:rgba(47,230,208,0.34);
+  --on-accent:#08203a;
+  --success:#46f0a0; --success-soft:rgba(70,240,160,0.15);
+  --warning:#ffb04a; --warning-soft:rgba(255,176,74,0.15);
+  --danger:#ff5a7a; --danger-soft:rgba(255,90,122,0.15);
+  --cyan:#2fe6d0; --cyan-soft:rgba(47,230,208,0.12);
+  --blue:#6aa8ff; --blue-soft:rgba(106,168,255,0.12);
+  --purple:#a58bff; --purple-soft:rgba(165,139,255,0.14);
+  --pink:#ff4fa3; --pink-soft:rgba(255,79,163,0.12);
+  --green:#46f0a0; --green-soft:rgba(70,240,160,0.12);
+  --orange:#ff8a4c; --orange-soft:rgba(255,138,76,0.12);
+  --shadow-card:0 8px 28px rgba(8,4,40,.5), inset 0 1px 0 rgba(255,255,255,.08); --shadow-1:0 10px 30px rgba(8,4,40,.55);
+}
+:root[data-theme="vicecitynight"] body{background:#07041a fixed;background-image:radial-gradient(80% 60% at 0% 100%, rgba(255,120,70,.42), rgba(255,79,140,.2) 45%, transparent 75%),radial-gradient(65% 50% at 100% 0%, rgba(255,79,163,.28), transparent 70%),radial-gradient(65% 55% at 100% 100%, rgba(47,230,208,.24), transparent 70%),linear-gradient(160deg,#0a0522 0%,#1a0e5a 55%,#2b1380 100%)}
+:root[data-theme="vicecitynight"] .nav-rail,:root[data-theme="vicecitynight"] .bottom-nav{background:rgba(10,6,40,.65);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+:root[data-theme="vicecitynight"] .card{backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%);border-radius:22px}
+:root[data-theme="vicecitynight"] .btn{border-radius:999px}
+:root[data-theme="vicecitynight"] .btn-primary{background:linear-gradient(135deg,#2fe6d0,#6aa8ff);box-shadow:0 6px 20px -6px rgba(47,230,208,.65), inset 0 1px 0 rgba(255,255,255,.35)}
+:root[data-theme="vicecitynight"] .btn-ghost{background:rgba(255,255,255,.06);border-color:var(--border-strong);backdrop-filter:blur(8px)}
+:root[data-theme="vicecitynight"] .btn-ghost:hover{background:rgba(47,230,208,.12);box-shadow:0 0 16px -4px var(--accent-glow)}
+:root[data-theme="vicecitynight"] .seg button.on,:root[data-theme="vicecitynight"] .nav-item.active .ni-indicator{background:linear-gradient(135deg,#ff8a4c,#ff4fa3);color:#fff;box-shadow:0 4px 16px -4px rgba(255,100,120,.7)}
+:root[data-theme="vicecitynight"] .nav-item.active{color:#fff}
 :root[data-theme="contrast"] body,:root[data-theme="midnight"] body{background-image:none}
 :root[data-theme="mint"] body{background-image:radial-gradient(120% 100% at 50% -10%, rgba(0,0,0,.03), transparent 55%)}
 :root[data-theme="neon"] body{background-image:radial-gradient(90% 70% at 85% -10%, rgba(232,121,249,.16), transparent 60%),radial-gradient(80% 60% at 0% 100%, rgba(34,211,238,.10), transparent 60%)}
@@ -1887,7 +1915,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611012219';   // AAAAMMDDHHMM
+const APP_VERSION = '202611012222';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2037,6 +2065,7 @@ const THEMES = [
   { id:'sunset',   name:'Atardecer',     light:false, sw:['#140c0f','#2a1920','#fb923c','#f472b6','#fbeff0'] },
   { id:'neon',     name:'Neón',          light:false, sw:['#0b0716','#1c1136','#e879f9','#22d3ee','#f5f0ff'] },
   { id:'vicecity', name:'ViceCity',      light:false, sw:['#1b1260','#262068','#2fe6d0','#ff8a4c','#f4f0ff'] },
+  { id:'vicecitynight', name:'ViceCityNight', light:false, sw:['#07041a','#160e40','#2fe6d0','#ff8a4c','#f4f0ff'] },
   { id:'mint',     name:'Menta',        light:true,  sw:['#eef7f2','#ffffff','#0a8f66','#0f766e','#10201a'] },
   { id:'contrast', name:'Alto contraste',light:false, sw:['#000000','#0f0f0f','#ffd60a','#00e5ff','#ffffff'] }
 ];
