@@ -254,6 +254,38 @@
 :root[data-theme="vicecitynight"] .btn-ghost:hover{background:rgba(47,230,208,.12);box-shadow:0 0 16px -4px var(--accent-glow)}
 :root[data-theme="vicecitynight"] .seg button.on,:root[data-theme="vicecitynight"] .nav-item.active .ni-indicator{background:linear-gradient(135deg,#ff8a4c,#ff4fa3);color:#fff;box-shadow:0 4px 16px -4px rgba(255,100,120,.7)}
 :root[data-theme="vicecitynight"] .nav-item.active{color:#fff}
+:root[data-theme="unicornio"]{
+  color-scheme:light;
+  --bg:#fff0f8; --bg-1:rgba(255,255,255,.7); --bg-2:rgba(255,160,210,.16); --bg-card:rgba(255,255,255,.72);
+  --border:rgba(236,110,190,.26); --border-strong:rgba(214,80,170,.45);
+  --text:#4a1d5c; --text-muted:#7b4a8e; --text-faint:#a47bb4;
+  --accent:#ec4899; --accent-2:#a855f7; --accent-3:#22c7b8;
+  --accent-soft:rgba(236,72,153,0.14); --accent-glow:rgba(236,72,153,0.32);
+  --on-accent:#ffffff;
+  --success:#0f9d77; --success-soft:rgba(15,157,119,0.14);
+  --warning:#c2680a; --warning-soft:rgba(194,104,10,0.14);
+  --danger:#d6285a; --danger-soft:rgba(214,40,90,0.13);
+  --cyan:#ec4899; --cyan-soft:rgba(236,72,153,0.12);
+  --blue:#5b8def; --blue-soft:rgba(91,141,239,0.13);
+  --purple:#9b5de5; --purple-soft:rgba(155,93,229,0.13);
+  --pink:#ec4899; --pink-soft:rgba(236,72,153,0.12);
+  --green:#0f9d77; --green-soft:rgba(15,157,119,0.12);
+  --orange:#f08a24; --orange-soft:rgba(240,138,36,0.13);
+  --shadow-card:0 8px 24px rgba(214,80,170,.18), inset 0 1px 0 rgba(255,255,255,.9); --shadow-1:0 8px 22px rgba(214,80,170,.2);
+  --est:#7a4700;
+}
+:root[data-theme="unicornio"] body{background:#ffe3f3 fixed;background-image:radial-gradient(2px 2px at 12% 18%, #fff 60%, transparent 62%),radial-gradient(3px 3px at 78% 12%, #fff 60%, transparent 62%),radial-gradient(2px 2px at 40% 70%, #fff 60%, transparent 62%),radial-gradient(3px 3px at 90% 60%, #fff 60%, transparent 62%),radial-gradient(2px 2px at 25% 92%, #fff 60%, transparent 62%),radial-gradient(70% 50% at 0% 0%, rgba(255,190,225,.95), transparent 70%),radial-gradient(60% 50% at 100% 20%, rgba(200,170,255,.85), transparent 70%),radial-gradient(70% 55% at 100% 100%, rgba(160,235,225,.8), transparent 70%),radial-gradient(60% 50% at 0% 100%, rgba(255,215,170,.75), transparent 70%),linear-gradient(160deg,#ffd9ee 0%,#e9d5ff 50%,#cdeefe 100%)}
+:root[data-theme="unicornio"] .card{backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:28px;border:2px solid rgba(255,255,255,.85);box-shadow:var(--shadow-card), 0 0 0 1px var(--border)}
+:root[data-theme="unicornio"] .card:hover{transform:translateY(-3px) rotate(-.4deg)}
+:root[data-theme="unicornio"] .nav-rail,:root[data-theme="unicornio"] .bottom-nav{background:rgba(255,255,255,.62);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+:root[data-theme="unicornio"] .btn{border-radius:999px}
+:root[data-theme="unicornio"] .btn-primary{background:linear-gradient(135deg,#ff7ac8,#c084fc 55%,#7dd3fc);box-shadow:0 8px 20px -6px rgba(236,72,153,.6), inset 0 2px 0 rgba(255,255,255,.55)}
+:root[data-theme="unicornio"] .btn-primary:hover{transform:translateY(-2px) scale(1.03)}
+:root[data-theme="unicornio"] .btn-ghost{background:rgba(255,255,255,.7);border:2px solid var(--border-strong);color:var(--text)}
+:root[data-theme="unicornio"] .btn-ghost:hover{background:#fff;box-shadow:0 0 18px -4px var(--accent-glow)}
+:root[data-theme="unicornio"] .seg button.on,:root[data-theme="unicornio"] .nav-item.active .ni-indicator{background:linear-gradient(135deg,#ff7ac8,#a78bfa);color:#fff;box-shadow:0 5px 16px -4px rgba(236,72,153,.6)}
+:root[data-theme="unicornio"] .nav-item.active{color:#c026a3}
+:root[data-theme="unicornio"] .title-accent{background:linear-gradient(90deg,#ec4899,#a855f7,#22c7b8);-webkit-background-clip:text;background-clip:text;color:transparent}
 :root[data-theme="contrast"] body,:root[data-theme="midnight"] body{background-image:none}
 :root[data-theme="mint"] body{background-image:radial-gradient(120% 100% at 50% -10%, rgba(0,0,0,.03), transparent 55%)}
 :root[data-theme="neon"] body{background-image:radial-gradient(90% 70% at 85% -10%, rgba(232,121,249,.16), transparent 60%),radial-gradient(80% 60% at 0% 100%, rgba(34,211,238,.10), transparent 60%)}
@@ -490,8 +522,8 @@ button{cursor:pointer}
 .car-wrap{position:relative;width:100%;max-width:300px;aspect-ratio:900/714}
 .car-img{position:absolute;inset:0;background:linear-gradient(100deg,var(--accent) 0%,var(--accent-2) 50%,var(--accent) 100%);background-size:260% 100%;animation:carshine 7s ease-in-out infinite alternate;-webkit-mask:url(images/atto3-evo-front.png) center/contain no-repeat;mask:url(images/atto3-evo-front.png) center/contain no-repeat;filter:drop-shadow(0 0 5px var(--accent-glow))}
 .car-bolt{position:absolute;left:50%;top:50.9%;width:8%;transform:translate(-50%,-50%);fill:var(--accent);filter:drop-shadow(0 0 4px var(--accent-glow))}
-:root[data-theme="light"] .car-img,:root[data-theme="mint"] .car-img{filter:none}
-:root[data-theme="light"] .car-bolt,:root[data-theme="mint"] .car-bolt{filter:none}
+:root[data-theme="light"] .car-img,:root[data-theme="mint"] .car-img,:root[data-theme="unicornio"] .car-img{filter:none}
+:root[data-theme="light"] .car-bolt,:root[data-theme="mint"] .car-bolt,:root[data-theme="unicornio"] .car-bolt{filter:none}
 @keyframes carshine{from{background-position:0% 0}to{background-position:100% 0}}
 @media(prefers-reduced-motion:reduce){.car-img{animation:none}}
 .car-name{font-family:var(--font-display);font-size:15px;font-weight:700;color:var(--text);letter-spacing:-.2px}
@@ -1213,7 +1245,7 @@ html.car .chg-tablecard{display:none!important}
   }
   html.car .car-badge{font-size:12px}
   /* Legibilidad en el coche: textos más grandes, más contraste y botones más cómodos */
-  html.car:not([data-theme="light"]):not([data-theme="mint"]):not([data-theme="contrast"]){--text-muted:#c0cada;--text-faint:#98a4b8}
+  html.car:not([data-theme="light"]):not([data-theme="mint"]):not([data-theme="unicornio"]):not([data-theme="contrast"]){--text-muted:#c0cada;--text-faint:#98a4b8}
   html.car .nav-item .ni-label{font-size:16px}
   html.car .nav-item .ni-indicator{width:88px;height:56px}
   html.car .nav-item .ni-indicator svg{width:34px;height:34px}
@@ -1915,7 +1947,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611012222';   // AAAAMMDDHHMM
+const APP_VERSION = '202611012229';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2066,6 +2098,7 @@ const THEMES = [
   { id:'neon',     name:'Neón',          light:false, sw:['#0b0716','#1c1136','#e879f9','#22d3ee','#f5f0ff'] },
   { id:'vicecity', name:'ViceCity',      light:false, sw:['#1b1260','#262068','#2fe6d0','#ff8a4c','#f4f0ff'] },
   { id:'vicecitynight', name:'ViceCityNight', light:false, sw:['#07041a','#160e40','#2fe6d0','#ff8a4c','#f4f0ff'] },
+  { id:'unicornio', name:'Unicornio ✨',  light:true,  sw:['#ffd9ee','#ffffff','#ec4899','#a855f7','#4a1d5c'] },
   { id:'mint',     name:'Menta',        light:true,  sw:['#eef7f2','#ffffff','#0a8f66','#0f766e','#10201a'] },
   { id:'contrast', name:'Alto contraste',light:false, sw:['#000000','#0f0f0f','#ffd60a','#00e5ff','#ffffff'] }
 ];
