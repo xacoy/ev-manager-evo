@@ -2007,7 +2007,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611031440';   // AAAAMMDDHHMM
+const APP_VERSION = '202611031510';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -3152,9 +3152,9 @@ function renderDocs(){
       '<button class="rev-more" data-act="menu" aria-label="Opciones">' + ICONS.dots + '</button></div></div>';
   }).join('');
 }
-function openDocMenu(btn, d){
+function openDocMenu(btn, d){ openItemMenu(btn, [['Editar', ()=>openDocForm(d)], ['Eliminar', ()=>askDeleteDoc(d), true]]); }
+function openItemMenu(btn, items){
   closeRevMenu();
-  const items = [['Editar', ()=>openDocForm(d)], ['Eliminar', ()=>askDeleteDoc(d), true]];
   const m = document.createElement('div'); m.id = 'revMenu'; m.className = 'rev-menu';
   items.forEach(([label, fn, danger])=>{ const b = document.createElement('button'); b.type = 'button'; b.textContent = label; if(danger) b.className = 'danger'; b.addEventListener('click', ()=>{ closeRevMenu(); fn(); }); m.appendChild(b); });
   document.body.appendChild(m);
@@ -3313,6 +3313,10 @@ function setupDocs(){
     const d = state.docs.find(x=>String(x.id) === b.closest('.doc-row').dataset.id); if(!d) return;
     if(b.dataset.act === 'menu') return openDocMenu(b, d);
     ({ view: openDocFiles, edit: openDocForm, del: askDeleteDoc })[b.dataset.act](d);
+  });
+  document.getElementById('notesList').addEventListener('click', e=>{
+    const b = e.target.closest('[data-nmenu]'); if(!b) return; const id = Number(b.dataset.nmenu);
+    openItemMenu(b, [['Editar', ()=>editNote(id)], ['Eliminar', ()=>deleteNote(id), true]]);
   });
   document.getElementById('docViewClose').addEventListener('click', ()=>{ document.getElementById('docViewOverlay').classList.remove('open'); document.getElementById('docViewBody').innerHTML = ''; });
   document.getElementById('docDelNo').addEventListener('click', ()=>{ delStep = 0; document.getElementById('docDelOverlay').classList.remove('open'); });
@@ -3553,15 +3557,13 @@ function renderNotes(){
   }).sort((a,b)=> new Date(b.date)-new Date(a.date));
 
   document.getElementById('noteSummary').innerHTML = '<b>' + filtered.length + '</b> ' + (filtered.length === 1 ? 'nota' : 'notas');
-  document.getElementById('notesList').innerHTML = filtered.map(n=>`
-    <div class="doc-row"><div class="dr-main">
+  document.getElementById('notesList').innerHTML = (filtered.length ? '<div class="doc-cols"><span>Nota</span><span>Etiquetas</span><span></span></div>' : '') + filtered.map(n=>`
+    <div class="doc-row doc-row3" data-nid="${n.id}"><div class="dr-main">
       <div class="dr-title">${escapeHtml(n.title)}</div>
-      <div class="dr-sub">${escapeHtml([fmtDate(n.date)].concat((n.tags||[]).filter(Boolean).map(t=>'#'+t)).join(' · '))}</div>
+      <div class="dr-sub">${escapeHtml(fmtDate(n.date))}</div>
       <div class="dr-note clamp">${escapeHtml(n.content)}</div>
-    </div><div class="dr-side"><div class="dr-act">
-      <button class="icon-action" onclick="editNote(${n.id})" title="Editar">${ICONS.edit}</button>
-      <button class="icon-action danger" onclick="deleteNote(${n.id})" title="Eliminar">${ICONS.trash}</button>
-    </div></div></div>`).join('');
+    </div><div class="dr-type">${(n.tags||[]).filter(Boolean).map(t=>'<span class="dr-chip">#'+escapeHtml(t)+'</span>').join('')}</div>
+    <div class="dr-side3"><button class="rev-more" data-nmenu="${n.id}" aria-label="Opciones">${ICONS.dots}</button></div></div>`).join('');
   document.getElementById('notesEmpty').style.display = filtered.length ? 'none' : 'block';
 }
 function toggleNoteTag(t){ activeNoteTags.has(t) ? activeNoteTags.delete(t) : activeNoteTags.add(t); renderNotes(); }
