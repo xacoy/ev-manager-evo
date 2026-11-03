@@ -761,12 +761,13 @@ button{cursor:pointer}
 .dr-act .icon-action{white-space:nowrap}
 .att-prev{width:100%;max-height:60vh;object-fit:contain;border-radius:8px;margin-top:8px;background:var(--bg-2)}
 .icon-action small{font-size:11px;font-weight:800;margin-left:2px}
-.doc-cols,.doc-row3{display:grid;grid-template-columns:minmax(0,1fr) minmax(150px,230px) 210px;gap:16px}
+.doc-cols,.doc-row3{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) 210px;gap:16px}
+.doc-cols span:nth-child(2){text-align:center}
 .doc-cols{padding:0 2px 8px;border-bottom:1px solid var(--border);font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint)}
 .doc-cols span:last-child{text-align:right;padding-right:46px}
 .doc-row3{align-items:center}
 .doc-cols + .doc-row3{border-top:0}
-.dr-type{min-width:0;display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px}
+.dr-type{min-width:0;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;text-align:center;gap:4px 8px}
 .dr-type .dr-sub{flex-basis:100%;margin-top:0}
 .dr-chip{display:inline-block;padding:3px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent);font-size:12px;font-weight:700;white-space:nowrap}
 .dr-subtype{font-size:12.5px;color:var(--text-dim);font-weight:600}
@@ -777,7 +778,7 @@ button{cursor:pointer}
 @media (max-width:700px){
   .doc-cols{display:none}
   .doc-row3{grid-template-columns:minmax(0,1fr) auto;gap:8px 12px;align-items:start}
-  .doc-row3 .dr-type{grid-column:1 / -1;grid-row:2}
+  .doc-row3 .dr-type{grid-column:1 / -1;grid-row:2;justify-content:flex-start;text-align:left}
   .dr-side3{grid-template-columns:auto auto auto;justify-content:end}
   .dr-side3 .dr-price,.dr-side3 .icon-action,.dr-side3 .rev-more{grid-column:auto}
 }
@@ -2006,7 +2007,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611031245';   // AAAAMMDDHHMM
+const APP_VERSION = '202611031310';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
