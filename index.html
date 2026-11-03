@@ -2007,7 +2007,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611031510';   // AAAAMMDDHHMM
+const APP_VERSION = '202611030801';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2237,8 +2237,8 @@ function computeAlerts(){
     else if(st.upcoming) alerts.push({rev, level:'upcoming', text: 'Faltan ' + (st.upcomingTime && !(st.upcomingKm && !st.byTime) ? fmtTimeLeft(st.daysLeft) : fmtNum(st.kmRemaining) + ' km')});
   });
   (state.docs || []).forEach(d=>{
-    const left = docDaysLeft(d); if(left === null || left > 30) return;
-    alerts.push({rev:{name:d.name}, level: left < 0 ? 'docexpired' : 'docsoon', text: left < 0 ? 'Documento caducado' : 'Caduca en ' + left + ' días'});
+    const left = docDaysLeft(d); if(left === null || left > DOC_WARN_DAYS) return;
+    alerts.push({rev:{name:d.name || d.sub || docCat(d)}, level: left < 0 ? 'docexpired' : 'docsoon', tone: docTone(left), text: left < 0 ? 'Caducado hace ' + (-left) + ' días' : left === 0 ? 'Caduca hoy' : 'Caduca en ' + left + ' días'});
   });
   return alerts;
 }
@@ -2251,9 +2251,9 @@ function renderAlerts(){
   } else { badge.style.display='none'; }
   list.innerHTML = alerts.length ? alerts.map(a=>`
     <div class="alert-row">
-      <div class="alert-dot" style="background:${(a.level==='overdue'||a.level==='docexpired')?'var(--danger)':'var(--warning)'}"></div>
+      <div class="alert-dot" style="background:${a.tone ? DOC_TONE_VAR[a.tone] : a.level==='overdue' ? 'var(--danger)' : 'var(--warning)'}"></div>
       <div><div class="t1">${a.rev.name}</div><div class="t2">${a.text}</div></div>
-    </div>`).join('') : `<div class="empty-mini">Todo al día. Sin revisiones pendientes.</div>`;
+    </div>`).join('') : `<div class="empty-mini">Todo al día. Sin revisiones ni caducidades pendientes.</div>`;
   maybeNotify(alerts);
 }
 function maybeNotify(alerts){
@@ -3020,6 +3020,10 @@ function normalizeState(){
   return changed;
 }
 function docDaysLeft(d){ if(!d.expires) return null; return Math.ceil((new Date(d.expires + 'T00:00:00') - new Date(new Date().toDateString())) / 86400000); }
+// Semáforo de caducidades: avisa a 75, 60, 30 y 7 días (verde, amarillo, naranja, rojo); caducado = rojo.
+const DOC_WARN_DAYS = 75;
+function docTone(left){ return left < 0 || left <= 7 ? 'red' : left <= 30 ? 'orange' : left <= 60 ? 'yellow' : 'green'; }
+const DOC_TONE_VAR = { red:'var(--danger)', orange:'#f97316', yellow:'#facc15', green:'var(--success)' };
 function docCat(d){ return DOC_CATS.includes(d.category) ? d.category : 'Otros'; }
 function openRevisions(){ docTab = 'revs'; navigate('docs'); }
 function setDocTab(t){
@@ -3139,9 +3143,9 @@ function renderDocs(){
   document.getElementById('docsList').innerHTML = (list.length ? '<div class="doc-cols"><span>Documento</span><span>Tipo</span><span>Importe</span></div>' : '') + list.map(d=>{
     const title = d.name || d.sub || docCat(d);
     const left = docDaysLeft(d);
-    const exp = left === null ? '' : left < 0 ? '<div class="dr-exp bad">Caducado hace ' + (-left) + ' días</div>' : left <= 30 ? '<div class="dr-exp soon">Caduca en ' + left + ' días</div>' : '';
+    const exp = left === null || left > DOC_WARN_DAYS ? '' : '<div class="dr-exp" style="color:' + DOC_TONE_VAR[docTone(left)] + '"><span class="alert-dot" style="display:inline-block;margin:0 6px 1px 0;background:' + DOC_TONE_VAR[docTone(left)] + '"></span>' + (left < 0 ? 'Caducado hace ' + (-left) + ' días' : left === 0 ? 'Caduca hoy' : 'Caduca en ' + left + ' días') + '</div>';
     const sub = d.sub && d.sub !== title ? d.sub : '';
-    const meta = [sub, d.date ? fmtDate(d.date) : '', d.km ? fmtNum(d.km) + ' km' : '', d.location || '', left !== null && left > 30 ? 'Caduca ' + fmtDate(d.expires) : '', d.noCount && d.price != null ? 'No cuenta en cálculos' : ''].filter(Boolean).join(' · ');
+    const meta = [sub, d.date ? fmtDate(d.date) : '', d.km ? fmtNum(d.km) + ' km' : '', d.location || '', left !== null && left > DOC_WARN_DAYS ? 'Caduca ' + fmtDate(d.expires) : '', d.noCount && d.price != null ? 'No cuenta en cálculos' : ''].filter(Boolean).join(' · ');
     const nf = (d.files || []).length;
     return '<div class="doc-row doc-row3" data-id="' + d.id + '"><div class="dr-main"><div class="dr-title">' + escapeHtml(title) + '</div>' +
       (meta ? '<div class="dr-sub">' + escapeHtml(meta) + '</div>' : '') +
