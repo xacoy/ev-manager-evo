@@ -761,6 +761,11 @@ button{cursor:pointer}
 .dr-act .icon-action{white-space:nowrap}
 .att-prev{width:100%;max-height:60vh;object-fit:contain;border-radius:8px;margin-top:8px;background:var(--bg-2)}
 .icon-action small{font-size:11px;font-weight:800;margin-left:2px}
+.doc-row3{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) auto;gap:12px;align-items:center}
+.dr-type{min-width:0}
+.dr-type-main{font-size:13px;font-weight:600;color:var(--text-dim);overflow-wrap:anywhere}
+.dr-side3{display:flex;align-items:center;justify-content:flex-end;gap:8px}
+.dr-side3 .dr-price{margin-right:4px}
 
 /* Selector de tema */
 .deco-row{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;margin:0 0 14px;border:1px solid var(--border);border-radius:12px;background:var(--bg-2);cursor:pointer;font-size:13.5px}.deco-row input{margin-top:3px;width:18px;height:18px;accent-color:var(--accent);flex-shrink:0}.deco-row small{display:block;color:var(--text-muted);font-size:12px;margin-top:2px}.deco-row.off{opacity:.55}
@@ -1986,7 +1991,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611012243';   // AAAAMMDDHHMM
+const APP_VERSION = '202611031200';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -3119,14 +3124,31 @@ function renderDocs(){
     const title = d.name || d.sub || docCat(d);
     const left = docDaysLeft(d);
     const exp = left === null ? '' : left < 0 ? '<div class="dr-exp bad">Caducado hace ' + (-left) + ' días</div>' : left <= 30 ? '<div class="dr-exp soon">Caduca en ' + left + ' días</div>' : '';
-    const parts = [docCat(d) + (d.sub && d.sub !== title ? ' › ' + d.sub : ''), d.date ? fmtDate(d.date) : '', d.km ? fmtNum(d.km) + ' km' : '', d.location || '', left !== null && left > 30 ? 'Caduca ' + fmtDate(d.expires) : '', d.noCount && d.price != null ? 'No cuenta en cálculos' : ''].filter(Boolean);
+    const type = docCat(d) + (d.sub && d.sub !== title ? ' › ' + d.sub : '');
+    const parts = [d.date ? fmtDate(d.date) : '', d.km ? fmtNum(d.km) + ' km' : '', d.location || '', left !== null && left > 30 ? 'Caduca ' + fmtDate(d.expires) : '', d.noCount && d.price != null ? 'No cuenta en cálculos' : ''].filter(Boolean);
     const nf = (d.files || []).length;
-    return '<div class="doc-row" data-id="' + d.id + '"><div class="dr-main"><div class="dr-title">' + escapeHtml(title) + '</div><div class="dr-sub">' + escapeHtml(parts.join(' · ')) + '</div>' +
+    return '<div class="doc-row doc-row3" data-id="' + d.id + '"><div class="dr-main"><div class="dr-title">' + escapeHtml(title) + '</div>' +
       (d.note ? '<div class="dr-note">' + escapeHtml(d.note) + '</div>' : '') + exp + '</div>' +
-      '<div class="dr-side">' + (d.price != null && d.price !== '' ? '<div class="dr-price">' + fmtEUR(d.price) + '</div>' : '') +
-      '<div class="dr-act">' + (nf ? '<button class="icon-action" data-act="view" title="Ver archivos">' + ICONS.clip + '<small>' + nf + '</small></button>' : '') +
-      '<button class="icon-action" data-act="edit" title="Editar">' + ICONS.edit + '</button><button class="icon-action danger" data-act="del" title="Eliminar">' + ICONS.trash + '</button></div></div></div>';
+      '<div class="dr-type"><div class="dr-type-main">' + escapeHtml(type) + '</div>' + (parts.length ? '<div class="dr-sub">' + escapeHtml(parts.join(' · ')) + '</div>' : '') + '</div>' +
+      '<div class="dr-side3">' + (d.price != null && d.price !== '' ? '<span class="dr-price">' + fmtEUR(d.price) + '</span>' : '') +
+      (nf ? '<button class="icon-action" data-act="view" title="Ver archivos">' + ICONS.clip + '<small>' + nf + '</small></button>' : '') +
+      '<button class="rev-more" data-act="menu" aria-label="Opciones">' + ICONS.dots + '</button></div></div>';
   }).join('');
+}
+function openDocMenu(btn, d){
+  closeRevMenu();
+  const items = [['Editar', ()=>openDocForm(d)], ['Eliminar', ()=>askDeleteDoc(d), true]];
+  const m = document.createElement('div'); m.id = 'revMenu'; m.className = 'rev-menu';
+  items.forEach(([label, fn, danger])=>{ const b = document.createElement('button'); b.type = 'button'; b.textContent = label; if(danger) b.className = 'danger'; b.addEventListener('click', ()=>{ closeRevMenu(); fn(); }); m.appendChild(b); });
+  document.body.appendChild(m);
+  const r = btn.getBoundingClientRect(), h = m.offsetHeight;
+  m.style.minWidth = '150px';
+  m.style.right = Math.max(8, window.innerWidth - r.right) + 'px';
+  m.style.top = (r.bottom + 6 + h > window.innerHeight - 8 ? Math.max(8, r.top - 6 - h) : r.bottom + 6) + 'px';
+  const t0 = Date.now(), off = ev=>{ if(!ev.target.closest('#revMenu')) closeRevMenu(); }, onScroll = ()=>{ if(Date.now() - t0 > 300) closeRevMenu(); };
+  setTimeout(()=>document.addEventListener('click', off, true), 0);
+  window.addEventListener('scroll', onScroll, true);
+  revMenuOff = ()=>{ document.removeEventListener('click', off, true); window.removeEventListener('scroll', onScroll, true); };
 }
 function fillDocSubs(cat, selected){
   const subs = DOC_SUBS[cat] || [], sel = document.getElementById('d_sub');
@@ -3272,6 +3294,7 @@ function setupDocs(){
   document.getElementById('docsList').addEventListener('click', e=>{
     const b = e.target.closest('[data-act]'); if(!b) return;
     const d = state.docs.find(x=>String(x.id) === b.closest('.doc-row').dataset.id); if(!d) return;
+    if(b.dataset.act === 'menu') return openDocMenu(b, d);
     ({ view: openDocFiles, edit: openDocForm, del: askDeleteDoc })[b.dataset.act](d);
   });
   document.getElementById('docViewClose').addEventListener('click', ()=>{ document.getElementById('docViewOverlay').classList.remove('open'); document.getElementById('docViewBody').innerHTML = ''; });
