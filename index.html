@@ -1016,7 +1016,7 @@ tr:hover td{background:var(--bg-2)}
 .lang-toggle button.active{background:var(--accent-soft);color:var(--accent)}
 
 /* ---------- toasts ---------- */
-.toasts{position:fixed;top:18px;right:18px;z-index:200;display:flex;flex-direction:column;gap:10px;max-width:340px}
+.toasts{position:fixed;top:92px;right:18px;z-index:200;display:flex;flex-direction:column;gap:10px;max-width:340px}
 .toast{
   display:flex;gap:12px;align-items:flex-start;padding:16px 20px;border-radius:14px;background:var(--bg-card);
   border:1px solid var(--border);box-shadow:0 12px 40px rgba(0,0,0,.28);
@@ -1028,7 +1028,10 @@ tr:hover td{background:var(--bg-2)}
 .toast.warning{color:var(--warning)}
 .toast.danger{color:var(--danger)}
 .toast.info{color:var(--accent)}
-.toast .msg{color:var(--text);font-weight:600}
+.toast .msg{color:var(--text);font-weight:600;flex:1;min-width:0}
+.toast .toast-x{flex-shrink:0;margin:-6px -10px -6px 0;width:28px;height:28px;border:0;border-radius:8px;background:none;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.toast .toast-x:hover{background:var(--bg-2);color:var(--text)}
+.toast .toast-x svg{width:14px;height:14px;margin:0;stroke:currentColor}
 
 /* ---------- modal ---------- */
 .overlay{position:fixed;inset:0;background:rgba(3,6,14,.6);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:150;padding:20px}
@@ -2007,7 +2010,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611030801';   // AAAAMMDDHHMM
+const APP_VERSION = '202611030805';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2108,9 +2111,12 @@ function toast(msg, type='info'){
   const el = document.createElement('div');
   el.className = 'toast ' + type;
   const icon = type==='success' ? ICONS.check : type==='danger' ? ICONS.alert : type==='warning' ? ICONS.alert : ICONS.clock;
-  el.innerHTML = icon + '<span class="msg">'+msg+'</span>';
+  el.innerHTML = icon + '<span class="msg">'+msg+'</span><button type="button" class="toast-x" aria-label="Cerrar"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>';
   box.appendChild(el);
-  setTimeout(()=>{ el.style.transition='opacity .3s'; el.style.opacity='0'; setTimeout(()=>el.remove(),300); }, 4200);
+  let timer;
+  const close = ()=>{ clearTimeout(timer); el.style.transition='opacity .3s'; el.style.opacity='0'; setTimeout(()=>el.remove(),300); };
+  el.querySelector('.toast-x').addEventListener('click', close);
+  timer = setTimeout(close, 4200);
 }
 
 /* ---------------- navigation ---------------- */
