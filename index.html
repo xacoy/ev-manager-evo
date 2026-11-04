@@ -1566,12 +1566,13 @@ html.car .chg-tablecard{display:none!important}
                 <div class="rd-sub"><span class="rd-status" id="rdStatus"></span><span id="rdAgo"></span></div>
               </div>
             </div>
-            <button type="button" class="btn btn-primary" id="readingOpenBtn">Actualizar lecturas</button>
+            <div class="set-btns"><button type="button" class="btn btn-ghost" id="readingCsvBtn">Importar CSV de BYD</button><button type="button" class="btn btn-primary" id="readingOpenBtn">Actualizar lecturas</button></div>
+            <input type="file" id="readingCsvFile" accept=".csv,text/csv" style="display:none">
           </div>
           <div class="rd-tiles" id="rdTiles"></div>
           <div class="rd-between" id="rdBetween"></div>
           <details class="rd-details" id="rdDetails"><summary id="rdSummary">Historial</summary><div class="rd-hist" id="rdHist"></div></details>
-          <p class="rd-help">Abre la app de BYD → <b>Consumo de energía</b> y copia estos datos cada pocos días. Con dos lecturas la app calcula el consumo real entre ellas, sin estimar con el % de batería.</p>
+          <p class="rd-help">Abre la app de BYD → <b>Consumo de energía</b> y copia estos datos cada pocos días. Con dos lecturas la app calcula el consumo real entre ellas, sin estimar con el % de batería. También puedes importar el CSV de <b>Mis datos</b> de la app de BYD: solo se leen km, consumos, SOC y presiones, en tu móvil, y no se guarda nada personal.</p>
         </div>
 
         <div class="card set-card" id="vehicleCard">
@@ -2010,7 +2011,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611030805';   // AAAAMMDDHHMM
+const APP_VERSION = '202611041620';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -3715,7 +3716,7 @@ function renderReadings(){
     st.className = 'rd-status ' + (stale ? 'stale' : 'ok'); st.textContent = stale ? 'Toca actualizar' : 'Al día';
     document.getElementById('rdWhen').textContent = fmtDate(last.date) + ' · ' + last.time;
     document.getElementById('rdAgo').textContent = readingAgoText(d);
-    tiles.innerHTML = tile('Km totales', fmtNum(last.km), 'km') + tile('Consumo acumulado', nf(last.aec, 1), 'kWh/100 km') + (last.recent > 0 ? tile('Consumo reciente', nf(last.recent, 1), 'kWh/100 km') : '');
+    tiles.innerHTML = tile('Km totales', fmtNum(last.km), 'km') + tile('Consumo acumulado', nf(last.aec, 1), 'kWh/100 km') + (last.recent > 0 ? tile('Consumo reciente', nf(last.recent, 1), 'kWh/100 km') : '') + (last.soc >= 0 && last.soc != null ? tile('Batería (SOC)', nf(last.soc, 0), '%') : '') + (last.tires && last.tires.length ? tile('Neumáticos', last.tires.map(t=>nf(t / 100, 1)).join(' · '), 'bar') : '');
   }
   const bt = document.getElementById('rdBetween');
   if(list.length >= 2){
@@ -3811,6 +3812,50 @@ function saveReading(e){
   closeReadingForm();
   renderReadings(); renderDashboard(); renderAlerts();
   toast('Lectura guardada', 'success');
+}
+/* ---- importar el CSV de «Mis datos» de la app de BYD (solo datos técnicos; nada personal) ---- */
+function parseCsv(text){
+  const rows = []; let row = [], cur = '', q = false;
+  for(let i = 0; i < text.length; i++){
+    const c = text[i];
+    if(q){ if(c === '"'){ if(text[i + 1] === '"'){ cur += '"'; i++; } else q = false; } else cur += c; }
+    else if(c === '"') q = true;
+    else if(c === ','){ row.push(cur); cur = ''; }
+    else if(c === '\n'){ row.push(cur); rows.push(row); row = []; cur = ''; }
+    else if(c !== '\r') cur += c;
+  }
+  if(cur || row.length){ row.push(cur); rows.push(row); }
+  return rows;
+}
+function bydTime(str){   // «11/4/26 15:50» → mes/día/año hora:min
+  const m = /^(\d{1,2})\/(\d{1,2})\/(\d{2,4})\s+(\d{1,2}):(\d{2})/.exec(String(str || '').trim()); if(!m) return null;
+  const y = Number(m[3]) < 100 ? 2000 + Number(m[3]) : Number(m[3]);
+  const d = new Date(y, Number(m[1]) - 1, Number(m[2]), Number(m[4]), Number(m[5]));
+  return isNaN(d) ? null : d;
+}
+function importCarCsv(text){
+  const rows = parseCsv(text.replace(/^﻿/, '')), f = {};
+  rows.forEach(r=>{ if(r.length >= 3 && r[1]) f[r[1].trim()] = { v: (r[2] || '').trim(), t: (r[4] || '').trim() }; });
+  const num = k => { const o = f[k]; if(!o) return null; const m = /^-?\d+(?:[.,]\d+)?/.exec(o.v); return m ? Number(m[0].replace(',', '.')) : null; };
+  const km = num('Total Vehicle Mileage'), aec = num('Cumulative Electricity Consumption Data');
+  if(!(km > 0) || !(aec >= 5 && aec <= 60)){ toast('No parece el CSV de datos del coche de BYD (faltan los km o el consumo)', 'warning'); return; }
+  let recent = num('Past 50 km Electricity'); if(!(recent >= 5 && recent <= 60)) recent = null;
+  let soc = num('SOC'); if(!(soc >= 0 && soc <= 100)) soc = null;
+  const tires = ['Left Front', 'Right Front', 'Left Rear', 'Right Rear'].map(n=>num(n + ' Tire Pressure Value'));
+  const okTires = tires.every(t=>t > 0) ? tires : null;
+  const d = bydTime(f['Total Vehicle Mileage'].t) || new Date();
+  const ts = d.getTime(), pad = n=>String(n).padStart(2, '0');
+  const date = d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()), time = pad(d.getHours()) + ':' + pad(d.getMinutes());
+  state.carReadings = state.carReadings || [];
+  if(state.carReadings.some(r=>r.ts === ts)){ toast('Esa lectura (' + fmtDate(date) + ' · ' + time + ') ya estaba importada', 'info'); return; }
+  const prev = readingList().filter(r=>r.ts < ts).pop(), next = readingList().find(r=>r.ts > ts);
+  if(prev && km < prev.km){ toast('Los km del CSV (' + fmtNum(km) + ') son menores que los de la lectura anterior (' + fmtNum(prev.km) + ')', 'warning'); return; }
+  if(next && km > next.km){ toast('Los km del CSV (' + fmtNum(km) + ') son mayores que los de una lectura posterior', 'warning'); return; }
+  state.carReadings.push({ id: ts, ts, date, time, km, aec, recent, soc, tires: okTires, src: 'csv' });
+  if(!next){ state.config.carAec = aec; state.config.currentKm = Math.max(Number(state.config.currentKm) || 0, km); }
+  saveState();
+  renderReadings(); renderDashboard(); renderAlerts();
+  toast('Importado: ' + fmtNum(km) + ' km · ' + nf(aec, 1) + ' kWh/100 km' + (soc != null ? ' · SOC ' + nf(soc, 0) + ' %' : ''), 'success');
 }
 function deleteReading(id){
   state.carReadings = (state.carReadings || []).filter(r=>r.id !== id);
@@ -4272,6 +4317,11 @@ function setupEventListeners(){
   document.getElementById('readingForm').addEventListener('submit', saveReading);
   document.getElementById('setGroups').addEventListener('click', e=>{ const v = e.target.closest('.set-view'); if(v) startSettingEdit(v.closest('.set-tile').dataset.key); });
   document.getElementById('readingOpenBtn').addEventListener('click', openReadingForm);
+  document.getElementById('readingCsvBtn').addEventListener('click', ()=>document.getElementById('readingCsvFile').click());
+  document.getElementById('readingCsvFile').addEventListener('change', e=>{
+    const file = e.target.files[0]; e.target.value = ''; if(!file) return;
+    const fr = new FileReader(); fr.onload = ()=>importCarCsv(String(fr.result || '')); fr.onerror = ()=>toast('No se pudo leer el archivo', 'warning'); fr.readAsText(file);
+  });
   document.getElementById('readingCancel').addEventListener('click', closeReadingForm);
   document.getElementById('doneForm').addEventListener('submit', submitDone);
   document.getElementById('doneCancel').addEventListener('click', closeDone);
