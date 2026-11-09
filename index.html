@@ -1594,7 +1594,7 @@ html.car #page-stats .card p,html.car #page-stats .card span{font-size:inherit}
 .hg-bar i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .6s var(--ease)}
 .hg-bar.bad i{background:linear-gradient(90deg,#f2b6a6,#e58a74)}
 .hg-a .hg-bar+.hg-bar{margin-top:6px}
-.hg-spark{width:100%;flex:1 1 0;min-height:28px;height:auto;margin:clamp(8px,4cqh,16px) 0 clamp(6px,3cqh,14px);overflow:visible}
+.hg-spark{width:100%;flex:none;height:clamp(40px,30cqh,120px);margin:clamp(14px,8cqh,28px) 0 0;overflow:visible}
 #sideConsSub{display:none!important}
 .hg-km{justify-content:center}.hg-km .kc{flex-shrink:0}
 .hg-cols{display:flex;align-items:flex-end;gap:clamp(4px,2cqw,9px);flex:1;min-height:0;max-height:clamp(34px,28cqh,110px);margin-top:clamp(6px,3cqh,14px)}
@@ -2311,7 +2311,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611091329';   // AAAAMMDDHHMM
+const APP_VERSION = '202611091330';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2821,7 +2821,11 @@ function renderHomeCards(){
     const vals = socSegments().slice(-5).map(x=>x.consBattery);
     if(vals.length >= 2){
       const lo = Math.min(...vals), hi = Math.max(...vals), rg = (hi - lo) || 1;
-      sp.innerHTML = '<polyline fill="none" stroke="var(--accent-2)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" points="' + vals.map((v,i)=>(i / (vals.length - 1) * 200).toFixed(1) + ',' + (44 - (v - lo) / rg * 38).toFixed(1)).join(' ') + '"/>';
+      const pts = vals.map((v,i)=>[i / (vals.length - 1) * 200, 42 - (v - lo) / rg * 34]);
+      const line = pts.map(q=>q[0].toFixed(1) + ',' + q[1].toFixed(1)).join(' ');
+      sp.innerHTML = '<defs><linearGradient id="spG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--accent-2)" stop-opacity=".35"/><stop offset="1" stop-color="var(--accent-2)" stop-opacity="0"/></linearGradient></defs>' +
+        '<polygon fill="url(#spG)" points="0,50 ' + line + ' 200,50"/>' +
+        '<polyline fill="none" stroke="var(--accent-2)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" points="' + line + '"/>';
     } else sp.innerHTML = '<line x1="0" y1="28" x2="200" y2="28" stroke="var(--border-strong)" stroke-width="2" stroke-dasharray="4 6" vector-effect="non-scaling-stroke"/>';
   }
 }
