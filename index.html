@@ -595,6 +595,17 @@ button{cursor:pointer}
 .dash-activity{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 16px}
 .dash-activity .card-head{margin-bottom:4px}
 
+/* Inicio simple: solo coche, 4 datos clave y accesos (sin curiosidades, actividad ni botón Cambiar) */
+html.home-simple #page-dashboard .fun-grid,
+html.home-simple #page-dashboard .dash-activity,
+html.home-simple #page-dashboard .fun-shuffle{display:none!important}
+html.home-simple #page-dashboard .panel-grid{grid-template-columns:minmax(220px,34%) 1fr}
+html.home-simple #page-dashboard .panel-grid .status-tiles-grid{grid-auto-rows:1fr}
+html.home-simple #page-dashboard .info-card-small{padding:18px}
+@media(max-width:1200px){html.home-simple #page-dashboard .panel-grid{grid-template-columns:1fr}}
+html.car.home-simple #page-dashboard .panel-grid{flex:1 1 0;grid-template-columns:minmax(220px,34%) 1fr}
+html.car.home-simple #page-dashboard .save-price{display:block}
+
 /* Resumen de cargas */
 /* Gráficas propias (SVG) */
 .grid-2eq{grid-template-columns:1fr 1fr}
@@ -1274,7 +1285,9 @@ html.car .chg-tablecard{display:none!important}
   html.car #page-dashboard .fun-em{font-size:clamp(22px,min(40cqh,11cqw),46px)}
   html.car #page-dashboard .fun-num{font-size:clamp(16px,min(24cqh,8cqw),34px)}
   html.car #page-dashboard .fun-lbl{font-size:clamp(11px,min(13cqh,5cqw),17px)}
-  html.car #page-dashboard .fun-sub{font-size:clamp(10px,min(11cqh,4.2cqw),14px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  html.car #page-dashboard .fun-sub{font-size:clamp(10px,min(11cqh,4.2cqw),14px);line-height:1.2;white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  html.car #page-dashboard .info-card-small .info-sub{line-height:1.2}
+  @container (max-height:170px){ .save-price{display:none} }
   html.car .fun-shuffle{min-height:40px;padding:6px 16px;font-size:14px}
   html.car .fun-shuffle svg{width:18px;height:18px}
   html.car #page-dashboard .fun-track{margin-top:max(12px,min(10cqh,16px))}
@@ -1438,6 +1451,7 @@ html.car .chg-tablecard{display:none!important}
             <button class="dropdown-item" id="addLinkBtn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Añadir enlace</button>
             <a href="https://github.com/xacoy/ev-manager-evo/raw/master/public/manuals/manual-es.pdf" target="_blank" class="dropdown-item" style="text-decoration:none;color:inherit"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>Manual PDF</a>
             <button class="dropdown-item" id="themeMenuBtn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.9 0 1.7-.8 1.7-1.7 0-.4-.2-.8-.4-1.1-.3-.3-.4-.7-.4-1.1 0-.9.8-1.7 1.7-1.7H16c3.3 0 6-2.7 6-6 0-4.9-4.5-8.4-10-8.4z"/></svg><span>Tema: Oscuro</span></button>
+            <button class="dropdown-item" id="homeViewBtn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg><span>Inicio: Completo</span></button>
             <button class="dropdown-item" id="carModeBtn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17h18v-4l-2-6H5l-2 6z"/><circle cx="7.5" cy="17" r="1.5"/><circle cx="16.5" cy="17" r="1.5"/></svg><span>Modo coche: Auto</span></button>
           </div>
           <input type="file" id="importFile" accept="application/json" style="display:none">
@@ -2011,7 +2025,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611041620';   // AAAAMMDDHHMM
+const APP_VERSION = '202611091200';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -4643,6 +4657,24 @@ function applyCarMode(){
   const b = document.getElementById('carModeBtn');
   if(b) b.querySelector('span').textContent = 'Modo coche: ' + ({auto:'Auto', on:'Sí', off:'No'}[pref]);
 }
+// Vista del Inicio: 'full' (completa) o 'simple' (sin curiosidades ni actividad). Se elige desde el menú ⋮.
+function homeViewPref(){ try{ return localStorage.getItem('homeView') === 'simple' ? 'simple' : 'full'; }catch(e){ return 'full'; } }
+function applyHomeView(){
+  const simple = homeViewPref() === 'simple';
+  document.documentElement.classList.toggle('home-simple', simple);
+  const b = document.getElementById('homeViewBtn');
+  if(b) b.querySelector('span').textContent = 'Inicio: ' + (simple ? 'Simple' : 'Completo');
+  if(typeof fitActivity === 'function') requestAnimationFrame(fitActivity);
+}
+function setupHomeView(){
+  applyHomeView();
+  const b = document.getElementById('homeViewBtn');
+  if(b) b.addEventListener('click', e=>{
+    e.stopPropagation();
+    try{ localStorage.setItem('homeView', homeViewPref() === 'simple' ? 'full' : 'simple'); }catch(err){}
+    applyHomeView();
+  });
+}
 function setupCarMode(){
   applyCarMode();
   window.addEventListener('resize', applyCarMode);
@@ -4662,6 +4694,7 @@ function init(){
   setupDrive();
   setupFullscreen();
   setupCarMode();
+  setupHomeView();
   freezeFuelPrices();   // con el precio guardado en caché, por si ya hay cargas sin precio fijado
   loadFuelPrice();
   applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
