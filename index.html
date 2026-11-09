@@ -1481,7 +1481,8 @@ html:not([data-page="dashboard"])::before{filter:blur(6px);transform:scale(1.06)
   .brand-pill{padding-right:12px}.brand-pill small{display:none}
   .top-right{margin-left:auto}
   .top-right .sync-btn span{display:none}.top-right .sync-btn{padding:0 12px}
-  .top-right #fullscreenBtn,.top-right #reloadBtn{display:none!important}
+  .top-right #fullscreenBtn{display:none!important}
+  .top-right .icon-btn{width:38px;height:38px}.top-right .sync-btn{height:38px}
   .tabs{order:3;width:100%;margin:0;justify-content:space-between}
   .tab-item{flex:1;justify-content:center;padding:10px 6px}.tab-item span{display:none}
   :root{--banner:min(110vw,640px)}
@@ -2246,7 +2247,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611091235';   // AAAAMMDDHHMM
+const APP_VERSION = '202611091237';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
