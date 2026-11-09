@@ -2311,7 +2311,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611091328';   // AAAAMMDDHHMM
+const APP_VERSION = '202611091329';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2818,7 +2818,7 @@ function renderHomeCards(){
   // tendencia del consumo (tramos entre cargas)
   const sp = document.getElementById('homeSpark');
   if(sp){
-    const vals = socSegments().slice(-8).map(x=>x.consBattery);
+    const vals = socSegments().slice(-5).map(x=>x.consBattery);
     if(vals.length >= 2){
       const lo = Math.min(...vals), hi = Math.max(...vals), rg = (hi - lo) || 1;
       sp.innerHTML = '<polyline fill="none" stroke="var(--accent-2)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" points="' + vals.map((v,i)=>(i / (vals.length - 1) * 200).toFixed(1) + ',' + (44 - (v - lo) / rg * 38).toFixed(1)).join(' ') + '"/>';
