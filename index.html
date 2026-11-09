@@ -792,7 +792,7 @@ button{cursor:pointer}
 .dr-title{font-size:14.5px;font-weight:700;color:var(--text);overflow-wrap:anywhere}
 .dr-sub{font-size:12px;color:var(--text-faint);margin-top:2px;overflow-wrap:anywhere}
 .dr-note{font-size:12.5px;color:var(--text-dim);margin-top:4px;white-space:pre-wrap;overflow-wrap:anywhere}
-.dr-note.clamp{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.dr-note.clamp{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .dr-exp{font-size:12px;font-weight:700;margin-top:3px}
 .dr-exp.bad{color:var(--danger)} .dr-exp.soon{color:var(--warning)}
 .dr-side{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0}
@@ -2248,7 +2248,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611091242';   // AAAAMMDDHHMM
+const APP_VERSION = '202611091248';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -3462,7 +3462,7 @@ function renderDocs(){
     const nf = (d.files || []).length;
     return '<div class="doc-row doc-row3" data-id="' + d.id + '"><div class="dr-main"><div class="dr-title">' + escapeHtml(title) + '</div>' +
       (meta ? '<div class="dr-sub">' + escapeHtml(meta) + '</div>' : '') +
-      (d.note ? '<div class="dr-note">' + escapeHtml(d.note) + '</div>' : '') + exp + '</div>' +
+      (d.note ? '<div class="dr-note clamp" title="' + escapeAttr(d.note) + '">' + escapeHtml(d.note) + '</div>' : '') + exp + '</div>' +
       '<div class="dr-type"><span class="dr-chip">' + escapeHtml(docCat(d)) + '</span></div>' +
       '<div class="dr-side3">' + (d.price != null && d.price !== '' ? '<span class="dr-price">' + fmtEUR(d.price) + '</span>' : '') +
       (nf ? '<button class="icon-action" data-act="view" title="Ver archivos">' + ICONS.clip + '<small>' + nf + '</small></button>' : '') +
