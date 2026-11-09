@@ -1446,7 +1446,7 @@ html:not([data-page="dashboard"])::before{filter:blur(6px);transform:scale(1.06)
 .top-right .icon-btn,.top-right .sync-btn{background:var(--glass);border-color:var(--glass-bd);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
 /* Inicio */
 #page-dashboard{max-width:none}
-.home-grid{display:grid;grid-template-columns:minmax(240px,22%) 1fr minmax(240px,22%);grid-template-rows:repeat(3,minmax(0,1fr));align-items:stretch;grid-template-areas:"a . l" "km . n" "r . q";gap:14px;height:calc(100dvh - 130px)}
+.home-grid{display:grid;grid-template-columns:minmax(240px,22%) 1fr minmax(240px,22%);grid-template-rows:repeat(3,minmax(0,1fr));align-items:stretch;grid-template-areas:"a clock l" "km . n" "r . q";gap:14px;height:calc(100dvh - 130px)}
 .hg-photo{display:none}
 .hg-a{grid-area:a}.hg-km{grid-area:km}.hg-km .kc{display:grid;grid-template-columns:1fr 1fr;gap:12px}.hg-km .kc>div{min-width:0}.hg-r{grid-area:r}.hg-l{grid-area:l}.hg-n{grid-area:n}.hg-q{grid-area:q}
 .home-grid .info-card-small{padding:22px 24px;border-radius:26px;justify-content:center;min-width:0;box-shadow:0 10px 28px rgba(0,0,0,.14)}
@@ -1595,6 +1595,13 @@ html.car #page-stats .card p,html.car #page-stats .card span{font-size:inherit}
 .hg-cols{display:flex;align-items:flex-end;gap:clamp(4px,2cqw,9px);flex:1;min-height:0;max-height:clamp(34px,28cqh,110px);margin-top:clamp(6px,3cqh,14px)}
 .hg-cols i{flex:1;border-radius:6px 6px 0 0;background:linear-gradient(0deg,var(--accent),var(--accent-2));min-height:6px}
 .hg-n .info-value{font-size:clamp(28px,min(26cqh,18cqw),64px)}
+
+/* Reloj sobre la foto (zona central, arriba) */
+.hg-clock{grid-area:clock;justify-self:center;align-self:start;text-align:center;color:#fff;text-shadow:0 2px 14px rgba(0,0,0,.65),0 0 3px rgba(0,0,0,.5);pointer-events:none;padding-top:clamp(4px,2vh,18px)}
+.hg-clock b{display:block;font:300 clamp(48px,9vh,92px)/1 var(--font-display);letter-spacing:2px;font-variant-numeric:tabular-nums}
+.hg-clock span{display:block;font-size:clamp(13px,2.2vh,20px);opacity:.9;margin-top:4px;letter-spacing:.5px}
+.hg-clock span::first-letter{text-transform:uppercase}
+@media(max-width:820px){.hg-clock{display:none}}
 /* modo coche */
 html.car .topbar{padding:12px 20px 6px}
 html.car .brand-pill b{font-size:17px}html.car .brand-pill small{font-size:13px}
@@ -1675,6 +1682,7 @@ html.car .home-grid{flex:1;min-height:0;height:auto;grid-template-columns:minmax
       <section class="page" id="page-dashboard">
         <div class="home-grid">
           <div class="hg-photo"></div>
+          <div class="hg-clock" id="homeClock"><b></b><span></span></div>
           <div class="info-card-small hg-a">
             <div class="info-label">Ahorro vs gasolina</div>
             <div class="info-value" data-save="value">—</div>
@@ -2215,7 +2223,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611091227';   // AAAAMMDDHHMM
+const APP_VERSION = '202611091229';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2690,7 +2698,15 @@ function renderFunTiles(km, totalKwh){
   set('funBatSub', 'Veces que has llenado la batería');
 }
 /* Tarjetas de la derecha del Inicio: última carga (con su batería de 10 celdas, sin %) y resumen de cargas */
+function tickClock(){
+  const el = document.getElementById('homeClock'); if(!el) return;
+  const d = new Date();
+  el.firstElementChild.textContent = d.toLocaleTimeString('es-ES', { hour:'2-digit', minute:'2-digit' });
+  el.lastElementChild.textContent = d.toLocaleDateString('es-ES', { weekday:'long', day:'numeric', month:'long' });
+}
+setInterval(tickClock, 15000);
 function renderHomeCards(){
+  tickClock();
   const el = document.getElementById('homeLast'), cn = document.getElementById('homeCount');
   if(!el || !cn) return;
   const last = [...state.charges].sort(chargeCmpDesc)[0];
