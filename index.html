@@ -1516,6 +1516,7 @@ html:not([data-page="dashboard"])::before{filter:blur(6px);transform:scale(1.06)
 /* ================= Cargas, Documentos y Datos con el estilo nuevo (escritorio y coche) ================= */
 @media(min-width:821px){
   #page-charges,#page-docs,#page-stats{max-width:none}
+  html:not(.car) #page-docs{max-width:1080px}
   .content{padding:6px 24px 28px}
   /* pestañas internas en píldora, como el menú de arriba */
   .doc-tabs{width:fit-content;max-width:100%;margin:0 auto 16px;border-radius:99px;padding:5px;background:var(--glass);border-color:var(--glass-bd);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
@@ -2247,7 +2248,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611091240';   // AAAAMMDDHHMM
+const APP_VERSION = '202611091242';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
