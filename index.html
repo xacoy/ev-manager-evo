@@ -1192,6 +1192,27 @@ html[data-page="charges"] .topbar h1{visibility:hidden}
 #estTip[hidden]{display:none}
 .chg-all{margin-top:14px}
 .modal-wide{max-width:560px;max-height:92vh;overflow:auto}
+/* Formulario de cargas: cómodo con el dedo (móvil) y en el coche */
+#chargeForm .field-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+@media(max-width:560px){
+  #chargeFormOverlay{padding:0;align-items:flex-end}
+  #chargeFormOverlay .modal{max-width:none;max-height:94vh;border-radius:22px 22px 0 0;padding:20px 16px calc(20px + env(safe-area-inset-bottom))}
+  #chargeFormOverlay .modal h3{font-size:20px;margin-bottom:14px}
+  #chargeForm .field{margin-bottom:16px}
+  #chargeForm .field label{font-size:13px}
+  #chargeForm .field input,#chargeForm .field select{min-height:56px;font-size:18px;padding:0 14px}
+  #chargeForm .btn{min-height:56px;font-size:18px}
+  #chargeDeleteBtn{display:block;width:100%;margin:16px 0 0!important;padding:0!important;min-height:52px;border:2px solid var(--danger)!important;border-radius:14px;color:var(--danger)!important;font-size:16px!important;text-decoration:none!important;font-weight:700}
+}
+html.car #chargeFormOverlay .modal{max-width:880px;padding:24px 32px}
+html.car #chargeFormOverlay .modal h3{font-size:26px;margin-bottom:14px}
+html.car #chargeForm .field-row{gap:20px}
+html.car #chargeForm .field{margin-bottom:16px;gap:8px}
+html.car #chargeForm .field label{font-size:16px}
+html.car #chargeForm .field input,html.car #chargeForm .field select{min-height:60px;font-size:22px;padding:0 18px}
+html.car #chargeForm .btn{min-height:64px;font-size:22px}
+html.car #chargeDeleteBtn{width:100%;margin:14px 0 0!important;padding:0!important;min-height:56px;border:2px solid var(--danger)!important;border-radius:14px;color:var(--danger)!important;font-size:18px!important;text-decoration:none!important;font-weight:700}
+
 .chg-tablecard{display:none;padding:6px 16px}
 .chg-act .icon-action .lbl{display:none}
 .chg-table td.when .loc2{display:none}
@@ -1845,8 +1866,8 @@ html.car .chg-tablecard{display:none!important}
                 <div class="field"><label>Hora</label><input id="c_time" type="time"></div>
               </div>
               <div class="field-row">
-                <div class="field"><label>kWh cargados <span class="opt-hint">(opcional · si no lo sabes, se estima con el % de batería)</span></label><input id="c_kwh" type="number" step="0.01" min="0" placeholder="0.00"></div>
-                <div class="field"><label>Coste (€) <span class="opt-hint">(opcional, 0 = gratis)</span></label><input id="c_cost" type="number" step="0.01" min="0" placeholder="0.00"></div>
+                <div class="field"><label>kWh cargados</label><input id="c_kwh" type="number" step="0.01" min="0" placeholder="0.00"></div>
+                <div class="field"><label>Coste (€)</label><input id="c_cost" type="number" step="0.01" min="0" placeholder="0.00"></div>
               </div>
               <div class="field-row">
                 <div class="field"><label>Km en el momento</label><input id="c_km" type="number" min="0" placeholder="opcional"></div>
@@ -1860,8 +1881,8 @@ html.car .chg-tablecard{display:none!important}
                 </div>
               </div>
               <div class="field-row">
-                <div class="field"><label>Batería al empezar (%) <span class="opt-hint">(opcional)</span></label><input id="c_soc0" type="number" min="0" max="100" step="1" placeholder="Ej. 35"></div>
-                <div class="field"><label>Batería al terminar (%) <span class="opt-hint">(opcional)</span></label><input id="c_soc1" type="number" min="0" max="100" step="1" placeholder="Ej. 80"></div>
+                <div class="field"><label>Batería inicial (%)</label><input id="c_soc0" type="number" min="0" max="100" step="1" placeholder="Ej. 35"></div>
+                <div class="field"><label>Batería final (%)</label><input id="c_soc1" type="number" min="0" max="100" step="1" placeholder="Ej. 80"></div>
               </div>
               <div class="field" id="c_location_other_wrap" style="display:none">
                 <label>Especifica el lugar</label>
@@ -2101,7 +2122,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611091023';   // AAAAMMDDHHMM
+const APP_VERSION = '202611091025';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
