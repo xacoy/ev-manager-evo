@@ -1446,7 +1446,7 @@ html:not([data-page="dashboard"])::before{filter:blur(6px);transform:scale(1.06)
 .top-right .icon-btn,.top-right .sync-btn{background:var(--glass);border-color:var(--glass-bd);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
 /* Inicio */
 #page-dashboard{max-width:none}
-.home-grid{display:grid;grid-template-columns:minmax(230px,20%) 1fr minmax(230px,20%);grid-template-rows:repeat(3,auto);align-content:space-between;align-items:start;grid-template-areas:"a . l" "km . n" "r . q";gap:14px;height:calc(100dvh - 130px)}
+.home-grid{display:grid;grid-template-columns:minmax(230px,20%) 1fr minmax(230px,20%);grid-template-rows:repeat(3,minmax(0,1fr));align-items:stretch;grid-template-areas:"a . l" "km . n" "r . q";gap:14px;height:calc(100dvh - 130px)}
 .hg-photo{display:none}
 .hg-a{grid-area:a}.hg-km{grid-area:km}.hg-km .kc{display:grid;grid-template-columns:1fr 1fr;gap:12px}.hg-km .kc>div{min-width:0}.hg-r{grid-area:r}.hg-l{grid-area:l}.hg-n{grid-area:n}.hg-q{grid-area:q}
 .home-grid .info-card-small{padding:22px 24px;border-radius:26px;justify-content:center;min-width:0;box-shadow:0 10px 28px rgba(0,0,0,.14)}
@@ -1492,6 +1492,25 @@ html:not([data-page="dashboard"])::before{filter:blur(6px);transform:scale(1.06)
   .hg-photo{display:block;grid-area:ph;height:min(43vw,250px)}
 }
 @media(min-width:561px) and (max-width:820px){:root{--banner:60vw}html::before{background-size:cover;background-position:60% 40%}.hg-photo{height:42vw}}
+
+/* Escritorio y coche: las tarjetas llenan todo el alto y el texto se adapta al tamaño real de cada una */
+@media(min-width:821px){
+  .home-grid .info-card-small{container-type:size;padding:0 clamp(16px,8cqw,28px);justify-content:center;gap:0}
+  .home-grid .info-label{font-size:clamp(14px,min(9.5cqh,7.4cqw),26px);margin-bottom:clamp(2px,2cqh,10px)}
+  .home-grid .info-value{font-size:clamp(30px,min(36cqh,23cqw),110px);line-height:1.05}
+  .home-grid .info-sub{font-size:clamp(12px,min(8cqh,5.6cqw),21px);margin-top:clamp(2px,2cqh,8px);line-height:1.25}
+  .hg-km .info-value{font-size:clamp(26px,min(34cqh,15.5cqw),84px)}
+  .hg-km .info-label{font-size:clamp(13px,min(8cqh,5.6cqw),22px);white-space:nowrap}
+  .hg-a .info-sub{font-size:clamp(11px,min(7.5cqh,4.1cqw),19px);white-space:nowrap}
+  .hl-cells{margin:clamp(6px,5cqh,18px) 0 clamp(4px,3cqh,10px)}.hl-cells i{height:clamp(22px,20cqh,64px)}
+  .hl-foot{font-size:clamp(13px,min(9cqh,6cqw),22px)}
+  .home-grid .car-badge{font-size:clamp(10px,5cqh,13px)}
+  .hg-q{justify-content:flex-start;padding-top:clamp(14px,8cqh,24px)}
+  .hg-q .quicklinks-grid{gap:clamp(8px,3cqh,14px);margin-top:clamp(8px,4cqh,16px)}
+  .hg-q .ql-tile{padding:clamp(8px,4cqh,16px) clamp(14px,6cqw,22px)}
+  .hg-q .ql-tile-label{font-size:clamp(14px,min(7.5cqh,5.6cqw),22px)}
+  .hg-q .ql-tile-icon,.hg-q .ql-tile-icon svg{width:clamp(18px,7cqh,26px);height:clamp(18px,7cqh,26px)}
+}
 /* modo coche */
 html.car .topbar{padding:12px 20px 6px}
 html.car .brand-pill b{font-size:17px}html.car .brand-pill small{font-size:13px}
@@ -1500,8 +1519,6 @@ html.car .tab-item{padding:11px 24px;font-size:17px}html.car .tab-item svg{width
 html.car .nav-rail{display:none!important}
 html.car #page-dashboard.active{display:flex;flex-direction:column;flex:1 1 auto;min-height:0}
 html.car .home-grid{flex:1;min-height:0;height:auto;grid-template-columns:minmax(240px,21%) 1fr minmax(240px,21%);gap:12px}
-html.car .home-grid .info-card-small{padding:14px 20px}
-html.car .hl-cells i{height:34px}
 html.car .hg-q .ql-tile{padding:10px 18px;font-size:15px}html.car .hg-q .ql-tile-label{font-size:15px}
 </style>
 </head>
@@ -2113,7 +2130,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611091203';   // AAAAMMDDHHMM
+const APP_VERSION = '202611091205';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
