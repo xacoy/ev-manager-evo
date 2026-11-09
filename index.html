@@ -595,14 +595,6 @@ button{cursor:pointer}
 .dash-activity .card-head{margin-bottom:4px}
 
 /* Inicio simple: coche, 4 datos clave, actividad reciente grande y accesos (sin curiosidades ni botón Cambiar) */
-html.home-simple #page-dashboard .fun-grid,
-html.home-simple #page-dashboard .fun-shuffle{display:none!important}
-html.home-simple #page-dashboard .panel-grid{grid-template-columns:minmax(220px,34%) 1fr}
-html.home-simple #page-dashboard .panel-grid .status-tiles-grid{grid-auto-rows:1fr}
-html.home-simple #page-dashboard .info-card-small{padding:18px}
-@media(max-width:1200px){html.home-simple #page-dashboard .panel-grid{grid-template-columns:1fr}}
-html.home-simple #page-dashboard .info-card-small .info-sub{display:none}
-html.home-simple #page-dashboard .info-label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #page-dashboard .act-txt{display:none}
 .act-short{display:none}
 #page-dashboard .act-full,#page-dashboard .act-cost{display:none}
@@ -636,27 +628,12 @@ html.home-simple #page-dashboard .info-label{white-space:nowrap;overflow:hidden;
 #page-dashboard .act-date{grid-column:1;grid-row:2;margin:0}
 #page-dashboard .act-bar{grid-column:2;grid-row:1/3;margin:0}
 #page-dashboard .act-bar{display:block}
-html.home-simple #page-dashboard .dash-activity{padding:16px 20px}
 #page-dashboard .act-row{gap:16px;padding:14px 0}
 #page-dashboard .act-title{font-size:26px;font-weight:800;line-height:1.2}
 #page-dashboard .act-date{font-size:16px;margin-top:4px}
 #page-dashboard .act-cost{font-size:20px}
 #page-dashboard .act-cost .chg-chip{font-size:16px;padding:6px 16px}
-html.car.home-simple #page-dashboard .dash-activity{flex:1 1 0;padding:10px 20px}
-html.car #page-dashboard .act-row{padding:6px 0;gap:14px}
-html.car #page-dashboard .act-cells{height:42px}
-html.car:not(.home-simple) #page-dashboard .act-cells{height:20px}
-html.car:not(.home-simple) #page-dashboard .act-date{font-size:13px;white-space:nowrap}
-html.car:not(.home-simple) #page-dashboard .act-short b{font-size:1.1em}
-html.car:not(.home-simple) #page-dashboard .act-shell em{font-size:15px}
-html.car:not(.home-simple) #page-dashboard .act-title{font-size:18px}
-html.car:not(.home-simple) #page-dashboard .act-row{padding:2px 0}
-html.car:not(.home-simple) #page-dashboard .act-shell{padding:3px;border-width:2px}
-html.car:not(.home-simple) #page-dashboard .act-main{grid-template-columns:140px 1fr}
 @media(max-width:560px){#page-dashboard .act-main{grid-template-columns:110px 1fr;column-gap:10px}#page-dashboard .act-title{font-size:20px}#page-dashboard .act-date{font-size:13px;white-space:nowrap}#page-dashboard .act-shell em{font-size:15px}#page-dashboard .act-cells{height:28px}}
-html.car #page-dashboard .act-shell em{font-size:26px}
-html.car #page-dashboard .act-title{font-size:26px}html.car #page-dashboard .act-date{font-size:16px}html.car #page-dashboard .act-cost{font-size:20px}
-html.car.home-simple #page-dashboard .panel-grid{flex:1 1 0;grid-template-columns:minmax(220px,34%) 1fr}
 
 /* Resumen de cargas */
 /* Gráficas propias (SVG) */
@@ -1337,49 +1314,10 @@ html.car .chg-tablecard{display:none!important}
   html.car input,html.car select,html.car textarea{min-height:46px}
   html.car   html.car   html.car .dropdown{max-height:calc(100vh - 80px)}
   /* Inicio: sin scroll, 2 columnas → estado (datos, curiosidades y actividad) a la izquierda, accesos a la derecha a toda altura */
-  html.car #page-dashboard.active{
-    display:grid;grid-template-columns:2.15fr 1fr;grid-template-rows:minmax(0,1fr);
-    gap:12px 16px;min-height:0;flex-shrink:1!important;width:100%;
-  }
-  html.car #page-dashboard .dash-header{grid-column:1;grid-row:1;margin:0;display:flex;flex-direction:column;min-height:0}
-  html.car #page-dashboard .cockpit-card{flex:1;display:flex;flex-direction:column;min-height:0}
-  html.car #page-dashboard .cockpit-body{flex:1;min-height:0;gap:10px}
-  html.car #page-dashboard .panel-grid{flex:1.15 1 0;min-height:0;grid-template-columns:minmax(200px,28%) 1fr;gap:10px}
-  html.car #page-dashboard .panel-grid .status-tiles-grid{grid-template-columns:repeat(2,1fr);gap:10px;grid-auto-rows:1fr}
   html.car footer.sig{display:none}
   /* tamaños en función del tamaño real de cada ficha: nunca enormes ni diminutos */
-  html.car #page-dashboard .info-card-small{container-type:size;padding:0 14px;display:flex;flex-direction:column;justify-content:center;gap:4px;min-height:0;min-width:0}
-  html.car #page-dashboard .info-label{font-size:clamp(12px,min(8cqh,6cqw),17px);letter-spacing:.6px;margin:0}
-  html.car #page-dashboard .info-value{font-size:clamp(16px,min(19cqh,calc((100cqw - 28px) / 5.8)),58px);white-space:nowrap}
-  html.car #page-dashboard .info-sub{font-size:clamp(13px,min(9cqh,6cqw),19px);margin:0}
-  html.car #page-dashboard .save-price{font-size:clamp(11px,min(7cqh,4.2cqw),15px)}
-  html.car #page-dashboard .battery-hero{padding:12px;gap:8px;min-height:0;overflow:hidden}
-  html.car #page-dashboard .car-wrap{max-width:none;width:100%;aspect-ratio:auto;flex:1 1 0;min-height:70px}
-  html.car #page-dashboard .fun-grid{flex:1.2 1 0;min-height:0;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:10px}
-  html.car #page-dashboard .fun-tile{container-type:size;min-height:0;padding:0 14px;gap:12px}
-  html.car #page-dashboard .fun-em{font-size:clamp(22px,min(40cqh,11cqw),46px)}
-  html.car #page-dashboard .fun-num{font-size:clamp(16px,min(24cqh,8cqw),34px)}
-  html.car #page-dashboard .fun-lbl{font-size:clamp(11px,min(13cqh,5cqw),17px)}
-  html.car #page-dashboard .fun-sub{font-size:clamp(10px,min(11cqh,4.2cqw),14px);line-height:1.2;white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-  html.car #page-dashboard .info-card-small .info-sub{line-height:1.2}
   @container (max-height:170px){ .save-price{display:none} }
-  html.car .fun-shuffle{min-height:40px;padding:6px 16px;font-size:14px}
-  html.car .fun-shuffle svg{width:18px;height:18px}
-  html.car #page-dashboard .fun-track{margin-top:max(12px,min(10cqh,16px))}
-  html.car #page-dashboard .dash-activity{flex:.95 1 0;min-height:0;overflow:hidden;display:flex;flex-direction:column;padding:8px 16px}
-  html.car #page-dashboard .dash-activity .card-head{flex-shrink:0;margin-bottom:4px}
-  html.car .act-title{font-size:16px}html.car .act-date{font-size:13px}html.car .act-cost{font-size:16px}
-  html.car #page-dashboard .quicklinks-grid{grid-column:2;grid-row:1;margin:0;grid-template-columns:repeat(var(--ql-cols,2),minmax(0,1fr));grid-template-rows:repeat(var(--ql-rows,2),minmax(0,1fr));grid-auto-rows:minmax(0,1fr);gap:10px;min-height:0;overflow:hidden}
-  html.car #page-dashboard .ql-tile{container-type:size;min-height:0;min-width:0;padding:6px;gap:0;overflow:hidden}
-  html.car #page-dashboard .ql-tile-icon{width:min(42cqh,58cqw);height:min(42cqh,58cqw);margin-bottom:min(5cqh,6px)}
-  html.car #page-dashboard .ql-tile-icon svg{width:100%;height:100%}
-  html.car #page-dashboard .ql-tile-label{font-size:clamp(11px,min(13cqh,15cqw),21px);line-height:1.15;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;max-width:100%;overflow-wrap:break-word;hyphens:auto}
-  html.car #page-dashboard[data-qlcols="4"],html.car #page-dashboard[data-qlcols="5"]{grid-template-columns:1.6fr 1fr}
-  html.car #dashRecentActivity{min-height:0;overflow:hidden;flex:1}
-  html.car .act-row{padding:8px 0}
-  html.car .act-title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   /* pantallas bajas (navegador del coche con barras): todo se compacta para que quepa sin desplazar */
-  @container (max-height:112px){ .info-sub:not([data-save]){display:none} }
   @media(max-height:560px){
     html.car .topbar{height:52px}
     html.car .icon-btn,html.car .sync-btn{height:42px}html.car .icon-btn{width:42px}
@@ -1389,7 +1327,6 @@ html.car .chg-tablecard{display:none!important}
     html.car .nav-item .ni-indicator svg{width:26px;height:26px}
     html.car .nav-item .ni-label{font-size:13px}
     html.car .content{padding:8px 16px}
-    html.car #page-dashboard .info-label{line-height:1.1;letter-spacing:.3px}
     html.car .cockpit-card{padding:12px 16px}
     html.car .card-head{margin-bottom:6px}
   }
@@ -1483,6 +1420,91 @@ html.car .chg-tablecard{display:none!important}
   html.car .est{position:relative}
   html.car .est::before{content:"";position:absolute;inset:-22px -10px}
   html.car #estTip{font-size:16px;max-width:min(420px,calc(100vw - 16px))}
+
+/* ================= Diseño cristal con foto: menú arriba, fondo de foto y tarjetas translúcidas (todos los temas) ================= */
+:root{--glass:color-mix(in srgb,var(--bg-card) 70%,transparent);--glass-bd:color-mix(in srgb,var(--text) 14%,transparent);--veil:linear-gradient(180deg,color-mix(in srgb,var(--bg) 72%,transparent),color-mix(in srgb,var(--bg) 84%,transparent))}
+html[data-page="dashboard"]{--veil:linear-gradient(180deg,color-mix(in srgb,var(--bg) 58%,transparent) 0,color-mix(in srgb,var(--bg) 12%,transparent) 30%,color-mix(in srgb,var(--bg) 20%,transparent) 62%,color-mix(in srgb,var(--bg) 72%,transparent) 100%)}
+html::before{content:"";position:fixed;inset:0;z-index:-3;background:url(images/bg-atto3.jpg) 56% 58%/cover no-repeat;pointer-events:none}
+html::after{content:"";position:fixed;inset:0;z-index:-2;background:var(--veil);pointer-events:none}
+html:not([data-page="dashboard"])::before{filter:blur(6px);transform:scale(1.06)}
+.card,.info-card-small,.fun-tile,.chg-save,.chg-mini,.chg-card,.stat-card,.rd-tile,.note-card,.rev-item,.hero-banner,.dash-activity,.ql-tile,.expandable-header,.set-hero,.tag-toggle{background:var(--glass);border-color:var(--glass-bd);-webkit-backdrop-filter:blur(14px) saturate(140%);backdrop-filter:blur(14px) saturate(140%)}
+.card:hover{transform:none}
+.nav-rail,.bottom-nav{display:none!important}
+.topbar{height:auto;padding:14px 24px 8px;border-bottom:0;gap:14px;background:transparent}
+.top-left{display:none}
+.topbar h1{display:none}
+.brand-pill{display:flex;align-items:center;gap:10px;padding:6px 18px 6px 6px;border-radius:99px;background:var(--glass);border:1px solid var(--glass-bd);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);white-space:nowrap;flex-shrink:0}
+.brand-pill .logo{width:40px;height:40px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:var(--on-accent);display:grid;place-items:center}
+.brand-pill .logo svg{width:20px;height:20px}
+.brand-pill b{display:block;font:700 15px var(--font-display);color:var(--text);line-height:1.15}
+.brand-pill small{display:block;font-size:11.5px;color:var(--text-muted);margin-top:1px}
+.tabs{display:flex;gap:4px;margin:0 auto;background:var(--glass);border:1px solid var(--glass-bd);border-radius:99px;padding:5px;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.tab-item{display:flex;align-items:center;gap:8px;padding:9px 20px;border-radius:99px;border:0;background:none;color:var(--text-muted);font:600 14px var(--font);transition:background .2s var(--ease),color .2s var(--ease);white-space:nowrap}
+.tab-item svg{width:18px;height:18px;stroke:currentColor;flex-shrink:0}
+.tab-item:hover{color:var(--text)}
+.tab-item.active{background:var(--accent);color:var(--on-accent);box-shadow:0 6px 16px -6px var(--accent-glow)}
+.top-right .icon-btn,.top-right .sync-btn{background:var(--glass);border-color:var(--glass-bd);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+/* Inicio */
+#page-dashboard{max-width:none}
+.home-grid{display:grid;grid-template-columns:minmax(220px,19%) 1fr minmax(220px,19%);grid-template-rows:repeat(3,minmax(0,1fr));grid-template-areas:"a . l" "km . n" "r . q";gap:14px;height:calc(100dvh - 130px)}
+.hg-photo{display:none}
+.hg-a{grid-area:a}.hg-km{grid-area:km}.hg-km .kc{display:grid;grid-template-columns:1fr 1fr;gap:12px}.hg-km .kc>div{min-width:0}.hg-r{grid-area:r}.hg-l{grid-area:l}.hg-n{grid-area:n}.hg-q{grid-area:q}
+.home-grid .info-card-small{padding:18px 20px;border-radius:26px;justify-content:center;min-width:0;box-shadow:0 10px 28px rgba(0,0,0,.14)}
+.home-grid .info-label{text-transform:none;letter-spacing:0;font-weight:600;font-size:clamp(12px,5cqw,15px);color:var(--text-muted)}
+.home-grid .info-value{font-weight:300;font-size:clamp(24px,14cqw,46px)}
+.hg-km .info-value{font-size:clamp(22px,10.5cqw,40px)}
+.home-grid .info-value small{font-size:.38em;font-weight:500;color:var(--text-muted)}
+.home-grid .info-sub{font-size:clamp(11px,4.6cqw,14px)}
+.home-grid .car-badge{margin-left:6px;vertical-align:1px;font-size:10px;padding:2px 8px}
+.hl-cells{display:flex;gap:4px;margin:10px 0 6px}.hl-cells i{flex:1;height:22px;border-radius:6px;background:color-mix(in srgb,var(--text) 12%,transparent)}.hl-cells i.pre{background:color-mix(in srgb,var(--text) 28%,transparent)}.hl-cells i.on{background:linear-gradient(180deg,var(--accent),var(--accent-2))}
+.hl-foot{font-size:13px;text-align:right}.hl-free{color:var(--success)}
+.hg-q{align-items:flex-start;justify-content:flex-start;overflow:hidden}
+.hg-q .quicklinks-grid{display:flex;flex-wrap:wrap;align-content:flex-start;gap:8px;margin:8px 0 0;grid-template-columns:none}
+.hg-q .ql-tile{flex:0 0 auto;min-height:0;overflow:visible}
+.hg-q{padding-bottom:12px}
+.home-grid .save-price{display:none}
+.home-grid .info-value{white-space:nowrap}
+:root:not([data-deco="off"]) body::before,:root:not([data-deco="off"]) body::after,:root:not([data-deco="off"]) .main::after{display:none!important}
+.hg-q .ql-tile{flex-direction:row;gap:8px;padding:8px 14px;border-radius:99px;font-size:13px;position:relative}
+.hg-q .ql-tile-icon{width:18px;height:18px}.hg-q .ql-tile-icon svg{width:18px;height:18px}
+.hg-q .ql-tile-label{font-size:13px;white-space:nowrap}
+.hg-q .ql-tile-edit,.hg-q .ql-tile-delete{width:20px;height:20px;top:-7px}.hg-q .ql-tile-edit{left:-5px}.hg-q .ql-tile-delete{right:-5px}.hg-q .ql-tile-edit svg{width:11px;height:11px}
+.old-dash{display:none!important}
+@media(max-width:1200px){
+  .topbar{padding:12px 16px 6px}
+  .content{padding:4px 16px 28px}
+  .tab-item{padding:9px 14px}
+}
+@media(max-width:820px){
+  .topbar{flex-wrap:wrap;gap:8px;padding:10px 12px 4px}
+  .brand-pill{padding-right:12px}.brand-pill small{display:none}
+  .top-right{margin-left:auto}
+  .top-right .sync-btn span{display:none}.top-right .sync-btn{padding:0 12px}
+  .top-right #fullscreenBtn,.top-right #reloadBtn{display:none!important}
+  .tabs{order:3;width:100%;margin:0;justify-content:space-between}
+  .tab-item{flex:1;justify-content:center;padding:10px 6px}.tab-item span{display:none}
+  :root{--banner:min(110vw,640px)}
+  html::before{inset:0 0 auto 0;height:var(--banner);background-size:170% auto;background-position:70% 14.5vw}
+  html[data-page="dashboard"]{--veil:linear-gradient(180deg,color-mix(in srgb,var(--bg) 25%,transparent) 0,transparent 35%,var(--bg) var(--banner))}
+  html::after{background:var(--veil)}
+  .home-grid{grid-template-columns:1fr 1fr;grid-template-rows:none;grid-template-areas:"ph ph" "a a" "km km" "r n" "l l" "q q";height:auto;gap:10px}
+  .hg-photo{display:block;grid-area:ph;height:min(43vw,250px)}
+}
+@media(min-width:561px) and (max-width:820px){:root{--banner:60vw}html::before{background-size:cover;background-position:60% 40%}.hg-photo{height:42vw}}
+/* modo coche */
+html.car .topbar{padding:12px 20px 6px}
+html.car .brand-pill b{font-size:17px}html.car .brand-pill small{font-size:13px}
+html.car .brand-pill .logo{width:46px;height:46px}
+html.car .tab-item{padding:11px 24px;font-size:17px}html.car .tab-item svg{width:22px;height:22px}
+html.car .nav-rail{display:none!important}
+html.car #page-dashboard.active{display:flex;flex-direction:column;flex:1 1 auto;min-height:0}
+html.car .home-grid{flex:1;min-height:0;grid-template-columns:minmax(230px,22%) 1fr minmax(230px,22%);gap:12px}
+html.car .home-grid .info-card-small{padding:12px 18px;container-type:size}
+html.car .home-grid .info-label{font-size:clamp(13px,9cqh,18px)}
+html.car .home-grid .info-value{font-size:clamp(24px,26cqh,50px)}
+html.car .home-grid .info-sub{font-size:clamp(12px,9cqh,16px)}
+html.car .hl-cells i{height:clamp(18px,18cqh,30px)}
+html.car .hg-q .ql-tile{padding:10px 18px;font-size:15px}html.car .hg-q .ql-tile-label{font-size:15px}
 </style>
 </head>
 <body>
@@ -1503,17 +1525,11 @@ html.car .chg-tablecard{display:none!important}
   <!-- MAIN -->
   <main class="main">
     <header class="topbar">
-      <div class="top-left">
-        <button class="icon-btn" id="homeBtn" data-page="dashboard" style="display:none">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
-        </button>
-      </div>
+      <div class="top-left" style="display:none"><button class="icon-btn" id="homeBtn" data-page="dashboard" style="display:none"></button></div>
+      <div class="brand-pill"><span class="logo"><svg viewBox="0 0 24 24" stroke-width="0" style="fill:currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span><div><b>BYD Atto 3 <em class="title-accent">EVO</em></b><small><span id="chipKm">— km</span> · <span id="chipBattery">— kWh</span></small></div></div>
       <h1 id="pageTitle">BYD Atto 3 <em class="title-accent">EVO</em></h1>
+      <nav class="tabs" id="topTabs"><button type="button" class="tab-item" data-page="dashboard"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg><span>Inicio</span></button><button type="button" class="tab-item" data-page="charges"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span>Cargas</span></button><button type="button" class="tab-item" data-page="docs"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg><span>Documentos</span></button><button type="button" class="tab-item" data-page="stats"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18M18 17V9M13 17V5M8 17v-4"/></svg><span>Datos</span></button></nav>
       <div class="top-right">
-        <div class="chip">
-          <span class="chip-dot"></span>
-          <div><div class="l1" id="chipKm">— km</div><div class="l2" id="chipBattery">— kWh</div></div>
-        </div>
         <button class="sync-btn" id="syncBtn" type="button" title="Sincronizar con Google Drive">
           <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5M3 21v-5h5"/></svg>
           <span>Sync</span>
@@ -1545,7 +1561,6 @@ html.car .chg-tablecard{display:none!important}
             <button class="dropdown-item" id="addLinkBtn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Añadir enlace</button>
             <a href="https://github.com/xacoy/ev-manager-evo/raw/master/public/manuals/manual-es.pdf" target="_blank" class="dropdown-item" style="text-decoration:none;color:inherit"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>Manual PDF</a>
             <button class="dropdown-item" id="themeMenuBtn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.9 0 1.7-.8 1.7-1.7 0-.4-.2-.8-.4-1.1-.3-.3-.4-.7-.4-1.1 0-.9.8-1.7 1.7-1.7H16c3.3 0 6-2.7 6-6 0-4.9-4.5-8.4-10-8.4z"/></svg><span>Tema: Oscuro</span></button>
-            <button class="dropdown-item" id="homeViewBtn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg><span>Inicio: Completo</span></button>
             <button class="dropdown-item" id="carModeBtn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17h18v-4l-2-6H5l-2 6z"/><circle cx="7.5" cy="17" r="1.5"/><circle cx="16.5" cy="17" r="1.5"/></svg><span>Modo coche: Auto</span></button>
           </div>
           <input type="file" id="importFile" accept="application/json" style="display:none">
@@ -1560,43 +1575,30 @@ html.car .chg-tablecard{display:none!important}
 
       <!-- DASHBOARD -->
       <section class="page" id="page-dashboard">
-        <!-- Estado general: coche pequeño + 4 datos, 6 curiosidades y actividad reciente -->
-        <div class="dash-header">
-          <div class="card cockpit-card">
-            <div class="card-head"><h2>Estado general</h2><div class="head-actions"><button type="button" class="fun-shuffle" id="funShuffle" onclick="shuffleFun()" title="Cambiar las curiosidades de las tarjetas de equivalencias" aria-label="Cambiar curiosidades"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 3v6h-6"/></svg><span>Cambiar</span></button><div class="car-badge" id="carStatusBadge">OK</div></div></div>
-            <div class="cockpit-body">
-              <div class="panel-grid">
-                <div class="battery-hero car-hero">
-                  <div class="car-wrap" role="img" aria-label="BYD Atto 3 EVO">
-                    <div class="car-img"></div>
-                  </div>
-                  <div class="car-soc" id="carSoc"></div>
-                </div>
-                <div class="status-tiles-grid">
-                  <div data-ico="💶" class="info-card-small tone-blue">
-                    <div class="info-label">AHORRO VS GASOLINA</div>
-                    <div class="info-value" data-save="value">—</div>
-                    <div class="info-sub" data-save="sub">Gasolina: — - Electricidad: —</div>
-                    <div class="info-sub save-price" data-save="price">Precio medio de hoy: —</div>
-                  </div>
-                  <div data-ico="🛣️" class="info-card-small tone-blue">
-                    <div class="info-label">KM RECORRIDOS</div>
-                    <div class="info-value" id="gaugeKm">0</div>
-                  </div>
-                  <div data-ico="⚡" class="info-card-small tone-blue">
-                    <div class="info-label">CONSUMO REAL</div>
-                    <div class="info-value" id="sideConsumption">—</div>
-                    <div class="info-sub" id="sideConsSub">kWh/100km</div>
-                  </div>
-                  <div data-ico="🔧" class="info-card-small tone-blue" id="nextRevisionTile">
-                    <div class="info-label">PRÓXIMA REVISIÓN</div>
-                    <div class="info-value" id="sideNextRevision">—</div>
-                    <div class="info-sub" id="sideNextRevisionSub">—</div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="fun-grid" id="funGrid">
+        <div class="home-grid">
+          <div class="hg-photo"></div>
+          <div class="info-card-small hg-a">
+            <div class="info-label">Ahorro vs gasolina</div>
+            <div class="info-value" data-save="value">—</div>
+            <div class="info-sub" data-save="sub">Gasolina: — - Electricidad: —</div>
+            <div class="info-sub save-price" data-save="price">Precio medio de hoy: —</div>
+          </div>
+          <div class="info-card-small hg-km"><div class="kc">
+            <div><div class="info-label">Km recorridos</div><div class="info-value" id="gaugeKm">0</div></div>
+            <div><div class="info-label">Consumo real</div><div class="info-value" id="sideConsumption">—</div><div class="info-sub" id="sideConsSub">kWh/100km</div></div>
+          </div></div>
+          <div class="info-card-small hg-r" id="nextRevisionTile">
+            <div class="info-label">Próxima revisión <span class="car-badge" id="carStatusBadge">OK</span></div>
+            <div class="info-value" id="sideNextRevision">—</div>
+            <div class="info-sub" id="sideNextRevisionSub">—</div>
+          </div>
+          <div class="info-card-small hg-l" id="homeLast"></div>
+          <div class="info-card-small hg-n" id="homeCount"></div>
+          <div class="info-card-small hg-q"><div class="info-label">Accesos</div><div class="quicklinks-grid" id="quickLinksGrid"></div></div>
+        </div>
+        <div class="old-dash" hidden>
+          <div class="car-wrap"><div class="car-img"></div></div><div id="carSoc"></div>
+          <div class="fun-grid" id="funGrid">
                 <div class="fun-tile" data-slot="0">
                   <div class="fun-em"></div>
                   <div class="fun-txt">
@@ -1649,17 +1651,11 @@ html.car .chg-tablecard{display:none!important}
                   </div>
                 </div>
               </div>
-
-              <!-- ACTIVITY: Recent charges + maintenance -->
-              <div class="dash-activity">
+          <div class="dash-activity">
                 <div class="card-head"><h2>Actividad reciente</h2></div>
                 <div id="dashRecentActivity"></div>
               </div>
-            </div>
-          </div>
         </div>
-
-        <div class="quicklinks-grid" id="quickLinksGrid"></div>
       </section>
 
       <!-- SETUP -->
@@ -2119,7 +2115,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611091127';   // AAAAMMDDHHMM
+const APP_VERSION = '202611091159';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2243,7 +2239,7 @@ function navigate(page, opts){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+page).classList.add('active');
   document.documentElement.dataset.page = page;
-  document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active', b.dataset.page===page));
+  document.querySelectorAll('.nav-item,.tab-item').forEach(b=>b.classList.toggle('active', b.dataset.page===page));
   const titles = {dashboard:'BYD Atto 3 <em class="title-accent">EVO</em>', setup:'Configuración', charges:'Cargas', maintenance:'Mantenimiento', revisions:'Revisiones', notes:'Notas', docs:'Documentos', stats:'Estadísticas'};
   document.getElementById('pageTitle').innerHTML = titles[page] || page;
   document.getElementById('moreSheetOverlay').classList.remove('open');
@@ -2593,8 +2589,29 @@ function renderFunTiles(km, totalKwh){
   set('funBatNum', totalKwh > 0 ? nf(totalKwh / VEHICLE_BATTERY_KWH, 1) : '—', nf(totalKwh, 1) + ' kWh cargados ÷ ' + nf(VEHICLE_BATTERY_KWH, 1) + ' kWh de batería');
   set('funBatSub', 'Veces que has llenado la batería');
 }
+/* Tarjetas de la derecha del Inicio: última carga (con su batería de 10 celdas, sin %) y resumen de cargas */
+function renderHomeCards(){
+  const el = document.getElementById('homeLast'), cn = document.getElementById('homeCount');
+  if(!el || !cn) return;
+  const last = [...state.charges].sort(chargeCmpDesc)[0];
+  if(!last){
+    el.innerHTML = '<div class="info-label">Última carga</div><div class="info-value">—</div><div class="info-sub">Aún sin cargas</div>';
+  } else {
+    const v = chargeView(last), kwh = v.kwh > 0 ? (v.kwhEst ? '≈ ' : '') + nf(v.kwh, 2) : '—';
+    let a = 0, b = 0;
+    if(last.socStart != null && last.socEnd != null && last.socStart !== '' && Number(last.socEnd) > Number(last.socStart)){ a = Number(last.socStart); b = Number(last.socEnd); }
+    else if(v.kwh > 0){ b = Math.min(100, v.kwh / VEHICLE_BATTERY_KWH * 100); }
+    let cells = '';
+    for(let k = 0; k < 10; k++){ const m = k * 10 + 5; cells += '<i class="' + (m < a ? 'pre' : m <= b ? 'on' : '') + '"></i>'; }
+    el.innerHTML = '<div class="info-label">Última carga · ' + escapeHtml(chargeDateLabel(last)) + '</div><div class="info-value">' + kwh + '<small> kWh</small></div>' +
+      '<div class="hl-cells">' + cells + '</div><div class="hl-foot">' + (v.free ? '<b class="hl-free">Gratis</b>' : (v.cost != null ? '<b>' + fmtEUR(v.cost) + '</b>' : '')) + '</div>';
+  }
+  const total = state.charges.reduce((x,c)=>x + kwhOf(c), 0);
+  cn.innerHTML = '<div class="info-label">Cargas</div><div class="info-value">' + state.charges.length + '<small> · ' + nf(total, 1) + ' kWh</small></div>';
+}
 function renderDashboard(){
   renderQuickLinks();
+  renderHomeCards();
   const c = state.config;
   const km = getCurrentKm();
 
@@ -2639,7 +2656,7 @@ function renderDashboard(){
   const nextRevSubEl = document.getElementById('sideNextRevisionSub');
   const nextRevTile = document.getElementById('nextRevisionTile');
   const shortName = next ? next.name.split('·')[0].trim() : '—';
-  nextRevTile.className = 'info-card-small tone-blue';
+  nextRevTile.className = 'info-card-small hg-r';
   nextRevEl.className = 'info-value';
   if(!next){
     nextRevEl.textContent = '—';
@@ -4313,7 +4330,7 @@ function applyStateToForms(){ renderSettings(); }
 
 function setupEventListeners(){
   try {
-    document.querySelectorAll('.nav-item[data-page]').forEach(btn=>{
+    document.querySelectorAll('.nav-item[data-page],.tab-item[data-page]').forEach(btn=>{
       btn.addEventListener('click', ()=>navigate(btn.dataset.page));
     });
 
@@ -4772,24 +4789,6 @@ function applyCarMode(){
   const b = document.getElementById('carModeBtn');
   if(b) b.querySelector('span').textContent = 'Modo coche: ' + ({auto:'Auto', on:'Sí', off:'No'}[pref]);
 }
-// Vista del Inicio: 'full' (completa) o 'simple' (sin curiosidades ni actividad). Se elige desde el menú ⋮.
-function homeViewPref(){ try{ return localStorage.getItem('homeView') === 'simple' ? 'simple' : 'full'; }catch(e){ return 'full'; } }
-function applyHomeView(){
-  const simple = homeViewPref() === 'simple';
-  document.documentElement.classList.toggle('home-simple', simple);
-  const b = document.getElementById('homeViewBtn');
-  if(b) b.querySelector('span').textContent = 'Inicio: ' + (simple ? 'Simple' : 'Completo');
-  if(typeof fitActivity === 'function') requestAnimationFrame(fitActivity);
-}
-function setupHomeView(){
-  applyHomeView();
-  const b = document.getElementById('homeViewBtn');
-  if(b) b.addEventListener('click', e=>{
-    e.stopPropagation();
-    try{ localStorage.setItem('homeView', homeViewPref() === 'simple' ? 'full' : 'simple'); }catch(err){}
-    applyHomeView();
-  });
-}
 function setupCarMode(){
   applyCarMode();
   window.addEventListener('resize', applyCarMode);
@@ -4809,7 +4808,6 @@ function init(){
   setupDrive();
   setupFullscreen();
   setupCarMode();
-  setupHomeView();
   freezeFuelPrices();   // con el precio guardado en caché, por si ya hay cargas sin precio fijado
   loadFuelPrice();
   applyTheme(localStorage.getItem(THEME_KEY) || 'dark');
