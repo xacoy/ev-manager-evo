@@ -1446,7 +1446,7 @@ html:not([data-page="dashboard"])::before{filter:blur(6px);transform:scale(1.06)
 .top-right .icon-btn,.top-right .sync-btn{background:var(--glass);border-color:var(--glass-bd);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
 /* Inicio */
 #page-dashboard{max-width:none}
-.home-grid{display:grid;grid-template-columns:minmax(230px,20%) 1fr minmax(230px,20%);grid-template-rows:repeat(3,minmax(0,1fr));align-items:stretch;grid-template-areas:"a . l" "km . n" "r . q";gap:14px;height:calc(100dvh - 130px)}
+.home-grid{display:grid;grid-template-columns:minmax(240px,22%) 1fr minmax(240px,22%);grid-template-rows:repeat(3,minmax(0,1fr));align-items:stretch;grid-template-areas:"a . l" "km . n" "r . q";gap:14px;height:calc(100dvh - 130px)}
 .hg-photo{display:none}
 .hg-a{grid-area:a}.hg-km{grid-area:km}.hg-km .kc{display:grid;grid-template-columns:1fr 1fr;gap:12px}.hg-km .kc>div{min-width:0}.hg-r{grid-area:r}.hg-l{grid-area:l}.hg-n{grid-area:n}.hg-q{grid-area:q}
 .home-grid .info-card-small{padding:22px 24px;border-radius:26px;justify-content:center;min-width:0;box-shadow:0 10px 28px rgba(0,0,0,.14)}
@@ -1573,6 +1573,17 @@ html.car .stats-top .help-toggle{height:48px;min-height:48px;font-size:15px;padd
 html.car .stat-card .label{font-size:17px}html.car .stat-card .value{font-size:50px}html.car .stat-card .sub{font-size:16px}
 html.car #page-stats .card h3,html.car #page-stats h3{font-size:22px}
 html.car #page-stats .card p,html.car #page-stats .card span{font-size:inherit}
+
+/* Accesos: botones que llenan toda la tarjeta (escritorio y coche) */
+@media(min-width:821px){
+  .home-grid .hg-q{align-items:stretch;justify-content:flex-start;padding-top:clamp(12px,6cqh,20px);padding-bottom:clamp(12px,6cqh,20px)}
+  .hg-q>.info-label{margin-bottom:0}
+  .hg-q .quicklinks-grid{flex:1;min-height:0;display:grid;grid-template-columns:repeat(var(--ql-cols,2),minmax(0,1fr));grid-auto-rows:minmax(0,1fr);gap:clamp(8px,2.4cqh,12px);margin:clamp(8px,3cqh,14px) 0 0;align-content:stretch}
+  .hg-q .ql-tile{container-type:size;flex-direction:column;justify-content:center;gap:clamp(2px,2cqh,8px);min-height:0;padding:4px 3px;border-radius:clamp(14px,20cqh,22px);overflow:hidden;text-align:center}
+  .hg-q .ql-tile-icon,.hg-q .ql-tile-icon svg{width:clamp(22px,min(40cqh,34cqw),46px);height:clamp(22px,min(40cqh,34cqw),46px)}
+  .hg-q .ql-tile-label{font-size:clamp(10px,min(17cqh,11.5cqw),19px);line-height:1.15;white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;max-width:100%;overflow-wrap:break-word;word-break:normal}
+  .hg-q .ql-tile-edit,.hg-q .ql-tile-delete{top:6px}.hg-q .ql-tile-edit{left:6px}.hg-q .ql-tile-delete{right:6px}
+}
 /* modo coche */
 html.car .topbar{padding:12px 20px 6px}
 html.car .brand-pill b{font-size:17px}html.car .brand-pill small{font-size:13px}
@@ -1580,8 +1591,7 @@ html.car .brand-pill .logo{width:46px;height:46px}
 html.car .tab-item{padding:11px 24px;font-size:17px}html.car .tab-item svg{width:22px;height:22px}
 html.car .nav-rail{display:none!important}
 html.car #page-dashboard.active{display:flex;flex-direction:column;flex:1 1 auto;min-height:0}
-html.car .home-grid{flex:1;min-height:0;height:auto;grid-template-columns:minmax(240px,21%) 1fr minmax(240px,21%);gap:12px}
-html.car .hg-q .ql-tile{padding:10px 18px;font-size:15px}html.car .hg-q .ql-tile-label{font-size:15px}
+html.car .home-grid{flex:1;min-height:0;height:auto;grid-template-columns:minmax(250px,22.5%) 1fr minmax(250px,22.5%);gap:12px}
 </style>
 </head>
 <body>
@@ -2192,7 +2202,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611091209';   // AAAAMMDDHHMM
+const APP_VERSION = '202611091222';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -3838,7 +3848,7 @@ function renderQuickLinks(){
   if(!grid) return;
   const links = state.quickLinks || [];
   // en el coche no se desplaza y los accesos ocupan toda la columna derecha: 2 columnas hasta 6, 3 hasta 9, 4 hasta 12 y luego 5 (más filas)
-  const cols = links.length <= 6 ? 2 : links.length <= 9 ? 3 : links.length <= 12 ? 4 : 5;
+  const cols = links.length <= 4 ? 2 : links.length <= 9 ? 3 : links.length <= 16 ? 4 : 5;
   document.getElementById('page-dashboard').dataset.qlcols = cols; grid.style.setProperty('--ql-cols', cols); grid.style.setProperty('--ql-rows', Math.max(1, Math.ceil(links.length / cols)));
   grid.innerHTML = links.length ? links.map(l=>`
     <a class="ql-tile" href="${escapeAttr(l.url)}" ${/^#/.test(l.url) ? '' : 'target="_blank" rel="noopener noreferrer"'} title="${escapeAttr(l.title)}">
