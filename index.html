@@ -607,6 +607,10 @@ html.home-simple #page-dashboard .info-card-small::after{content:attr(data-ico);
 html.home-simple #page-dashboard .info-card-small .info-sub{display:none}
 html.home-simple #page-dashboard .info-label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 html.home-simple #page-dashboard .act-txt{display:none}
+.act-short{display:none}
+html.home-simple #page-dashboard .act-full,html.home-simple #page-dashboard .act-cost{display:none}
+html.home-simple #page-dashboard .act-short{display:inline}
+html.home-simple #page-dashboard .act-short b{color:var(--accent);font-weight:800;font-size:1.2em}
 html.home-simple #page-dashboard .act-bar{position:relative;padding-right:10px}
 html.home-simple #page-dashboard .act-bar:after{content:"";position:absolute;right:0;top:50%;margin-top:-9px;width:6px;height:18px;background:#5b6880;border-radius:0 4px 4px 0}
 html.home-simple #page-dashboard .act-shell{position:relative;border:3px solid #5b6880;border-radius:12px;padding:4px;background:var(--bg)}
@@ -2057,7 +2061,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611091004';   // AAAAMMDDHHMM
+const APP_VERSION = '202611091005';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2750,7 +2754,7 @@ function buildRecentActivity(){
       <div class="activity-icon">${icon}</div>
       <div class="act-main">
         <div class="act-title">${label}</div>
-        <div class="act-date">${ev.type==='charge' ? chargeDateTimeHtml(ev.data) : fmtDate(ev.date)}</div>
+        <div class="act-date"><span class="act-full">${ev.type==='charge' ? chargeDateTimeHtml(ev.data) : fmtDate(ev.date)}</span><span class="act-short">${fmtDate(ev.date)}${free ? ' · <b>Gratis</b>' : hasCost ? ' · <b>' + fmtEUR(cost) + '</b>' : ''}</span></div>
         ${ev.type==='charge' ? actBarHtml(ev.data) : ''}
       </div>
       <div class="act-cost">${free ? '<span class="chg-chip free">Gratis</span>' : hasCost ? fmtEUR(cost) : '—'}</div>
