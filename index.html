@@ -595,16 +595,25 @@ button{cursor:pointer}
 .dash-activity{background:var(--bg-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 16px}
 .dash-activity .card-head{margin-bottom:4px}
 
-/* Inicio simple: solo coche, 4 datos clave y accesos (sin curiosidades, actividad ni botón Cambiar) */
+/* Inicio simple: coche, 4 datos clave, actividad reciente grande y accesos (sin curiosidades ni botón Cambiar) */
 html.home-simple #page-dashboard .fun-grid,
-html.home-simple #page-dashboard .dash-activity,
 html.home-simple #page-dashboard .fun-shuffle{display:none!important}
 html.home-simple #page-dashboard .panel-grid{grid-template-columns:minmax(220px,34%) 1fr}
 html.home-simple #page-dashboard .panel-grid .status-tiles-grid{grid-auto-rows:1fr}
 html.home-simple #page-dashboard .info-card-small{padding:18px}
 @media(max-width:1200px){html.home-simple #page-dashboard .panel-grid{grid-template-columns:1fr}}
+html.home-simple #page-dashboard .dash-activity{padding:16px 20px}
+html.home-simple #page-dashboard .act-row{gap:16px;padding:14px 0}
+html.home-simple #page-dashboard .act-row .activity-icon{width:48px;height:48px;border-radius:12px}
+html.home-simple #page-dashboard .act-row .activity-icon svg{width:24px;height:24px}
+html.home-simple #page-dashboard .act-title{font-size:22px;font-weight:800;line-height:1.2}
+html.home-simple #page-dashboard .act-date{font-size:16px;margin-top:4px}
+html.home-simple #page-dashboard .act-cost{font-size:20px}
+html.home-simple #page-dashboard .act-cost .chg-chip{font-size:16px;padding:6px 16px}
+html.car.home-simple #page-dashboard .dash-activity{flex:1 1 0;padding:10px 20px}
+html.car.home-simple #page-dashboard .act-row{padding:10px 0}
+html.car.home-simple #page-dashboard .act-title{font-size:22px}html.car.home-simple #page-dashboard .act-date{font-size:16px}html.car.home-simple #page-dashboard .act-cost{font-size:20px}
 html.car.home-simple #page-dashboard .panel-grid{flex:1 1 0;grid-template-columns:minmax(220px,34%) 1fr}
-html.car.home-simple #page-dashboard .save-price{display:block}
 
 /* Resumen de cargas */
 /* Gráficas propias (SVG) */
@@ -2025,7 +2034,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611090953';   // AAAAMMDDHHMM
+const APP_VERSION = '202611090954';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
