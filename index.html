@@ -622,6 +622,17 @@ html.home-simple #page-dashboard .info-label{white-space:nowrap;overflow:hidden;
 #page-dashboard .act-cells i.mid{background:var(--warning);color:var(--warning)}
 #page-dashboard .act-cells i.low{background:var(--danger);color:var(--danger)}
 #page-dashboard .act-shell em{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:800 22px var(--font);font-style:normal;color:#fff;text-shadow:0 1px 5px #000,0 0 3px #000}
+#page-charges .act-bar{position:relative;padding-right:10px}
+#page-charges .act-bar:after{content:"";position:absolute;right:0;top:50%;margin-top:-9px;width:6px;height:18px;background:#5b6880;border-radius:0 4px 4px 0}
+#page-charges .act-shell{position:relative;border:3px solid #5b6880;border-radius:12px;padding:4px;background:var(--bg)}
+#page-charges .act-cells{display:flex;gap:3px;height:34px}
+#page-charges .act-cells i{flex:1;border-radius:4px;background:var(--bg-2)}
+#page-charges .act-cells i.pre{background:var(--border-strong)}
+#page-charges .act-cells i.on{box-shadow:0 0 8px currentColor}
+#page-charges .act-cells i.ok{background:var(--success);color:var(--success)}
+#page-charges .act-cells i.mid{background:var(--warning);color:var(--warning)}
+#page-charges .act-cells i.low{background:var(--danger);color:var(--danger)}
+#page-charges .act-shell em{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:800 22px var(--font);font-style:normal;color:#fff;text-shadow:0 1px 5px #000,0 0 3px #000}
 #page-dashboard .act-row .activity-icon{display:none}
 #page-dashboard .act-main{display:grid;grid-template-columns:170px 1fr;align-items:center;column-gap:16px}
 #page-dashboard .act-title{grid-column:1;grid-row:1}
@@ -1182,6 +1193,7 @@ html[data-page="charges"] .topbar h1{visibility:hidden}
 .chg-all{margin-top:14px}
 .modal-wide{max-width:560px;max-height:92vh;overflow:auto}
 .chg-tablecard{display:none;padding:6px 16px}
+.chg-table td.when .loc2{display:none}
 .chg-tablecard.empty{display:none!important}
 .chg-table{width:100%;border-collapse:collapse}
 .chg-table th{white-space:nowrap}
@@ -1428,6 +1440,20 @@ html.car .chg-tablecard{display:none!important}
   html.car .chg-table .chg-bar{height:8px;margin-top:6px;max-width:150px}
   html.car .chg-table .chg-chip{font-size:16px;padding:2px 12px}
   html.car button.chg-all{min-height:64px;font-size:18px;margin-top:10px}
+  /* Cargas en el coche, simplificado: ahorro y kWh arriba; fecha + lugar, batería grande, kWh y coste */
+  html.car .chg-base,html.car .chg-save-r,html.car .chg-legend,html.car .chg-minis .chg-mini:nth-child(3){display:none}
+  html.car .chg-sum{grid-template-columns:2fr 1fr}
+  html.car .chg-table{--chg-cols:minmax(0,1.5fr) minmax(0,3.2fr) minmax(0,1.1fr) minmax(0,1.1fr) minmax(0,.7fr)}
+  html.car .chg-table th:nth-child(2),html.car .chg-table td:nth-child(2),html.car .chg-table th:nth-child(6),html.car .chg-table td:nth-child(6),html.car .chg-table th:nth-child(7),html.car .chg-table td:nth-child(7){display:none}
+  html.car .chg-table td.when .t{display:none}
+  html.car .chg-table td.when .loc2{display:flex;align-items:center;gap:6px;font-size:18px;color:var(--text-muted);line-height:1.2;margin-top:2px}
+  html.car .chg-table td.when .loc2 svg{width:18px;height:18px;flex-shrink:0;stroke:var(--accent)}
+  html.car .chg-table td.when b{font-size:26px}
+  html.car .chg-table td.num{font-size:28px;font-weight:800}
+  html.car .chg-table td.num .chg-chip{font-size:20px;padding:4px 16px}
+  html.car #page-charges .act-cells{height:38px}
+  html.car #page-charges .act-shell em{font-size:24px}
+  html.car #page-charges .act-bar{max-width:520px}
   html.car #page-charges .empty-state{font-size:18px}
   html.car #page-charges .empty-state p{font-size:20px}
   html.car .est{position:relative}
@@ -2069,7 +2095,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611091007';   // AAAAMMDDHHMM
+const APP_VERSION = '202611091021';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2880,9 +2906,10 @@ function chargeCardHtml(v, withActions){
 function chargeRowHtml(v){
   const c = v.c, t = chargeParts(v, 2);
   const kwh = v.kwh > 0 ? (v.kwhEst ? estSpan(nf(v.kwh, 2), v.tips.kwh) : nf(v.kwh, 2)) : '—';
-  return '<tr><td class="when"><b>' + t.date + '</b><span class="dot"> · </span><span class="t">' + t.time + '</span></td>' +
+  const car = document.documentElement.classList.contains('car');
+  return '<tr><td class="when"><b>' + t.date + '</b><span class="dot"> · </span><span class="t">' + t.time + '</span><span class="loc2">' + PIN_ICON + t.loc + '</span></td>' +
     '<td><span class="chg-loc">' + PIN_ICON + t.loc + '</span></td>' +
-    '<td>' + (v.soc ? chargeSocHtml(v) : '—') + '</td>' +
+    '<td>' + ((car && actBarHtml(c)) || (v.soc ? chargeSocHtml(v) : '—')) + '</td>' +
     '<td class="num">' + kwh + '</td>' +
     '<td class="num">' + (v.free ? '<span class="chg-chip free">Gratis</span>' : t.cost) + '</td>' +
     '<td class="num">' + (v.price != null ? (v.priceEst ? estSpan(nf(v.price, 3) + ' €', v.tips.price) : nf(v.price, 3) + ' €') : '—') + '</td>' +
