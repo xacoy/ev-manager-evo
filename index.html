@@ -607,9 +607,13 @@ html.home-simple #page-dashboard .info-card-small::after{content:attr(data-ico);
 html.home-simple #page-dashboard .info-card-small .info-sub{display:none}
 html.home-simple #page-dashboard .info-label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 html.home-simple #page-dashboard .act-txt{display:none}
-html.home-simple #page-dashboard .act-bar{position:relative;height:18px;border-radius:99px;background:var(--bg-card);border:1px solid var(--border);margin-top:8px;overflow:hidden}
-html.home-simple #page-dashboard .act-bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent-2))}
-html.home-simple #page-dashboard .act-bar em{position:absolute;right:8px;top:50%;transform:translateY(-50%);font:800 12px var(--font);font-style:normal;color:var(--text)}
+html.home-simple #page-dashboard .act-bar{position:relative;height:26px;border-radius:8px;background:var(--bg-card);border:2px solid var(--border-strong);margin-top:8px;overflow:hidden}
+html.home-simple #page-dashboard .act-bar b{position:absolute;top:0;bottom:0}
+html.home-simple #page-dashboard .act-bar .pre{left:0;background:var(--border-strong)}
+html.home-simple #page-dashboard .act-bar em{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:800 15px var(--font);font-style:normal;color:#fff;text-shadow:0 1px 4px #000,0 0 2px #000}
+.act-ticks{display:none}
+html.home-simple #page-dashboard .act-ticks{display:flex;justify-content:space-between;font-size:10px;color:var(--text-faint);margin-top:2px;padding:0 2px}
+html.car.home-simple #page-dashboard .act-ticks{display:none}
 .act-bar{display:none}
 html.home-simple #page-dashboard .act-bar{display:block}
 html.home-simple #page-dashboard .dash-activity{padding:16px 20px}
@@ -621,10 +625,11 @@ html.home-simple #page-dashboard .act-date{font-size:16px;margin-top:4px}
 html.home-simple #page-dashboard .act-cost{font-size:20px}
 html.home-simple #page-dashboard .act-cost .chg-chip{font-size:16px;padding:6px 16px}
 html.car.home-simple #page-dashboard .dash-activity{flex:1 1 0;padding:10px 20px}
-html.car.home-simple #page-dashboard .act-row{padding:6px 0}
-html.car.home-simple #page-dashboard .act-bar{margin-top:4px;height:16px}
+html.car.home-simple #page-dashboard .act-row{padding:2px 0;gap:14px}
+html.car.home-simple #page-dashboard .act-row .activity-icon{width:40px;height:40px}
+html.car.home-simple #page-dashboard .act-bar{margin-top:3px;height:22px}
 html.car.home-simple #page-dashboard .act-date{margin-top:0}
-html.car.home-simple #page-dashboard .act-title{font-size:24px}html.car.home-simple #page-dashboard .act-date{font-size:16px}html.car.home-simple #page-dashboard .act-cost{font-size:20px}
+html.car.home-simple #page-dashboard .act-title{font-size:22px}html.car.home-simple #page-dashboard .act-date{font-size:16px}html.car.home-simple #page-dashboard .act-cost{font-size:20px}
 html.car.home-simple #page-dashboard .panel-grid{flex:1 1 0;grid-template-columns:minmax(220px,34%) 1fr}
 
 /* Resumen de cargas */
@@ -2046,7 +2051,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611090956';   // AAAAMMDDHHMM
+const APP_VERSION = '202611091003';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2704,6 +2709,17 @@ function renderSavings(){
 }
 
 
+/* Barra de batería de la vista simple: tramo previo en gris + tramo cargado con el color del nivel final (verde >50 %, ámbar 20-50 %, rojo <20 %) */
+function actBarHtml(c){
+  const kwh = kwhOf(c);
+  let a = 0, b = 0, txt = '';
+  if(c.socStart != null && c.socEnd != null && Number(c.socEnd) > Number(c.socStart)){ a = Number(c.socStart); b = Number(c.socEnd); txt = Math.round(a) + '% → ' + Math.round(b) + '%'; }
+  else if(kwh){ b = Math.min(100, kwh / VEHICLE_BATTERY_KWH * 100); txt = '+' + Math.round(b) + ' %'; }
+  else return '';
+  a = Math.max(0, Math.min(100, a)); b = Math.max(a, Math.min(100, b));
+  const col = b < 20 ? 'var(--danger)' : b < 50 ? 'var(--warning)' : 'var(--success)';
+  return '<div class="act-bar"><b class="pre" style="width:' + a.toFixed(1) + '%"></b><b class="chg" style="left:' + a.toFixed(1) + '%;width:' + (b - a).toFixed(1) + '%;background:' + col + ';box-shadow:0 0 10px ' + col + '"></b><em>' + txt + '</em></div><div class="act-ticks"><span>0</span><span>25</span><span>50</span><span>75</span><span>100</span></div>';
+}
 function buildRecentActivity(){
   const container = document.getElementById('dashRecentActivity');
   if(!container) return;
@@ -2728,7 +2744,7 @@ function buildRecentActivity(){
       <div class="act-main">
         <div class="act-title">${label}</div>
         <div class="act-date">${ev.type==='charge' ? chargeDateTimeHtml(ev.data) : fmtDate(ev.date)}</div>
-        ${ev.type==='charge' && kwhOf(ev.data) ? '<div class="act-bar" title="' + Math.round(Math.min(100, kwhOf(ev.data) / VEHICLE_BATTERY_KWH * 100)) + ' % de la batería"><i style="width:' + Math.min(100, kwhOf(ev.data) / VEHICLE_BATTERY_KWH * 100).toFixed(1) + '%"></i><em>' + Math.round(Math.min(100, kwhOf(ev.data) / VEHICLE_BATTERY_KWH * 100)) + ' %</em></div>' : ''}
+        ${ev.type==='charge' ? actBarHtml(ev.data) : ''}
       </div>
       <div class="act-cost">${free ? '<span class="chg-chip free">Gratis</span>' : hasCost ? fmtEUR(cost) : '—'}</div>
     </div>`;
