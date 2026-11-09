@@ -556,13 +556,12 @@ button{cursor:pointer}
 /* Panel: anillo de batería + fichas */
 .panel-grid{display:grid;grid-template-columns:280px 1fr;gap:16px;align-items:stretch}
 .panel-grid .status-tiles-grid{grid-template-columns:repeat(2,1fr)}
-.car-wrap{position:relative;width:100%;max-width:300px;aspect-ratio:900/714}
-.car-img{position:absolute;inset:0;background:linear-gradient(100deg,var(--accent) 0%,var(--accent-2) 50%,var(--accent) 100%);background-size:260% 100%;animation:carshine 7s ease-in-out infinite alternate;-webkit-mask:url(images/atto3-evo-front.png) center/contain no-repeat;mask:url(images/atto3-evo-front.png) center/contain no-repeat;filter:drop-shadow(0 0 5px var(--accent-glow))}
-.car-bolt{position:absolute;left:50%;top:50.9%;width:8%;transform:translate(-50%,-50%);fill:var(--accent);filter:drop-shadow(0 0 4px var(--accent-glow))}
+.car-wrap{position:relative;width:100%;max-width:340px;aspect-ratio:875/599;--soc:100%}
+/* Contorno neón del coche (de tu foto): se rellena de abajo arriba según el % de batería */
+.car-img{position:absolute;inset:0;background:linear-gradient(0deg,var(--accent) 0%,var(--accent-2) var(--soc),#5b6b88 var(--soc),#5b6b88 100%);-webkit-mask:url(images/atto3-evo-34.png) center/contain no-repeat;mask:url(images/atto3-evo-34.png) center/contain no-repeat;filter:drop-shadow(0 0 5px var(--accent-glow))}
 :root[data-theme="light"] .car-img,:root[data-theme="mint"] .car-img,:root[data-theme="unicornio"] .car-img{filter:none}
-:root[data-theme="light"] .car-bolt,:root[data-theme="mint"] .car-bolt,:root[data-theme="unicornio"] .car-bolt{filter:none}
-@keyframes carshine{from{background-position:0% 0}to{background-position:100% 0}}
-@media(prefers-reduced-motion:reduce){.car-img{animation:none}}
+.car-soc{font-family:var(--font-display);font-size:34px;font-weight:800;line-height:1;color:var(--accent-2);text-align:center}
+.car-soc:empty{display:none}
 .car-name{font-family:var(--font-display);font-size:15px;font-weight:700;color:var(--text);letter-spacing:-.2px}
 .save-block{text-align:center;border-top:1px solid var(--border);padding-top:12px;width:100%}
 .save-label{font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--text-faint)}
@@ -1570,8 +1569,8 @@ html.car .chg-tablecard{display:none!important}
                 <div class="battery-hero car-hero">
                   <div class="car-wrap" role="img" aria-label="BYD Atto 3 EVO">
                     <div class="car-img"></div>
-                    <svg class="car-bolt" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
                   </div>
+                  <div class="car-soc" id="carSoc"></div>
                 </div>
                 <div class="status-tiles-grid">
                   <div data-ico="💶" class="info-card-small tone-blue">
@@ -2120,7 +2119,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611091031';   // AAAAMMDDHHMM
+const APP_VERSION = '202611091121';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2606,6 +2605,13 @@ function renderDashboard(){
   const overdueCount = alerts.filter(a=>a.level==='overdue').length;
 
   animateCountUp(document.getElementById('gaugeKm'), km);
+  // batería actual: la última lectura del coche con % o, si no hay, el % final de la última carga
+  const lastR = readingList().filter(r=>r.soc != null).pop();
+  const lastC = [...state.charges].sort(chargeCmpDesc).find(c=>c.socEnd != null && c.socEnd !== '');
+  const socNow = lastR ? Number(lastR.soc) : (lastC ? Number(lastC.socEnd) : null);
+  const cw = document.querySelector('.car-wrap'), cs = document.getElementById('carSoc');
+  if(cw) cw.style.setProperty('--soc', (socNow != null && socNow >= 0 ? Math.min(100, socNow) : 100) + '%');
+  if(cs) cs.textContent = (socNow != null && socNow >= 0) ? Math.round(Math.min(100, socNow)) + ' %' : '';
   const carStatusBadge = document.getElementById('carStatusBadge');
 
   if(!c.purchaseDate){
