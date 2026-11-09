@@ -1610,11 +1610,11 @@ html.car #page-stats .card p,html.car #page-stats .card span{font-size:inherit}
 .hga-pill{font-weight:700;font-size:clamp(11px,min(6cqh,4.4cqw),15px);color:var(--success);background:var(--success-soft);border:1px solid color-mix(in srgb,var(--success) 50%,transparent);border-radius:99px;padding:2px 11px;white-space:nowrap}
 .hga-pill:empty{display:none}
 .hga-grid{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:clamp(6px,2cqh,10px);margin-top:clamp(6px,2cqh,12px)}
-.hga-c{display:flex;align-items:center;justify-content:center;gap:clamp(6px,3cqw,12px);border-radius:clamp(12px,8cqh,18px);padding:4px 6px;min-width:0;border:1px solid transparent}
+.hga-c{display:flex;align-items:center;justify-content:center;text-align:center;gap:0;border-radius:clamp(12px,8cqh,18px);padding:4px 6px;min-width:0;border:1px solid transparent}
 .hga-c i{font-style:normal;font-size:clamp(20px,min(13cqh,10cqw),36px);line-height:1;flex-shrink:0}
-.hga-c div{min-width:0;text-align:left}
-.hga-c span{display:block;font-size:clamp(11px,min(6.2cqh,4.6cqw),16px);color:var(--text-muted);white-space:nowrap}
-.hga-c b{display:block;font-weight:500;font-size:clamp(16px,min(9.6cqh,7.4cqw),30px);line-height:1.15;white-space:nowrap}
+.hga-c div{min-width:0;text-align:center}
+.hga-c span{display:block;font-size:clamp(11px,min(6.6cqh,5cqw),17px);color:var(--text-muted);white-space:nowrap}
+.hga-c b{display:block;font-weight:500;font-size:clamp(18px,min(11cqh,8.6cqw),36px);line-height:1.15;white-space:nowrap}
 .hga-c.gas{background:rgba(242,182,166,.2);border-color:rgba(242,182,166,.5)}
 .hga-c.ele{background:color-mix(in srgb,var(--success) 20%,transparent);border-color:color-mix(in srgb,var(--success) 50%,transparent)}
 .hga-c.dep{background:rgba(255,196,87,.18);border-color:rgba(255,196,87,.45)}
@@ -1707,10 +1707,10 @@ html.car .home-grid{flex:1;min-height:0;height:auto;grid-template-columns:minmax
             <div class="hga-head"><div class="info-label">Ahorro vs gasolina</div><span class="hga-pill" id="svPct"></span></div>
             <div class="info-value" data-save="value">—</div>
             <div class="hga-grid">
-              <div class="hga-c gas"><i>⛽</i><div><span>Gasolina</span><b id="svGas">—</b></div></div>
-              <div class="hga-c ele"><i>⚡</i><div><span>Electricidad</span><b id="svElec">—</b></div></div>
-              <div class="hga-c dep"><i>🛢️</i><div><span>Depósitos</span><b id="svTank">—</b></div></div>
-              <div class="hga-c kmg"><i>🚗</i><div><span>Km con la luz</span><b id="svKm">—</b></div></div>
+              <div class="hga-c gas"><div><span>Gasolina</span><b id="svGas">—</b></div></div>
+              <div class="hga-c ele"><div><span>Electricidad</span><b id="svElec">—</b></div></div>
+              <div class="hga-c dep"><div><span>Depósitos</span><b id="svTank">—</b></div></div>
+              <div class="hga-c kmg"><div><span>Km con la luz</span><b id="svKm">—</b></div></div>
             </div>
             <div class="hga-hide"><div data-save="sub"></div><div data-save="price"></div></div>
           </div>
@@ -2247,7 +2247,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611091239';   // AAAAMMDDHHMM
+const APP_VERSION = '202611091240';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
