@@ -1214,7 +1214,7 @@ html.car #chargeForm .btn{min-height:64px;font-size:22px}
 html.car #chargeDeleteBtn{width:100%;margin:14px 0 0!important;padding:0!important;min-height:56px;border:2px solid var(--danger)!important;border-radius:14px;color:var(--danger)!important;font-size:18px!important;text-decoration:none!important;font-weight:700}
 
 .chg-tablecard{display:none;padding:6px 16px}
-.chg-act .icon-action .lbl{display:none}
+.chg-act .icon-action .ico-car{display:none}
 .chg-table td.when .loc2{display:none}
 .chg-tablecard.empty{display:none!important}
 .chg-table{width:100%;border-collapse:collapse}
@@ -1465,7 +1465,7 @@ html.car .chg-tablecard{display:none!important}
   /* Cargas en el coche, simplificado: ahorro y kWh arriba; fecha + lugar, batería grande, kWh y coste */
   html.car .chg-base,html.car .chg-save-r,html.car .chg-legend,html.car .chg-minis .chg-mini:nth-child(3){display:none}
   html.car .chg-sum{grid-template-columns:2fr 1fr}
-  html.car .chg-table{--chg-cols:minmax(0,1.45fr) minmax(0,3fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1.35fr)}
+  html.car .chg-table{--chg-cols:minmax(0,1.45fr) minmax(0,3fr) minmax(0,1fr) minmax(0,1fr) minmax(0,.8fr)}
   html.car .chg-table th:nth-child(2),html.car .chg-table td:nth-child(2),html.car .chg-table th:nth-child(6),html.car .chg-table td:nth-child(6),html.car .chg-table th:nth-child(7),html.car .chg-table td:nth-child(7){display:none}
   html.car .chg-table td.when .t{display:none}
   html.car .chg-table td.when .loc2{display:flex;align-items:center;gap:6px;font-size:18px;color:var(--text-muted);line-height:1.2;margin-top:2px}
@@ -1477,9 +1477,9 @@ html.car .chg-tablecard{display:none!important}
   html.car #page-charges .act-shell em{font-size:24px}
   html.car #page-charges .act-bar{max-width:520px}
   html.car .chg-table .chg-act{justify-content:flex-end}
-  html.car .chg-table .chg-act .icon-action{display:inline-flex;align-items:center;gap:10px;min-height:56px;padding:0 22px;border-radius:16px;background:linear-gradient(135deg,#8b5cf6,#6d4be0);border:0;color:#fff;box-shadow:0 4px 14px rgba(139,92,246,.45);font:800 20px var(--font)}
-  html.car .chg-table .chg-act .icon-action svg{width:26px;height:26px;stroke:currentColor}
-  html.car .chg-table .chg-act .icon-action .lbl{display:inline}
+  html.car .chg-table .chg-act .icon-action{display:inline-flex;align-items:center;justify-content:center;width:64px;min-height:64px;padding:0;border-radius:16px;background:linear-gradient(135deg,#8b5cf6,#6d4be0);border:0;color:#fff;box-shadow:0 4px 14px rgba(139,92,246,.45);font:800 20px var(--font)}
+  html.car .chg-table .chg-act .icon-action .ico-def{display:none}
+  html.car .chg-table .chg-act .icon-action .ico-car{display:block;width:32px;height:32px;stroke:currentColor}
   html.car .chg-table .chg-act .icon-action:active{filter:brightness(1.25);transform:scale(.97)}
   html.car #page-charges .empty-state{font-size:18px}
   html.car #page-charges .empty-state p{font-size:20px}
@@ -2122,7 +2122,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611091025';   // AAAAMMDDHHMM
+const APP_VERSION = '202611091028';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2920,7 +2920,7 @@ function chargeSocHtml(v){
     '<div class="chg-bar" aria-hidden="true"><i style="left:' + a + '%;width:' + Math.max(0, Math.min(100 - a, v.soc.b - v.soc.a)) + '%"></i></div></div>';
 }
 function chargeActionsHtml(c){
-  return '<span class="chg-act"><button type="button" class="icon-action" onclick="editCharge(' + c.id + ')" aria-label="Editar carga">' + ICONS.edit + '<span class="lbl">Editar</span></button></span>';
+  return '<span class="chg-act"><button type="button" class="icon-action" onclick="editCharge(' + c.id + ')" aria-label="Editar carga"><span class="ico-def">' + ICONS.edit + '</span><svg class="ico-car" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/></svg></button></span>';
 }
 function chargeCardHtml(v, withActions){
   const c = v.c, t = chargeParts(v, 1);
