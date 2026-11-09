@@ -1511,6 +1511,68 @@ html:not([data-page="dashboard"])::before{filter:blur(6px);transform:scale(1.06)
   .hg-q .ql-tile-label{font-size:clamp(14px,min(7.5cqh,5.6cqw),22px)}
   .hg-q .ql-tile-icon,.hg-q .ql-tile-icon svg{width:clamp(18px,7cqh,26px);height:clamp(18px,7cqh,26px)}
 }
+
+/* ================= Cargas, Documentos y Datos con el estilo nuevo (escritorio y coche) ================= */
+@media(min-width:821px){
+  #page-charges,#page-docs,#page-stats{max-width:none}
+  .content{padding:6px 24px 28px}
+  /* pestañas internas en píldora, como el menú de arriba */
+  .doc-tabs{width:fit-content;max-width:100%;margin:0 auto 16px;border-radius:99px;padding:5px;background:var(--glass);border-color:var(--glass-bd);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+  .doc-tabs button{flex:0 0 auto;border-radius:99px;padding:10px 28px;font-size:15px;color:var(--text-muted)}
+  .doc-tabs button.active{background:var(--accent);color:var(--on-accent);box-shadow:0 6px 16px -6px var(--accent-glow)}
+  .seg{border-radius:99px;background:var(--glass);border-color:var(--glass-bd);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+  /* Cargas */
+  .chg-title{font-size:40px}
+  .chg-sum{gap:14px}
+  .chg-save,.chg-mini{border-radius:26px}
+  .chg-save{padding:20px 26px}
+  .chg-save-val{font-size:46px}
+  .chg-mini{padding:18px 24px}
+  .chg-mini-val{font-size:38px!important}
+  .chg-lbl{font-size:13px}
+  .chg-tablecard{border-radius:26px}
+  .chg-table td{padding:14px 16px;font-size:17px}
+  .chg-table td.when b{font-size:19px}
+  .chg-table td .act-bar{min-width:280px;max-width:520px}
+  .chg-table .chg-chip{font-size:14px;padding:3px 14px}
+  .chg-table td.num{font-size:19px;font-weight:700}
+  .chg-act .icon-action{width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,#8b5cf6,#6d4be0);border:0;color:#fff;box-shadow:0 4px 14px rgba(139,92,246,.4);display:inline-flex;align-items:center;justify-content:center;padding:0}
+  .chg-act .icon-action svg{stroke:#fff}
+  /* Documentos */
+  #docsTab>.card,#notesTab>.card{border-radius:26px}
+  .doc-sum{font-size:16px}.doc-sum b{font-size:18px}
+  .dr-title{font-size:19px}.dr-sub{font-size:14px}.dr-price{font-size:19px}.dr-exp{font-size:14px}.dr-note{font-size:15px}
+  .doc-row{padding:16px 4px}
+  .doc-cols{font-size:12.5px}
+  /* Datos */
+  .stats-top{margin-bottom:18px}
+  .stat-card{border-radius:26px;padding:26px 28px}
+  .stat-card .label{font-size:15px}
+  .stat-card .value{font-size:clamp(38px,4.2vw,60px);font-weight:300}
+  .stat-card .sub{font-size:15px}
+}
+html.car .content{padding:6px 20px 12px}
+html.car .doc-tabs button{padding:14px 34px;font-size:19px}
+html.car .doc-row{padding:14px 4px}
+html.car .dr-title{font-size:22px}html.car .dr-sub{font-size:16px}html.car .dr-price{font-size:22px}html.car .dr-exp{font-size:16px}html.car .doc-sum{font-size:18px}
+html.car .doc-cols{font-size:14px}
+html.car #page-docs .btn,html.car #page-docs .btn-sm{min-height:52px;font-size:18px;padding:0 24px}
+html.car #page-docs .tag-toggle{min-height:46px;font-size:17px;padding:0 20px}
+html.car #page-docs input[type=text],html.car #page-docs input[type=search],html.car #page-docs .field input{min-height:52px;font-size:19px}
+html.car #page-docs input{min-height:52px;font-size:19px}
+html.car .dr-type .chg-chip,html.car .dr-type span,html.car .dr-type .cat{font-size:16px}
+html.car .doc-row3 .dr-type > *:first-child{font-size:16px;padding:5px 16px}
+html.car .dr-act .icon-action{width:52px;height:52px}
+html.car .card-head h2{font-size:24px}
+html.car #page-stats .what,html.car #page-stats p{font-size:16px;line-height:1.35}
+html.car #page-stats .label-row .label{font-size:18px}
+html.car #page-stats .stat-card{padding:20px 24px}
+html.car .dr-act .icon-action,html.car .dr-act button{min-width:52px;min-height:52px}
+html.car .stats-top .seg button{padding:12px 22px;font-size:17px}
+html.car .stats-top .help-toggle{height:48px;min-height:48px;font-size:15px;padding:0 18px}
+html.car .stat-card .label{font-size:17px}html.car .stat-card .value{font-size:50px}html.car .stat-card .sub{font-size:16px}
+html.car #page-stats .card h3,html.car #page-stats h3{font-size:22px}
+html.car #page-stats .card p,html.car #page-stats .card span{font-size:inherit}
 /* modo coche */
 html.car .topbar{padding:12px 20px 6px}
 html.car .brand-pill b{font-size:17px}html.car .brand-pill small{font-size:13px}
@@ -2130,7 +2192,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611091205';   // AAAAMMDDHHMM
+const APP_VERSION = '202611091209';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2969,7 +3031,7 @@ function chargeCardHtml(v, withActions){
 function chargeRowHtml(v){
   const c = v.c, t = chargeParts(v, 2);
   const kwh = v.kwh > 0 ? (v.kwhEst ? estSpan(nf(v.kwh, 2), v.tips.kwh) : nf(v.kwh, 2)) : '—';
-  const car = document.documentElement.classList.contains('car');
+  const car = true;
   return '<tr><td class="when"><b>' + t.date + '</b><span class="dot"> · </span><span class="t">' + t.time + '</span><span class="loc2">' + PIN_ICON + t.loc + '</span></td>' +
     '<td><span class="chg-loc">' + PIN_ICON + t.loc + '</span></td>' +
     '<td>' + ((car && actBarHtml(c)) || (v.soc ? chargeSocHtml(v) : '—')) + '</td>' +
