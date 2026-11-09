@@ -1,7 +1,7 @@
 // Service worker mínimo: permite instalar la web como app y que abra sin conexión.
 // Estrategia "red primero": siempre intenta la versión nueva y usa la copia solo si no hay red.
-const CACHE = 'ev-manager-v3';
-const SHELL = ['./', './index.html', './manifest.json', './icons/icon-192.png', './icons/icon-512.png', './images/atto3-evo-front.png'];
+const CACHE = 'ev-manager-v4';
+const SHELL = ['./', './index.html', './manifest.json', './icons/icon-192.png', './icons/icon-512.png', './images/atto3-evo-front.png', './images/atto3-evo-34.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
