@@ -1222,7 +1222,7 @@ html.car .chg-tablecard{display:none!important}
 .rd-status{font-size:11px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;padding:4px 10px;border-radius:99px}
 .rd-status:empty{display:none}
 .rd-status.ok{color:var(--success);background:var(--success-soft)}
-.rd-status.stale{color:var(--est);background:var(--warning-soft)}
+.rd-status.stale{color:var(--warning);background:var(--warning-soft)}
 .set-hero{padding:22px 24px;margin-bottom:16px;background:linear-gradient(135deg,var(--accent-soft),transparent 62%),var(--bg-card)}
 .set-hero-top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
 .set-hero-id{display:flex;align-items:center;gap:14px}
@@ -1280,7 +1280,7 @@ html.car .chg-tablecard{display:none!important}
 .set-btns{display:flex;gap:8px;flex-wrap:wrap}
 .set-btns .btn{flex:1 1 130px}
 .set-status{font-size:12px;color:var(--text-muted);margin-top:10px;line-height:1.45}
-.set-status.warn{color:var(--est)}
+.set-status.warn{color:var(--warning)}
 .set-foot{font-size:11px;color:var(--text-faint);text-align:center;margin:4px 0 8px}
 .btn-ico{width:16px;height:16px;stroke:currentColor;margin-right:6px;vertical-align:-3px}
 @media(max-width:900px){.set-groups{grid-template-columns:repeat(2,minmax(0,1fr))}.set-actions{grid-template-columns:1fr}}
@@ -1681,6 +1681,9 @@ html.car .qlm-row{padding:10px 12px}html.car .qlm-btns button{width:52px;height:
   html:not(.car) .chg-table td .act-shell em{font-size:clamp(18px,2.6vh,24px)}
   html:not(.car) .chg-table td{padding-top:clamp(12px,2vh,20px);padding-bottom:clamp(12px,2vh,20px)}
 }
+
+/* Valores estimados: siguen el color de acento del tema (la marca ≈ y el subrayado de puntos los distinguen) */
+:root,:root[data-theme]{--est:var(--accent)}
 /* modo coche */
 html.car .topbar{padding:12px 20px 6px}
 html.car .brand-pill b{font-size:17px}html.car .brand-pill small{font-size:13px}
@@ -2311,7 +2314,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611091330';   // AAAAMMDDHHMM
+const APP_VERSION = '202611091346';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
