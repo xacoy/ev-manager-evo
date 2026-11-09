@@ -606,40 +606,48 @@ html.home-simple #page-dashboard .info-card-small{position:relative;padding-righ
 html.home-simple #page-dashboard .info-card-small::after{content:attr(data-ico);position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:44px;line-height:1;filter:drop-shadow(0 0 8px var(--accent-glow))}
 html.home-simple #page-dashboard .info-card-small .info-sub{display:none}
 html.home-simple #page-dashboard .info-label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-html.home-simple #page-dashboard .act-txt{display:none}
+#page-dashboard .act-txt{display:none}
 .act-short{display:none}
-html.home-simple #page-dashboard .act-full,html.home-simple #page-dashboard .act-cost{display:none}
-html.home-simple #page-dashboard .act-short{display:inline}
-html.home-simple #page-dashboard .act-short b{color:var(--accent);font-weight:800;font-size:1.2em}
-html.home-simple #page-dashboard .act-bar{position:relative;padding-right:10px}
-html.home-simple #page-dashboard .act-bar:after{content:"";position:absolute;right:0;top:50%;margin-top:-9px;width:6px;height:18px;background:#5b6880;border-radius:0 4px 4px 0}
-html.home-simple #page-dashboard .act-shell{position:relative;border:3px solid #5b6880;border-radius:12px;padding:4px;background:var(--bg)}
-html.home-simple #page-dashboard .act-cells{display:flex;gap:3px;height:34px}
-html.home-simple #page-dashboard .act-cells i{flex:1;border-radius:4px;background:var(--bg-2)}
-html.home-simple #page-dashboard .act-cells i.pre{background:var(--border-strong)}
-html.home-simple #page-dashboard .act-cells i.on{box-shadow:0 0 8px currentColor}
-html.home-simple #page-dashboard .act-cells i.ok{background:var(--success);color:var(--success)}
-html.home-simple #page-dashboard .act-cells i.mid{background:var(--warning);color:var(--warning)}
-html.home-simple #page-dashboard .act-cells i.low{background:var(--danger);color:var(--danger)}
-html.home-simple #page-dashboard .act-shell em{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:800 22px var(--font);font-style:normal;color:#fff;text-shadow:0 1px 5px #000,0 0 3px #000}
-html.home-simple #page-dashboard .act-row .activity-icon{display:none}
-html.home-simple #page-dashboard .act-main{display:grid;grid-template-columns:170px 1fr;align-items:center;column-gap:16px}
-html.home-simple #page-dashboard .act-title{grid-column:1;grid-row:1}
-html.home-simple #page-dashboard .act-date{grid-column:1;grid-row:2;margin:0}
-html.home-simple #page-dashboard .act-bar{grid-column:2;grid-row:1/3;margin:0}
-.act-bar{display:none}
-html.home-simple #page-dashboard .act-bar{display:block}
+#page-dashboard .act-full,#page-dashboard .act-cost{display:none}
+#page-dashboard .act-short{display:inline}
+#page-dashboard .act-short b{color:var(--accent);font-weight:800;font-size:1.2em}
+#page-dashboard .act-bar{position:relative;padding-right:10px}
+#page-dashboard .act-bar:after{content:"";position:absolute;right:0;top:50%;margin-top:-9px;width:6px;height:18px;background:#5b6880;border-radius:0 4px 4px 0}
+#page-dashboard .act-shell{position:relative;border:3px solid #5b6880;border-radius:12px;padding:4px;background:var(--bg)}
+#page-dashboard .act-cells{display:flex;gap:3px;height:34px}
+#page-dashboard .act-cells i{flex:1;border-radius:4px;background:var(--bg-2)}
+#page-dashboard .act-cells i.pre{background:var(--border-strong)}
+#page-dashboard .act-cells i.on{box-shadow:0 0 8px currentColor}
+#page-dashboard .act-cells i.ok{background:var(--success);color:var(--success)}
+#page-dashboard .act-cells i.mid{background:var(--warning);color:var(--warning)}
+#page-dashboard .act-cells i.low{background:var(--danger);color:var(--danger)}
+#page-dashboard .act-shell em{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:800 22px var(--font);font-style:normal;color:#fff;text-shadow:0 1px 5px #000,0 0 3px #000}
+#page-dashboard .act-row .activity-icon{display:none}
+#page-dashboard .act-main{display:grid;grid-template-columns:170px 1fr;align-items:center;column-gap:16px}
+#page-dashboard .act-title{grid-column:1;grid-row:1}
+#page-dashboard .act-date{grid-column:1;grid-row:2;margin:0}
+#page-dashboard .act-bar{grid-column:2;grid-row:1/3;margin:0}
+#page-dashboard .act-bar{display:block}
 html.home-simple #page-dashboard .dash-activity{padding:16px 20px}
-html.home-simple #page-dashboard .act-row{gap:16px;padding:14px 0}
-html.home-simple #page-dashboard .act-title{font-size:26px;font-weight:800;line-height:1.2}
-html.home-simple #page-dashboard .act-date{font-size:16px;margin-top:4px}
-html.home-simple #page-dashboard .act-cost{font-size:20px}
-html.home-simple #page-dashboard .act-cost .chg-chip{font-size:16px;padding:6px 16px}
+#page-dashboard .act-row{gap:16px;padding:14px 0}
+#page-dashboard .act-title{font-size:26px;font-weight:800;line-height:1.2}
+#page-dashboard .act-date{font-size:16px;margin-top:4px}
+#page-dashboard .act-cost{font-size:20px}
+#page-dashboard .act-cost .chg-chip{font-size:16px;padding:6px 16px}
 html.car.home-simple #page-dashboard .dash-activity{flex:1 1 0;padding:10px 20px}
-html.car.home-simple #page-dashboard .act-row{padding:6px 0;gap:14px}
-html.car.home-simple #page-dashboard .act-cells{height:42px}
-html.car.home-simple #page-dashboard .act-shell em{font-size:26px}
-html.car.home-simple #page-dashboard .act-title{font-size:26px}html.car.home-simple #page-dashboard .act-date{font-size:16px}html.car.home-simple #page-dashboard .act-cost{font-size:20px}
+html.car #page-dashboard .act-row{padding:6px 0;gap:14px}
+html.car #page-dashboard .act-cells{height:42px}
+html.car:not(.home-simple) #page-dashboard .act-cells{height:20px}
+html.car:not(.home-simple) #page-dashboard .act-date{font-size:13px;white-space:nowrap}
+html.car:not(.home-simple) #page-dashboard .act-short b{font-size:1.1em}
+html.car:not(.home-simple) #page-dashboard .act-shell em{font-size:15px}
+html.car:not(.home-simple) #page-dashboard .act-title{font-size:18px}
+html.car:not(.home-simple) #page-dashboard .act-row{padding:2px 0}
+html.car:not(.home-simple) #page-dashboard .act-shell{padding:3px;border-width:2px}
+html.car:not(.home-simple) #page-dashboard .act-main{grid-template-columns:140px 1fr}
+@media(max-width:560px){#page-dashboard .act-main{grid-template-columns:110px 1fr;column-gap:10px}#page-dashboard .act-title{font-size:20px}#page-dashboard .act-date{font-size:13px;white-space:nowrap}#page-dashboard .act-shell em{font-size:15px}#page-dashboard .act-cells{height:28px}}
+html.car #page-dashboard .act-shell em{font-size:26px}
+html.car #page-dashboard .act-title{font-size:26px}html.car #page-dashboard .act-date{font-size:16px}html.car #page-dashboard .act-cost{font-size:20px}
 html.car.home-simple #page-dashboard .panel-grid{flex:1 1 0;grid-template-columns:minmax(220px,34%) 1fr}
 
 /* Resumen de cargas */
@@ -2061,7 +2069,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611091005';   // AAAAMMDDHHMM
+const APP_VERSION = '202611091007';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
