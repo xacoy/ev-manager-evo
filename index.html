@@ -2247,7 +2247,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611091237';   // AAAAMMDDHHMM
+const APP_VERSION = '202611091239';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2749,7 +2749,7 @@ function renderHomeCards(){
   const total = state.charges.reduce((x,c)=>x + kwhOf(c), 0);
   const lastN = [...state.charges].sort((a,b)=>chargeTs(a) - chargeTs(b)).slice(-6).map(c=>kwhOf(c));
   const mxk = Math.max(...lastN, 1);
-  cn.innerHTML = '<div class="info-label">Cargas · ' + nf(total, 1) + ' kWh</div><div class="info-value">' + state.charges.length + '</div>' +
+  cn.innerHTML = '<div class="info-label">Cargas · ' + state.charges.length + '</div><div class="info-value">' + nf(total, 1) + '<small> kWh</small></div>' +
     (lastN.length ? '<div class="hg-cols">' + lastN.map(k=>'<i style="height:' + Math.max(6, k / mxk * 100).toFixed(0) + '%" title="' + nf(k, 1) + ' kWh"></i>').join('') + '</div>' : '');
   // tendencia del consumo (tramos entre cargas)
   const sp = document.getElementById('homeSpark');
