@@ -1446,18 +1446,19 @@ html:not([data-page="dashboard"])::before{filter:blur(6px);transform:scale(1.06)
 .top-right .icon-btn,.top-right .sync-btn{background:var(--glass);border-color:var(--glass-bd);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
 /* Inicio */
 #page-dashboard{max-width:none}
-.home-grid{display:grid;grid-template-columns:minmax(220px,19%) 1fr minmax(220px,19%);grid-template-rows:repeat(3,minmax(0,1fr));grid-template-areas:"a . l" "km . n" "r . q";gap:14px;height:calc(100dvh - 130px)}
+.home-grid{display:grid;grid-template-columns:minmax(230px,20%) 1fr minmax(230px,20%);grid-template-rows:repeat(3,auto);align-content:space-between;align-items:start;grid-template-areas:"a . l" "km . n" "r . q";gap:14px;height:calc(100dvh - 130px)}
 .hg-photo{display:none}
 .hg-a{grid-area:a}.hg-km{grid-area:km}.hg-km .kc{display:grid;grid-template-columns:1fr 1fr;gap:12px}.hg-km .kc>div{min-width:0}.hg-r{grid-area:r}.hg-l{grid-area:l}.hg-n{grid-area:n}.hg-q{grid-area:q}
-.home-grid .info-card-small{padding:18px 20px;border-radius:26px;justify-content:center;min-width:0;box-shadow:0 10px 28px rgba(0,0,0,.14)}
-.home-grid .info-label{text-transform:none;letter-spacing:0;font-weight:600;font-size:clamp(12px,5cqw,15px);color:var(--text-muted)}
-.home-grid .info-value{font-weight:300;font-size:clamp(24px,14cqw,46px)}
-.hg-km .info-value{font-size:clamp(22px,10.5cqw,40px)}
+.home-grid .info-card-small{padding:22px 24px;border-radius:26px;justify-content:center;min-width:0;box-shadow:0 10px 28px rgba(0,0,0,.14)}
+.home-grid .info-label{text-transform:none;letter-spacing:0;font-weight:600;font-size:clamp(14px,6.2cqw,18px);color:var(--text-muted);margin-bottom:8px}
+.home-grid .info-value{font-weight:300;font-size:clamp(30px,19cqw,60px)}
+.hg-km .info-value{font-size:clamp(30px,15cqw,54px)}
+.hg-a .info-sub{font-size:clamp(11px,4.4cqw,15px)}
 .home-grid .info-value small{font-size:.38em;font-weight:500;color:var(--text-muted)}
-.home-grid .info-sub{font-size:clamp(11px,4.6cqw,14px)}
+.home-grid .info-sub{font-size:clamp(12px,5.2cqw,16px);margin-top:6px}
 .home-grid .car-badge{margin-left:6px;vertical-align:1px;font-size:10px;padding:2px 8px}
-.hl-cells{display:flex;gap:4px;margin:10px 0 6px}.hl-cells i{flex:1;height:22px;border-radius:6px;background:color-mix(in srgb,var(--text) 12%,transparent)}.hl-cells i.pre{background:color-mix(in srgb,var(--text) 28%,transparent)}.hl-cells i.on{background:linear-gradient(180deg,var(--accent),var(--accent-2))}
-.hl-foot{font-size:13px;text-align:right}.hl-free{color:var(--success)}
+.hl-cells{display:flex;gap:5px;margin:14px 0 8px}.hl-cells i{flex:1;height:30px;border-radius:6px;background:color-mix(in srgb,var(--text) 12%,transparent)}.hl-cells i.pre{background:color-mix(in srgb,var(--text) 28%,transparent)}.hl-cells i.on{background:linear-gradient(180deg,var(--accent),var(--accent-2))}
+.hl-foot{font-size:15px;text-align:right}.hl-free{color:var(--success)}
 .hg-q{align-items:flex-start;justify-content:flex-start;overflow:hidden}
 .hg-q .quicklinks-grid{display:flex;flex-wrap:wrap;align-content:flex-start;gap:8px;margin:8px 0 0;grid-template-columns:none}
 .hg-q .ql-tile{flex:0 0 auto;min-height:0;overflow:visible}
@@ -1465,9 +1466,9 @@ html:not([data-page="dashboard"])::before{filter:blur(6px);transform:scale(1.06)
 .home-grid .save-price{display:none}
 .home-grid .info-value{white-space:nowrap}
 :root:not([data-deco="off"]) body::before,:root:not([data-deco="off"]) body::after,:root:not([data-deco="off"]) .main::after{display:none!important}
-.hg-q .ql-tile{flex-direction:row;gap:8px;padding:8px 14px;border-radius:99px;font-size:13px;position:relative}
+.hg-q .ql-tile{flex-direction:row;gap:8px;padding:10px 16px;border-radius:99px;font-size:15px;position:relative}
 .hg-q .ql-tile-icon{width:18px;height:18px}.hg-q .ql-tile-icon svg{width:18px;height:18px}
-.hg-q .ql-tile-label{font-size:13px;white-space:nowrap}
+.hg-q .ql-tile-label{font-size:15px;white-space:nowrap}
 .hg-q .ql-tile-edit,.hg-q .ql-tile-delete{width:20px;height:20px;top:-7px}.hg-q .ql-tile-edit{left:-5px}.hg-q .ql-tile-delete{right:-5px}.hg-q .ql-tile-edit svg{width:11px;height:11px}
 .old-dash{display:none!important}
 @media(max-width:1200px){
@@ -1498,12 +1499,9 @@ html.car .brand-pill .logo{width:46px;height:46px}
 html.car .tab-item{padding:11px 24px;font-size:17px}html.car .tab-item svg{width:22px;height:22px}
 html.car .nav-rail{display:none!important}
 html.car #page-dashboard.active{display:flex;flex-direction:column;flex:1 1 auto;min-height:0}
-html.car .home-grid{flex:1;min-height:0;grid-template-columns:minmax(230px,22%) 1fr minmax(230px,22%);gap:12px}
-html.car .home-grid .info-card-small{padding:12px 18px;container-type:size}
-html.car .home-grid .info-label{font-size:clamp(13px,9cqh,18px)}
-html.car .home-grid .info-value{font-size:clamp(24px,26cqh,50px)}
-html.car .home-grid .info-sub{font-size:clamp(12px,9cqh,16px)}
-html.car .hl-cells i{height:clamp(18px,18cqh,30px)}
+html.car .home-grid{flex:1;min-height:0;height:auto;grid-template-columns:minmax(240px,21%) 1fr minmax(240px,21%);gap:12px}
+html.car .home-grid .info-card-small{padding:14px 20px}
+html.car .hl-cells i{height:34px}
 html.car .hg-q .ql-tile{padding:10px 18px;font-size:15px}html.car .hg-q .ql-tile-label{font-size:15px}
 </style>
 </head>
@@ -2115,7 +2113,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611091159';   // AAAAMMDDHHMM
+const APP_VERSION = '202611091203';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
