@@ -1689,6 +1689,32 @@ html.car .topbar{padding:12px 20px 6px}
 html.car .brand-pill b{font-size:17px}html.car .brand-pill small{font-size:13px}
 html.car .brand-pill .logo{width:46px;height:46px}
 html.car .tab-item{padding:11px 24px;font-size:17px}html.car .tab-item svg{width:22px;height:22px}
+
+/* Modo coche: la barra superior cabe en pantallas estrechas (sin salirse por la derecha) */
+html.car .topbar{gap:10px}
+html.car .topbar>*{min-width:0}
+html.car .tabs{flex-shrink:1;min-width:0}
+@media(max-width:1450px){
+  html.car .brand-pill small{display:none}
+  html.car .tab-item{padding:11px 16px}
+  html.car .sync-btn span{display:none}
+  html.car .sync-btn{padding:0 16px}
+  html.car .top-right{gap:6px}
+}
+@media(max-width:1150px){
+  html.car .tab-item:not(.active) span{display:none}
+  html.car .tab-item{padding:11px 14px}
+  html.car .icon-btn{width:48px;height:48px}
+  html.car .brand-pill{padding-right:12px}
+  html.car .brand-pill b{font-size:15px}
+  html.car .brand-pill .logo{width:40px;height:40px}
+}
+@media(max-width:1150px){html.car .hga-pill{display:none}html.car .hg-a .info-label{white-space:nowrap}html.car .home-grid .info-value{line-height:1}}
+@media(max-width:850px){html.car #fullscreenBtn{display:none!important}}
+@media(max-width:900px){
+  html.car .brand-pill b{display:none}
+  html.car .brand-pill{padding-right:6px}
+}
 html.car .nav-rail{display:none!important}
 html.car #page-dashboard.active{display:flex;flex-direction:column;flex:1 1 auto;min-height:0}
 html.car .home-grid{flex:1;min-height:0;height:auto;grid-template-columns:minmax(250px,22.5%) 1fr minmax(250px,22.5%);gap:12px}
@@ -2314,7 +2340,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611091346';   // AAAAMMDDHHMM
+const APP_VERSION = '202611100706';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
