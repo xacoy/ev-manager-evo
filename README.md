@@ -194,6 +194,6 @@ MIT
 
 ---
 
-**Última actualización:** Septiembre 2026
+**Última actualización:** Noviembre 2026
 
 Hecho con ❤️ para propietarios del BYD Atto 3 EVO
