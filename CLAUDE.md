@@ -1,5 +1,8 @@
 # Notas para trabajar en este repositorio
 
+## Despliegue
+- Todo cambio se sube **siempre también a `master`** (además de a la rama de trabajo), sin esperar a que se pida cada vez: `git push origin HEAD:master`.
+
 ## Número de versión
 - Cada cambio que se suba a `master` y toque `index.html` debe **actualizar `APP_VERSION`** (cerca del inicio del script, junto a `VEHICLE_BATTERY_KWH`).
 - Formato: `AAAAMMDDHHMM` con la fecha y hora (hora de Canarias) del cambio, p. ej. `202610300952`. Se muestra como `v202610300952`. Al subir otro cambio, usa siempre una hora posterior.
