@@ -1646,6 +1646,40 @@ html.car #page-stats .card p,html.car #page-stats .card span{font-size:inherit}
   .hg-cols{flex:none;height:56px;max-height:none}
 }
 
+
+/* Página de enlaces */
+.lk-top{display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.lk-search{flex:1;min-width:180px;position:relative}
+.lk-search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;stroke:var(--text-faint)}
+.lk-search input{width:100%;background:var(--bg-card);border:1px solid var(--border);border-radius:99px;padding:11px 16px 11px 42px;font-size:14px;color:var(--text);outline:none}
+.lk-search input:focus{border-color:var(--accent)}
+.lk-chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 14px;scrollbar-width:none}.lk-chips::-webkit-scrollbar{display:none}
+.lk-chip{flex:0 0 auto;border:1px solid var(--border);background:var(--bg-card);color:var(--text-muted);border-radius:99px;padding:7px 15px;font:600 13px var(--font);cursor:pointer}
+.lk-chip.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.lk-sec{margin-bottom:22px}
+.lk-sec h2{display:flex;align-items:center;gap:10px;font:700 13px var(--font-display);letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted);margin:0 0 10px}
+.lk-sec h2::before{content:"";width:10px;height:10px;border-radius:3px;background:var(--c)}
+.lk-sec h2 span{font-weight:600;letter-spacing:0;color:var(--text-faint)}
+.lk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.lk-c{position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;gap:3px;min-height:128px;padding:16px 18px;border-radius:20px;color:var(--text);text-decoration:none;
+  background:linear-gradient(150deg,color-mix(in srgb,var(--c) 24%,var(--bg-card)),var(--bg-card) 82%);border:1px solid color-mix(in srgb,var(--c) 38%,var(--border));transition:transform .2s var(--ease),border-color .2s var(--ease)}
+.lk-c::before{content:"";position:absolute;right:-36px;top:-36px;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--c) 38%,transparent),transparent 70%);pointer-events:none}
+.lk-c:hover{transform:translateY(-3px);border-color:var(--c)}.lk-c:active{transform:scale(.97)}
+.lk-ic{position:absolute;top:14px;left:16px;width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 22%,transparent);color:var(--c)}
+.lk-ic svg{width:22px;height:22px;stroke:currentColor}
+.lk-c b{position:relative;font:700 17px var(--font-display);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lk-c small{position:relative;font-size:12px;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lk-acts{position:absolute;top:10px;right:10px;display:flex;gap:4px;z-index:1}
+.lk-acts button{width:32px;height:32px;border-radius:50%;border:0;background:color-mix(in srgb,var(--text) 10%,transparent);color:var(--text-muted);display:grid;place-items:center;padding:0;cursor:pointer}
+.lk-acts button svg{width:15px;height:15px;stroke:currentColor;fill:none}
+.lk-acts button:hover{color:var(--text)}
+.lk-acts .fav.on{color:var(--warning)}.lk-acts .fav.on svg{fill:currentColor}
+.lk-empty{text-align:center;color:var(--text-faint);padding:48px 12px;font-size:14px}
+.qlm-fav{color:var(--warning);margin-left:4px}
+.ql-check{display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer}.ql-check input{width:18px;height:18px;accent-color:var(--accent)}
+html.car .lk-c b{font-size:20px}html.car .lk-c{min-height:150px}html.car .lk-acts button{width:44px;height:44px}
+@media(max-width:620px){.lk-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.lk-c{min-height:112px;padding:12px 14px}.lk-c b{font-size:15px}}
+
 /* Gestor de enlaces rápidos */
 .qlm-hint{font-size:13px;color:var(--text-muted);margin-bottom:12px}
 .qlm-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
@@ -1732,6 +1766,7 @@ html.car .home-grid{flex:1;min-height:0;height:auto;grid-template-columns:minmax
     <button class="nav-item" data-page="dashboard"><span class="ni-indicator"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></span><span class="ni-label">Inicio</span></button>
     <button class="nav-item" data-page="charges"><span class="ni-indicator"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span><span class="ni-label">Cargas</span></button>
     <button class="nav-item" data-page="docs"><span class="ni-indicator"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg></span><span class="ni-label">Documentos</span></button>
+    <button class="nav-item" data-page="links"><span class="ni-indicator"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span><span class="ni-label">Enlaces</span></button>
     <button class="nav-item" data-page="stats"><span class="ni-indicator"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18M18 17V9M13 17V5M8 17v-4"/></svg></span><span class="ni-label">Datos</span></button>
   </nav>
 
@@ -1741,7 +1776,7 @@ html.car .home-grid{flex:1;min-height:0;height:auto;grid-template-columns:minmax
       <div class="top-left" style="display:none"><button class="icon-btn" id="homeBtn" data-page="dashboard" style="display:none"></button></div>
       <div class="brand-pill"><span class="logo"><svg viewBox="0 0 24 24" stroke-width="0" style="fill:currentColor"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span><div><b>BYD Atto 3 <em class="title-accent">EVO</em></b><small><span id="chipKm">— km</span> · <span id="chipBattery">— kWh</span></small></div></div>
       <h1 id="pageTitle">BYD Atto 3 <em class="title-accent">EVO</em></h1>
-      <nav class="tabs" id="topTabs"><button type="button" class="tab-item" data-page="dashboard"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg><span>Inicio</span></button><button type="button" class="tab-item" data-page="charges"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span>Cargas</span></button><button type="button" class="tab-item" data-page="docs"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg><span>Documentos</span></button><button type="button" class="tab-item" data-page="stats"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18M18 17V9M13 17V5M8 17v-4"/></svg><span>Datos</span></button></nav>
+      <nav class="tabs" id="topTabs"><button type="button" class="tab-item" data-page="dashboard"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg><span>Inicio</span></button><button type="button" class="tab-item" data-page="charges"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><span>Cargas</span></button><button type="button" class="tab-item" data-page="docs"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg><span>Documentos</span></button><button type="button" class="tab-item" data-page="links"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><span>Enlaces</span></button><button type="button" class="tab-item" data-page="stats"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18M18 17V9M13 17V5M8 17v-4"/></svg><span>Datos</span></button></nav>
       <div class="top-right">
         <button class="sync-btn" id="syncBtn" type="button" title="Sincronizar con Google Drive">
           <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 12a9 9 0 0 1 15.5-6.2L21 8"/><path d="M21 3v5h-5M3 21v-5h5"/></svg>
@@ -2039,6 +2074,17 @@ html.car .home-grid{flex:1;min-height:0;height:auto;grid-template-columns:minmax
         </div>
       </section>
 
+      <!-- ENLACES -->
+      <section class="page" id="page-links">
+        <div class="lk-top">
+          <div class="lk-search"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input id="lkSearch" type="search" placeholder="Buscar enlace…" autocomplete="off"></div>
+          <button type="button" class="btn btn-ghost" id="lkOrder">Ordenar</button>
+          <button type="button" class="btn btn-primary" id="lkAdd">+ Añadir enlace</button>
+        </div>
+        <div class="lk-chips" id="lkChips"></div>
+        <div id="lkBody"></div>
+      </section>
+
     </div>
   </main>
 
@@ -2054,6 +2100,7 @@ html.car .home-grid{flex:1;min-height:0;height:auto;grid-template-columns:minmax
   <div class="more-sheet-overlay" id="moreSheetOverlay">
     <div class="more-sheet">
       <div class="sheet-handle"></div>
+      <button class="sheet-item nav-item" data-page="links"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Enlaces</button>
       <button class="sheet-item nav-item" data-page="stats"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18M18 17V9M13 17V5M8 17v-4"/></svg>Estadísticas</button>
       <button class="sheet-item nav-item" data-page="setup"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Configuración</button>
     </div>
@@ -2205,7 +2252,7 @@ html.car .home-grid{flex:1;min-height:0;height:auto;grid-template-columns:minmax
   <div class="modal" style="max-width:540px;max-height:92vh;overflow:auto">
     <h3 id="quickLinkModalTitle">Enlaces rápidos</h3>
     <div id="qlListView">
-      <p class="qlm-hint">Los accesos del Inicio, en este orden. Usa las flechas para ordenarlos.</p>
+      <p class="qlm-hint">Todos tus enlaces, en este orden (el de las categorías y el del Inicio). Usa las flechas para ordenarlos; la estrella ★ indica los que salen en Inicio.</p>
       <div id="qlManageList" class="qlm-list"></div>
       <div class="modal-actions"><button type="button" class="btn btn-ghost" id="qlClose">Cerrar</button><button type="button" class="btn btn-primary" id="qlNew">+ Añadir enlace</button></div>
     </div>
@@ -2215,6 +2262,7 @@ html.car .home-grid{flex:1;min-height:0;height:auto;grid-template-columns:minmax
         <option value="">Enlace externo (URL)</option>
         <option value="inicio">Sección: Inicio</option>
         <option value="cargas">Sección: Cargas</option>
+        <option value="enlaces">Sección: Enlaces</option>
         <option value="taller">Sección: Taller</option>
         <option value="notas">Sección: Notas</option>
         <option value="datos">Sección: Datos</option>
@@ -2222,6 +2270,8 @@ html.car .home-grid{flex:1;min-height:0;height:auto;grid-template-columns:minmax
       </select></div>
       <div class="field"><label>Icono</label><div class="icon-picker" id="ql_icon_picker"></div><input type="hidden" id="ql_icon_modal" value="link"></div>
       <div class="field" id="ql_url_field"><label>URL</label><input id="ql_url_modal" type="text" placeholder="https://..."></div>
+      <div class="field"><label>Categoría</label><input id="ql_cat_modal" type="text" list="ql_cat_list" placeholder="Ej. Coche, Música, Seguros…" maxlength="24" autocomplete="off"><datalist id="ql_cat_list"></datalist></div>
+      <label class="ql-check"><input type="checkbox" id="ql_fav_modal"> Importante: mostrar también en Inicio</label>
       <div class="modal-actions">
         <button type="button" class="btn btn-ghost" id="addLinkCancel">Cancelar</button>
         <button type="submit" class="btn btn-primary" id="quickLinkSubmitBtn">Guardar enlace</button>
@@ -2335,12 +2385,12 @@ const ICONS = {
   edit: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg>'
 };
 const DEFAULT_QUICK_LINKS = [
-  { id:'bydmanual', title:'Manual BYD', url:'https://www.byd.com/es-es/service-maintenance/owners-manual.html', icon:'book' },
-  { id:'bydservice', title:'Servicio BYD', url:'https://www.byd.com/es-es/service-maintenance', icon:'wrench' }
+  { id:'bydmanual', title:'Manual BYD', url:'https://www.byd.com/es-es/service-maintenance/owners-manual.html', icon:'book', cat:'BYD', fav:true },
+  { id:'bydservice', title:'Servicio BYD', url:'https://www.byd.com/es-es/service-maintenance', icon:'wrench', cat:'BYD', fav:true }
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611100706';   // AAAAMMDDHHMM
+const APP_VERSION = '202611112030';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2450,9 +2500,9 @@ function toast(msg, type='info'){
 }
 
 /* ---------------- navigation ---------------- */
-const ROUTES = { inicio:'dashboard', cargas:'charges', taller:'maintenance', notas:'notes', documentos:'docs', datos:'stats', configuracion:'setup' };
+const ROUTES = { inicio:'dashboard', cargas:'charges', taller:'maintenance', notas:'notes', documentos:'docs', enlaces:'links', datos:'stats', configuracion:'setup' };
 const PAGE_ROUTE = Object.fromEntries(Object.entries(ROUTES).map(([r,p])=>[p,r]));
-const ROUTE_LABELS = { inicio:'Inicio', cargas:'Cargas', taller:'Taller', notas:'Notas', documentos:'Documentos', datos:'Datos', configuracion:'Configuración' };
+const ROUTE_LABELS = { inicio:'Inicio', cargas:'Cargas', taller:'Taller', notas:'Notas', documentos:'Documentos', enlaces:'Enlaces', datos:'Datos', configuracion:'Configuración' };
 const ROUTE_ICONS = { cargas:'bolt', taller:'wrench', notas:'edit' };
 function pageFromHash(){
   const r = decodeURIComponent((location.hash||'').replace(/^#\/?/,'')).toLowerCase();
@@ -2465,7 +2515,7 @@ function navigate(page, opts){
   document.getElementById('page-'+page).classList.add('active');
   document.documentElement.dataset.page = page;
   document.querySelectorAll('.nav-item,.tab-item').forEach(b=>b.classList.toggle('active', b.dataset.page===page));
-  const titles = {dashboard:'BYD Atto 3 <em class="title-accent">EVO</em>', setup:'Configuración', charges:'Cargas', maintenance:'Mantenimiento', revisions:'Revisiones', notes:'Notas', docs:'Documentos', stats:'Estadísticas'};
+  const titles = {dashboard:'BYD Atto 3 <em class="title-accent">EVO</em>', setup:'Configuración', charges:'Cargas', maintenance:'Mantenimiento', revisions:'Revisiones', notes:'Notas', docs:'Documentos', links:'Enlaces', stats:'Estadísticas'};
   document.getElementById('pageTitle').innerHTML = titles[page] || page;
   document.getElementById('moreSheetOverlay').classList.remove('open');
   if(!(opts && opts.fromHash) && PAGE_ROUTE[page]){
@@ -2478,6 +2528,7 @@ function navigate(page, opts){
   if(page==='docs') setDocTab(docTab);
   if(page==='dashboard') requestAnimationFrame(fitActivity);
   if(page==='stats') renderStats();
+  if(page==='links') renderLinksPage();
   if(page==='dashboard') {
     setTimeout(renderDashboard, 10);
   }
@@ -3402,6 +3453,10 @@ function normalizeState(){
     changed = true;
   }
   if(Array.isArray(state.quickLinks) && state.quickLinks.some(l=>/^#\/?manual$/.test(l.url || ''))){ state.quickLinks = state.quickLinks.filter(l=>!/^#\/?manual$/.test(l.url || '')); changed = true; }   // la sección Manual ya no existe
+  if(Array.isArray(state.quickLinks)) state.quickLinks.forEach(l=>{   // categorías y «importante»: los enlaces que ya había siguen en Inicio
+    if(typeof l.fav !== 'boolean'){ l.fav = true; changed = true; }
+    if(!l.cat){ l.cat = /^byd/.test(l.id || '') ? 'BYD' : 'General'; changed = true; }
+  });
   if(!Array.isArray(state.docs)){ state.docs = []; changed = true; }
   state.docs.forEach(d=>{
     if(DOC_CAT_ALIAS[d.category]){ d.sub = d.sub || d.category; d.category = DOC_CAT_ALIAS[d.category]; changed = true; }
@@ -4015,18 +4070,60 @@ function escapeAttr(s){ return (s||'').replace(/"/g,'&quot;'); }
 
 /* ---------------- quick links ---------------- */
 const ICON_CHOICES = [['link','Enlace'],['globe','Web'],['home','Casa'],['car','Coche'],['bolt','Carga'],['battery','Batería'],['wrench','Taller'],['book','Manual'],['file','Documento'],['shield','Seguro'],['card','Pago'],['euro','Gasto'],['cart','Tienda'],['parking','Parking'],['pin','Lugar'],['phone','Teléfono'],['mail','Correo'],['calendar','Calendario'],['clock','Horario'],['star','Favorito'],['music','Música'],['film','Películas'],['play','Reproducir'],['tv','TV'],['video','Vídeo'],['headphones','Auriculares'],['radio','Radio'],['mic','Podcast'],['volume','Sonido'],['camera','Cámara'],['image','Fotos'],['gamepad','Juegos'],['map','Mapa'],['compass','Navegación'],['cloud','Nube'],['coffee','Café'],['heart','Salud'],['wifi','Wi-Fi'],['user','Perfil'],['search','Buscar'],['joystick','Mando'],['dice','Juegos de mesa'],['trophy','Logros'],['target','Objetivo'],['monitor','Pantalla'],['headset','Cascos con micro'],['disc','Disco'],['cast','Enviar a TV'],['playlist','Lista'],['speaker','Altavoz'],['pause','Pausa'],['carfront','Coche de frente'],['fuel','Gasolinera'],['plug','Enchufe'],['charger','Cargador'],['key','Llave'],['gauge','Velocímetro'],['wheel','Volante'],['route','Ruta'],['cone','Obras'],['truck','Furgoneta'],['drop','Aceite'],['batcharge','Batería cargando'],['ghost','Fantasma'],['invader','Marciano'],['pacman','Comecocos'],['dpad','Cruceta'],['coin','Moneda'],['sword','Espada'],['skull','Calavera'],['crown','Corona'],['bomb','Bomba'],['rocket','Cohete'],['puzzle','Puzzle'],['flag','Meta'],['gem','Gema']];
+const LINK_COLORS = ['var(--cyan)','var(--green)','var(--orange)','var(--purple)','var(--pink)','var(--blue)'];
+let linksCat = '', linksQuery = '', qlFromPage = false;
+function linkCat(l){ return l.cat || 'General'; }
+function linkColor(cat){ let h = 0; for(const ch of cat) h = (h * 31 + ch.charCodeAt(0)) >>> 0; return LINK_COLORS[h % LINK_COLORS.length]; }
+function linkHost(url){ return /^#/.test(url || '') ? 'Sección de la web' : (url || '').replace(/^https?:\/\/(www\.)?/, '').replace(/\/.*$/, ''); }
+function linkAttrs(l){ return 'href="' + escapeAttr(l.url) + '"' + (/^#/.test(l.url) ? '' : ' target="_blank" rel="noopener noreferrer"'); }
 function renderQuickLinks(){
+  renderLinksPage();
   const grid = document.getElementById('quickLinksGrid');
   if(!grid) return;
-  const links = state.quickLinks || [];
+  const links = (state.quickLinks || []).filter(l=>l.fav);   // en Inicio solo los marcados como importantes
   // en el coche no se desplaza y los accesos ocupan toda la columna derecha: 2 columnas hasta 6, 3 hasta 9, 4 hasta 12 y luego 5 (más filas)
   const cols = links.length <= 4 ? 2 : links.length <= 9 ? 3 : links.length <= 16 ? 4 : 5;
   document.getElementById('page-dashboard').dataset.qlcols = cols; grid.style.setProperty('--ql-cols', cols); grid.style.setProperty('--ql-rows', Math.max(1, Math.ceil(links.length / cols)));
   grid.innerHTML = links.length ? links.map(l=>`
-    <a class="ql-tile" href="${escapeAttr(l.url)}" ${/^#/.test(l.url) ? '' : 'target="_blank" rel="noopener noreferrer"'} title="${escapeAttr(l.title)}">
+    <a class="ql-tile" ${linkAttrs(l)} title="${escapeAttr(l.title)}">
       <div class="ql-tile-icon">${ICONS[l.icon]||ICONS.link}</div>
       <div class="ql-tile-label">${escapeHtml(l.title)}</div>
-    </a>`).join('') : `<div style="grid-column:1/-1;text-align:center;padding:24px;color:var(--text-faint);font-size:13px">Sin enlaces todavía. Añádelos desde el menú ⋮ › Enlaces rápidos.</div>`;
+    </a>`).join('') : `<div style="grid-column:1/-1;text-align:center;padding:24px;color:var(--text-faint);font-size:13px">Sin enlaces importantes. Marca con ★ los que quieras ver aquí desde la pestaña Enlaces.</div>`;
+}
+function renderLinksPage(){
+  const body = document.getElementById('lkBody'); if(!body) return;
+  const all = state.quickLinks || [];
+  const cats = []; all.forEach(l=>{ const c = linkCat(l); if(!cats.includes(c)) cats.push(c); });
+  if(linksCat && !cats.includes(linksCat)) linksCat = '';
+  document.getElementById('lkChips').innerHTML = cats.length > 1 ? ['', ...cats].map(c=>'<button type="button" class="lk-chip' + (c === linksCat ? ' on' : '') + '" data-cat="' + escapeAttr(c) + '">' + (c ? escapeHtml(c) : 'Todos') + '</button>').join('') : '';
+  const q = linksQuery.trim().toLowerCase();
+  const star = '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linejoin="round"><polygon points="12 2 15.1 8.6 22 9.3 16.9 14 18.4 21 12 17.5 5.6 21 7.1 14 2 9.3 8.9 8.6"/></svg>';
+  const html = cats.filter(c=>!linksCat || c === linksCat).map(c=>{
+    const items = all.filter(l=>linkCat(l) === c && (!q || (l.title + ' ' + l.url + ' ' + c).toLowerCase().includes(q)));
+    if(!items.length) return '';
+    return '<div class="lk-sec" style="--c:' + linkColor(c) + '"><h2>' + escapeHtml(c) + ' <span>' + items.length + '</span></h2><div class="lk-grid">' + items.map(l=>
+      '<a class="lk-c" style="--c:' + linkColor(c) + '" ' + linkAttrs(l) + ' data-id="' + escapeAttr(l.id) + '">' +
+        '<span class="lk-ic">' + (ICONS[l.icon] || ICONS.link) + '</span>' +
+        '<span class="lk-acts"><button type="button" class="fav' + (l.fav ? ' on' : '') + '" data-act="fav" aria-label="' + (l.fav ? 'Quitar de Inicio' : 'Mostrar en Inicio') + '" title="' + (l.fav ? 'Quitar de Inicio' : 'Mostrar en Inicio') + '">' + star + '</button>' +
+        '<button type="button" data-act="edit" aria-label="Editar" title="Editar">' + ICONS.edit + '</button></span>' +
+        '<b>' + escapeHtml(l.title) + '</b><small>' + escapeHtml(linkHost(l.url)) + '</small></a>').join('') + '</div></div>';
+  }).join('');
+  body.innerHTML = html || '<div class="lk-empty">' + (all.length ? 'Ningún enlace coincide con la búsqueda.' : 'Aún no hay enlaces. Pulsa «Añadir enlace».') + '</div>';
+}
+function refreshQlCats(){
+  const dl = document.getElementById('ql_cat_list'); if(!dl) return;
+  const cats = []; (state.quickLinks || []).forEach(l=>{ const c = linkCat(l); if(!cats.includes(c)) cats.push(c); });
+  dl.innerHTML = cats.map(c=>'<option value="' + escapeAttr(c) + '"></option>').join('');
+}
+function openLinkForm(id){
+  qlFromPage = true;
+  if(id) editQuickLink(id);
+  else {
+    cancelQuickLinkEdit(); showQuickLinkForm();
+    document.getElementById('ql_cat_modal').value = linksCat;
+    document.getElementById('addLinkOverlay').classList.add('open');
+  }
+  refreshQlCats();
 }
 function deleteQuickLink(id){
   if(editingQuickLinkId===id) cancelQuickLinkEdit();
@@ -4045,7 +4142,7 @@ function renderQuickLinksManager(){
     const ask = qlDeleteAsk === l.id;
     return '<div class="qlm-row" data-id="' + escapeAttr(l.id) + '">' +
       '<span class="qlm-ico">' + (ICONS[l.icon] || ICONS.link) + '</span>' +
-      '<div class="qlm-txt"><b>' + escapeHtml(l.title) + '</b><small>' + escapeHtml(/^#/.test(l.url || '') ? 'Sección de la web' : (l.url || '').replace(/^https?:\/\//, '')) + '</small></div>' +
+      '<div class="qlm-txt"><b>' + escapeHtml(l.title) + (l.fav ? '<span class="qlm-fav" title="En Inicio">★</span>' : '') + '</b><small>' + escapeHtml(linkCat(l) + ' · ' + (/^#/.test(l.url || '') ? 'Sección de la web' : (l.url || '').replace(/^https?:\/\//, ''))) + '</small></div>' +
       '<div class="qlm-btns">' +
         '<button type="button" data-act="up" aria-label="Subir"' + (i === 0 ? ' disabled' : '') + '>' + up + '</button>' +
         '<button type="button" data-act="down" aria-label="Bajar"' + (i === links.length - 1 ? ' disabled' : '') + '>' + down + '</button>' +
@@ -4071,7 +4168,7 @@ function showQuickLinkForm(){
   document.getElementById('quickLinkFormModal').style.display = 'flex';
 }
 function openQuickLinks(){
-  cancelQuickLinkEdit(); showQuickLinkList();
+  qlFromPage = false; cancelQuickLinkEdit(); showQuickLinkList();
   document.getElementById('addLinkOverlay').classList.add('open');
 }
 let editingQuickLinkId = null;
@@ -4085,6 +4182,7 @@ function editQuickLink(id){
   document.getElementById('ql_url_modal').value = ROUTES[route] ? '' : (l.url || '');
   syncQuickLinkTarget();
   qlIconManual = true; setQuickLinkIcon(l.icon || 'link');
+  document.getElementById('ql_cat_modal').value = linkCat(l); document.getElementById('ql_fav_modal').checked = !!l.fav; refreshQlCats();
   document.getElementById('quickLinkModalTitle').textContent = 'Editar enlace';
   document.getElementById('quickLinkSubmitBtn').textContent = 'Guardar cambios';
   showQuickLinkForm();
@@ -4118,6 +4216,7 @@ function cancelQuickLinkEdit(){
   syncQuickLinkTarget();
   setQuickLinkIcon('link');
   document.getElementById('quickLinkModalTitle').textContent = 'Añadir enlace';
+  refreshQlCats();
   document.getElementById('quickLinkSubmitBtn').textContent = 'Guardar enlace';
 }
 
@@ -4650,7 +4749,18 @@ function setupEventListeners(){
     tryAdd('themeClose', ()=>document.getElementById('themeOverlay').classList.remove('open'));
 
     tryAdd('addLinkBtn', ()=>{ openQuickLinks(); document.getElementById('moreMenuDropdown').classList.remove('open'); });
-    tryAdd('addLinkCancel', ()=>{ cancelQuickLinkEdit(); showQuickLinkList(); });
+    tryAdd('addLinkCancel', ()=>{ cancelQuickLinkEdit(); if(qlFromPage) document.getElementById('addLinkOverlay').classList.remove('open'); else showQuickLinkList(); });
+    tryAdd('lkAdd', ()=>openLinkForm());
+    tryAdd('lkOrder', ()=>openQuickLinks());
+    { const si = document.getElementById('lkSearch'); if(si) si.addEventListener('input', ()=>{ linksQuery = si.value; renderLinksPage(); });
+      const chips = document.getElementById('lkChips'); if(chips) chips.addEventListener('click', e=>{ const b = e.target.closest('.lk-chip'); if(!b) return; linksCat = b.dataset.cat; renderLinksPage(); });
+      const lb2 = document.getElementById('lkBody'); if(lb2) lb2.addEventListener('click', e=>{
+        const btn = e.target.closest('button[data-act]'); if(!btn) return;
+        e.preventDefault(); e.stopPropagation();
+        const id = btn.closest('.lk-c').dataset.id;
+        if(btn.dataset.act === 'edit') openLinkForm(id);
+        else { const l = (state.quickLinks || []).find(x=>x.id === id); if(l){ l.fav = !l.fav; saveState(); renderQuickLinks(); toast(l.fav ? 'Se mostrará en Inicio' : 'Quitado de Inicio', 'info'); } }
+      }); }
     tryAdd('qlClose', ()=>{ document.getElementById('addLinkOverlay').classList.remove('open'); });
     tryAdd('qlNew', ()=>{ cancelQuickLinkEdit(); showQuickLinkForm(); });
     { const lb = document.getElementById('qlManageList');
@@ -4817,16 +4927,18 @@ function setupEventListeners(){
     if(!title || !url) return;
     if(!target && !/^https?:\/\//i.test(url) && !/^tel:/i.test(url)) url = 'https://' + url;
     const icon = document.getElementById('ql_icon_modal').value || (target ? (ROUTE_ICONS[target] || 'link') : 'link');
+    const cat = document.getElementById('ql_cat_modal').value.trim() || 'General';
+    const fav = document.getElementById('ql_fav_modal').checked;
     state.quickLinks = state.quickLinks || [];
     const wasEditing = editingQuickLinkId!=null;
     if(wasEditing){
       const idx = state.quickLinks.findIndex(l=>l.id===editingQuickLinkId);
-      if(idx>-1) state.quickLinks[idx] = { ...state.quickLinks[idx], title, url, icon };
+      if(idx>-1) state.quickLinks[idx] = { ...state.quickLinks[idx], title, url, icon, cat, fav };
     } else {
-      state.quickLinks.push({ id: 'custom-'+uid(), title, url, icon });
+      state.quickLinks.push({ id: 'custom-'+uid(), title, url, icon, cat, fav });
     }
     cancelQuickLinkEdit(); saveState(); renderQuickLinks();
-    showQuickLinkList();
+    if(qlFromPage) document.getElementById('addLinkOverlay').classList.remove('open'); else showQuickLinkList();
     toast(wasEditing ? 'Enlace actualizado' : 'Enlace añadido', 'success');
   });
 
