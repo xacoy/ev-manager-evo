@@ -841,7 +841,7 @@ button{cursor:pointer}
 .ql-tile:active{transform:scale(.97)}
 .ql-tile-icon{width:52px;height:52px;display:flex;align-items:center;justify-content:center;color:var(--accent);flex-shrink:0}
 .ql-tile-icon svg{width:32px;height:32px;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.icon-picker{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;max-height:300px;overflow-y:auto;padding:2px}
+.icon-picker{display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:8px;padding:2px}   /* todos los iconos a la vista, sin scroll propio: solo se desplaza la ventana */
 .icon-pick{display:flex;align-items:center;justify-content:center;height:46px;border-radius:10px;border:1px solid var(--border);background:var(--bg-2);color:var(--text-muted);cursor:pointer;padding:0}
 .icon-pick svg{width:22px;height:22px;stroke:currentColor}.icon-pick svg text,.ql-tile-icon svg text,.lk-ic svg text,.qlm-ico svg text{stroke:none}
 .icon-pick.sel{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
@@ -2249,7 +2249,7 @@ html.car .home-grid{flex:1;min-height:0;height:auto;grid-template-columns:minmax
   </div>
 </div>
 <div class="overlay" id="addLinkOverlay">
-  <div class="modal" style="max-width:540px;max-height:92vh;overflow:auto">
+  <div class="modal" style="max-width:760px;max-height:92vh;overflow:auto">
     <h3 id="quickLinkModalTitle">Enlaces rápidos</h3>
     <div id="qlListView">
       <p class="qlm-hint">Todos tus enlaces, en este orden (el de las categorías y el del Inicio). Usa las flechas para ordenarlos; la estrella ★ indica los que salen en Inicio.</p>
@@ -2390,7 +2390,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611120612';   // AAAAMMDDHHMM
+const APP_VERSION = '202611120640';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
