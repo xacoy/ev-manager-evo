@@ -606,10 +606,12 @@ button{cursor:pointer}
 .act-bar .rb-tx b{display:block;font:800 23px var(--font-display,var(--font));color:var(--text);font-variant-numeric:tabular-nums;white-space:nowrap}
 .act-bar .rb-tx b small{font-size:.58em;font-weight:700;margin-left:1px;color:var(--text-muted)}
 .act-bar .rb-tx b .arr{display:inline-block;margin:0 .25em;font:700 .8em system-ui,"Segoe UI",sans-serif;color:var(--text-muted);vertical-align:.08em}
-.act-bar .rb-tr{position:relative;flex:1;min-width:90px;height:36px;border-radius:10px;background:var(--bg-2);border:1px solid var(--border-strong);overflow:hidden}
-.act-bar .rb-fl{position:absolute;inset:0;background:linear-gradient(90deg,#e2565f 0,#f2873a 30%,#22b8b0 58%,#3ecf8e 82%)}
-.act-bar .rb-mk{position:absolute;top:0;bottom:0;width:2px;background:rgba(11,16,27,.7)}
-.act-bar .rb-st{position:absolute;top:-1px;bottom:-1px;width:3px;border-radius:2px;background:#fff;box-shadow:0 0 6px rgba(255,255,255,.8)}
+.chg-soc .rb-tr{display:block;height:16px;margin-top:8px;flex:none}
+.act-bar .rb-tr{flex:1;min-width:90px;height:36px}
+.rb-tr{position:relative;border-radius:10px;background:var(--bg-2);border:1px solid var(--border-strong);overflow:hidden}
+.rb-fl{position:absolute;inset:0;background:linear-gradient(90deg,#e2565f 0,#f2873a 30%,#22b8b0 58%,#3ecf8e 82%)}
+.rb-mk{position:absolute;top:0;bottom:0;width:2px;background:rgba(11,16,27,.7)}
+.rb-st{position:absolute;top:-1px;bottom:-1px;width:3px;border-radius:2px;background:#fff;box-shadow:0 0 6px rgba(255,255,255,.8)}
 #page-dashboard .act-row .activity-icon{display:none}
 #page-dashboard .act-main{display:grid;grid-template-columns:170px 1fr;align-items:center;column-gap:16px}
 #page-dashboard .act-title{grid-column:1;grid-row:1}
@@ -1159,6 +1161,8 @@ html[data-page="charges"] .topbar h1{visibility:hidden}
 .chg-soc-val .arr{margin:0 .3em}
 .chg-soc-val small{font-size:.58em;font-weight:700;margin-left:1px;color:var(--text-muted)}
 .chg-when .t{color:var(--text-muted);font-weight:500}
+.lbl{font:600 12px var(--font);color:var(--text-muted);margin-right:2px}
+.kmd{display:block;font-size:11px;font-weight:500;color:var(--text-muted)}
 .chg-soc-val,.chg-kwh-val{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--text);line-height:1.15;font-variant-numeric:tabular-nums;white-space:nowrap}
 .chg-bar{position:relative;height:6px;border-radius:99px;background:var(--border-strong);margin-top:8px}
 .chg-bar i{position:absolute;top:0;bottom:0;border-radius:99px;background:var(--accent)}
@@ -2422,7 +2426,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611131040';   // AAAAMMDDHHMM
+const APP_VERSION = '202611131100';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -3145,6 +3149,26 @@ function renderSavings(){
 
 
 /* Batería de la vista simple: ver estilos «rango» (nivel final grande + barra continua con degradado) */
+// Barra continua con degradado: tramo cargado de a a b (con a = null solo se marca el nivel b)
+function rangeBarHtml(a, b){
+  const mk = [25, 50, 75].map(p => '<i class="rb-mk" style="left:' + p + '%"></i>').join('');
+  return '<div class="rb-tr">' + (a == null ? '' : '<div class="rb-fl" style="clip-path:inset(0 ' + (100 - b) + '% 0 ' + a + '%)"></div>') + mk + '<i class="rb-st" style="left:calc(' + b + '% - 2px)"></i></div>';
+}
+// Carga sin % de batería ni kWh: con lo que sí se sabe (km y la carga anterior) se estima con cuánta batería llegó. Solo se muestra; no entra en totales ni se guarda.
+function chargeHasLevel(c){ return (c.socStart != null && c.socEnd != null && Number(c.socEnd) > Number(c.socStart)) || kwhOf(c) > 0; }
+function incompleteInfo(c){
+  if(chargeHasLevel(c) || !(Number(c.km) > 0)) return null;
+  const ts = chargeTs(c);
+  const prev = state.charges.filter(x => x !== c && chargeTs(x) < ts && x.socEnd != null && Number(x.km) > 0).sort((a, b) => chargeTs(b) - chargeTs(a))[0];
+  if(!prev) return null;
+  const km = Number(c.km) - Number(prev.km);
+  if(!(km > 0)) return null;
+  const cons = Number(c.cons) > 0 ? Number(c.cons) : savingsConsumption();
+  const drop = km * cons * CHARGE_EFF / VEHICLE_BATTERY_KWH;      // kWh/100 km de red → de batería → puntos de %
+  const end = Number(prev.socEnd), est = Math.max(0, Math.min(100, end - drop));
+  return { km, est, tip: 'Estimado: la carga anterior (' + chargeDateLabel(prev) + ', ' + fmtNum(prev.km) + ' km) terminó en ' + nf(end, 0) + ' %; desde entonces ' + fmtNum(km) + ' km × ' + nf(cons, 1) + ' kWh/100 km × ' + nf(CHARGE_EFF, 1) + ' ÷ ' + nf(VEHICLE_BATTERY_KWH, 1) + ' kWh de batería = unos ' + nf(drop, 0) + ' puntos menos. No se sabe con cuánto terminó la carga.' };
+}
+function incLevelHtml(inc){ return '<span class="lbl">llegó con</span> ' + estSpan(Math.round(inc.est) + ' %', inc.tip, Math.round(inc.est) + '<small>%</small>'); }
 function actBarHtml(c){
   const kwh = kwhOf(c);
   let a = 0, b = 0, big = '';
@@ -3152,11 +3176,13 @@ function actBarHtml(c){
     a = Math.max(0, Math.min(100, Number(c.socStart))); b = Math.max(0, Math.min(100, Number(c.socEnd)));
     big = Math.round(a) + '<small>%</small><span class="arr">→</span>' + Math.round(b) + '<small>%</small>';
   } else if(kwh){ b = Math.min(100, kwh / VEHICLE_BATTERY_KWH * 100); big = '+' + Math.round(b) + '<small>%</small>'; }
-  else return '';
-  const mk = [25, 50, 75].map(p => '<i class="rb-mk" style="left:' + p + '%"></i>').join('');
+  else {
+    const inc = incompleteInfo(c);
+    if(!inc) return '';
+    return '<div class="act-bar inc"><div class="rb-tx"><b>' + incLevelHtml(inc) + '</b></div>' + rangeBarHtml(null, inc.est) + '</div>';
+  }
   return '<div class="act-bar" role="img" aria-label="' + (a ? 'de ' + Math.round(a) + ' a ' + Math.round(b) : 'cargó ' + Math.round(b)) + ' por ciento">' +
-    '<div class="rb-tx"><b>' + big + '</b></div>' +
-    '<div class="rb-tr"><div class="rb-fl" style="clip-path:inset(0 ' + (100 - b) + '% 0 ' + a + '%)"></div>' + mk + '<i class="rb-st" style="left:calc(' + b + '% - 2px)"></i></div></div>';
+    '<div class="rb-tx"><b>' + big + '</b></div>' + rangeBarHtml(a, b) + '</div>';
 }
 function buildRecentActivity(){
   const container = document.getElementById('dashRecentActivity');
@@ -3294,17 +3320,17 @@ function chargeSocHtml(v){
   if(!v.soc) return '';
   const a = Math.max(0, Math.min(100, v.soc.a));
   return '<div class="chg-soc"><div class="chg-soc-val" aria-label="' + nf(v.soc.a, 0) + ' a ' + nf(v.soc.b, 0) + ' por ciento">' + nf(v.soc.a, 0) + '<small>%</small><span class="arr">→</span>' + nf(v.soc.b, 0) + '<small>%</small></div>' +
-    '<div class="chg-bar" aria-hidden="true"><i style="left:' + a + '%;width:' + Math.max(0, Math.min(100 - a, v.soc.b - v.soc.a)) + '%"></i></div></div>';
+    rangeBarHtml(a, Math.max(a, Math.min(100, v.soc.b))) + '</div>';
 }
 function chargeActionsHtml(c){
   return '<span class="chg-act"><button type="button" class="icon-action" onclick="editCharge(' + c.id + ')" aria-label="Editar carga"><span class="ico-def">' + ICONS.edit + '</span><svg class="ico-car" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/></svg></button></span>';
 }
 function chargeCardHtml(v, withActions){
-  const c = v.c, t = chargeParts(v, 1);
-  return '<article class="chg-card' + (v.soc ? '' : ' no-soc') + '">' +
+  const c = v.c, t = chargeParts(v, 1), inc = v.soc ? null : incompleteInfo(c);
+  return '<article class="chg-card' + (v.soc || inc ? '' : ' no-soc') + '">' +
     '<div class="chg-top">' + locIconHtml(c) + '<b class="chg-when">' + t.date + (v.time ? ' <span class="t">' + t.time + '</span>' : '') + '</b></div>' +
-    '<div class="chg-mid">' + chargeSocHtml(v) + '<div class="chg-kwh"><div class="chg-kwh-val">' + t.kwh + '</div><div class="chg-kwh-sub">' + (v.free ? '' : t.cost) + '</div></div></div>' +
-    '<div class="chg-bot"><span class="chg-chip">' + t.km + '</span>' + (v.free ? '<span class="chg-chip free">Gratis</span>' : '') + (withActions ? chargeActionsHtml(c) : '') + '</div></article>';
+    '<div class="chg-mid">' + (inc ? '<div class="chg-soc"><div class="chg-soc-val">' + incLevelHtml(inc) + '</div>' + rangeBarHtml(null, inc.est) + '</div>' : chargeSocHtml(v)) + '<div class="chg-kwh"><div class="chg-kwh-val">' + t.kwh + '</div><div class="chg-kwh-sub">' + (v.free ? '' : t.cost) + '</div></div></div>' +
+    '<div class="chg-bot"><span class="chg-chip">' + t.km + (inc ? ' · +' + fmtNum(inc.km) + ' km' : '') + '</span>' + (v.free ? '<span class="chg-chip free">Gratis</span>' : '') + (withActions ? chargeActionsHtml(c) : '') + '</div></article>';
 }
 // Fila de la tabla (tablet horizontal y escritorio): columnas rotuladas, más fáciles de comparar.
 function chargeRowHtml(v){
@@ -3316,7 +3342,7 @@ function chargeRowHtml(v){
     '<td>' + ((car && actBarHtml(c)) || (v.soc ? chargeSocHtml(v) : '—')) + '</td>' +
     '<td class="num">' + kwh + '</td>' +
     '<td class="num">' + (v.free ? '<span class="chg-chip free">Gratis</span>' : t.cost) + '</td>' +
-    '<td class="num">' + (c.km ? fmtNum(c.km) : '—') + '</td>' +
+    '<td class="num">' + (c.km ? fmtNum(c.km) : '—') + (incompleteInfo(c) ? '<small class="kmd">+' + fmtNum(incompleteInfo(c).km) + ' km</small>' : '') + '</td>' +
     '<td class="num">' + chargeActionsHtml(c) + '</td></tr>';
 }
 // Explicación de un valor estimado: al pasar el ratón, enfocar con teclado o tocar. Esc o tocar fuera la cierra.
