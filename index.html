@@ -1157,6 +1157,8 @@ html[data-page="charges"] .topbar h1{visibility:hidden}
 .chg-card.no-soc .chg-mid{grid-template-columns:1fr}
 .chg-soc{padding-right:14px;border-right:1px solid var(--border)}
 .chg-soc-val .arr{margin:0 .3em}
+.chg-soc-val small{font-size:.58em;font-weight:700;margin-left:1px;color:var(--text-muted)}
+.chg-when .t{color:var(--text-muted);font-weight:500}
 .chg-soc-val,.chg-kwh-val{font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--text);line-height:1.15;font-variant-numeric:tabular-nums;white-space:nowrap}
 .chg-bar{position:relative;height:6px;border-radius:99px;background:var(--border-strong);margin-top:8px}
 .chg-bar i{position:absolute;top:0;bottom:0;border-radius:99px;background:var(--accent)}
@@ -2420,7 +2422,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611131010';   // AAAAMMDDHHMM
+const APP_VERSION = '202611131040';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -3291,7 +3293,7 @@ function chargeParts(v, kwhDec){
 function chargeSocHtml(v){
   if(!v.soc) return '';
   const a = Math.max(0, Math.min(100, v.soc.a));
-  return '<div class="chg-soc"><div class="chg-soc-val" aria-label="' + nf(v.soc.a, 0) + ' a ' + nf(v.soc.b, 0) + ' por ciento">' + nf(v.soc.a, 0) + '<span class="arr">→</span>' + nf(v.soc.b, 0) + '<small class="u"> %</small></div>' +
+  return '<div class="chg-soc"><div class="chg-soc-val" aria-label="' + nf(v.soc.a, 0) + ' a ' + nf(v.soc.b, 0) + ' por ciento">' + nf(v.soc.a, 0) + '<small>%</small><span class="arr">→</span>' + nf(v.soc.b, 0) + '<small>%</small></div>' +
     '<div class="chg-bar" aria-hidden="true"><i style="left:' + a + '%;width:' + Math.max(0, Math.min(100 - a, v.soc.b - v.soc.a)) + '%"></i></div></div>';
 }
 function chargeActionsHtml(c){
@@ -3300,8 +3302,8 @@ function chargeActionsHtml(c){
 function chargeCardHtml(v, withActions){
   const c = v.c, t = chargeParts(v, 1);
   return '<article class="chg-card' + (v.soc ? '' : ' no-soc') + '">' +
-    '<div class="chg-top"><span class="chg-loc">' + PIN_ICON + t.loc + '</span><b class="chg-when">' + t.date + ' · ' + t.time + '</b></div>' +
-    '<div class="chg-mid">' + chargeSocHtml(v) + '<div class="chg-kwh"><div class="chg-kwh-val">' + t.kwh + '</div><div class="chg-kwh-sub">' + (v.free ? '' : t.cost + ' · ') + t.price + '</div></div></div>' +
+    '<div class="chg-top">' + locIconHtml(c) + '<b class="chg-when">' + t.date + (v.time ? ' <span class="t">' + t.time + '</span>' : '') + '</b></div>' +
+    '<div class="chg-mid">' + chargeSocHtml(v) + '<div class="chg-kwh"><div class="chg-kwh-val">' + t.kwh + '</div><div class="chg-kwh-sub">' + (v.free ? '' : t.cost) + '</div></div></div>' +
     '<div class="chg-bot"><span class="chg-chip">' + t.km + '</span>' + (v.free ? '<span class="chg-chip free">Gratis</span>' : '') + (withActions ? chargeActionsHtml(c) : '') + '</div></article>';
 }
 // Fila de la tabla (tablet horizontal y escritorio): columnas rotuladas, más fáciles de comparar.
