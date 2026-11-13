@@ -1446,6 +1446,9 @@ html[data-page="dashboard"]{--veil:linear-gradient(180deg,color-mix(in srgb,var(
 html::before{content:"";position:fixed;inset:0;z-index:-3;background:url(images/bg-atto3.jpg) 56% 58%/cover no-repeat;pointer-events:none}
 html::after{content:"";position:fixed;inset:0;z-index:-2;background:var(--veil);pointer-events:none}
 html:not([data-page="dashboard"])::before{filter:blur(6px);transform:scale(1.06)}
+.bg-rot{position:fixed;inset:0;z-index:-3;background:center/cover no-repeat;opacity:0;transition:opacity 2.5s ease;pointer-events:none}
+.bg-rot.on{opacity:1}
+html:not([data-page="dashboard"]) .bg-rot{filter:blur(6px);transform:scale(1.06)}
 .card,.info-card-small,.fun-tile,.chg-save,.chg-mini,.chg-card,.stat-card,.rd-tile,.note-card,.rev-item,.hero-banner,.dash-activity,.ql-tile,.expandable-header,.set-hero,.tag-toggle{background:var(--glass);border-color:var(--glass-bd);-webkit-backdrop-filter:blur(14px) saturate(140%);backdrop-filter:blur(14px) saturate(140%)}
 .card:hover{transform:none}
 .nav-rail,.bottom-nav{display:none!important}
@@ -1782,6 +1785,7 @@ html.car .home-grid{flex:1;min-height:0;height:auto;grid-template-columns:minmax
 </style>
 </head>
 <body>
+<div class="bg-rot" id="bgA"></div><div class="bg-rot" id="bgB"></div>
 
 <div class="app-ver" id="appVerTag" aria-hidden="true"></div>
 <div class="toasts" id="toasts"></div>
@@ -2426,7 +2430,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611131140';   // AAAAMMDDHHMM
+const APP_VERSION = '202611131215';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -5479,6 +5483,40 @@ function init(){
   });
 }
 document.addEventListener('DOMContentLoaded', init);
+
+/* ---------------- fondo rotativo: cambia solo, al azar, y se mantiene al menos 4 min ---------------- */
+(function(){
+  const FILES = ['01_costa_panoramica','02_avenida_moderna','03_paisaje_alpino','04_bosque','05_marina','06_costa_volcanica','07_villa','08_campos_dorados','09_tenerife_teide','10_tenerife_los_gigantes','11_frontal_atardecer','12_tres_cuartos_trasero','13_tres_cuartos_delantero','14_perfil_lateral'];
+  const MIN_MS = 4 * 60 * 1000, MAX_MS = 7 * 60 * 1000, KEY = 'evBgRot';
+  const layers = [document.getElementById('bgA'), document.getElementById('bgB')];
+  if (!layers[0] || !layers[1]) return;
+  let st = {}; try { st = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) {}
+  let cur = -1, front = 0, nextAt = 0;
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify({ i: cur, due: nextAt })); } catch (e) {} };
+  function show(i, instant) {
+    const back = 1 - front, L = layers[back], url = 'images/fondos/' + FILES[i] + '.jpg';
+    const img = new Image();
+    img.onload = () => {
+      L.style.background = 'url(' + url + ') center/cover no-repeat';
+      if (instant) L.style.transition = 'none';
+      L.classList.add('on'); layers[front].classList.remove('on');
+      if (instant) { void L.offsetWidth; L.style.transition = ''; }
+      front = back;
+    };
+    img.src = url;
+  }
+  function change(instant) {
+    let i; do { i = Math.floor(Math.random() * FILES.length); } while (i === cur && FILES.length > 1);
+    cur = i; show(i, instant);
+    nextAt = Date.now() + MIN_MS + Math.random() * (MAX_MS - MIN_MS);
+    save();
+  }
+  if (typeof st.i === 'number' && st.i >= 0 && st.i < FILES.length && st.due > Date.now()) {
+    cur = st.i; nextAt = st.due; show(cur, true);
+  } else change(true);
+  setInterval(() => { if (!document.hidden && Date.now() >= nextAt) change(false); }, 15000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && Date.now() >= nextAt) change(false); });
+})();
 </script>
 </body>
 </html>
