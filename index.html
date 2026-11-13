@@ -2426,7 +2426,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611131125';   // AAAAMMDDHHMM
+const APP_VERSION = '202611131140';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -3178,7 +3178,7 @@ function incompleteInfo(c){
 }
 function incLevelHtml(inc){
   const n = Math.round(inc.lvl);
-  return '<span class="lbl">' + inc.label + '</span> ' + (inc.exact ? n + '<small>%</small>' : estSpan(n + ' %', inc.tip, n + '<small>%</small>'));
+  return (inc.exact ? n + '<small>%</small>' : estSpan(n + ' %', inc.tip, n + '<small>%</small>'));
 }
 function actBarHtml(c){
   const kwh = kwhOf(c);
