@@ -602,11 +602,12 @@ button{cursor:pointer}
 #page-dashboard .act-short b{color:var(--accent);font-weight:800;font-size:1.2em}
 /* Batería «rango»: nivel final grande a la izquierda (con «desde X %») y barra continua con degradado rojo→verde; solo se ilumina el tramo cargado */
 .act-bar{display:flex;align-items:center;gap:12px;min-width:0}
-.act-bar .rb-tx{flex:0 0 136px;line-height:1.05}
+.act-bar .rb-tx{flex:0 0 156px;line-height:1.05}
 .act-bar .rb-tx b{display:block;font:800 24px var(--font-display,var(--font));color:var(--text);font-variant-numeric:tabular-nums;white-space:nowrap}
-.act-bar .rb-tx b small{font-size:.55em;font-weight:700;margin-left:1px}
+.act-bar .rb-tx b small{font-size:.6em;font-weight:700;margin-left:3px}
+.act-bar .rb-tx b .arr{display:inline-block;margin:0 .25em;font:700 .8em system-ui,"Segoe UI",sans-serif;color:var(--text-muted);vertical-align:.08em}
 .act-bar .rb-tx span{display:block;margin-top:3px;font-size:12px;color:var(--text-muted);white-space:nowrap}
-.act-bar .rb-tr{position:relative;flex:1;min-width:90px;height:16px;border-radius:99px;background:var(--bg-2);border:1px solid var(--border-strong);overflow:hidden}
+.act-bar .rb-tr{position:relative;flex:1;min-width:90px;height:36px;border-radius:10px;background:var(--bg-2);border:1px solid var(--border-strong);overflow:hidden}
 .act-bar .rb-fl{position:absolute;inset:0;background:linear-gradient(90deg,#e2565f 0,#f2873a 30%,#22b8b0 58%,#3ecf8e 82%)}
 .act-bar .rb-mk{position:absolute;top:0;bottom:0;width:2px;background:rgba(11,16,27,.7)}
 .act-bar .rb-st{position:absolute;top:-1px;bottom:-1px;width:3px;border-radius:2px;background:#fff;box-shadow:0 0 6px rgba(255,255,255,.8)}
@@ -614,12 +615,15 @@ button{cursor:pointer}
 #page-dashboard .act-main{display:grid;grid-template-columns:170px 1fr;align-items:center;column-gap:16px}
 #page-dashboard .act-title{grid-column:1;grid-row:1}
 #page-dashboard .act-date{grid-column:1;grid-row:2;margin:0}
+#page-dashboard .act-bar{grid-column:2;grid-row:1/3;margin:0}
+#page-dashboard .act-bar .rb-tx{flex-basis:170px}
+#page-dashboard .act-bar .rb-tx b{font-size:28px}
 #page-dashboard .act-row{gap:16px;padding:14px 0}
 #page-dashboard .act-title{font-size:26px;font-weight:800;line-height:1.2}
 #page-dashboard .act-date{font-size:16px;margin-top:4px}
 #page-dashboard .act-cost{font-size:20px}
 #page-dashboard .act-cost .chg-chip{font-size:16px;padding:6px 16px}
-@media(max-width:560px){#page-dashboard .act-main{grid-template-columns:110px 1fr;column-gap:10px}#page-dashboard .act-title{font-size:20px}#page-dashboard .act-date{font-size:13px;white-space:nowrap}#page-dashboard .act-bar .rb-tx b{font-size:22px}}
+@media(max-width:560px){#page-dashboard .act-main{grid-template-columns:110px 1fr;column-gap:10px}#page-dashboard .act-title{font-size:20px}#page-dashboard .act-date{font-size:13px;white-space:nowrap}#page-dashboard .act-bar .rb-tx{flex-basis:120px}#page-dashboard .act-bar .rb-tx b{font-size:19px}#page-dashboard .act-bar .rb-tr{height:30px}}
 
 /* Resumen de cargas */
 /* Gráficas propias (SVG) */
@@ -1415,7 +1419,7 @@ html.car .chg-tablecard{display:none!important}
   html.car #page-charges .act-bar{max-width:560px}
   html.car #page-charges .act-bar .rb-tx b{font-size:30px}
   html.car #page-charges .act-bar .rb-tx span{font-size:14px}
-  html.car #page-charges .act-bar .rb-tr{height:22px}
+  html.car #page-charges .act-bar .rb-tr{height:42px}
   html.car .chg-table .chg-act{justify-content:flex-end}
   html.car .chg-table .chg-act .icon-action{display:inline-flex;align-items:center;justify-content:center;width:64px;min-height:64px;padding:0;border-radius:16px;background:linear-gradient(135deg,#8b5cf6,#6d4be0);border:0;color:#fff;box-shadow:0 4px 14px rgba(139,92,246,.45);font:800 20px var(--font)}
   html.car .chg-table .chg-act .icon-action .ico-def{display:none}
@@ -1729,8 +1733,8 @@ html.car .qlm-row{padding:10px 12px}html.car .qlm-btns button{width:52px;height:
   html:not(.car) .chg-table td.when .t{display:block;font-size:14px;color:var(--text-muted);line-height:1.2;margin-top:2px}
   html:not(.car) .chg-table td:nth-child(2) .chg-loc{font-size:15px}
   html:not(.car) .chg-table th:nth-child(1),html:not(.car) .chg-table td:nth-child(1){padding-right:8px}
-  html:not(.car) #page-charges .chg-table td .act-bar{max-width:340px;min-width:260px}
-  html:not(.car) #page-charges .chg-table td .act-bar .rb-tr{height:clamp(14px,1.8vh,18px)}
+  html:not(.car) #page-charges .chg-table td .act-bar{max-width:440px;min-width:320px}
+  html:not(.car) #page-charges .chg-table td .act-bar .rb-tr{height:clamp(34px,4.4vh,46px)}
   html:not(.car) .chg-table td{padding-top:clamp(12px,2vh,20px);padding-bottom:clamp(12px,2vh,20px)}
 }
 
@@ -2417,7 +2421,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611130935';   // AAAAMMDDHHMM
+const APP_VERSION = '202611130945';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -3145,7 +3149,7 @@ function actBarHtml(c){
   let a = 0, b = 0, big = '', sub = '';
   if(c.socStart != null && c.socEnd != null && Number(c.socEnd) > Number(c.socStart)){
     a = Math.max(0, Math.min(100, Number(c.socStart))); b = Math.max(0, Math.min(100, Number(c.socEnd)));
-    big = Math.round(b) + '<small>%</small>'; sub = 'desde ' + Math.round(a) + ' % · +' + Math.round(b - a) + ' %';
+    big = Math.round(a) + '<span class="arr">→</span>' + Math.round(b) + '<small>%</small>'; sub = '+' + Math.round(b - a) + ' %';
   } else if(kwh){ b = Math.min(100, kwh / VEHICLE_BATTERY_KWH * 100); big = '+' + Math.round(b) + '<small>%</small>'; sub = 'sin nivel inicial'; }
   else return '';
   const mk = [25, 50, 75].map(p => '<i class="rb-mk" style="left:' + p + '%"></i>').join('');
