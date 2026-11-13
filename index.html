@@ -602,11 +602,10 @@ button{cursor:pointer}
 #page-dashboard .act-short b{color:var(--accent);font-weight:800;font-size:1.2em}
 /* Batería «rango»: nivel final grande a la izquierda (con «desde X %») y barra continua con degradado rojo→verde; solo se ilumina el tramo cargado */
 .act-bar{display:flex;align-items:center;gap:12px;min-width:0}
-.act-bar .rb-tx{flex:0 0 156px;line-height:1.05}
-.act-bar .rb-tx b{display:block;font:800 24px var(--font-display,var(--font));color:var(--text);font-variant-numeric:tabular-nums;white-space:nowrap}
-.act-bar .rb-tx b small{font-size:.6em;font-weight:700;margin-left:3px}
+.act-bar .rb-tx{flex:0 0 160px;line-height:1.05}
+.act-bar .rb-tx b{display:block;font:800 23px var(--font-display,var(--font));color:var(--text);font-variant-numeric:tabular-nums;white-space:nowrap}
+.act-bar .rb-tx b small{font-size:.58em;font-weight:700;margin-left:1px;color:var(--text-muted)}
 .act-bar .rb-tx b .arr{display:inline-block;margin:0 .25em;font:700 .8em system-ui,"Segoe UI",sans-serif;color:var(--text-muted);vertical-align:.08em}
-.act-bar .rb-tx span{display:block;margin-top:3px;font-size:12px;color:var(--text-muted);white-space:nowrap}
 .act-bar .rb-tr{position:relative;flex:1;min-width:90px;height:36px;border-radius:10px;background:var(--bg-2);border:1px solid var(--border-strong);overflow:hidden}
 .act-bar .rb-fl{position:absolute;inset:0;background:linear-gradient(90deg,#e2565f 0,#f2873a 30%,#22b8b0 58%,#3ecf8e 82%)}
 .act-bar .rb-mk{position:absolute;top:0;bottom:0;width:2px;background:rgba(11,16,27,.7)}
@@ -616,14 +615,14 @@ button{cursor:pointer}
 #page-dashboard .act-title{grid-column:1;grid-row:1}
 #page-dashboard .act-date{grid-column:1;grid-row:2;margin:0}
 #page-dashboard .act-bar{grid-column:2;grid-row:1/3;margin:0}
-#page-dashboard .act-bar .rb-tx{flex-basis:170px}
+#page-dashboard .act-bar .rb-tx{flex-basis:210px}
 #page-dashboard .act-bar .rb-tx b{font-size:28px}
 #page-dashboard .act-row{gap:16px;padding:14px 0}
 #page-dashboard .act-title{font-size:26px;font-weight:800;line-height:1.2}
 #page-dashboard .act-date{font-size:16px;margin-top:4px}
 #page-dashboard .act-cost{font-size:20px}
 #page-dashboard .act-cost .chg-chip{font-size:16px;padding:6px 16px}
-@media(max-width:560px){#page-dashboard .act-main{grid-template-columns:110px 1fr;column-gap:10px}#page-dashboard .act-title{font-size:20px}#page-dashboard .act-date{font-size:13px;white-space:nowrap}#page-dashboard .act-bar .rb-tx{flex-basis:120px}#page-dashboard .act-bar .rb-tx b{font-size:19px}#page-dashboard .act-bar .rb-tr{height:30px}}
+@media(max-width:560px){#page-dashboard .act-main{grid-template-columns:110px 1fr;column-gap:10px}#page-dashboard .act-title{font-size:20px}#page-dashboard .act-date{font-size:13px;white-space:nowrap}#page-dashboard .act-bar .rb-tx{flex-basis:140px}#page-dashboard .act-bar .rb-tx b{font-size:19px}#page-dashboard .act-bar .rb-tr{height:30px}}
 
 /* Resumen de cargas */
 /* Gráficas propias (SVG) */
@@ -1200,6 +1199,10 @@ html.car #chargeDeleteBtn{width:100%;margin:14px 0 0!important;padding:0!importa
 .chg-act .icon-action .ico-car{display:none}
 .chg-table td.when .loc2{display:none}
 .chg-tablecard.empty{display:none!important}
+.loc-ic{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:10px;border:1px solid currentColor;background:color-mix(in srgb,currentColor 14%,transparent);cursor:default}
+.loc-ic svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.loc-ic.home{color:#22b8b0}.loc-ic.work{color:#a78bfa}.loc-ic.oth{color:var(--text-muted)}
+.loc-none{color:var(--text-muted)}
 .chg-table{width:100%;border-collapse:collapse}
 .chg-table th{white-space:nowrap}
 .chg-table th.num,.chg-table td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -1384,7 +1387,7 @@ html.car .chg-tablecard{display:none!important}
   html.car .chg-tablecard{display:flex!important;flex-direction:column;flex:1;min-height:0;padding:0 18px;border-radius:18px}
   html.car .chg-tablecard.empty{display:none!important}
   html.car .chg-tablecard .table-wrap{flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column}
-  html.car .chg-table{--chg-cols:minmax(0,1.25fr) minmax(0,1fr) minmax(0,1.5fr) minmax(0,.9fr) minmax(0,1.2fr) minmax(0,1.1fr) minmax(0,.8fr) minmax(0,.9fr);display:flex;flex-direction:column;flex:1;min-height:0}
+  html.car .chg-table{--chg-cols:minmax(0,1.25fr) minmax(0,1fr) minmax(0,2fr) minmax(0,.9fr) minmax(0,1.2fr) minmax(0,.8fr) minmax(0,.9fr);display:flex;flex-direction:column;flex:1;min-height:0}
   html.car .chg-table thead{display:block;flex:0 0 auto}
   html.car .chg-table tbody{display:flex;flex-direction:column;flex:1;min-height:0}
   html.car .chg-table tr{display:grid;grid-template-columns:var(--chg-cols);align-items:center}
@@ -1409,7 +1412,7 @@ html.car .chg-tablecard{display:none!important}
   html.car .chg-base,html.car .chg-save-r,html.car .chg-legend,html.car .chg-minis .chg-mini:nth-child(3){display:none}
   html.car .chg-sum{grid-template-columns:2fr 1fr}
   html.car .chg-table{--chg-cols:minmax(0,1.45fr) minmax(0,3fr) minmax(0,1fr) minmax(0,1fr) minmax(0,.8fr)}
-  html.car .chg-table th:nth-child(2),html.car .chg-table td:nth-child(2),html.car .chg-table th:nth-child(6),html.car .chg-table td:nth-child(6),html.car .chg-table th:nth-child(7),html.car .chg-table td:nth-child(7){display:none}
+  html.car .chg-table th:nth-child(2),html.car .chg-table td:nth-child(2),html.car .chg-table th:nth-child(6),html.car .chg-table td:nth-child(6){display:none}
   html.car .chg-table td.when .t{display:none}
   html.car .chg-table td.when .loc2{display:flex;align-items:center;gap:6px;font-size:18px;color:var(--text-muted);line-height:1.2;margin-top:2px}
   html.car .chg-table td.when .loc2 svg{display:none}
@@ -1417,8 +1420,8 @@ html.car .chg-tablecard{display:none!important}
   html.car .chg-table td.num{font-size:28px;font-weight:800}
   html.car .chg-table td.num .chg-chip{font-size:20px;padding:4px 16px}
   html.car #page-charges .act-bar{max-width:560px}
+  html.car #page-charges .act-bar .rb-tx{flex-basis:230px}
   html.car #page-charges .act-bar .rb-tx b{font-size:30px}
-  html.car #page-charges .act-bar .rb-tx span{font-size:14px}
   html.car #page-charges .act-bar .rb-tr{height:42px}
   html.car .chg-table .chg-act{justify-content:flex-end}
   html.car .chg-table .chg-act .icon-action{display:inline-flex;align-items:center;justify-content:center;width:64px;min-height:64px;padding:0;border-radius:16px;background:linear-gradient(135deg,#8b5cf6,#6d4be0);border:0;color:#fff;box-shadow:0 4px 14px rgba(139,92,246,.45);font:800 20px var(--font)}
@@ -1563,7 +1566,6 @@ html:not([data-page="dashboard"])::before{filter:blur(6px);transform:scale(1.06)
   .stat-card .value{font-size:clamp(38px,4.2vw,60px);font-weight:300}
   .stat-card .sub{font-size:15px}
 }
-@media(min-width:821px) and (max-width:1250px){html:not(.car) .chg-table th:nth-child(6),html:not(.car) .chg-table td:nth-child(6){display:none}}
 html.car .content{padding:6px 20px 12px}
 html.car .doc-tabs button{padding:14px 34px;font-size:19px}
 html.car .doc-row{padding:14px 4px}
@@ -1728,10 +1730,7 @@ html.car .qlm-row{padding:10px 12px}html.car .qlm-btns button{width:52px;height:
   html:not(.car) .chg-table th:nth-child(1),html:not(.car) .chg-table td:nth-child(1){padding-left:18px}
   html:not(.car) .chg-table td:nth-child(3){padding-left:clamp(10px,1.4vw,24px);padding-right:clamp(10px,1.4vw,24px)}
   html:not(.car) .chg-table th:nth-child(3){width:70%}
-  html:not(.car) .chg-table td.when b{display:block;line-height:1.2}
-  html:not(.car) .chg-table td.when .dot{display:none}
-  html:not(.car) .chg-table td.when .t{display:block;font-size:14px;color:var(--text-muted);line-height:1.2;margin-top:2px}
-  html:not(.car) .chg-table td:nth-child(2) .chg-loc{font-size:15px}
+  html:not(.car) .chg-table td.when .t{font-size:inherit;color:var(--text-muted);font-weight:500;margin-left:.2em}
   html:not(.car) .chg-table th:nth-child(1),html:not(.car) .chg-table td:nth-child(1){padding-right:8px}
   html:not(.car) #page-charges .chg-table td .act-bar{max-width:440px;min-width:320px}
   html:not(.car) #page-charges .chg-table td .act-bar .rb-tr{height:clamp(34px,4.4vh,46px)}
@@ -2000,7 +1999,7 @@ html.car .home-grid{flex:1;min-height:0;height:auto;grid-template-columns:minmax
           <div class="chg-legend" id="chgLegend"></div>
           <div class="chg-list" id="chgList"></div>
           <div class="card chg-tablecard"><div class="table-wrap"><table class="chg-table">
-            <thead><tr><th>Fecha</th><th>Ubicación</th><th>Batería</th><th class="num">kWh</th><th class="num">Coste</th><th class="num">€/kWh</th><th class="num">Km</th><th></th></tr></thead>
+            <thead><tr><th>Fecha</th><th>Lugar</th><th>Batería</th><th class="num">kWh</th><th class="num">Coste</th><th class="num">Km</th><th></th></tr></thead>
             <tbody id="chgTableBody"></tbody>
           </table></div></div>
           <div id="chargesEmpty" class="empty-state" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><p>Aún no hay cargas registradas</p></div>
@@ -2421,7 +2420,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611130945';   // AAAAMMDDHHMM
+const APP_VERSION = '202611131010';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -3146,15 +3145,15 @@ function renderSavings(){
 /* Batería de la vista simple: ver estilos «rango» (nivel final grande + barra continua con degradado) */
 function actBarHtml(c){
   const kwh = kwhOf(c);
-  let a = 0, b = 0, big = '', sub = '';
+  let a = 0, b = 0, big = '';
   if(c.socStart != null && c.socEnd != null && Number(c.socEnd) > Number(c.socStart)){
     a = Math.max(0, Math.min(100, Number(c.socStart))); b = Math.max(0, Math.min(100, Number(c.socEnd)));
-    big = Math.round(a) + '<span class="arr">→</span>' + Math.round(b) + '<small>%</small>'; sub = '+' + Math.round(b - a) + ' %';
-  } else if(kwh){ b = Math.min(100, kwh / VEHICLE_BATTERY_KWH * 100); big = '+' + Math.round(b) + '<small>%</small>'; sub = 'sin nivel inicial'; }
+    big = Math.round(a) + '<small>%</small><span class="arr">→</span>' + Math.round(b) + '<small>%</small>';
+  } else if(kwh){ b = Math.min(100, kwh / VEHICLE_BATTERY_KWH * 100); big = '+' + Math.round(b) + '<small>%</small>'; }
   else return '';
   const mk = [25, 50, 75].map(p => '<i class="rb-mk" style="left:' + p + '%"></i>').join('');
   return '<div class="act-bar" role="img" aria-label="' + (a ? 'de ' + Math.round(a) + ' a ' + Math.round(b) : 'cargó ' + Math.round(b)) + ' por ciento">' +
-    '<div class="rb-tx"><b>' + big + '</b><span>' + sub + '</span></div>' +
+    '<div class="rb-tx"><b>' + big + '</b></div>' +
     '<div class="rb-tr"><div class="rb-fl" style="clip-path:inset(0 ' + (100 - b) + '% 0 ' + a + '%)"></div>' + mk + '<i class="rb-st" style="left:calc(' + b + '% - 2px)"></i></div></div>';
 }
 function buildRecentActivity(){
@@ -3262,6 +3261,17 @@ function chargeLocationLabel(c){
   return !l ? '—' : (l === 'Casa' || l === 'Trabajo' || l === 'Otro') ? l : 'Otro · ' + l;
 }
 const PIN_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>';
+const LOC_ICONS = {
+  home: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>',
+  work: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/><path d="M3 13h18"/></svg>'
+};
+// Lugar como icono (casa / trabajo / otro); el nombre sale al pasar el ratón o al leer con lector de pantalla
+function locIconHtml(c){
+  const l = (c.location || '').trim();
+  if(!l) return '<span class="loc-none">—</span>';
+  const k = l === 'Casa' ? 'home' : l === 'Trabajo' ? 'work' : 'oth', name = escapeAttr(chargeLocationLabel(c));
+  return '<span class="loc-ic ' + k + '" role="img" tabindex="0" title="' + name + '" aria-label="' + name + '">' + (LOC_ICONS[k] || PIN_ICON) + '</span>';
+}
 // Textos de una carga (con ≈ y explicación cuando son estimados), compartidos por la tarjeta y la fila de la tabla.
 function chargeParts(v, kwhDec){
   const c = v.c;
@@ -3299,12 +3309,11 @@ function chargeRowHtml(v){
   const c = v.c, t = chargeParts(v, 2);
   const kwh = v.kwh > 0 ? (v.kwhEst ? estSpan(nf(v.kwh, 2), v.tips.kwh) : nf(v.kwh, 2)) : '—';
   const car = true;
-  return '<tr><td class="when"><b>' + t.date + '</b><span class="dot"> · </span><span class="t">' + t.time + '</span><span class="loc2">' + PIN_ICON + t.loc + '</span></td>' +
-    '<td><span class="chg-loc">' + PIN_ICON + t.loc + '</span></td>' +
+  return '<tr><td class="when"><b>' + t.date + '</b>' + (v.time ? ' <span class="t">' + t.time + '</span>' : '') + '<span class="loc2">' + PIN_ICON + t.loc + '</span></td>' +
+    '<td class="loc">' + locIconHtml(c) + '</td>' +
     '<td>' + ((car && actBarHtml(c)) || (v.soc ? chargeSocHtml(v) : '—')) + '</td>' +
     '<td class="num">' + kwh + '</td>' +
     '<td class="num">' + (v.free ? '<span class="chg-chip free">Gratis</span>' : t.cost) + '</td>' +
-    '<td class="num">' + (v.price != null ? (v.priceEst ? estSpan(nf(v.price, 3) + ' €', v.tips.price) : nf(v.price, 3) + ' €') : '—') + '</td>' +
     '<td class="num">' + (c.km ? fmtNum(c.km) : '—') + '</td>' +
     '<td class="num">' + chargeActionsHtml(c) + '</td></tr>';
 }
