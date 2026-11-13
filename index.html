@@ -2434,7 +2434,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611130920';   // AAAAMMDDHHMM
+const APP_VERSION = '202611130925';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -3156,16 +3156,16 @@ function renderSavings(){
 }
 
 
-/* Batería de la vista simple: 10 celdas; las que ya había en gris y las cargadas con el color del nivel final (rojo <25 %, naranja 25-50 %, verde azulado 50-75 %, verde ≥75 %) */
+/* Batería de la vista simple: 10 celdas; las que ya había en gris y las cargadas con el color de su propio tramo (rojo <25 %, naranja 25-50 %, verde azulado 50-75 %, verde ≥75 %) */
 function actBarHtml(c){
   const kwh = kwhOf(c);
   let a = 0, b = 0, txt = '';
   if(c.socStart != null && c.socEnd != null && Number(c.socEnd) > Number(c.socStart)){ a = Number(c.socStart); b = Number(c.socEnd); txt = Math.round(a) + ' → ' + Math.round(b) + ' %'; }
   else if(kwh){ b = Math.min(100, kwh / VEHICLE_BATTERY_KWH * 100); txt = '+' + Math.round(b) + ' %'; }
   else return '';
-  const lvl = b < 25 ? 'low' : b < 50 ? 'mid' : b < 75 ? 'teal' : 'ok';
+  const lvl = m => m < 25 ? 'low' : m < 50 ? 'mid' : m < 75 ? 'teal' : 'ok';
   let cells = '';
-  for(let k = 0; k < 10; k++){ const m = k * 10 + 5; cells += '<i class="' + (m < a ? 'pre' : m <= b ? 'on ' + lvl : '') + '"></i>'; }
+  for(let k = 0; k < 10; k++){ const m = k * 10 + 5; cells += '<i class="' + (m < a ? 'pre' : m <= b ? 'on ' + lvl(m) : '') + '"></i>'; }
   return '<div class="act-bar"><div class="act-shell"><div class="act-cells">' + cells + '</div><em>' + txt + '</em></div></div>';
 }
 function buildRecentActivity(){
