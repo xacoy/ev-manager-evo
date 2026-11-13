@@ -2145,6 +2145,7 @@ html.car .home-grid{flex:1;min-height:0;height:auto;grid-template-columns:minmax
     <p>El tema se guarda en este dispositivo.</p>
     <div class="theme-grid" id="themeGrid"></div>
     <label class="deco-row" id="decoRow"><input type="checkbox" id="decoToggle" checked><span><b>Iconos y detalles temáticos</b><small id="decoHint">Dibujos, iconos y adornos propios de cada tema: fondo, mascota, adornos y emojis de las curiosidades.</small></span></label>
+    <div class="deco-row" style="cursor:default;flex-wrap:wrap"><span style="flex:1;min-width:200px"><b>Fondo de pantalla</b><small>Automático cambia solo al azar (cada 4-7 min). O fija el que más te guste.</small></span><select id="bgMode" class="input" style="min-width:180px"></select><button type="button" class="btn btn-ghost btn-sm" id="bgNext">Otro al azar</button></div>
     <div class="modal-actions"><button type="button" class="btn btn-primary" id="themeClose">Listo</button></div>
   </div>
 </div>
@@ -2430,7 +2431,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611131215';   // AAAAMMDDHHMM
+const APP_VERSION = '202611131235';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2612,6 +2613,14 @@ function applyDeco(on){
   try{ renderFunTiles(getCurrentKm(), state.charges.reduce((a,x)=>a+kwhOf(x),0)); }catch(e){}
 }
 function buildThemePicker(){
+  const bm = document.getElementById('bgMode');
+  if(bm && window.evBg && !bm.dataset.bound){
+    bm.dataset.bound = '1';
+    bm.innerHTML = '<option value="auto">Automático (al azar)</option>' + evBg.names.map((n,i)=>'<option value="' + i + '">' + n + '</option>').join('');
+    bm.addEventListener('change', ()=>{ evBg.setMode(bm.value); });
+    document.getElementById('bgNext').addEventListener('click', ()=>{ if(evBg.mode !== 'auto'){ bm.value = 'auto'; evBg.setMode('auto'); } else evBg.next(); });
+  }
+  if(bm && window.evBg) bm.value = evBg.mode;
   const tg = document.getElementById('decoToggle');
   if(tg && !tg.dataset.bound){ tg.dataset.bound = '1'; tg.checked = decoOn(); tg.addEventListener('change', ()=>applyDeco(tg.checked)); }
   const grid = document.getElementById('themeGrid'); if(!grid || grid.children.length) return;
@@ -5486,7 +5495,9 @@ document.addEventListener('DOMContentLoaded', init);
 
 /* ---------------- fondo rotativo: cambia solo, al azar, y se mantiene al menos 4 min ---------------- */
 (function(){
+  const NAMES = ['Costa panorámica','Avenida moderna','Paisaje alpino','Bosque','Marina','Costa volcánica','Villa','Campos dorados','Tenerife · Teide','Tenerife · Los Gigantes','Frontal al atardecer','Tres cuartos trasero','Tres cuartos delantero','Perfil lateral'];
   const FILES = ['01_costa_panoramica','02_avenida_moderna','03_paisaje_alpino','04_bosque','05_marina','06_costa_volcanica','07_villa','08_campos_dorados','09_tenerife_teide','10_tenerife_los_gigantes','11_frontal_atardecer','12_tres_cuartos_trasero','13_tres_cuartos_delantero','14_perfil_lateral'];
+  const MODE_KEY = 'evBgMode';
   const MIN_MS = 4 * 60 * 1000, MAX_MS = 7 * 60 * 1000, KEY = 'evBgRot';
   const layers = [document.getElementById('bgA'), document.getElementById('bgB')];
   if (!layers[0] || !layers[1]) return;
@@ -5511,7 +5522,18 @@ document.addEventListener('DOMContentLoaded', init);
     nextAt = Date.now() + MIN_MS + Math.random() * (MAX_MS - MIN_MS);
     save();
   }
-  if (typeof st.i === 'number' && st.i >= 0 && st.i < FILES.length && st.due > Date.now()) {
+  let mode = 'auto'; try { mode = localStorage.getItem(MODE_KEY) || 'auto'; } catch (e) {}
+  const fixedIdx = () => { const n = parseInt(mode, 10); return mode !== 'auto' && n >= 0 && n < FILES.length ? n : -1; };
+  window.evBg = {
+    names: NAMES, get mode() { return fixedIdx() >= 0 ? String(fixedIdx()) : 'auto'; },
+    setMode(m) {
+      mode = m; try { localStorage.setItem(MODE_KEY, m); } catch (e) {}
+      if (fixedIdx() >= 0) { cur = fixedIdx(); show(cur, false); nextAt = Infinity; save(); } else change(false);
+    },
+    next() { change(false); }
+  };
+  if (fixedIdx() >= 0) { cur = fixedIdx(); nextAt = Infinity; show(cur, true); }
+  else if (typeof st.i === 'number' && st.i >= 0 && st.i < FILES.length && st.due > Date.now()) {
     cur = st.i; nextAt = st.due; show(cur, true);
   } else change(true);
   setInterval(() => { if (!document.hidden && Date.now() >= nextAt) change(false); }, 15000);
