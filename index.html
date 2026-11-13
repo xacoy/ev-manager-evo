@@ -2426,7 +2426,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611131100';   // AAAAMMDDHHMM
+const APP_VERSION = '202611131125';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -3157,18 +3157,29 @@ function rangeBarHtml(a, b){
 // Carga sin % de batería ni kWh: con lo que sí se sabe (km y la carga anterior) se estima con cuánta batería llegó. Solo se muestra; no entra en totales ni se guarda.
 function chargeHasLevel(c){ return (c.socStart != null && c.socEnd != null && Number(c.socEnd) > Number(c.socStart)) || kwhOf(c) > 0; }
 function incompleteInfo(c){
-  if(chargeHasLevel(c) || !(Number(c.km) > 0)) return null;
-  const ts = chargeTs(c);
-  const prev = state.charges.filter(x => x !== c && chargeTs(x) < ts && x.socEnd != null && Number(x.km) > 0).sort((a, b) => chargeTs(b) - chargeTs(a))[0];
+  if(chargeHasLevel(c)) return null;
+  const has = v => v != null && v !== '' && isFinite(Number(v));
+  // km desde la carga anterior con % final conocido (si hay)
+  let km = null, prev = null;
+  if(Number(c.km) > 0){
+    const ts = chargeTs(c);
+    prev = state.charges.filter(x => x !== c && chargeTs(x) < ts && x.socEnd != null && Number(x.km) > 0).sort((a, b) => chargeTs(b) - chargeTs(a))[0] || null;
+    if(prev && Number(c.km) > Number(prev.km)) km = Number(c.km) - Number(prev.km); else prev = null;
+  }
+  // un % anotado es ese % y nada más: no se estima
+  if(has(c.socStart)) return { km, lvl: Math.max(0, Math.min(100, Number(c.socStart))), exact: true, label: 'llegó con' };
+  if(has(c.socEnd)) return { km, lvl: Math.max(0, Math.min(100, Number(c.socEnd))), exact: true, label: 'terminó en' };
   if(!prev) return null;
-  const km = Number(c.km) - Number(prev.km);
-  if(!(km > 0)) return null;
   const cons = Number(c.cons) > 0 ? Number(c.cons) : savingsConsumption();
   const drop = km * cons * CHARGE_EFF / VEHICLE_BATTERY_KWH;      // kWh/100 km de red → de batería → puntos de %
-  const end = Number(prev.socEnd), est = Math.max(0, Math.min(100, end - drop));
-  return { km, est, tip: 'Estimado: la carga anterior (' + chargeDateLabel(prev) + ', ' + fmtNum(prev.km) + ' km) terminó en ' + nf(end, 0) + ' %; desde entonces ' + fmtNum(km) + ' km × ' + nf(cons, 1) + ' kWh/100 km × ' + nf(CHARGE_EFF, 1) + ' ÷ ' + nf(VEHICLE_BATTERY_KWH, 1) + ' kWh de batería = unos ' + nf(drop, 0) + ' puntos menos. No se sabe con cuánto terminó la carga.' };
+  const end = Number(prev.socEnd);
+  return { km, lvl: Math.max(0, Math.min(100, end - drop)), exact: false, label: 'llegó con',
+    tip: 'Estimado: la carga anterior (' + chargeDateLabel(prev) + ', ' + fmtNum(prev.km) + ' km) terminó en ' + nf(end, 0) + ' %; desde entonces ' + fmtNum(km) + ' km × ' + nf(cons, 1) + ' kWh/100 km × ' + nf(CHARGE_EFF, 1) + ' ÷ ' + nf(VEHICLE_BATTERY_KWH, 1) + ' kWh de batería = unos ' + nf(drop, 0) + ' puntos menos. No se sabe con cuánto terminó la carga.' };
 }
-function incLevelHtml(inc){ return '<span class="lbl">llegó con</span> ' + estSpan(Math.round(inc.est) + ' %', inc.tip, Math.round(inc.est) + '<small>%</small>'); }
+function incLevelHtml(inc){
+  const n = Math.round(inc.lvl);
+  return '<span class="lbl">' + inc.label + '</span> ' + (inc.exact ? n + '<small>%</small>' : estSpan(n + ' %', inc.tip, n + '<small>%</small>'));
+}
 function actBarHtml(c){
   const kwh = kwhOf(c);
   let a = 0, b = 0, big = '';
@@ -3179,7 +3190,7 @@ function actBarHtml(c){
   else {
     const inc = incompleteInfo(c);
     if(!inc) return '';
-    return '<div class="act-bar inc"><div class="rb-tx"><b>' + incLevelHtml(inc) + '</b></div>' + rangeBarHtml(null, inc.est) + '</div>';
+    return '<div class="act-bar inc"><div class="rb-tx"><b>' + incLevelHtml(inc) + '</b></div>' + rangeBarHtml(null, inc.lvl) + '</div>';
   }
   return '<div class="act-bar" role="img" aria-label="' + (a ? 'de ' + Math.round(a) + ' a ' + Math.round(b) : 'cargó ' + Math.round(b)) + ' por ciento">' +
     '<div class="rb-tx"><b>' + big + '</b></div>' + rangeBarHtml(a, b) + '</div>';
@@ -3329,8 +3340,8 @@ function chargeCardHtml(v, withActions){
   const c = v.c, t = chargeParts(v, 1), inc = v.soc ? null : incompleteInfo(c);
   return '<article class="chg-card' + (v.soc || inc ? '' : ' no-soc') + '">' +
     '<div class="chg-top">' + locIconHtml(c) + '<b class="chg-when">' + t.date + (v.time ? ' <span class="t">' + t.time + '</span>' : '') + '</b></div>' +
-    '<div class="chg-mid">' + (inc ? '<div class="chg-soc"><div class="chg-soc-val">' + incLevelHtml(inc) + '</div>' + rangeBarHtml(null, inc.est) + '</div>' : chargeSocHtml(v)) + '<div class="chg-kwh"><div class="chg-kwh-val">' + t.kwh + '</div><div class="chg-kwh-sub">' + (v.free ? '' : t.cost) + '</div></div></div>' +
-    '<div class="chg-bot"><span class="chg-chip">' + t.km + (inc ? ' · +' + fmtNum(inc.km) + ' km' : '') + '</span>' + (v.free ? '<span class="chg-chip free">Gratis</span>' : '') + (withActions ? chargeActionsHtml(c) : '') + '</div></article>';
+    '<div class="chg-mid">' + (inc ? '<div class="chg-soc"><div class="chg-soc-val">' + incLevelHtml(inc) + '</div>' + rangeBarHtml(null, inc.lvl) + '</div>' : chargeSocHtml(v)) + '<div class="chg-kwh"><div class="chg-kwh-val">' + t.kwh + '</div><div class="chg-kwh-sub">' + (v.free ? '' : t.cost) + '</div></div></div>' +
+    '<div class="chg-bot"><span class="chg-chip">' + t.km + (inc && inc.km ? ' · +' + fmtNum(inc.km) + ' km' : '') + '</span>' + (v.free ? '<span class="chg-chip free">Gratis</span>' : '') + (withActions ? chargeActionsHtml(c) : '') + '</div></article>';
 }
 // Fila de la tabla (tablet horizontal y escritorio): columnas rotuladas, más fáciles de comparar.
 function chargeRowHtml(v){
@@ -3342,7 +3353,7 @@ function chargeRowHtml(v){
     '<td>' + ((car && actBarHtml(c)) || (v.soc ? chargeSocHtml(v) : '—')) + '</td>' +
     '<td class="num">' + kwh + '</td>' +
     '<td class="num">' + (v.free ? '<span class="chg-chip free">Gratis</span>' : t.cost) + '</td>' +
-    '<td class="num">' + (c.km ? fmtNum(c.km) : '—') + (incompleteInfo(c) ? '<small class="kmd">+' + fmtNum(incompleteInfo(c).km) + ' km</small>' : '') + '</td>' +
+    '<td class="num">' + (c.km ? fmtNum(c.km) : '—') + (incompleteInfo(c) && incompleteInfo(c).km ? '<small class="kmd">+' + fmtNum(incompleteInfo(c).km) + ' km</small>' : '') + '</td>' +
     '<td class="num">' + chargeActionsHtml(c) + '</td></tr>';
 }
 // Explicación de un valor estimado: al pasar el ratón, enfocar con teclado o tocar. Esc o tocar fuera la cierra.
