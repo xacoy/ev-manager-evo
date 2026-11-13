@@ -1743,9 +1743,13 @@ html.car .qlm-row{padding:10px 12px}html.car .qlm-btns button{width:52px;height:
   html:not(.car) .chg-table td.when .t{display:block;font-size:14px;color:var(--text-muted);line-height:1.2;margin-top:2px}
   html:not(.car) .chg-table td:nth-child(2) .chg-loc{font-size:15px}
   html:not(.car) .chg-table th:nth-child(1),html:not(.car) .chg-table td:nth-child(1){padding-right:8px}
-  html:not(.car) .chg-table td .act-bar{max-width:none;min-width:260px;width:100%}
-  html:not(.car) .chg-table td .act-cells{height:clamp(34px,4.4vh,46px)}
-  html:not(.car) .chg-table td .act-shell em{font-size:clamp(18px,2.6vh,24px)}
+  html:not(.car) #page-charges .chg-table td .act-bar{max-width:340px;min-width:220px;width:100%;padding-right:6px}
+  html:not(.car) #page-charges .chg-table td .act-bar:after{width:4px;height:12px;margin-top:-6px;border-radius:0 3px 3px 0}
+  html:not(.car) #page-charges .chg-table td .act-shell{border-width:2px;border-radius:8px;padding:3px}
+  html:not(.car) #page-charges .chg-table td .act-cells{height:22px;gap:2px}
+  html:not(.car) #page-charges .chg-table td .act-cells i{border-radius:3px}
+  html:not(.car) #page-charges .chg-table td .act-cells i.on{box-shadow:0 0 5px currentColor}
+  html:not(.car) #page-charges .chg-table td .act-shell em{inset:auto;left:50%;top:50%;transform:translate(-50%,-50%);padding:1px 9px;border-radius:999px;background:rgba(10,14,24,.78);font-size:14px;font-weight:700;letter-spacing:.2px;white-space:nowrap;text-shadow:none}
   html:not(.car) .chg-table td{padding-top:clamp(12px,2vh,20px);padding-bottom:clamp(12px,2vh,20px)}
 }
 
@@ -2432,7 +2436,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611121141';   // AAAAMMDDHHMM
+const APP_VERSION = '202611130916';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
