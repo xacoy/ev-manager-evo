@@ -607,9 +607,10 @@ button{cursor:pointer}
 #page-dashboard .act-cells i{flex:1;border-radius:4px;background:var(--bg-2)}
 #page-dashboard .act-cells i.pre{background:var(--border-strong)}
 #page-dashboard .act-cells i.on{box-shadow:0 0 8px currentColor}
-#page-dashboard .act-cells i.ok{background:var(--success);color:var(--success)}
-#page-dashboard .act-cells i.mid{background:var(--warning);color:var(--warning)}
-#page-dashboard .act-cells i.low{background:var(--danger);color:var(--danger)}
+#page-dashboard .act-cells i.ok{background:#3ecf8e;color:#3ecf8e}
+#page-dashboard .act-cells i.teal{background:#22b8b0;color:#22b8b0}
+#page-dashboard .act-cells i.mid{background:#f2873a;color:#f2873a}
+#page-dashboard .act-cells i.low{background:#e2565f;color:#e2565f}
 #page-dashboard .act-shell em{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:800 22px var(--font);font-style:normal;color:#fff;text-shadow:0 1px 5px #000,0 0 3px #000}
 #page-charges .act-bar{position:relative;padding-right:10px}
 #page-charges .act-bar:after{content:"";position:absolute;right:0;top:50%;margin-top:-9px;width:6px;height:18px;background:#5b6880;border-radius:0 4px 4px 0}
@@ -618,9 +619,10 @@ button{cursor:pointer}
 #page-charges .act-cells i{flex:1;border-radius:4px;background:var(--bg-2)}
 #page-charges .act-cells i.pre{background:var(--border-strong)}
 #page-charges .act-cells i.on{box-shadow:0 0 8px currentColor}
-#page-charges .act-cells i.ok{background:var(--success);color:var(--success)}
-#page-charges .act-cells i.mid{background:var(--warning);color:var(--warning)}
-#page-charges .act-cells i.low{background:var(--danger);color:var(--danger)}
+#page-charges .act-cells i.ok{background:#3ecf8e;color:#3ecf8e}
+#page-charges .act-cells i.teal{background:#22b8b0;color:#22b8b0}
+#page-charges .act-cells i.mid{background:#f2873a;color:#f2873a}
+#page-charges .act-cells i.low{background:#e2565f;color:#e2565f}
 #page-charges .act-shell em{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:800 22px var(--font);font-style:normal;color:#fff;text-shadow:0 1px 5px #000,0 0 3px #000}
 #page-dashboard .act-row .activity-icon{display:none}
 #page-dashboard .act-main{display:grid;grid-template-columns:170px 1fr;align-items:center;column-gap:16px}
@@ -2436,7 +2438,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611130916';   // AAAAMMDDHHMM
+const APP_VERSION = '202611130918';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -3158,14 +3160,14 @@ function renderSavings(){
 }
 
 
-/* Batería de la vista simple: 10 celdas; las que ya había en gris y las cargadas con el color del nivel final (verde >50 %, ámbar 20-50 %, rojo <20 %) */
+/* Batería de la vista simple: 10 celdas; las que ya había en gris y las cargadas con el color del nivel final (rojo <25 %, naranja 25-50 %, verde azulado 50-75 %, verde ≥75 %) */
 function actBarHtml(c){
   const kwh = kwhOf(c);
   let a = 0, b = 0, txt = '';
   if(c.socStart != null && c.socEnd != null && Number(c.socEnd) > Number(c.socStart)){ a = Number(c.socStart); b = Number(c.socEnd); txt = Math.round(a) + ' → ' + Math.round(b) + ' %'; }
   else if(kwh){ b = Math.min(100, kwh / VEHICLE_BATTERY_KWH * 100); txt = '+' + Math.round(b) + ' %'; }
   else return '';
-  const lvl = b < 20 ? 'low' : b < 50 ? 'mid' : 'ok';
+  const lvl = b < 25 ? 'low' : b < 50 ? 'mid' : b < 75 ? 'teal' : 'ok';
   let cells = '';
   for(let k = 0; k < 10; k++){ const m = k * 10 + 5; cells += '<i class="' + (m < a ? 'pre' : m <= b ? 'on ' + lvl : '') + '"></i>'; }
   return '<div class="act-bar"><div class="act-shell"><div class="act-cells">' + cells + '</div><em>' + txt + '</em></div></div>';
