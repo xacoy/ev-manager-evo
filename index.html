@@ -642,6 +642,8 @@ button{cursor:pointer}
 .seg button{border:0;background:transparent;color:var(--text-muted);font:700 12.5px var(--font);padding:7px 14px;border-radius:var(--radius-full);cursor:pointer;white-space:nowrap}
 .seg button:hover{color:var(--text)}
 .seg button.on{background:var(--accent);color:var(--on-accent)}
+.stats-custom{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:12.5px;font-weight:700;color:var(--text-muted)}
+.stats-custom input{font:inherit;padding:6px 8px;border-radius:10px;border:1px solid var(--border);background:var(--bg-2);color:var(--text)}
 #page-stats .stat-card .label-row{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:22px}
 #page-stats .stat-card .value{font-size:30px;margin-top:10px}
 .delta{display:inline-flex;align-items:center;gap:3px;font-size:11.5px;font-weight:800;padding:3px 8px;border-radius:var(--radius-full);white-space:nowrap}
@@ -2078,9 +2080,13 @@ html.car .home-grid{flex:1;min-height:0;height:auto;grid-template-columns:minmax
           <div class="seg" id="statsPeriodSeg" role="tablist" aria-label="Periodo">
             <button type="button" data-p="all" onclick="setStatsPeriod('all')">Todo</button>
             <button type="button" data-p="y1" onclick="setStatsPeriod('y1')">12 meses</button>
-            <button type="button" data-p="ytd" onclick="setStatsPeriod('ytd')">Este año</button>
+            <button type="button" data-p="m6" onclick="setStatsPeriod('m6')">6 meses</button>
+            <button type="button" data-p="m3" onclick="setStatsPeriod('m3')">3 meses</button>
+            <button type="button" data-p="m1" onclick="setStatsPeriod('m1')">1 mes</button>
             <button type="button" data-p="m" onclick="setStatsPeriod('m')">Este mes</button>
+            <button type="button" data-p="custom" onclick="setStatsPeriod('custom')">Rango</button>
           </div>
+          <div class="stats-custom" id="statsCustom" style="display:none"><label>Del <input type="date" id="statsFrom" onchange="setStatsCustom()"></label><label>al <input type="date" id="statsTo" onchange="setStatsCustom()"></label></div>
           <div class="range" id="statsRangeLabel"></div>
           <button type="button" class="btn btn-ghost help-toggle" id="statsHelpBtn" onclick="toggleStatsHelp()">Ocultar explicaciones</button>
         </div>
@@ -2440,7 +2446,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611241225';   // AAAAMMDDHHMM
+const APP_VERSION = '202611241227';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -4662,7 +4668,10 @@ function shortDate(d){ const x = new Date(d); return isNaN(x) ? '' : x.getDate()
 const CO2_PETROL = 2.31, CO2_GRID = 0.5;   // kg CO₂ por litro de gasolina y por kWh de la red (estimación para Canarias)
 let statsPeriod = 'all', placeSort = { key: 'kwh', dir: -1 };
 try{ statsPeriod = localStorage.getItem('statsPeriod') || 'all'; }catch(e){}
-if(!['all','y1','ytd','m'].includes(statsPeriod)) statsPeriod = 'all';
+if(!['all','y1','m6','m3','m1','m','custom'].includes(statsPeriod)) statsPeriod = 'all';
+let statsCustom = { from: '', to: '' };
+try{ statsCustom = Object.assign(statsCustom, JSON.parse(localStorage.getItem('statsCustom') || '{}')); }catch(e){}
+const STATS_MONTHS = { y1: 12, m6: 6, m3: 3, m1: 1 };
 const isoLocal = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
 function shiftMonths(d, k){
   const x = new Date(d), day = x.getDate();
@@ -4674,10 +4683,18 @@ function shiftMonths(d, k){
 function statsRange(){
   const now = new Date(), to = isoLocal(now);
   if(statsPeriod === 'all') return { all: true };
-  let s, k = 12;
+  if(statsPeriod === 'custom'){
+    let f = statsCustom.from, t = statsCustom.to || to;
+    if(!f) return { all: true };
+    if(t < f) [f, t] = [t, f];
+    const days = Math.round((new Date(t + 'T12:00:00') - new Date(f + 'T12:00:00')) / 864e5) + 1;
+    const pt = new Date(f + 'T12:00:00'); pt.setDate(pt.getDate() - 1);
+    const pf = new Date(pt); pf.setDate(pf.getDate() - (days - 1));
+    return { all: false, from: f, to: t, pfrom: isoLocal(pf), pto: isoLocal(pt) };
+  }
+  let s, k;
   if(statsPeriod === 'm'){ s = new Date(now.getFullYear(), now.getMonth(), 1); k = 1; }
-  else if(statsPeriod === 'ytd') s = new Date(now.getFullYear(), 0, 1);
-  else { s = shiftMonths(now, 12); s.setDate(s.getDate() + 1); }
+  else { k = STATS_MONTHS[statsPeriod] || 12; s = shiftMonths(now, k); s.setDate(s.getDate() + 1); }
   return { all: false, from: isoLocal(s), to, pfrom: isoLocal(shiftMonths(s, k)), pto: isoLocal(shiftMonths(now, k)) };
 }
 // Primer registro (carga o taller) y fecha desde la que se cuenta el tiempo del coche: la de compra o, si no hay, el primer registro.
@@ -4697,6 +4714,11 @@ function toggleStatsHelp(){
 function setStatsPeriod(p){
   statsPeriod = p;
   try{ localStorage.setItem('statsPeriod', p); }catch(e){}
+  renderStats();
+}
+function setStatsCustom(){
+  statsCustom = { from: document.getElementById('statsFrom').value, to: document.getElementById('statsTo').value };
+  try{ localStorage.setItem('statsCustom', JSON.stringify(statsCustom)); }catch(e){}
   renderStats();
 }
 function setPlaceSort(key){
@@ -4864,7 +4886,9 @@ function renderStats(){
   const r = statsRange(), from = r.all ? null : r.from, to = r.all ? null : r.to;
   const m = periodMetrics(from, to), pm = r.all ? null : periodMetrics(r.pfrom, r.pto);
   document.querySelectorAll('#statsPeriodSeg button').forEach(b=> b.classList.toggle('on', b.dataset.p === statsPeriod));
-  document.getElementById('statsRangeLabel').textContent = r.all ? 'Todo el historial' : fmtDate(r.from) + ' – ' + fmtDate(r.to) + ' · comparado con ' + fmtDate(r.pfrom) + ' – ' + fmtDate(r.pto);
+  const cu = document.getElementById('statsCustom'); cu.style.display = statsPeriod === 'custom' ? '' : 'none';
+  if(statsPeriod === 'custom'){ document.getElementById('statsFrom').value = statsCustom.from || ''; document.getElementById('statsTo').value = statsCustom.to || ''; }
+  document.getElementById('statsRangeLabel').textContent = r.all ? (statsPeriod === 'custom' ? 'Elige la fecha de inicio (se muestra todo el historial)' : 'Todo el historial') : fmtDate(r.from) + ' – ' + fmtDate(r.to) + ' · comparado con ' + fmtDate(r.pfrom) + ' – ' + fmtDate(r.pto);
   const fr = firstRecordIso(), full = r.all || !fr || r.from <= fr;   // el periodo ya incluye todos los registros: mismas cifras que «Todo»
   const set = (id, v) => { document.getElementById(id).textContent = v; };
 
