@@ -1257,6 +1257,10 @@ html.car .chg-tablecard{display:none!important}
 .rd-empty{grid-column:1/-1;font-size:13px;color:var(--text-muted);margin:0}
 .rd-between{margin-top:14px;font-size:13px;color:var(--text-muted)}
 .rd-iv{margin-top:4px;line-height:1.6}
+.rd-range{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0}
+.rd-range label{display:flex;align-items:center;gap:6px;font-size:12px}
+.rd-range select{font:inherit;font-size:12px;padding:6px 8px;border-radius:10px;border:1px solid var(--border,#d0d7de);background:var(--surface,#fff);color:var(--text)}
+.rd-range .btn{padding:6px 10px;font-size:12px}
 .rd-iv b{color:var(--text)}
 .rd-details{margin-top:14px;border-top:1px solid var(--border);padding-top:10px}
 .rd-details summary{cursor:pointer;font-size:12.5px;font-weight:700;color:var(--text-muted);padding:4px 0;list-style:none}
@@ -2436,7 +2440,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611241059';   // AAAAMMDDHHMM
+const APP_VERSION = '202611241225';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -4458,6 +4462,17 @@ function readingInterval(r1, r2){
   const cons = kwh / km * 100;
   return { km, kwh, cons, wall: cons / CHARGE_EFF, ok: cons >= 5 && cons <= 60 };
 }
+let rdFromId = null, rdToId = null;
+function setReadingRange(reset){
+  if(reset){ rdFromId = rdToId = null; }
+  else {
+    let f = Number(document.getElementById('rdFrom').value), t = Number(document.getElementById('rdTo').value);
+    const l = readingList(), fi = l.findIndex(r=>r.id === f), ti = l.findIndex(r=>r.id === t);
+    if(fi >= ti){ if(document.activeElement && document.activeElement.id === 'rdFrom') t = l[Math.min(fi + 1, l.length - 1)].id; else f = l[Math.max(ti - 1, 0)].id; }
+    rdFromId = f; rdToId = t;
+  }
+  renderReadings();
+}
 function openReadingForm(){
   document.getElementById('readingFormOverlay').classList.add('open');
   setTimeout(()=>document.getElementById('rd_km').focus(), 50);
@@ -4486,8 +4501,15 @@ function renderReadings(){
   }
   const bt = document.getElementById('rdBetween');
   if(list.length >= 2){
-    const a = list[list.length - 2], iv = readingInterval(a, last);
-    bt.innerHTML = '<span class="rd-lbl">Entre las dos últimas lecturas</span>' + (iv.ok ?
+    // Tramo elegible: por defecto las dos últimas lecturas; se puede abrir a cualquier rango.
+    let ia = list.findIndex(r=>r.id === rdFromId), ib = list.findIndex(r=>r.id === rdToId);
+    if(ia < 0 || ib < 0 || ia >= ib){ ia = list.length - 2; ib = list.length - 1; rdFromId = rdToId = null; }
+    const a = list[ia], b = list[ib], iv = readingInterval(a, b);
+    const opt = (r, sel) => '<option value="' + r.id + '"' + (sel ? ' selected' : '') + '>' + fmtDate(r.date) + ' · ' + escapeHtml(r.time) + ' · ' + fmtNum(r.km) + ' km</option>';
+    const sels = '<div class="rd-range"><label>Desde <select id="rdFrom" onchange="setReadingRange()">' + list.map((r,i)=>opt(r, i === ia)).join('') + '</select></label>' +
+      '<label>Hasta <select id="rdTo" onchange="setReadingRange()">' + list.map((r,i)=>opt(r, i === ib)).join('') + '</select></label>' +
+      (rdFromId != null ? '<button type="button" class="btn btn-ghost" onclick="setReadingRange(true)">Últimas dos</button>' : '') + '</div>';
+    bt.innerHTML = '<span class="rd-lbl">Tramo entre lecturas</span>' + sels + (iv.ok ?
       '<div class="rd-iv"><b>' + fmtNum(iv.km) + ' km</b> · <b>' + nf(iv.kwh, 1) + ' kWh</b> de batería · <b>' + nf(iv.cons, 1) + ' kWh/100 km</b> · ' + estSpan(nf(iv.wall, 1) + ' kWh/100 km de red', 'Estimado: ' + nf(iv.cons, 1) + ' kWh/100 km de batería ÷ ' + nf(CHARGE_EFF, 1) + ' de rendimiento de carga') + '</div>'
       : '<div class="rd-iv muted">' + (iv.km >= 1 ? 'Las lecturas no son coherentes (la energía no puede bajar): revisa los datos.' : 'Faltan km entre las lecturas para calcular el consumo.') + '</div>');
   } else bt.innerHTML = '';
