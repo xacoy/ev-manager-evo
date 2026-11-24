@@ -2216,11 +2216,11 @@ html.car .home-grid{flex:1;min-height:0;height:auto;grid-template-columns:minmax
 <div class="overlay" id="readingFormOverlay">
   <div class="modal" style="max-width:460px">
     <h3>Actualizar lecturas</h3>
-    <p class="set-help" style="margin-bottom:14px">Datos de la app de BYD → Consumo de energía.</p>
+    <p class="set-help" style="margin-bottom:14px">Datos de la app de BYD → Consumo de energía (Kilometraje total, En 50 millas y AEC acumulativo).</p>
     <form id="readingForm" autocomplete="off">
       <div class="field"><label>Kilometraje total (km)</label><input id="rd_km" type="number" min="0" step="1" inputmode="numeric" placeholder="Ej. 801"></div>
-      <div class="field"><label>Consumo acumulado (kWh/100 km)</label><input id="rd_aec" type="number" min="0" step="any" inputmode="decimal" placeholder="Ej. 16,2"></div>
-      <div class="field"><label>Consumo reciente <span class="opt-hint">(opcional, kWh/100 km)</span></label><input id="rd_recent" type="number" min="0" step="any" inputmode="decimal" placeholder="Ej. 15,4"></div>
+      <div class="field"><label>En 50 millas · Electricidad <span class="opt-hint">(opcional, kWh/100 km)</span></label><input id="rd_recent" type="number" min="0" step="any" inputmode="decimal" placeholder="Ej. 11,4"></div>
+      <div class="field"><label>AEC acumulativo (kWh/100 km)</label><input id="rd_aec" type="number" min="0" step="any" inputmode="decimal" placeholder="Ej. 16,6"></div>
       <div class="modal-actions"><button type="submit" class="btn btn-primary" id="readingSave">Guardar lectura</button><button type="button" class="btn btn-ghost" id="readingCancel">Cancelar</button></div>
     </form>
   </div>
@@ -2436,7 +2436,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611131300';   // AAAAMMDDHHMM
+const APP_VERSION = '202611241200';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -4482,7 +4482,7 @@ function renderReadings(){
     st.className = 'rd-status ' + (stale ? 'stale' : 'ok'); st.textContent = stale ? 'Toca actualizar' : 'Al día';
     document.getElementById('rdWhen').textContent = fmtDate(last.date) + ' · ' + last.time;
     document.getElementById('rdAgo').textContent = readingAgoText(d);
-    tiles.innerHTML = tile('Km totales', fmtNum(last.km), 'km') + tile('Consumo acumulado', nf(last.aec, 1), 'kWh/100 km') + (last.recent > 0 ? tile('Consumo reciente', nf(last.recent, 1), 'kWh/100 km') : '') + (last.soc >= 0 && last.soc != null ? tile('Batería (SOC)', nf(last.soc, 0), '%') : '') + (last.tires && last.tires.length ? tile('Neumáticos', last.tires.map(t=>nf(t / 100, 1)).join(' · '), 'bar') : '');
+    tiles.innerHTML = tile('Km totales', fmtNum(last.km), 'km') + tile('AEC acumulativo', nf(last.aec, 1), 'kWh/100 km') + (last.recent > 0 ? tile('En 50 millas', nf(last.recent, 1), 'kWh/100 km') : '') + (last.soc >= 0 && last.soc != null ? tile('Batería (SOC)', nf(last.soc, 0), '%') : '') + (last.tires && last.tires.length ? tile('Neumáticos', last.tires.map(t=>nf(t / 100, 1)).join(' · '), 'bar') : '');
   }
   const bt = document.getElementById('rdBetween');
   if(list.length >= 2){
@@ -4564,7 +4564,7 @@ function saveReading(e){
   const km = Number(document.getElementById('rd_km').value), aec = Number(document.getElementById('rd_aec').value);
   const rv = document.getElementById('rd_recent').value, recent = rv === '' ? null : Number(rv);
   if(!(km > 0)){ toast('Indica el kilometraje total', 'warning'); return; }
-  if(!(aec >= 5 && aec <= 60)){ toast('El consumo acumulado debe estar entre 5 y 60 kWh/100 km', 'warning'); return; }
+  if(!(aec >= 5 && aec <= 60)){ toast('El AEC acumulativo debe estar entre 5 y 60 kWh/100 km', 'warning'); return; }
   if(recent != null && !(recent >= 5 && recent <= 60)){ toast('El consumo reciente debe estar entre 5 y 60 kWh/100 km', 'warning'); return; }
   const last = readingList().pop();
   if(last && km < last.km){ toast('Los km no pueden ser menores que los de la última lectura (' + fmtNum(last.km) + ' km)', 'warning'); return; }
