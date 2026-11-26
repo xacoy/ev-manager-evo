@@ -1285,7 +1285,7 @@ html.car .chg-tablecard{display:none!important}
 .rd-daily label{font-size:11px;font-weight:700;color:var(--text-faint);display:block;margin:0}
 .rd-daily input{width:100%}
 .rd-daily-chart{margin-top:12px}
-.rd-daily-chart svg{width:100%;height:auto;display:block}
+.rd-daily-chart svg{width:100%;max-width:680px;height:auto;display:block}
 .rd-range{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0}
 .rd-range label{display:flex;align-items:center;gap:6px;font-size:12px}
 .rd-range select{font:inherit;font-size:12px;padding:6px 8px;border-radius:10px;border:1px solid var(--border,#d0d7de);background:var(--surface,#fff);color:var(--text)}
@@ -2126,6 +2126,13 @@ html.car .home-grid{flex:1;min-height:0;height:auto;grid-template-columns:minmax
           <div class="insights" id="statsInsights"></div>
         </div>
 
+        <div class="card" style="margin-bottom:16px;display:none" id="carDataCard">
+          <div class="card-head"><h2>Consumo del coche</h2><span class="hint" id="carDataHint"></span></div>
+          <p class="what">Lo que mide el propio coche (capturas de la app de BYD), día a día. Es consumo de batería, no de red.</p>
+          <div class="rd-tiles" id="carDataTiles" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))"></div>
+          <div class="rd-daily-chart" id="carDataChart"></div>
+        </div>
+
         <div class="card" style="margin-bottom:16px">
           <div class="card-head"><h2>Resumen del periodo</h2></div>
           <p class="what">Cuánto gastas, cuánto usas el coche y cómo sale frente al León. El CO₂ evitado es una estimación.</p>
@@ -2484,7 +2491,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611262145';   // AAAAMMDDHHMM
+const APP_VERSION = '202611262148';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -4622,17 +4629,38 @@ function saveDailyFromForm(){
   box.querySelectorAll('#rdDaily input').forEach(i=>{ const v = Number(i.value); if(i.value !== '' && v >= 5 && v <= 60){ state.carDaily[i.dataset.date] = v; n++; } });
   return n;
 }
+function dailySvg(days, vals, avg){
+  const lo = Math.floor(Math.min(...vals, avg || 99) - 1), hi = Math.ceil(Math.max(...vals, avg || 0) + 1), many = days.length > 16;
+  const W = 560, H = 150, pl = 26, pr = 26, pt = 22, pb = 24, x = i => pl + (W - pl - pr) * (days.length === 1 ? .5 : i / (days.length - 1)), y = v => pt + (H - pt - pb) * (1 - (v - lo) / (hi - lo));
+  const pts = vals.map((v,i)=>x(i).toFixed(1) + ',' + y(v).toFixed(1)).join(' ');
+  return '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Consumo por día">' +
+    (avg ? '<line x1="' + pl + '" x2="' + (W - pr) + '" y1="' + y(avg).toFixed(1) + '" y2="' + y(avg).toFixed(1) + '" stroke="var(--text-faint)" stroke-dasharray="4 4"/>' : '') +
+    '<polyline points="' + pts + '" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/>' +
+    vals.map((v,i)=>many ? '' : '<circle cx="' + x(i).toFixed(1) + '" cy="' + y(v).toFixed(1) + '" r="3.5" fill="var(--accent)"/><text x="' + x(i).toFixed(1) + '" y="' + (y(v) - 8).toFixed(1) + '" text-anchor="middle" font-size="11" font-weight="700" fill="var(--text)">' + nf(v, 1) + '</text>').join('') +
+    days.map((d,i)=>(days.length <= 8 || i % Math.ceil(days.length / 8) === 0) ? '<text x="' + x(i).toFixed(1) + '" y="' + (H - 6) + '" text-anchor="middle" font-size="10" fill="var(--text-faint)">' + d.slice(8) + '/' + d.slice(5, 7) + '</text>' : '').join('') + '</svg>';
+}
 function renderDailyChart(){
   const el = document.getElementById('rdDailyChart'); if(!el) return;
   const days = Object.keys(state.carDaily || {}).sort().slice(-14);
-  if(days.length < 2){ el.innerHTML = ''; return; }
-  const vals = days.map(d=>state.carDaily[d]), lo = Math.floor(Math.min(...vals) - 1), hi = Math.ceil(Math.max(...vals) + 1);
-  const W = 560, H = 150, pl = 8, pr = 8, pt = 22, pb = 24, x = i => pl + (W - pl - pr) * (days.length === 1 ? .5 : i / (days.length - 1)), y = v => pt + (H - pt - pb) * (1 - (v - lo) / (hi - lo));
-  const pts = vals.map((v,i)=>x(i).toFixed(1) + ',' + y(v).toFixed(1)).join(' ');
-  el.innerHTML = '<span class="rd-lbl">Consumo por día (kWh/100 km)</span><svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Consumo por día">' +
-    '<polyline points="' + pts + '" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round"/>' +
-    vals.map((v,i)=>'<circle cx="' + x(i).toFixed(1) + '" cy="' + y(v).toFixed(1) + '" r="3.5" fill="var(--accent)"/><text x="' + x(i).toFixed(1) + '" y="' + (y(v) - 8).toFixed(1) + '" text-anchor="middle" font-size="11" font-weight="700" fill="var(--text)">' + nf(v, 1) + '</text>').join('') +
-    days.map((d,i)=>(days.length <= 8 || i % 2 === 0) ? '<text x="' + x(i).toFixed(1) + '" y="' + (H - 6) + '" text-anchor="middle" font-size="10" fill="var(--text-faint)">' + d.slice(8) + '/' + d.slice(5, 7) + '</text>' : '').join('') + '</svg>';
+  el.innerHTML = days.length < 2 ? '' : '<span class="rd-lbl">Consumo por día (kWh/100 km)</span>' + dailySvg(days, days.map(d=>state.carDaily[d]));
+}
+// Tarjeta de «Datos»: consumo diario del coche dentro del periodo elegido (y comparación con el anterior).
+function renderStatsCar(r){
+  const card = document.getElementById('carDataCard'); if(!card) return;
+  const all = Object.keys(state.carDaily || {}).sort();
+  const inR = (a, b) => all.filter(d=>(!a || d >= a) && (!b || d <= b));
+  const days = r.all ? all : inR(r.from, r.to);
+  if(!days.length){ card.style.display = r.all && !all.length ? 'none' : ''; if(card.style.display === 'none') return; document.getElementById('carDataTiles').innerHTML = '<p class="rd-empty">Sin datos diarios en este periodo.</p>'; document.getElementById('carDataChart').innerHTML = ''; document.getElementById('carDataHint').textContent = ''; return; }
+  card.style.display = '';
+  const vals = days.map(d=>state.carDaily[d]), avg = vals.reduce((a,b)=>a + b, 0) / vals.length;
+  const bi = vals.indexOf(Math.min(...vals)), wi = vals.indexOf(Math.max(...vals));
+  const tile = (lbl, val, unit) => '<div class="rd-tile"><span class="rd-lbl">' + lbl + '</span><b>' + val + '</b><small>' + unit + '</small></div>';
+  let cmp = '';
+  if(!r.all){ const pd = inR(r.pfrom, r.pto); if(pd.length){ const pa = pd.reduce((a,d)=>a + state.carDaily[d], 0) / pd.length, df = avg - pa; cmp = ' · ' + (df <= 0 ? '' : '+') + nf(df, 1) + ' vs periodo anterior (' + nf(pa, 1) + ')'; } }
+  const last = readingList().pop();
+  document.getElementById('carDataHint').textContent = days.length + (days.length === 1 ? ' día' : ' días') + ' con datos';
+  document.getElementById('carDataTiles').innerHTML = tile('Media diaria', nf(avg, 1), 'kWh/100 km' + cmp) + tile('Mejor día', nf(vals[bi], 1), fmtDate(days[bi])) + tile('Peor día', nf(vals[wi], 1), fmtDate(days[wi])) + (last ? tile('AEC acumulativo', nf(last.aec, 1), 'última lectura') : '');
+  document.getElementById('carDataChart').innerHTML = days.length < 2 ? '' : '<span class="rd-lbl">Consumo por día (kWh/100 km) · línea de puntos: media</span>' + dailySvg(days, vals, avg);
 }
 function openReadingForm(){
   document.getElementById('readingFormOverlay').classList.add('open');
@@ -5092,6 +5120,7 @@ function renderStats(){
   const cur = STATS_PERIODS.find(x=>x[0] === statsPeriod) || STATS_PERIODS[0];
   document.getElementById('statsPeriodBtn').textContent = (statsPeriod === 'custom' ? 'Rango' : cur[1]) + ' ▾';
   document.getElementById('statsMenu').innerHTML = STATS_PERIODS.map(x=>'<button type="button" role="option" class="' + (x[0] === statsPeriod ? 'on' : '') + '" onclick="pickStatsPeriod(\'' + x[0] + '\')">' + x[1] + '</button>').join('');
+  renderStatsCar(r);
   const chip = document.getElementById('statsRangeChip'), isCu = statsPeriod === 'custom' && statsCustom.from;
   chip.style.display = isCu ? '' : 'none';
   if(isCu) document.getElementById('statsRangeChipTxt').textContent = fmtDate(r.from) + ' – ' + fmtDate(r.to);
