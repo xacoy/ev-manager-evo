@@ -4597,7 +4597,13 @@ async function scanBydImage(file){
     window._rdDailyInit = o.daily; rdDailyRows(o.daily);
     document.getElementById('rdDailyBox').style.display = o.daily.some(v=>v != null) ? '' : 'none';
     const n = [o.km, o.aec, o.recent].filter(v=>v != null).length + o.daily.filter(v=>v != null).length;
-    st.textContent = n ? 'Datos leídos (' + n + '). Revísalos antes de guardar: la lectura de texto puede equivocarse.' : 'No he podido leer datos en esa imagen. Prueba con la captura completa de «Mi informe de consumo de energía».';
+    if(o.km != null && o.aec != null){   // lectura completa: se guarda directamente
+      const last = readingList().pop();
+      if(last && last.km === o.km && last.aec === o.aec){
+        const nd = saveDailyFromForm(); saveState(); closeReadingForm(); renderReadings();
+        toast('Esa lectura ya estaba guardada' + (nd ? ' · consumo diario actualizado' : ''), 'info');
+      } else { st.textContent = 'Guardando lectura…'; document.getElementById('readingForm').requestSubmit(); }
+    } else st.textContent = n ? 'Datos leídos (' + n + ') pero faltan km o AEC. Complétalos y guarda.' : 'No he podido leer datos en esa imagen. Prueba con la captura completa de «Mi informe de consumo de energía».';
   }catch(e){ st.textContent = 'No se pudo leer la imagen: ' + e.message + '. Comprueba la conexión.'; }
   btn.disabled = false;
 }
@@ -4753,11 +4759,11 @@ function saveReading(e){
   // la última lectura es el consumo del coche que usa el resto de la app y también actualiza el odómetro
   state.config.carAec = aec;
   state.config.currentKm = Math.max(Number(state.config.currentKm) || 0, km);
-  saveDailyFromForm();
+  const nd = saveDailyFromForm();
   saveState();
   closeReadingForm();
   renderReadings(); renderDashboard(); renderAlerts();
-  toast('Lectura guardada', 'success');
+  toast('Lectura guardada' + (nd ? ' · ' + nd + ' días de consumo' : ''), 'success');
 }
 /* ---- importar el CSV de «Mis datos» de la app de BYD (solo datos técnicos; nada personal) ---- */
 function parseCsv(text){
