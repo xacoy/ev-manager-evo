@@ -2484,7 +2484,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611262142';   // AAAAMMDDHHMM
+const APP_VERSION = '202611262144';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -4578,6 +4578,19 @@ async function scanBydImage(file){
     const raw = r.data.words || [];
     const words = raw.map(w=>({ t: w.text, x: (w.bbox.x0 + w.bbox.x1) / 2, y: (w.bbox.y0 + w.bbox.y1) / 2 }));
     const o = parseBydShot(words);
+    if(!o.date){   // la línea «Actualizar: dd/mm/aa» es gris claro: se relee el pie con más contraste
+      try{
+        const bmp = await createImageBitmap(file), h0 = Math.round(bmp.height * 0.08), cv = document.createElement('canvas'); cv.width = bmp.width; cv.height = h0;
+        const cx = cv.getContext('2d'); cx.drawImage(bmp, 0, bmp.height - h0, bmp.width, h0, 0, 0, bmp.width, h0);
+        const im = cx.getImageData(0, 0, cv.width, cv.height), d = im.data; let mn = 255, mx = 0;
+        for(let i = 0; i < d.length; i += 4){ const g = (d[i] + d[i+1] + d[i+2]) / 3; if(g < mn) mn = g; if(g > mx) mx = g; }
+        for(let i = 0; i < d.length; i += 4){ const g = ((d[i] + d[i+1] + d[i+2]) / 3 - mn) / Math.max(1, mx - mn) * 255, v = g < 200 ? 0 : 255; d[i] = d[i+1] = d[i+2] = v; }
+        cx.putImageData(im, 0, 0);
+        const w2 = await Tesseract.createWorker('eng'), r2 = await w2.recognize(cv); await w2.terminate();
+        const o2 = parseBydShot((r2.data.words || []).map(w=>({ t: w.text, x: (w.bbox.x0 + w.bbox.x1) / 2, y: (w.bbox.y0 + w.bbox.y1) / 2 })));
+        if(o2.date) o.date = o2.date;
+      }catch(e){}
+    }
     const set = (id, v) => { if(v != null) document.getElementById(id).value = String(v).replace('.', '.'); };
     set('rd_km', o.km); set('rd_aec', o.aec); set('rd_recent', o.recent);
     document.getElementById('rd_today').value = o.date || isoToday();
