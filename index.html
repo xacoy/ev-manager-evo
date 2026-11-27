@@ -1277,10 +1277,12 @@ html.car .chg-tablecard{display:none!important}
 .rd-between{margin-top:14px;font-size:13px;color:var(--text-muted)}
 .rd-iv{margin-top:4px;line-height:1.6}
 .rd-scan{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
-.rd-scan .btn{width:100%;min-width:0;padding-left:8px;padding-right:8px;font-size:13px;white-space:nowrap}
+.rd-scan .btn{width:100%;min-width:0;height:auto;min-height:76px;padding:12px 10px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:8px;text-align:center;white-space:normal;font:600 13px/1.25 var(--font)}
+.rd-scan .btn svg{width:22px;height:22px;stroke:currentColor;flex:none}
+.rd-scan .btn span{display:block;text-wrap:balance}
 .rd-scan .set-help{grid-column:1/-1;margin:0}
 .rd-scan .set-help:empty{display:none}
-@media(max-width:560px){.rd-scan{grid-template-columns:1fr}}
+@media(max-width:360px){.rd-scan{grid-template-columns:1fr}}
 .rd-daily-top{display:flex;align-items:center;gap:8px;font-size:12.5px;margin:6px 0}
 .rd-daily{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}
 .rd-daily label{font-size:11px;font-weight:700;color:var(--text-faint);display:block;margin:0}
@@ -2270,7 +2272,7 @@ html.car .home-grid{flex:1;min-height:0;height:auto;grid-template-columns:minmax
   <div class="modal" style="max-width:520px">
     <h3>Actualizar lecturas</h3>
     <p class="set-help" style="margin-bottom:14px">Datos de la app de BYD → Consumo de energía (Kilometraje total, En 50 millas y AEC acumulativo).</p>
-    <div class="rd-scan"><button type="button" class="btn btn-ghost" id="rdScanBtn">📷 Leer desde una captura de la app</button><button type="button" class="btn btn-ghost" id="readingCsvBtn">Importar CSV de BYD</button><input type="file" id="rdScanFile" accept="image/*" style="display:none"><span class="set-help" id="rdScanSt"></span></div>
+    <div class="rd-scan"><button type="button" class="btn btn-ghost" id="rdScanBtn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg><span>Leer desde una captura de la app</span></button><button type="button" class="btn btn-ghost" id="readingCsvBtn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></svg><span>Importar CSV de BYD</span></button><input type="file" id="rdScanFile" accept="image/*" style="display:none"><span class="set-help" id="rdScanSt"></span></div>
     <form id="readingForm" autocomplete="off">
       <div class="field"><label>Kilometraje total (km)</label><input id="rd_km" type="number" min="0" step="1" inputmode="numeric" placeholder="Ej. 801"></div>
       <div class="field"><label>En 50 millas · Electricidad <span class="opt-hint">(opcional, kWh/100 km)</span></label><input id="rd_recent" type="number" min="0" step="any" inputmode="decimal" placeholder="Ej. 11,4"></div>
@@ -2493,7 +2495,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611271003';   // AAAAMMDDHHMM
+const APP_VERSION = '202611271008';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
