@@ -12,10 +12,7 @@
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Exo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<link rel="stylesheet" href="fonts/fonts.css">
 <style>
 :root{
   color-scheme:dark;
@@ -1871,7 +1868,7 @@ html.car .home-grid{flex:1;min-height:0;height:auto;grid-template-columns:minmax
             <button class="dropdown-item" id="setupTopBtn" data-page="setup"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Configuración</button>
             <hr style="border:none;border-top:1px solid var(--border);margin:4px 0">
             <button class="dropdown-item" id="addLinkBtn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Enlaces rápidos</button>
-            <a href="https://github.com/xacoy/ev-manager-evo/raw/master/public/manuals/manual-es.pdf" target="_blank" class="dropdown-item" style="text-decoration:none;color:inherit"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>Manual PDF</a>
+            <a href="https://www.byd.com/es-es/service-maintenance/owners-manual.html" target="_blank" rel="noopener noreferrer" class="dropdown-item" style="text-decoration:none;color:inherit"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>Manual BYD</a>
             <button class="dropdown-item" id="themeMenuBtn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.9 0 1.7-.8 1.7-1.7 0-.4-.2-.8-.4-1.1-.3-.3-.4-.7-.4-1.1 0-.9.8-1.7 1.7-1.7H16c3.3 0 6-2.7 6-6 0-4.9-4.5-8.4-10-8.4z"/></svg><span>Tema: Oscuro</span></button>
             <button class="dropdown-item" id="carModeBtn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17h18v-4l-2-6H5l-2 6z"/><circle cx="7.5" cy="17" r="1.5"/><circle cx="16.5" cy="17" r="1.5"/></svg><span>Modo coche: Auto</span></button>
           </div>
@@ -2035,6 +2032,7 @@ html.car .home-grid{flex:1;min-height:0;height:auto;grid-template-columns:minmax
           </div>
         </div>
         <p class="set-foot" id="appVersion"></p>
+        <p class="set-foot" style="margin-top:6px">Herramienta personal e independiente: no está afiliada, patrocinada ni respaldada por BYD ni por ninguna otra marca citada. Las marcas y nombres pertenecen a sus titulares. Los intervalos de mantenimiento son orientativos: consulta el manual oficial. Precio de la gasolina: datos abiertos del Ministerio para la Transición Ecológica.</p>
       </section>
 
       <!-- CHARGES -->
@@ -2491,7 +2489,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611270948';   // AAAAMMDDHHMM
+const APP_VERSION = '202611270951';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -2551,6 +2549,7 @@ function saveState(opts){
 function deepMerge(base, incoming){
   const out = Array.isArray(base) ? base.slice() : {...base};
   for(const k in incoming){
+    if(k === '__proto__' || k === 'constructor' || k === 'prototype') continue;   // evita contaminar prototipos con copias de seguridad manipuladas
     if(incoming[k] && typeof incoming[k]==='object' && !Array.isArray(incoming[k]) && base[k] && typeof base[k]==='object'){
       out[k] = deepMerge(base[k], incoming[k]);
     } else { out[k] = incoming[k]; }

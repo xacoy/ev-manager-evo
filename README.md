@@ -145,8 +145,7 @@ Móvil        → Full stack, Quicklinks 1 col
 ## 🛠️ Tecnología
 
 - HTML5 + CSS3 + Vanilla JavaScript
-- Sin dependencias externas
-- Chart.js para gráficos
+- Sin dependencias externas para funcionar (tipografías Plus Jakarta Sans y Exo 2 alojadas en `fonts/`, licencia SIL OFL)
 - PWA compatible (manifest.json incluido)
 
 ## 📊 Archivos
@@ -174,7 +173,8 @@ Incluye `manifest.json` básico. Para iconos PNG profesionales:
 ## 🔒 Privacidad
 
 ✅ **Todos los datos se guardan localmente en tu navegador**
-✅ Nada se envía a servidores
+✅ No hay servidor propio ni cuentas: la sincronización con Google Drive es opcional y usa solo la carpeta privada de la app (`drive.appdata`)
+✅ El lector de capturas de BYD funciona en tu dispositivo; la imagen no se envía a ningún sitio
 ✅ Exporta/importa para cambiar dispositivo
 ✅ Borra los datos cuando quieras (limpia tu navegador)
 
@@ -185,6 +185,10 @@ Incluye `manifest.json` básico. Para iconos PNG profesionales:
 ## 📄 Licencia
 
 MIT
+
+## ⚖️ Aviso legal
+
+Proyecto personal e independiente. **No está afiliado, patrocinado ni respaldado por BYD** ni por ninguna otra marca mencionada; los nombres y marcas pertenecen a sus titulares. Los intervalos de mantenimiento son orientativos: consulta siempre el manual oficial. Precio de la gasolina: datos abiertos del Ministerio para la Transición Ecológica (Geoportal de gasolineras).
 
 ## 🔗 Enlaces
 
