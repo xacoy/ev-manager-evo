@@ -2496,7 +2496,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611271010';   // AAAAMMDDHHMM
+const APP_VERSION = '202611271202';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -3007,7 +3007,9 @@ function renderHomeCards(){
   // tendencia del consumo (tramos entre cargas)
   const sp = document.getElementById('homeSpark');
   if(sp){
-    const vals = socSegments().slice(-5).map(x=>x.consBattery);
+    // tendencia: el consumo por día que mide el propio coche (si hay capturas); si no, los tramos entre cargas
+    const dd = Object.keys(state.carDaily || {}).sort().slice(-7).map(d=>state.carDaily[d]);
+    const vals = dd.length >= 2 ? dd : socSegments().slice(-5).map(x=>x.consBattery);
     if(vals.length >= 2){
       const lo = Math.min(...vals), hi = Math.max(...vals), rg = (hi - lo) || 1;
       const pts = vals.map((v,i)=>[i / (vals.length - 1) * 200, 42 - (v - lo) / rg * 34]);
@@ -3086,8 +3088,10 @@ function renderDashboard(){
 
   const cons = computeAvgConsumption(c);
   const totalKwh = state.charges.reduce((s,x)=>s+kwhOf(x),0);
-  document.getElementById('sideConsumption').textContent = nf(cons, 1);
-  document.getElementById('sideConsSub').textContent = 'kWh/100km (' + ({soc:'por batería',aec:'AEC del coche',window:'medido',config:'configurado'}[consumptionSource()]) + ')';
+  // Con lecturas del coche se muestra su AEC acumulativo tal cual (el mismo número que ves en la app de BYD, consumo de batería)
+  const lastRd = readingList().pop();
+  document.getElementById('sideConsumption').textContent = nf(lastRd ? lastRd.aec : cons, 1);
+  document.getElementById('sideConsSub').textContent = lastRd ? 'kWh/100km · AEC del coche' + (Object.keys(state.carDaily || {}).length >= 2 ? ' · últimos días' : '') : 'kWh/100km (' + ({soc:'por batería',aec:'AEC del coche',window:'medido',config:'configurado'}[consumptionSource()]) + ')';
   renderSavings();
   renderFunTiles(km, totalKwh);
 
