@@ -2491,7 +2491,7 @@ const DEFAULT_QUICK_LINKS = [
 ];
 
 /* ---------------- embedded reference data (mirrors /data/*.json) ---------------- */
-const APP_VERSION = '202611262148';   // AAAAMMDDHHMM
+const APP_VERSION = '202611270948';   // AAAAMMDDHHMM
 const VEHICLE_BATTERY_KWH = 74.8;
 const VERSION_LABELS = { design: 'Design (RWD) · 313 CV', excellence: 'Excellence (AWD) · 449 CV' };
 const REVISIONS_SCHEDULE = {
@@ -5147,13 +5147,17 @@ function renderStats(){
   const first = dataStartIso(), startIso = r.all ? first : (first && first > r.from ? first : r.from), endIso = r.all ? isoLocal(new Date()) : r.to;
   const days = startIso ? Math.max(1, Math.round((new Date(endIso + 'T12:00:00') - new Date(startIso + 'T12:00:00')) / 864e5) + 1) : 0;
   const monthlyAvg = days ? m.total / (days / 30.44) : null;
-  const yearProj = days ? m.total / days * 365 : null;
+  // Previsión anual de energía: km al ritmo del periodo × consumo del coche × precio medio real del kWh (mezcla de casa, trabajo gratis y otros).
+  // No incluye mantenimiento (es irregular) y necesita al menos 30 días de datos.
+  const cons100 = savingsConsumption(), kmYear = days >= 30 && m.km > 0 ? m.km / days * 365 : null;
+  const yearProj = kmYear != null && cons100 > 0 && m.price != null ? kmYear * cons100 / 100 * m.price : null;
+  const yearTip = yearProj != null ? 'Estimado: ' + fmtNum(kmYear) + ' km/año (a tu ritmo) × ' + nf(cons100, 1) + ' kWh/100 km × ' + nf(m.price, 4) + ' €/kWh (precio medio real, con la carga gratis incluida). No incluye mantenimiento.' : '';
   const p100 = (v) => m.kwhS > 0 && m.kmEq > 0 ? fmtEUR(v / m.kmEq * 100) : '—', leonTip = 'SEAT León FR 2018 125 CV: solo combustible, al precio de la gasolina de cada día de carga.';
   const grp = (title, bl, bv, bs, rows) => '<div class="sum-grp"><h3>' + title + '</h3><div class="sum-big"><div class="l">' + bl + '</div><div class="n">' + bv + '</div>' + (bs ? '<div class="s">' + bs + '</div>' : '') + '</div>' + rows + '</div>';
   document.getElementById('blkSummary').innerHTML =
     grp('Gasto', 'Total del periodo', fmtEUR(m.total), '', 
       kvRow('Cada mes, de media', monthlyAvg != null ? fmtEUR(monthlyAvg) : '—') +
-      kvRow('Previsión al año', yearProj != null ? fmtEUR(yearProj) : '—') +
+      kvRow('Previsión de energía al año', yearProj != null ? estSpan(fmtEUR(yearProj), yearTip) : '—', yearProj != null ? '≈ ' + fmtNum(kmYear) + ' km' : (days < 30 ? 'faltan datos (mín. 30 días)' : '')) +
       kvRow('En cargas', fmtEUR(m.eCost)) +
       kvRow('En mantenimiento', fmtEUR(m.mCost), m.mt.length + (m.mt.length === 1 ? ' registro' : ' registros'))) +
     grp('Uso', 'Km recorridos', m.km > 0 ? fmtNum(m.km) + ' km' : '—', '',
